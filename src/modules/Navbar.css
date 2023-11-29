@@ -34,7 +34,7 @@
     justify-content: center;
     align-items: center;
     border-radius: 10px;
-    background: var(--pink-purple-mix-gradient-main, linear-gradient(180deg, #cbc5d6 66.15%, #bc93c7 86.98%));
+    background: var(--pink-purple-mix-main, #EDE6F9); 
 }
 
 .NavButton > div {
@@ -60,4 +60,21 @@
     font-style: normal;
     font-weight: 700;
     line-height: 24px; /* 100% */
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+@media only screen and (max-width: 768px) {
+    .NavButton {
+        flex: 1 0 20%; /* Make each item take up 100% width on smaller screens */
+    }
+
+    .NavButton > div {
+        padding: 0.5em 1em;
+    }
+
+    .NavButton > div > div {
+        font-size: 80%;
+    }
 }
