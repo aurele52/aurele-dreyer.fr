@@ -102,7 +102,7 @@ export class Window extends React.Component<WindowProps, WindowState> {
         <Rnd
             default={{
                 x: 0,
-                y: 0,
+                y: 150,
                 width: 500,
                 height: 500,
             }}
