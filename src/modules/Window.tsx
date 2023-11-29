@@ -1,7 +1,6 @@
 import React from "react";
 import './Window.css';
 import { Rnd } from "react-rnd";
-let Draggable = require('react-draggable');
 
 interface WindowProps {
     WindowName: string,
@@ -12,26 +11,92 @@ interface WindowProps {
 }
 
 interface WindowState {
-    isDraggable: boolean
+    width: string,
+    height: string,
+    posX: number,
+    posY: number,
+    isReduced: boolean,
+    windowLock: boolean,
 }
 
 
 
 export class Window extends React.Component<WindowProps, WindowState> {
+    rnd: any;
     constructor(props: WindowProps) {
         super(props);
         this.state = {
-            isDraggable: false
+            width: "500",
+            height: "300",
+            posX: 0,
+            posY: 150,
+            isReduced: false,
+            windowLock: false,
         }
+        var rnd = null;
+        this.handleClose = this.handleClose.bind(this);
+        this.handleEnlarge = this.handleEnlarge.bind(this);
+        this.handleReduce = this.handleReduce.bind(this);
+
         
-    }
+    }    
 
     handleReduce() {
+        this.setState({
+            isReduced: !this.state.isReduced
+        }, () => {
 
+        })
     }
 
-    handleEnlarge() {
+/*     handleEnlarge() {
+        this.setState({
+            width: "100%",
+            height: "100%",
+            posX: 0,
+            posY: 0,
+        }, () => {
+            this.rnd.updateSize({
+                height: this.state.height,
+                width: this.state.width,
+              });
+              this.rnd.updatePosition({
+                x: this.state.posX,
+                y: this.state.posY,
+              });
+              this.setState({
+                windowLock: true
+              })
+        })
+    } */
 
+    handleEnlarge() {
+        this.setState({
+            windowLock: !this.state.windowLock
+        }, () => {
+            if (this.state.windowLock)
+            {
+                this.rnd.updateSize({
+                    height: "100%",
+                    width: "100%",
+                });
+                this.rnd.updatePosition({
+                    x: 0,
+                    y: 0,
+                });
+            }
+            else
+            {
+                this.rnd.updateSize({
+                    height: this.state.height,
+                    width: this.state.width,
+                  });
+                  this.rnd.updatePosition({
+                    x: this.state.posX,
+                    y: this.state.posY,
+                  });
+            }
+        })
     }
 
     handleClose() {
@@ -101,15 +166,18 @@ export class Window extends React.Component<WindowProps, WindowState> {
       return (
         <Rnd
             default={{
-                x: 0,
-                y: 150,
-                width: 500,
-                height: 500,
+                x: this.state.posX,
+                y: this.state.posY,
+                width: this.state.width,
+                height: this.state.height,
             }}
             minWidth={300}
             minHeight={100}
             bounds="window"
             dragHandleClassName="handleBar"
+            enableResizing={!this.state.windowLock}
+            disableDragging={this.state.windowLock}
+            ref={c => {this.rnd = c;}}
             >
                 <div className="Window">
                     <div className="handleBar">
