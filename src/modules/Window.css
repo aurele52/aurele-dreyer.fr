@@ -1,19 +1,50 @@
 .Window {
-    /* display: flex; */
     padding: 3px;
     flex-direction: column;
-/*     align-items: flex-start; */
     flex-shrink: 0;
     border-radius: 15px;
     border: 3px solid var(--base-black, #000);
     background: var(--base-white, #FFF);
-    /* position: absolute; */
     width: 100%;
     height: 100%;
     position: fixed;
 }
 
-.handleBar {
+.reducedWindow {
+    padding: 3px;
+    flex-direction: column;
+    flex-shrink: 0;
+    border-radius: 15px;
+    width: 100%;
+    height: 100%;
+    position: fixed;
+}
+
+.reducedWindow > .handleBar {
+    display: flex;
+    width:100px;
+    padding: 4px 10px 5px 10px;
+    align-items: center;
+    gap: 5px;
+    align-self: stretch;
+    border-radius: 10px 10px 0px 0px;
+    border-bottom: 3px solid var(--base-black, #000);
+    background: linear-gradient(180deg, #E980BB 0%, #BBA0E9 9.9%);
+    cursor: grab;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
+}
+
+.reducedWindow > .handleBar > .Button {
+    display: none;
+}
+
+.reducedWindow > .content {
+    display: none;
+}
+
+.Window > .handleBar {
     display: flex;
     min-width: 250px;
     padding: 4px 10px 5px 10px;
@@ -24,9 +55,12 @@
     border-bottom: 3px solid var(--base-black, #000);
     background: linear-gradient(180deg, #E980BB 0%, #BBA0E9 9.9%);
     cursor: grab;
+    -webkit-user-select: none; /* Safari */
+    -ms-user-select: none; /* IE 10 and IE 11 */
+    user-select: none; /* Standard syntax */
 }
 
-.handleBar :active {
+.Window > .handleBar :active {
     cursor: grabbing;
 }
 
@@ -46,7 +80,7 @@
     line-height: 18px; /* 100% */
 }
 
-.content {
+.Window > .content {
     display: flex;
     padding: 0px;
     flex-direction: column;

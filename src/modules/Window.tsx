@@ -18,7 +18,9 @@ interface WindowState {
     posX: number,
     posY: number,
     isReduced: boolean,
-    windowLock: boolean,
+    windowMoveLock: boolean,
+    windowResizeLock: boolean,
+    clickStartTime: number | null;
 }
 
 
@@ -33,29 +35,62 @@ export class Window extends React.Component<WindowProps, WindowState> {
             posX: 0,
             posY: 150,
             isReduced: false,
-            windowLock: false,
-        }
+            windowMoveLock: false,
+            windowResizeLock: false,
+            clickStartTime: null,
+            }
         var rnd = null;
         this.handleClose = this.handleClose.bind(this);
         this.handleEnlarge = this.handleEnlarge.bind(this);
         this.handleReduce = this.handleReduce.bind(this);
-
+        this.handleMouseDown = this.handleMouseDown.bind(this);
+        this.handleMouseUp = this.handleMouseUp.bind(this);
         
     }    
 
-    handleReduce() {
+    handleMouseDown = () => {
         this.setState({
-            isReduced: !this.state.isReduced
-        }, () => {
+          clickStartTime: Date.now(),
+        });
+      };
+    
+      handleMouseUp = () => {
+        if (this.state.clickStartTime == null)
+            return;
+        const clickDuration = Date.now() - (this.state.clickStartTime || 0);
+        if (clickDuration < 200) {
+          this.setState({
+            isReduced: false,
+            clickStartTime: null,
+            windowMoveLock: false,
+            windowResizeLock: false
+          });
+          this.rnd.updateSize({
+            height: this.state.height
+        })
+        }
+      };
 
+    handleReduce( ){
+        
+        this.setState({
+            isReduced: !this.state.isReduced,
+            clickStartTime: null,
+            windowResizeLock: !this.state.isReduced,
+            windowMoveLock: false
+        }, () => {
+            this.rnd.updateSize({
+                height: "100"
+            })
         })
     }
 
     handleEnlarge() {
         this.setState({
-            windowLock: !this.state.windowLock
+            windowMoveLock: !this.state.windowMoveLock,
+            windowResizeLock: !this.state.windowMoveLock
         }, () => {
-            if (this.state.windowLock)
+            if (this.state.windowMoveLock)
             {
                 this.rnd.updateSize({
                     height: "100%",
@@ -156,11 +191,15 @@ export class Window extends React.Component<WindowProps, WindowState> {
             minHeight={100}
             bounds="window"
             dragHandleClassName="handleBar"
-            enableResizing={!this.state.windowLock}
-            disableDragging={this.state.windowLock}
+            enableResizing={!this.state.windowResizeLock}
+            disableDragging={this.state.windowMoveLock}
             ref={c => {this.rnd = c;}}
             >
-                <div className="Window">
+                <div
+                    className={this.state.isReduced ? "reducedWindow" : "Window"}
+                    onMouseDown={this.state.isReduced ? this.handleMouseDown : undefined}
+                    onMouseUp={this.state.isReduced ? this.handleMouseUp : undefined}
+                >
                     <div className="handleBar">
                         <div className="WindowName"><div>{this.props.WindowName.toUpperCase()}</div></div>
                             <div className="ButtonReduce Button" onClick={this.handleReduce}>
