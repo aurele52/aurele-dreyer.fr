@@ -1,25 +1,19 @@
 import React from "react";
 import './Navbar.css';
+import { connect, ConnectedProps } from "react-redux";
+import { Window } from "./Window";
+import { Play } from "./Play";
+import { Ladder } from "./Ladder";
+import { Chat } from "./Chat";
+import { Profile } from "./Profile";
+import { addWindow } from "../reducers";
 
-import { Dispatch } from "redux";
-import { setIsPlay, setIsLadder, setIsChat, setIsProfile } from '../store';
-import { connect } from "react-redux";
-import { BoolState } from "../store";
-
-interface NavbarProps {
-  dispatch: Dispatch,
+interface NavbarProps extends ReduxProps {
 }
 
 interface NavbarState {
-  isPlay: boolean,
-  isLadder: boolean,
-  isChat: boolean,
-  isProfile: boolean,
-  childId: number
   
 }
-
-
 
 
 
@@ -28,89 +22,66 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
     constructor(props: NavbarProps) {
       super(props);
       this.state = {
-        isPlay: false,
-        isLadder: false,
-        isChat: false,
-        isProfile: false,
-        childId: 0
       };
-
-      
       this.handlePlay = this.handlePlay.bind(this);
       this.handleLadder = this.handleLadder.bind(this);
       this.handleChat = this.handleChat.bind(this);
       this.handleProfile = this.handleProfile.bind(this);
       
     }
+
     
-    handleSetBooleans = () => {
-      const { dispatch } = this.props;
-        dispatch(setIsPlay(this.state.isPlay));
-        dispatch(setIsLadder(this.state.isLadder));
-        dispatch(setIsChat(this.state.isChat));
-        dispatch(setIsProfile(this.state.isProfile));
-
-    }
-
-    componentDidUpdate(prevProps: NavbarProps, prevState: NavbarState) {
-      if (this.state.isPlay !== prevState.isPlay
-        || this.state.isLadder !== prevState.isLadder
-        || this.state.isChat !== prevState.isChat
-        || this.state.isProfile !== prevState.isProfile)
-        this.handleSetBooleans();
-    }
-
     handlePlay() {
-      if (this.state.isPlay)
-      {
-        //close Play
-        this.setState({isPlay: false}); 
-      }
-      else{
-        //open Play
-        this.setState({isPlay: true});
-      }
-      this.handleSetBooleans(); 
+      const newWindow = {
+          WindowName:"Play",
+          width:"500",
+          height:"500",
+          id: 0,
+          content: { type: 'PLAY' },
+      };
+      this.props.dispatch(addWindow(newWindow));
+      console.log("Handle Play")
     };
 
     handleLadder() {
-      if (this.state.isLadder)
-      {
-        //close Ladder
-        this.setState({isLadder: false}); 
-      }
-      else{
-        //open Ladder
-        this.setState({isLadder: true});
-      }
-      this.handleSetBooleans(); 
+      const newWindow = {
+          WindowName:"Ladder",
+          width:"500",
+          height:"500",
+          id: 0,
+          content: { type: 'LADDER' },
+      };
+      this.props.dispatch(addWindow(newWindow));
+
+      console.log("Handle Ladder")
     };
 
     handleChat() {
-      if (this.state.isChat)
-      {
-        //close Chat
-        this.setState({isChat: false}); 
-      }
-      else{
-        //open Chat
-        this.setState({isChat: true});
-      }
-      this.handleSetBooleans(); 
+      const newWindow = {
+          WindowName:"Chat",
+          width:"500",
+          height:"500",
+          id: 0,
+          content: { type: 'CHAT' },
+      };
+      this.props.dispatch(addWindow(newWindow));
+
+      console.log("Handle Chat")
     };
 
     handleProfile() {
-      if (this.state.isProfile)
-      {
-        //close Profile
-        this.setState({isProfile: false}); 
-      }
-      else{
-        //open Profile
-        this.setState({isProfile: true});
-      }
-      this.handleSetBooleans(); 
+      const newWindow = {
+          WindowName:"Profile",
+          width:"500",
+          height:"500",
+          id: 0,
+          content: { type: 'PROFILE' },
+      };
+      this.props.dispatch(addWindow(newWindow));
+
+      console.log("Handle Profile")
     };
+
     render() {
       return (
         <div id="Navbar">
@@ -125,14 +96,11 @@ export class Navbar extends React.Component<NavbarProps, NavbarState> {
       )
     }
   }
+  
+const mapDispatchToProps = null;
 
-
-
-  const mapStateToProps = (state: BoolState) => ({
-    isPlay: state.isPlay,
-    isLadder: state.isLadder,
-    isChat: state.isChat,
-    isProfile: state.isProfile,
-  });
-
-  export default connect(mapStateToProps)(Navbar);
+  const connector = connect(mapDispatchToProps);
+  type ReduxProps = ConnectedProps<typeof connector>;
+  
+  export default connector(Navbar);
+  

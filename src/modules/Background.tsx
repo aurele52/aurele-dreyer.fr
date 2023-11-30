@@ -1,72 +1,56 @@
 import React from "react";
 import './Background.css';
+import { connect } from "react-redux";
+import { AppState } from "../reducers";
+import { ConnectedProps } from "react-redux";
 import { Window } from "./Window";
 import { Play } from "./Play";
-import { Ladder } from "./Ladder";
 import { Chat } from "./Chat";
+import { Ladder } from "./Ladder";
 import { Profile } from "./Profile";
-import { BoolState } from "../store";
-import { connect } from "react-redux";
 
-interface BackgroundProps {
-  bool: BoolState,
+interface BackgroundProps extends ReduxProps {
 }
 
 interface BackgroundState {
-  childId: number,
-  showPlay: boolean,
-  showLadder: boolean,
-  showChat: boolean,
-  showProfile: boolean,
 }
 
 export class Background extends React.Component<BackgroundProps, BackgroundState> {
     constructor(props: BackgroundProps) {
       super(props);
       this.state = {
-        childId: 4,
-        showPlay: false,
-        showLadder: false,
-        showChat: false,
-        showProfile: false,
       }
     }
   
-
     render() {
       return (
         <div id="Background">
-            <div style={{ display:this.props.bool.isPlay ? 'block' : 'none'}}><Window 
-              WindowName={"Play"} 
-              width={"600"} 
-              height={"450"} 
-              id={0} 
-              content={Play} /></div>
-            <div style={{ display:this.props.bool.isLadder ? 'block' : 'none'}}><Window 
-              WindowName={"Ladder"} 
-              width={"400"} 
-              height={"600"} 
-              id={1} 
-              content={Ladder} /></div>
-            <div style={{ display:this.props.bool.isChat ? 'block' : 'none'}}><Window 
-              WindowName={"Chat"} 
-              width={"400"} 
-              height={"600"} 
-              id={2} 
-              content={Chat} /></div>
-            <div style={{ display:this.props.bool.isProfile ? 'block' : 'none'}}><Window 
-              WindowName={"Profile"} 
-              width={"400"} 
-              height={"400"} 
-              id={3} 
-              content={Profile} /></div>
+          {Array.isArray(this.props.windows) && this.props.windows.map((window, index) => {
+            console.log(`Window ${index} content type: ${window.content.type}`);
+            return (
+              <Window 
+                key={index}
+                WindowName={window.WindowName} 
+                width={window.width} 
+                height={window.height} 
+                id={window.id} >
+                  {window.content.type === 'PLAY' && <Play />}
+                  {window.content.type === 'LADDER' && <Ladder />}
+                  {window.content.type === 'CHAT' && <Chat />}
+                  {window.content.type === 'PROFILE' && <Profile />}
+              </Window>
+            );
+          })}
         </div>
-  
-      )
+      );
     }
 };
 
-const mapStateToProps = (state: { bool: BoolState }) => ({
-  bool: state.bool,
+const mapStateToProps = (state: AppState) => ({
+  windows: state.windows,
 });
-export default connect(mapStateToProps)(Background);
+
+const connector = connect(mapStateToProps);
+type ReduxProps = ConnectedProps<typeof connector>;
+
+export default connector(Background);

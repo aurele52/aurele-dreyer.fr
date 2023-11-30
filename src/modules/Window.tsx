@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ReactNode } from "react";
 import './Window.css';
 import { Rnd } from "react-rnd";
 
@@ -7,7 +7,7 @@ interface WindowProps {
     width: string,
     height: string,
     id: number,
-    content: React.ComponentType<any>
+    children: ReactNode
 }
 
 interface WindowState {
@@ -48,27 +48,6 @@ export class Window extends React.Component<WindowProps, WindowState> {
 
         })
     }
-
-/*     handleEnlarge() {
-        this.setState({
-            width: "100%",
-            height: "100%",
-            posX: 0,
-            posY: 0,
-        }, () => {
-            this.rnd.updateSize({
-                height: this.state.height,
-                width: this.state.width,
-              });
-              this.rnd.updatePosition({
-                x: this.state.posX,
-                y: this.state.posY,
-              });
-              this.setState({
-                windowLock: true
-              })
-        })
-    } */
 
     handleEnlarge() {
         this.setState({
@@ -192,34 +171,9 @@ export class Window extends React.Component<WindowProps, WindowState> {
                                 <div><div><div>{closeSVG}</div></div></div>
                             </div>
                         </div>
-                    <div className="content"></div>
+                    <div className="content">{this.props.children}</div>
                 </div>
-            </Rnd>
-/*         <Draggable
-            handle=".handleBar"
-            scale={1}>
-                <div id="Window" style={windowstyle}>
-            
-
-                    <div className="handleBar">
-                        <div className="WindowName"><div>{this.props.WindowName.toUpperCase()}</div></div>
-
-                    </div>
-                    <div className="ButtonReduce">
-                        <div></div>
-                    </div>
-                    <div className="ButtonEnlarge">
-                        <div></div>
-                    </div>
-                    <div className="ButtonClose">
-                        <div></div>
-                    </div>
-                    <div className="content"></div>
-
-                
-                </div>
-        </Draggable> */
-  
+            </Rnd>  
       )
     }
   }
