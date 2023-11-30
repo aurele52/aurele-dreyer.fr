@@ -3,7 +3,7 @@ import './Background.css';
 import { connect } from "react-redux";
 import { AppState } from "../reducers";
 import { ConnectedProps } from "react-redux";
-import { Window } from "./Window";
+import  Window  from "./Window";
 import { Play } from "./Play";
 import { Chat } from "./Chat";
 import { Ladder } from "./Ladder";

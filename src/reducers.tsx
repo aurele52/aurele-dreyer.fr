@@ -17,12 +17,14 @@ import { Profile } from './modules/Profile';
 
 export interface AppState<T = WindowData> {
     windows: T[];
+    id: number;
   }
   
   export const ADD_WINDOW = 'ADD_WINDOW';
   
   const initialState: AppState = {
     windows: [],
+    id: 10
   };
   
 
@@ -32,12 +34,22 @@ export interface AppState<T = WindowData> {
     initialState,
     reducers: {
       addWindow: (state, action: PayloadAction<WindowData>) => {
-        console.log('Reducer received action:', action);
-        state.windows.push(action.payload);
+        let res = action.payload;
+        res.id = state.id;
+        console.log(res);
+        state.windows.push(res);
+        state.id++;
       },
+      delWindow: (state, action: PayloadAction<number>) => ({
+        ...state,
+        windows:[
+            ...state.windows.filter((element) => element.id !== action.payload)
+        ],
+      })
     },
   });
   
-  export const { addWindow } = windowsSlice.actions;
+  export const { addWindow, delWindow } = windowsSlice.actions;
   
+
   export default windowsSlice.reducer;

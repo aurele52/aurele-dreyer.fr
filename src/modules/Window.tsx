@@ -1,8 +1,10 @@
 import React, { ReactNode } from "react";
 import './Window.css';
 import { Rnd } from "react-rnd";
+import { ConnectedProps, connect } from "react-redux";
+import { delWindow } from "../reducers";
 
-interface WindowProps {
+interface WindowProps extends ReduxProps{
     WindowName: string,
     width: string,
     height: string,
@@ -26,8 +28,8 @@ export class Window extends React.Component<WindowProps, WindowState> {
     constructor(props: WindowProps) {
         super(props);
         this.state = {
-            width: "500",
-            height: "300",
+            width: this.props.width,
+            height: this.props.height,
             posX: 0,
             posY: 150,
             isReduced: false,
@@ -79,7 +81,7 @@ export class Window extends React.Component<WindowProps, WindowState> {
     }
 
     handleClose() {
-
+        this.props.dispatch(delWindow(this.props.id));
     }
 
     render() {
@@ -177,3 +179,10 @@ export class Window extends React.Component<WindowProps, WindowState> {
       )
     }
   }
+
+  const mapDispatchToProps = null;
+
+  const connector = connect(mapDispatchToProps);
+  type ReduxProps = ConnectedProps<typeof connector>;
+  
+  export default connector(Window);
