@@ -1,11 +1,11 @@
 import React from "react";
 import './Navbar.css';
 import { connect, ConnectedProps } from "react-redux";
-import { Window } from "./Window";
-import { Play } from "./Play";
-import { Ladder } from "./Ladder";
-import { Chat } from "./Chat";
-import { Profile } from "./Profile";
+//import { Window } from "./Window";
+//import { Play } from "./Play";
+//import { Ladder } from "./Ladder";
+//import { Chat } from "./Chat";
+//import { Profile } from "./Profile";
 import { addWindow } from "../reducers";
 
 interface NavbarProps extends ReduxProps {

@@ -39,7 +39,7 @@ export class Window extends React.Component<WindowProps, WindowState> {
             windowResizeLock: false,
             clickStartTime: null,
             }
-        var rnd = null;
+        //var rnd = null;
         this.handleClose = this.handleClose.bind(this);
         this.handleEnlarge = this.handleEnlarge.bind(this);
         this.handleReduce = this.handleReduce.bind(this);

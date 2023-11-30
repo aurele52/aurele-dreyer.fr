@@ -1,5 +1,5 @@
 {
-  "name": "transcendence",
+  "name": "@2bt/api",
   "version": "0.0.1",
   "description": "",
   "author": "",
@@ -23,6 +23,7 @@
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/platform-express": "^10.0.0",
+    "@nestjs/serve-static": "^4.0.0",
     "hbs": "^4.2.0",
     "reflect-metadata": "^0.1.13",
     "rxjs": "^7.8.1"
@@ -47,8 +48,7 @@
     "ts-jest": "^29.1.0",
     "ts-loader": "^9.4.3",
     "ts-node": "^10.9.1",
-    "tsconfig-paths": "^4.2.0",
-    "typescript": "^5.1.3"
+    "tsconfig-paths": "^4.2.0"
   },
   "jest": {
     "moduleFileExtensions": [

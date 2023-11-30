@@ -1,11 +1,11 @@
 import { createSlice, PayloadAction } from '@reduxjs/toolkit';
-import { JSX } from 'react/jsx-runtime';
-import { combineReducers } from 'redux';
-import { ComponentType } from 'react';
-import { Play } from './modules/Play';
-import { Ladder } from './modules/Ladder';
-import { Chat } from './modules/Chat';
-import { Profile } from './modules/Profile';
+//import { JSX } from 'react/jsx-runtime';
+//import { combineReducers } from 'redux';
+//import { ComponentType } from 'react';
+//import { Play } from './modules/Play';
+//import { Ladder } from './modules/Ladder';
+//import { Chat } from './modules/Chat';
+//import { Profile } from './modules/Profile';
 
   interface WindowData {
     WindowName: string;
