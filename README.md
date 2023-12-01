@@ -7,3 +7,14 @@ $ npm -v
 $ node -v
 v20.9.0
 ```
+
+## Dev
+```
+$ npm run dev
+```
+
+## Prod
+```
+$ npm run build
+$ npm start
+```
