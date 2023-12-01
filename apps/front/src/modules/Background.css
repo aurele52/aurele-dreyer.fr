@@ -1,0 +1,8 @@
+#Background {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    flex: 1 0 0;
+    align-self: stretch;
+    background: linear-gradient(180deg, #4D3B73 23.84%, #91498C 50.27%, #EA7EBA 72.22%, #BBA0E9 100%);
+}
