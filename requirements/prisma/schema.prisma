@@ -1,0 +1,136 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+//IMPORTANT  => updated_at have to be changed
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model Channel {
+  id           Int           @id @default(autoincrement())
+  name         String
+  type         ChanType
+  password     String
+  created_at   DateTime      @default(now())
+  updated_at   DateTime      @updatedAt
+  userChannels UserChannel[]
+  messages     Message[]
+}
+
+model UserChannel {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  channel_id Int
+  role       Role
+  ban        DateTime
+  mute       DateTime
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  User       User     @relation(fields: [user_id], references: [id])
+  Channel    Channel  @relation(fields: [channel_id], references: [id])
+}
+
+model User {
+  id           Int               @id @default(autoincrement())
+  username     String            @unique
+  avatar_url   String
+  auth42_id    String
+  user_state   UserStatus
+  created_at   DateTime          @default(now())
+  updated_at   DateTime          @updatedAt
+  userChannels UserChannel[]
+  matches      MatchPlayer[]
+  achievement  UserAchievement[]
+  friendships  UserFriendships[]
+}
+
+model Message {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  channel_id Int
+  content    String
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  channel    Channel  @relation(fields: [channel_id], references: [id])
+}
+
+model Match {
+  id            Int           @id @default(autoincrement())
+  player1_score Int
+  player2_score Int
+  on_going      Boolean
+  created_at    DateTime      @default(now())
+  updated_at    DateTime      @updatedAt
+  players       MatchPlayer[]
+}
+
+model MatchPlayer {
+  id         Int      @id @default(autoincrement())
+  userId     Int
+  matchId    Int
+  score      Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation(fields: [userId], references: [id])
+  match      Match    @relation(fields: [matchId], references: [id])
+
+  @@unique([userId, matchId])
+}
+
+model UserAchievement {
+  id          Int         @id @default(autoincrement())
+  user_id     Int
+  achievement Achievement
+  created_at  DateTime    @default(now())
+  updated_at  DateTime    @updatedAt
+  user        User        @relation(fields: [user_id], references: [id])
+}
+
+model UserFriendships {
+  id           Int        @id @default(autoincrement())
+  userId       Int
+  friendshipId Int
+  created_at   DateTime   @default(now())
+  updated_at   DateTime   @updatedAt
+  friendship   Friendship @relation(fields: [friendshipId], references: [id])
+  user         User       @relation(fields: [userId], references: [id])
+}
+
+model Friendship {
+  id         Int               @id @default(autoincrement())
+  blockey_by Int
+  created_at DateTime          @default(now())
+  updated_at DateTime          @updatedAt
+  friends    UserFriendships[]
+}
+
+enum ChanType {
+  DM
+  PUBLIC
+  PROTECTED
+  PRIVATE
+}
+
+enum Role {
+  MEMBER
+  ADMIN
+  OWNER
+}
+
+enum UserStatus {
+  ONLINE
+  OFFLINE
+  INGAME
+}
+
+enum Achievement {
+  WINS10PLUS
+  POINTS100PLUS
+  WINSINLESSTHAN1M
+}

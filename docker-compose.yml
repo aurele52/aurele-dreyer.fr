@@ -1,0 +1,33 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:13.5
+    restart: always
+    volumes:
+      - postgres:/var/lib/postgresql/data
+    env_file:
+      - .env
+    ports:
+      - '5432:5432'
+    networks:
+      - your_network_name
+
+  migrate-sql:
+    image: node:latest
+    working_dir: /app
+    volumes:
+      - ./requirements/prisma:/app
+      - ./.env:/app/.env
+    command: bash -c "npm install -g prisma@5.6.0 && prisma migrate deploy --schema=/app/schema.prisma"
+    depends_on:
+      - postgres
+    networks:
+      - your_network_name
+
+volumes:
+  postgres:
+
+networks:
+  your_network_name:
+    driver: bridge
