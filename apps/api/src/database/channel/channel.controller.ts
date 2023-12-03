@@ -1,19 +1,19 @@
 import { Controller, Post, Get, Body } from '@nestjs/common';
-import { CreateChannelDto} from './dto/create-channel.dto'
+import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
-import { Channel } from './interfaces/channel.interface';
+import { Channel as ChannelModel } from '@prisma/client';
 
-@Controller('Database/channel')
+@Controller()
 export class ChannelController {
-    constructor(private channelService: ChannelService){}
+  constructor(private channelService: ChannelService) {}
 
-    @Post()
-    async create(@Body() createChannelDto: CreateChannelDto) {
-        this.channelService.create(createChannelDto);
-    }
+  @Post()
+  async create(@Body() createChannelDto: CreateChannelDto) {
+    this.channelService.create(createChannelDto);
+  }
 
-    @Get() 
-    async findAll(): Promise<Channel[]> {
-        return this.channelService.findAll();
-    }
+  @Get('channels')
+  async getAllChannels(): Promise<ChannelModel[]> {
+    return await this.channelService.channels({});
+  }
 }

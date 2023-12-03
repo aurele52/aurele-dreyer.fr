@@ -6,28 +6,23 @@ services:
     restart: always
     volumes:
       - postgres:/var/lib/postgresql/data
-    env_file:
-      - .env
-    ports:
-      - '5432:5432'
     networks:
-      - your_network_name
+      - net-transcendance
 
   migrate-sql:
     image: node:latest
     working_dir: /app
     volumes:
-      - ./requirements/prisma:/app
-      - ./.env:/app/.env
+      - ./apps/api/prisma:/app
     command: bash -c "npm install -g prisma@5.6.0 && prisma migrate deploy --schema=/app/schema.prisma"
     depends_on:
       - postgres
     networks:
-      - your_network_name
+      - net-transcendance
 
 volumes:
   postgres:
 
 networks:
-  your_network_name:
+  net-transcendance:
     driver: bridge

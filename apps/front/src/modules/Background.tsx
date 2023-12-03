@@ -44,7 +44,7 @@ export class Background extends React.Component<BackgroundProps, BackgroundState
         </div>
       );
     }
-};
+}
 
 const mapStateToProps = (state: AppState) => ({
   windows: state.windows,
