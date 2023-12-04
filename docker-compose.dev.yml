@@ -9,4 +9,4 @@ services:
 
   migrate-sql:
     volumes:
-      - ./.env.dev:/app/.env
+      - ./.env.prod:/app/.env
