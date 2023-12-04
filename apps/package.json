@@ -5,10 +5,11 @@
   "scripts": {
     "dev": "turbo run dev",
     "build": "turbo run build",
-	"start": "node apps/api/dist/main"
+	  "start": "node api/dist/main"
   },
   "workspaces": [
-    "apps/*"
+    "api",
+    "front"
   ],
   "dependencies": {
     "typescript": "^5.3.2"

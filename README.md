@@ -10,11 +10,10 @@ v20.9.0
 
 ## Dev
 ```
-$ npm run dev
+$ make dev
 ```
 
 ## Prod
 ```
-$ npm run build
-$ npm start
+$ make
 ```
