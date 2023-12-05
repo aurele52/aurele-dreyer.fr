@@ -19,7 +19,7 @@ re				:	clean all
 
 dev				: 
 			@docker-compose -f docker-compose.yml -f docker-compose.dev.yml up -d --build
-			@cd apps && npm run dev
+			@cd apps && npm i && npm run dev
 
 dev-down	:
 			@fuser -k 3000/tcp || true
