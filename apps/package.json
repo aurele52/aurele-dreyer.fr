@@ -3,9 +3,9 @@
     "turbo": "^1.10.16"
   },
   "scripts": {
-    "dev": "turbo run dev",
+    "dev": "NODE_ENV=development turbo run dev",
     "build": "turbo run build",
-	  "start": "node api/dist/main"
+	  "start": "NODE_ENV=production node api/dist/main"
   },
   "workspaces": [
     "api",

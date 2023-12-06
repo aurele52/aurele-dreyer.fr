@@ -4,25 +4,29 @@ services:
   postgres:
     image: postgres:13.5
     restart: always
+    env_file:
+      - .env.docker
     volumes:
       - postgres:/var/lib/postgresql/data
     networks:
-      - net-transcendance
+      - net-transcendence
 
   migrate-sql:
     image: node:latest
     working_dir: /app
+    env_file:
+      - .env.docker
     volumes:
       - ./apps/api/prisma:/app
     command: bash -c "npm install -g prisma@5.6.0 && prisma migrate deploy --schema=/app/schema.prisma"
     depends_on:
       - postgres
     networks:
-      - net-transcendance
+      - net-transcendence
 
 volumes:
   postgres:
 
 networks:
-  net-transcendance:
+  net-transcendence:
     driver: bridge
