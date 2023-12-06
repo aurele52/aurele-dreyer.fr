@@ -7,6 +7,7 @@ $ npm -v
 $ node -v
 v20.9.0
 ```
+Create a .env.docker file and a .env.localhost file from the empty.env.docker and empty.env.localhost files
 
 ## Dev
 ```

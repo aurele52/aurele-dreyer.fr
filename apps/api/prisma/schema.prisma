@@ -47,7 +47,8 @@ model User {
   userChannels UserChannel[]
   matches      MatchPlayer[]
   achievement  UserAchievement[]
-  friendships  UserFriendships[]
+  friendship_user1   Friendship[]      @relation("user1_friendship")
+  friendship_user2   Friendship[]      @relation("user2_friendship")
 }
 
 model Message {
@@ -62,9 +63,7 @@ model Message {
 
 model Match {
   id            Int           @id @default(autoincrement())
-  player1_score Int
-  player2_score Int
-  on_going      Boolean
+  on_going      Boolean       @default(true)
   created_at    DateTime      @default(now())
   updated_at    DateTime      @updatedAt
   players       MatchPlayer[]
@@ -72,15 +71,16 @@ model Match {
 
 model MatchPlayer {
   id         Int      @id @default(autoincrement())
-  userId     Int
-  matchId    Int
+  user_id    Int
+  match_id   Int
   score      Int
+  winner     Boolean
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  user       User     @relation(fields: [userId], references: [id])
-  match      Match    @relation(fields: [matchId], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
+  match      Match    @relation(fields: [match_id], references: [id])
 
-  @@unique([userId, matchId])
+  @@unique([user_id, match_id])
 }
 
 model UserAchievement {
@@ -92,22 +92,15 @@ model UserAchievement {
   user        User        @relation(fields: [user_id], references: [id])
 }
 
-model UserFriendships {
-  id           Int        @id @default(autoincrement())
-  userId       Int
-  friendshipId Int
-  created_at   DateTime   @default(now())
-  updated_at   DateTime   @updatedAt
-  friendship   Friendship @relation(fields: [friendshipId], references: [id])
-  user         User       @relation(fields: [userId], references: [id])
-}
-
 model Friendship {
   id         Int               @id @default(autoincrement())
-  blockey_by Int
+  user1_id   Int 
+  user2_id   Int 
+  blocked_by Int               @default(0)
   created_at DateTime          @default(now())
   updated_at DateTime          @updatedAt
-  friends    UserFriendships[]
+  user1      User              @relation("user1_friendship", fields: [user1_id], references: [id])
+  user2      User              @relation("user2_friendship", fields: [user2_id], references: [id])
 }
 
 enum ChanType {

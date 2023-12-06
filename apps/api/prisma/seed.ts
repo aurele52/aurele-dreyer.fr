@@ -1,15 +1,4 @@
-import {
-  PrismaClient,
-  User,
-  UserStatus,
-  Channel,
-  ChanType,
-  UserChannel,
-  Role,
-  Message,
-  UserAchievement,
-  Achievement,
-} from '@prisma/client';
+import { PrismaClient } from '@prisma/client';
 import { faker } from '@faker-js/faker';
 
 const prisma = new PrismaClient();
@@ -19,13 +8,12 @@ async function createUsers() {
 
   const amountOfUsers = 50;
 
-  const users: User[] = [];
+  const users = [];
 
-  const userStatus: UserStatus[] = ['ONLINE', 'OFFLINE', 'INGAME'];
+  const userStatus = ['ONLINE', 'OFFLINE', 'INGAME'];
 
   for (let i = 0; i < amountOfUsers; i++) {
-    const user: User = {
-      id: i,
+    const user = {
       username: faker.internet.userName(),
       avatar_url: faker.internet.url(),
       auth42_id: faker.number.int().toString(),
@@ -47,14 +35,13 @@ async function createChannels() {
 
   const amountOfChannels = 15;
 
-  const channels: Channel[] = [];
+  const channels = [];
 
-  const chanType: ChanType[] = ['DM', 'PUBLIC', 'PROTECTED', 'PRIVATE'];
+  const chanType = ['DM', 'PUBLIC', 'PROTECTED', 'PRIVATE'];
 
   for (let i = 0; i < amountOfChannels; i++) {
-    const type: ChanType = chanType[faker.number.int({ min: 0, max: 3 })];
-    const channel: Channel = {
-      id: i,
+    const type = chanType[faker.number.int({ min: 0, max: 3 })];
+    const channel = {
       name: faker.word.words({ count: { min: 1, max: 3 } }),
       type: type,
       password: type === 'PROTECTED' ? '' : faker.word.words(),
@@ -76,15 +63,14 @@ async function createUserChannels() {
 
   const amountOfUserChannels = 40;
 
-  const userChannels: UserChannel[] = [];
+  const userChannels = [];
 
-  const roles: Role[] = ['MEMBER', 'ADMIN', 'OWNER'];
+  const roles = ['MEMBER', 'ADMIN', 'OWNER'];
 
   for (let i = 0; i < amountOfUserChannels; i++) {
-    const userChannel: UserChannel = {
-      id: i,
-      user_id: faker.number.int({ min: 0, max: 49 }),
-      channel_id: faker.number.int({ min: 0, max: 14 }),
+    const userChannel = {
+      user_id: faker.number.int({ min: 1, max: 50 }),
+      channel_id: faker.number.int({ min: 1, max: 15 }),
       role: roles[faker.number.int({ min: 0, max: 2 })],
       ban: faker.date.future(),
       mute: faker.date.future(),
@@ -106,13 +92,12 @@ async function createMessages() {
 
   const amountOfMessages = 100;
 
-  const messages: Message[] = [];
+  const messages = [];
 
   for (let i = 0; i < amountOfMessages; i++) {
-    const message: Message = {
-      id: i,
-      user_id: faker.number.int({ min: 0, max: 49 }),
-      channel_id: faker.number.int({ min: 0, max: 14 }),
+    const message = {
+      user_id: faker.number.int({ min: 1, max: 50 }),
+      channel_id: faker.number.int({ min: 1, max: 15 }),
       content: faker.lorem.sentences({ min: 1, max: 3 }),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
@@ -132,18 +117,13 @@ async function createUserAchievements() {
 
   const amountOfUserAchievements = 100;
 
-  const userAchievements: UserAchievement[] = [];
+  const userAchievements = [];
 
-  const achievements: Achievement[] = [
-    'WINS10PLUS',
-    'POINTS100PLUS',
-    'WINSINLESSTHAN1M',
-  ];
+  const achievements = ['WINS10PLUS', 'POINTS100PLUS', 'WINSINLESSTHAN1M'];
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
-    const userAchievement: UserAchievement = {
-      id: i,
-      user_id: faker.number.int({ min: 0, max: 49 }),
+    const userAchievement = {
+      user_id: faker.number.int({ min: 1, max: 50 }),
       achievement: achievements[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
@@ -158,12 +138,94 @@ async function createUserAchievements() {
   addUserAchievements();
 }
 
+async function createMatches() {
+  await prisma.match.deleteMany({});
+
+  const amountOfMatches = 100;
+
+  const matches = [];
+
+  for (let i = 0; i < amountOfMatches; i++) {
+    const match = {
+      on_going: false,
+      created_at: faker.date.past(),
+      updated_at: faker.date.recent(),
+    };
+
+    matches.push(match);
+  }
+
+  const addMatches = async () => prisma.match.createMany({ data: matches });
+
+  addMatches();
+}
+
+async function createMatchPlayers() {
+  await prisma.matchPlayer.deleteMany({});
+
+  const amountOfMatchPlayers = 200;
+  const matchPlayers = [];
+  const uniquePairs = new Set();
+
+  while (matchPlayers.length < amountOfMatchPlayers) {
+    const userId = faker.number.int({ min: 1, max: 50 });
+    const matchId = faker.number.int({ min: 1, max: 100 });
+    const pair = `${userId}-${matchId}`;
+
+    if (!uniquePairs.has(pair)) {
+      uniquePairs.add(pair);
+
+      const matchPlayer = {
+        user_id: userId,
+        match_id: matchId,
+        score: faker.number.int({ min: 0, max: 11 }),
+        winner: faker.number.int() % 2 === 0,
+        created_at: faker.date.past(),
+        updated_at: faker.date.recent(),
+      };
+
+      matchPlayers.push(matchPlayer);
+    }
+  }
+
+  const addMatchPlayers = async () =>
+    prisma.matchPlayer.createMany({ data: matchPlayers });
+  addMatchPlayers();
+}
+
+async function createFirendships() {
+  await prisma.friendship.deleteMany({});
+
+  const amountOfFriendships = 200;
+
+  const friendships = [];
+
+  for (let i = 0; i < amountOfFriendships; i++) {
+    const friendship = {
+      user1_id: faker.number.int({ min: 1, max: 50 }),
+      user2_id: faker.number.int({ min: 1, max: 50 }),
+      created_at: faker.date.past(),
+      updated_at: faker.date.recent(),
+    };
+
+    friendships.push(friendship);
+  }
+
+  const addFriendships = async () =>
+    prisma.friendship.createMany({ data: friendships });
+
+  addFriendships();
+}
+
 async function main() {
-  createUsers();
-  createChannels();
-  createUserChannels();
-  createMessages();
-  createUserAchievements();
+  await createUsers();
+  await createChannels();
+  await createUserChannels();
+  await createMessages();
+  await createUserAchievements();
+  await createMatches();
+  await createMatchPlayers();
+  await createFirendships();
   console.log('Seed complete!');
 }
 
