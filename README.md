@@ -13,6 +13,12 @@ Create a .env.docker file and a .env.localhost file from the empty.env.docker an
 ```
 $ make dev
 ```
+## Seed
+```
+$ source .env.localhost
+$ export DATABASE_URL
+$ (cd apps/api && npm run seed)
+```
 
 ## Prod
 ```
