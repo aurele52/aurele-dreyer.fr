@@ -1,11 +1,11 @@
 {
   "devDependencies": {
-    "turbo": "^1.10.16"
+    "turbo": "^1.11.0"
   },
   "scripts": {
     "dev": "NODE_ENV=development turbo run dev",
     "build": "turbo run build",
-	  "start": "NODE_ENV=production node api/dist/main"
+    "start": "NODE_ENV=production node api/dist/main"
   },
   "workspaces": [
     "api",
