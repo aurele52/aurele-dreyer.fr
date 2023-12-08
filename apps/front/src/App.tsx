@@ -5,7 +5,7 @@ import Background from './modules/Background';
 //import { addWindow, AppState } from './reducers';
 //import { useDispatch } from 'react-redux';
 
-export function App() {
+function App() {
 
   return (
     <div className="App">
@@ -14,3 +14,5 @@ export function App() {
     </div>
   );
 }
+
+export default App;
