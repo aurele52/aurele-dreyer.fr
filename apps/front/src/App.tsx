@@ -1,17 +1,18 @@
-import './App.css';
-import Navbar from './modules/Navbar';
-import Background from './modules/Background';
-//import { useSelector } from 'react-redux';
-//import { addWindow, AppState } from './reducers';
-//import { useDispatch } from 'react-redux';
+import "./App.css";
+import Navbar from "./modules/Navbar";
+import Background from "./modules/Background";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
+
+const queryClient = new QueryClient();
 
 function App() {
-
   return (
-    <div className="App">
-      <Navbar />
-      <Background />
-    </div>
+    <QueryClientProvider client={queryClient}>
+      <div className="App">
+        <Navbar />
+        <Background />
+      </div>
+    </QueryClientProvider>
   );
 }
 
