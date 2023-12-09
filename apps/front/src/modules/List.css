@@ -1,0 +1,8 @@
+#List {
+  border-radius: 10px;
+  border-top: 3px solid var(--base-black, #000);
+  border-right: 2px solid var(--base-black, #000);
+  border-bottom: 1px solid var(--base-black, #000);
+  border-left: 2px solid var(--base-black, #000);
+  background: var(--purple-300, #BBA0E9);
+}

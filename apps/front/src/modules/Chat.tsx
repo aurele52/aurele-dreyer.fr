@@ -1,12 +1,34 @@
 import "./Chat.css";
+import { useQuery } from "@tanstack/react-query";
+import axios from "axios";
+import List from "./List";
 
 function Chat() {
+  const apiUrl = "/api/channels";
+  const { data: channels, isLoading } = useQuery<{ id: number, name: string, type: string }[]>({
+    queryKey: ["channels"],
+    queryFn: async () => {
+      return axios.get(apiUrl).then((response) => response.data);
+    },
+  });
+
+  if (isLoading) {
+    return <div>Tmp Loading...</div>;
+  }
+
   return (
     <div className="Chat">
-      <h2>Channels</h2>
-      <ul>
-        <li>channel</li>
-      </ul>
+      <List>
+        <ul>
+          {channels?.map((channel) => {
+            return (
+              <li key={channel.id}>
+                {channel.name} - {channel.type}
+              </li>
+            );
+          })}
+        </ul>
+      </List>
     </div>
   );
 }
