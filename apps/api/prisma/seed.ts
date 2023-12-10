@@ -15,7 +15,7 @@ async function createUsers() {
   for (let i = 0; i < amountOfUsers; i++) {
     const user = {
       username: faker.internet.userName(),
-      avatar_url: faker.internet.url(),
+      avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
       user_state: userStatus[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),

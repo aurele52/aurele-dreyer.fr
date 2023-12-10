@@ -1,0 +1,12 @@
+.channel {
+  --bg-channel-color: var(--pink-purple-mix-gradient-chat, linear-gradient(180deg, #F8E5F8 65.1%, #EDC6F7 87.5%));
+  border-radius: 7px;
+  background: var(--bg-channel-color);
+  display: flex;
+  min-height: 50px;
+  padding: 3px 12px;
+  border: 1px solid var(--base-black, #000);
+}
+.channel.dm {
+  --bg-channel-color: var(--purple-gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
+}

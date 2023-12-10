@@ -8,6 +8,7 @@
     width: 100%;
     height: 100%;
     position: fixed;
+    display: flex;
 }
 
 .reducedWindow {
@@ -82,15 +83,11 @@
 
 .Window > .content {
     display: flex;
-    padding: 0px;
-    flex-direction: column;
-    align-items: flex-start;
     gap: 3px;
-    flex: 1 0 0;
-    align-self: stretch;
     border-radius: 0px 0px 13px 13px;
     background: var(--purple-100, #F5F1FC);
-    align-items: stretch;
+    padding: 8px;
+    height: calc(100% - 55px); /* @TODO change it */
 }
 
 .Button {

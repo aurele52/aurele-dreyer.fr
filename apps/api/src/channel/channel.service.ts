@@ -19,14 +19,28 @@ export class ChannelService {
     cursor?: Prisma.ChannelWhereUniqueInput;
     where?: Prisma.ChannelWhereInput;
     orderBy?: Prisma.ChannelOrderByWithRelationInput;
+    exceptUserId: number;
   }): Promise<Channel[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.channel.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
-    });
+    const { skip, take, cursor, where, orderBy, exceptUserId } = params;
+    return (
+      await this.prisma.channel.findMany({
+        skip,
+        take,
+        cursor,
+        where,
+        orderBy,
+        include: {
+          userChannels: {
+            include: {
+              User: true,
+            },
+          },
+        },
+      })
+    ).map((el) => ({
+      ...el,
+      image: el.userChannels.find((uc) => uc.User?.id !== exceptUserId)?.User
+        .avatar_url,
+    }));
   }
 }

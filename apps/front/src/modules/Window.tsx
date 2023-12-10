@@ -100,7 +100,7 @@ export function Window({
         y: state.posY,
       });
     }
-  // eslint-disable-next-line react-hooks/exhaustive-deps
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.windowMoveLock]);
 
   const handleClose = () => {
