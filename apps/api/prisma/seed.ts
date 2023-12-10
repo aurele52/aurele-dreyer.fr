@@ -4,8 +4,6 @@ import { faker } from '@faker-js/faker';
 const prisma = new PrismaClient();
 
 async function createUsers() {
-  await prisma.user.deleteMany({});
-
   const amountOfUsers = 50;
 
   const users = [];
@@ -27,24 +25,22 @@ async function createUsers() {
 
   const addUsers = async () => await prisma.user.createMany({ data: users });
 
-  addUsers();
+  await addUsers();
 }
 
 async function createChannels() {
-  await prisma.channel.deleteMany({});
-
   const amountOfChannels = 15;
 
   const channels = [];
 
-  const chanType = ['DM', 'PUBLIC', 'PROTECTED', 'PRIVATE'];
+  const chanType = ['PUBLIC', 'PROTECTED', 'PRIVATE'];
 
   for (let i = 0; i < amountOfChannels; i++) {
-    const type = chanType[faker.number.int({ min: 0, max: 3 })];
+    const type = chanType[faker.number.int({ min: 0, max: 2 })];
     const channel = {
       name: faker.word.words({ count: { min: 1, max: 3 } }),
       type: type,
-      password: type === 'PROTECTED' ? '' : faker.word.words(),
+      password: type === 'PROTECTED' ? faker.word.words() : undefined,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -58,38 +54,42 @@ async function createChannels() {
   addChannels();
 }
 
-async function createUserChannels() {
-  await prisma.userChannel.deleteMany({});
+async function createDMs() {
+  const userPool = await prisma.user.findMany();
+  const amountOfChannels = 15;
 
-  const amountOfUserChannels = 40;
+  for (let i = 0; i < amountOfChannels; i++) {
+    const userA =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    const userB =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
 
-  const userChannels = [];
-
-  const roles = ['MEMBER', 'ADMIN', 'OWNER'];
-
-  for (let i = 0; i < amountOfUserChannels; i++) {
-    const userChannel = {
-      user_id: faker.number.int({ min: 1, max: 50 }),
-      channel_id: faker.number.int({ min: 1, max: 15 }),
-      role: roles[faker.number.int({ min: 0, max: 2 })],
-      ban: faker.date.future(),
-      mute: faker.date.future(),
-      created_at: faker.date.past(),
-      updated_at: faker.date.recent(),
-    };
-
-    userChannels.push(userChannel);
+    await prisma.channel.create({
+      data: {
+        name: faker.word.words({ count: { min: 1, max: 3 } }),
+        type: 'DM',
+        created_at: faker.date.past(),
+        updated_at: faker.date.recent(),
+        userChannels: {
+          createMany: {
+            data: [
+              {
+                user_id: userA.id,
+                role: 'MEMBER',
+              },
+              {
+                user_id: userB.id,
+                role: 'MEMBER',
+              },
+            ],
+          },
+        },
+      },
+    });
   }
-
-  const addUserChannels = async () =>
-    await prisma.userChannel.createMany({ data: userChannels });
-
-  addUserChannels();
 }
 
 async function createMessages() {
-  await prisma.message.deleteMany({});
-
   const amountOfMessages = 100;
 
   const messages = [];
@@ -113,7 +113,7 @@ async function createMessages() {
 }
 
 async function createUserAchievements() {
-  await prisma.userAchievement.deleteMany({});
+  const userPool = await prisma.user.findMany();
 
   const amountOfUserAchievements = 100;
 
@@ -123,7 +123,8 @@ async function createUserAchievements() {
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
     const userAchievement = {
-      user_id: faker.number.int({ min: 1, max: 50 }),
+      user_id:
+        userPool[faker.number.int({ min: 0, max: userPool.length - 1 })].id,
       achievement: achievements[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
@@ -139,71 +140,54 @@ async function createUserAchievements() {
 }
 
 async function createMatches() {
-  await prisma.match.deleteMany({});
+  const userPool = await prisma.user.findMany();
+  const amountOfChannels = 15;
 
-  const amountOfMatches = 100;
+  for (let i = 0; i < amountOfChannels; i++) {
+    const userA =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    const userB =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
 
-  const matches = [];
-
-  for (let i = 0; i < amountOfMatches; i++) {
-    const match = {
-      on_going: false,
-      created_at: faker.date.past(),
-      updated_at: faker.date.recent(),
-    };
-
-    matches.push(match);
-  }
-
-  const addMatches = async () => prisma.match.createMany({ data: matches });
-
-  addMatches();
-}
-
-async function createMatchPlayers() {
-  await prisma.matchPlayer.deleteMany({});
-
-  const amountOfMatchPlayers = 200;
-  const matchPlayers = [];
-  const uniquePairs = new Set();
-
-  while (matchPlayers.length < amountOfMatchPlayers) {
-    const userId = faker.number.int({ min: 1, max: 50 });
-    const matchId = faker.number.int({ min: 1, max: 100 });
-    const pair = `${userId}-${matchId}`;
-
-    if (!uniquePairs.has(pair)) {
-      uniquePairs.add(pair);
-
-      const matchPlayer = {
-        user_id: userId,
-        match_id: matchId,
-        score: faker.number.int({ min: 0, max: 11 }),
-        winner: faker.number.int() % 2 === 0,
+    await prisma.match.create({
+      data: {
+        on_going: true,
         created_at: faker.date.past(),
         updated_at: faker.date.recent(),
-      };
-
-      matchPlayers.push(matchPlayer);
-    }
+        players: {
+          createMany: {
+            data: [
+              {
+                user_id: userA.id,
+                score: faker.number.int({ min: 0, max: 11 }),
+                winner: faker.number.int() % 2 === 0,
+              },
+              {
+                user_id: userB.id,
+                score: faker.number.int({ min: 0, max: 11 }),
+                winner: faker.number.int() % 2 === 0,
+              },
+            ],
+          },
+        },
+      },
+    });
   }
-
-  const addMatchPlayers = async () =>
-    prisma.matchPlayer.createMany({ data: matchPlayers });
-  addMatchPlayers();
 }
 
 async function createFirendships() {
-  await prisma.friendship.deleteMany({});
-
   const amountOfFriendships = 200;
-
+  const userPool = await prisma.user.findMany();
   const friendships = [];
 
   for (let i = 0; i < amountOfFriendships; i++) {
+    const userA =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    const userB =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
     const friendship = {
-      user1_id: faker.number.int({ min: 1, max: 50 }),
-      user2_id: faker.number.int({ min: 1, max: 50 }),
+      user1_id: userA.id,
+      user2_id: userB.id,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -219,12 +203,11 @@ async function createFirendships() {
 
 async function main() {
   await createUsers();
+  await createDMs();
   await createChannels();
-  await createUserChannels();
   await createMessages();
   await createUserAchievements();
   await createMatches();
-  await createMatchPlayers();
   await createFirendships();
   console.log('Seed complete!');
 }

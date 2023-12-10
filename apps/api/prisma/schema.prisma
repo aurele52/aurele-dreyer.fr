@@ -18,37 +18,37 @@ model Channel {
   type         ChanType
   password     String?
   created_at   DateTime      @default(now())
-  updated_at   DateTime      @updatedAt @default(now())
+  updated_at   DateTime      @default(now()) @updatedAt
   userChannels UserChannel[]
   messages     Message[]
 }
 
 model UserChannel {
-  id         Int      @id @default(autoincrement())
+  id         Int       @id @default(autoincrement())
   user_id    Int
   channel_id Int
   role       Role
-  ban        DateTime
-  mute       DateTime
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  User       User     @relation(fields: [user_id], references: [id])
-  Channel    Channel  @relation(fields: [channel_id], references: [id])
+  ban        DateTime?
+  mute       DateTime?
+  created_at DateTime  @default(now())
+  updated_at DateTime  @updatedAt
+  User       User      @relation(fields: [user_id], references: [id])
+  Channel    Channel   @relation(fields: [channel_id], references: [id])
 }
 
 model User {
-  id           Int               @id @default(autoincrement())
-  username     String            @unique
-  avatar_url   String
-  auth42_id    String
-  user_state   UserStatus
-  created_at   DateTime          @default(now())
-  updated_at   DateTime          @updatedAt
-  userChannels UserChannel[]
-  matches      MatchPlayer[]
-  achievement  UserAchievement[]
-  friendship_user1   Friendship[]      @relation("user1_friendship")
-  friendship_user2   Friendship[]      @relation("user2_friendship")
+  id               Int               @id @default(autoincrement())
+  username         String            @unique
+  avatar_url       String
+  auth42_id        String
+  user_state       UserStatus
+  created_at       DateTime          @default(now())
+  updated_at       DateTime          @updatedAt
+  userChannels     UserChannel[]
+  matches          MatchPlayer[]
+  achievement      UserAchievement[]
+  friendship_user1 Friendship[]      @relation("user1_friendship")
+  friendship_user2 Friendship[]      @relation("user2_friendship")
 }
 
 model Message {
@@ -62,11 +62,11 @@ model Message {
 }
 
 model Match {
-  id            Int           @id @default(autoincrement())
-  on_going      Boolean       @default(true)
-  created_at    DateTime      @default(now())
-  updated_at    DateTime      @updatedAt
-  players       MatchPlayer[]
+  id         Int           @id @default(autoincrement())
+  on_going   Boolean       @default(true)
+  created_at DateTime      @default(now())
+  updated_at DateTime      @updatedAt
+  players    MatchPlayer[]
 }
 
 model MatchPlayer {
@@ -93,14 +93,14 @@ model UserAchievement {
 }
 
 model Friendship {
-  id         Int               @id @default(autoincrement())
-  user1_id   Int 
-  user2_id   Int 
-  blocked_by Int               @default(0)
-  created_at DateTime          @default(now())
-  updated_at DateTime          @updatedAt
-  user1      User              @relation("user1_friendship", fields: [user1_id], references: [id])
-  user2      User              @relation("user2_friendship", fields: [user2_id], references: [id])
+  id         Int      @id @default(autoincrement())
+  user1_id   Int
+  user2_id   Int
+  blocked_by Int      @default(0)
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user1      User     @relation("user1_friendship", fields: [user1_id], references: [id])
+  user2      User     @relation("user2_friendship", fields: [user2_id], references: [id])
 }
 
 enum ChanType {
