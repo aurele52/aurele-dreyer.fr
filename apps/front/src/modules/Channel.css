@@ -3,10 +3,33 @@
   border-radius: 7px;
   background: var(--bg-channel-color);
   display: flex;
-  min-height: 50px;
+  height: 50px;
   padding: 3px 12px;
   border: 1px solid var(--base-black, #000);
+  gap: 10px;
+  align-items: center;
+  flex-grow: 1;
+  width: 80%;
 }
+
 .channel.dm {
   --bg-channel-color: var(--purple-gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
+}
+
+.channel:hover {
+ --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
+  background: var(--bg-channel-color-hover);
+  cursor: pointer;
+}
+
+.channel.dm:hover {
+ --bg-channel-color-hover: var(--purple-200, #E5D9FD);
+}
+
+.avatar {
+  border: 4px solid var(--base-white, #FFF);
+  border-radius: 5px;
+  object-fit: contain;
+  width: auto;
+  height: 70%;
 }

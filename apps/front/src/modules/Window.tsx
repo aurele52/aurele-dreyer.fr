@@ -3,6 +3,7 @@ import "./Window.css";
 import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
 import { delWindow } from "../reducers";
+import Button from "./Button";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;
@@ -107,99 +108,6 @@ export function Window({
     dispatch(delWindow(id));
   };
 
-  const reduceSVG = (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="3" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="13" y="9" width="2" height="2" fill="#FAF7A4" />
-      <rect x="9" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="11" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="5" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="13" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="7" y="11" width="2" height="2" fill="#FAF7A4" />
-      <rect x="7" y="9" width="2" height="2" fill="#FAF7A4" />
-      <rect x="3" y="9" width="2" height="2" fill="#FAF7A4" />
-      <rect x="9" y="9" width="2" height="2" fill="#FAF7A4" />
-      <rect x="5" y="9" width="2" height="2" fill="#FAF7A4" />
-      <rect x="11" y="9" width="2" height="2" fill="#FAF7A4" />
-    </svg>
-  );
-
-  const enlargeSVG = (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="3" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="3" y="6" width="2" height="2" fill="#00BBAA" />
-      <rect x="3" y="8" width="2" height="2" fill="#00BBAA" />
-      <rect x="3" y="10" width="2" height="2" fill="#00BBAA" />
-      <rect x="3" y="12" width="2" height="2" fill="#00BBAA" />
-      <rect x="3" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="6" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="8" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="10" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="12" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="9" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="9" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="5" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="11" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="11" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="5" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="7" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="13" y="14" width="2" height="2" fill="#00BBAA" />
-      <rect x="7" y="4" width="2" height="2" fill="#00BBAA" />
-      <rect x="11" y="6" width="2" height="2" fill="#00BBAA" />
-      <rect x="5" y="6" width="2" height="2" fill="#00BBAA" />
-      <rect x="7" y="6" width="2" height="2" fill="#00BBAA" />
-      <rect x="9" y="6" width="2" height="2" fill="#00BBAA" />
-    </svg>
-  );
-
-  const closeSVG = (
-    <svg
-      width="18"
-      height="18"
-      viewBox="0 0 18 18"
-      fill="none"
-      xmlns="http://www.w3.org/2000/svg"
-    >
-      <rect x="4" y="5" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="10" y="7" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="12" y="5" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="6" y="7" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="6" y="11" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="4" y="13" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect x="8" y="9" width="2" height="2" fill="#F06E8D" stroke="#F06E8D" />
-      <rect
-        x="10"
-        y="11"
-        width="2"
-        height="2"
-        fill="#F06E8D"
-        stroke="#F06E8D"
-      />
-      <rect
-        x="12"
-        y="13"
-        width="2"
-        height="2"
-        fill="#F06E8D"
-        stroke="#F06E8D"
-      />
-    </svg>
-  );
-
   return (
     <Rnd
       default={{
@@ -225,27 +133,9 @@ export function Window({
           <div className="WindowName">
             <div>{WindowName.toUpperCase()}</div>
           </div>
-          <div className="ButtonReduce Button" onClick={handleReduce}>
-            <div>
-              <div>
-                <div>{reduceSVG}</div>
-              </div>
-            </div>
-          </div>
-          <div className="ButtonEnlarge Button" onClick={handleEnlarge}>
-            <div>
-              <div>
-                <div>{enlargeSVG}</div>
-              </div>
-            </div>
-          </div>
-          <div className="ButtonClose Button" onClick={handleClose}>
-            <div>
-              <div>
-                <div>{closeSVG}</div>
-              </div>
-            </div>
-          </div>
+          <Button icon="Reduce" color="purple" onClick={handleReduce} className="ButtonWindow"/>
+          <Button icon="Enlarge" color="purple" onClick={handleEnlarge} className="ButtonWindow"/>
+          <Button icon="Close" color="purple" onClick={handleClose} className="ButtonWindow"/>
         </div>
         <div className="content">{children}</div>
       </div>

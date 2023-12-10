@@ -1,0 +1,64 @@
+.Button {
+  border-radius: 4px;
+  border: 1px solid var(--base-black, #000);
+  box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24);
+  align-self: center;
+  padding: 0;
+}
+
+.ButtonInner {
+  border-radius: 4px;
+  border-top: 1px solid var(--base-white, #FFF);
+  border-right: 1px solid var(--base-white, #FFF);
+  border-left: 1px solid var(--base-white, #FFF);
+  padding: 2px 2px 0 2px;
+  text-transform: uppercase;
+  color: var(--base-white, #FFF);
+  font-family: ChakraPetch;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 14px;
+  letter-spacing: 0.07px;
+}
+
+.ButtonText {
+  padding: 5px;
+}
+
+.pink>.Button>.ButtonInner:hover {
+  border-top: 1px solid var(--pink-300, #F3ACD4);
+  border-right: 1px solid var(--pink-300, #F3ACD4);
+  border-left: 1px solid var(--pink-300, #F3ACD4);
+}
+
+.pink>.Button {
+  background: var(--pink-gradient-300, linear-gradient(180deg, #F3ACD4 69.79%, #F37EC1 90.62%));
+}
+
+.pink>.Button:hover {
+  background: var(--pink-300, #F3ACD4);
+}
+
+.purple>.Button>.ButtonInner:hover {
+  border-top: 1px solid var(--purple-400, #6C559C);
+  border-right: 1px solid var(--purple-400, #6C559C);
+  border-left: 1px solid var(--purple-400, #6C559C);
+}
+
+.purple>.Button {
+  background: var(--purple-gradient-400, linear-gradient(180deg, #6D559C 66.15%, #4C3778 86.98%));
+}
+
+.purple>.Button:hover {
+  background: var(--purple-400, #6C559C);
+}
+
+.pink,
+.purple {
+  display: flex;
+}
+
+.Button:hover {
+  cursor: pointer;
+}

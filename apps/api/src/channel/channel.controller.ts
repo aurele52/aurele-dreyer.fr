@@ -10,10 +10,9 @@ export class ChannelController {
 
   @Get()
   async getAllChannels(@CurrentUser() user): Promise<ChannelModel[]> {
-    const channels = await this.channelService.channels({
-      exceptUserId: user.id,
+    const channels = await this.channelService.channelsCurrentUser({
+      currUserId: user.id,
     });
-    console.log(channels);
     return channels;
   }
 }

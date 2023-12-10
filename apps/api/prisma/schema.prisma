@@ -41,7 +41,6 @@ model User {
   username         String            @unique
   avatar_url       String
   auth42_id        String
-  user_state       UserStatus
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   userChannels     UserChannel[]
@@ -114,12 +113,6 @@ enum Role {
   MEMBER
   ADMIN
   OWNER
-}
-
-enum UserStatus {
-  ONLINE
-  OFFLINE
-  INGAME
 }
 
 enum Achievement {

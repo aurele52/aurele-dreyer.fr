@@ -3,11 +3,12 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import List from "./List";
 import Channel from "./Channel";
+import Button from "./Button";
 
 function Chat() {
   const apiUrl = "/api/channels";
   const { data: channels, isLoading } = useQuery<
-    { id: number; name: string; type: string }[]
+    { id: number; name: string; type: string; image: string; interlocutor: string }[]
   >({
     queryKey: ["channels"],
     queryFn: async () => {
@@ -24,15 +25,23 @@ function Chat() {
       <List>
         {channels?.map((channel) => {
           return (
-            <Channel
-              name={channel.name}
-              key={channel.id}
-              className={channel.type === 'DM' ? channel.type.toLowerCase() : '' }
-            />
+            <div className="chatRow" key={channel.id}>
+              <Button icon="TripleDot" color="pink"/>
+              <Channel
+                name={channel.type === "DM" ? channel.interlocutor : channel.name}
+                className={
+                  channel.type === "DM" ? channel.type.toLowerCase() : ""
+                }
+                image={channel.type === "DM" ? channel.image : undefined }
+              />
+            </div>
           );
         })}
       </List>
-      <div className="ChatFooter">Footer</div>
+      <div className="ChatFooter">
+        <Button content="find channel" color="purple"/>
+        <Button content="create channel" color="purple"/>
+      </div>
     </div>
   );
 }

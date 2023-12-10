@@ -3,11 +3,13 @@ import "./Channel.css";
 
 type ChannelProps = {
   name: string;
+  image?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-function Channel({ name, ...props }: ChannelProps) {
+function Channel({ name, image, ...props }: ChannelProps) {
   return (
     <div {...props} className={`channel ${props.className}`}>
+      {image && <img src={image} className="avatar"/>}
       <p className="truncate">{name}</p>
     </div>
   );

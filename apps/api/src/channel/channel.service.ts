@@ -13,21 +13,26 @@ export class ChannelService {
     });
   }
 
-  async channels(params: {
+  async channelsCurrentUser(params: {
     skip?: number;
     take?: number;
     cursor?: Prisma.ChannelWhereUniqueInput;
-    where?: Prisma.ChannelWhereInput;
     orderBy?: Prisma.ChannelOrderByWithRelationInput;
-    exceptUserId: number;
+    currUserId: number;
   }): Promise<Channel[]> {
-    const { skip, take, cursor, where, orderBy, exceptUserId } = params;
+    const { skip, take, cursor, orderBy, currUserId } = params;
     return (
       await this.prisma.channel.findMany({
         skip,
         take,
         cursor,
-        where,
+        where: {
+          userChannels: {
+            some: {
+              user_id: currUserId,
+            },
+          },
+        },
         orderBy,
         include: {
           userChannels: {
@@ -39,8 +44,10 @@ export class ChannelService {
       })
     ).map((el) => ({
       ...el,
-      image: el.userChannels.find((uc) => uc.User?.id !== exceptUserId)?.User
+      image: el.userChannels.find((uc) => uc.User?.id !== currUserId)?.User
         .avatar_url,
+      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
+        ?.User.username,
     }));
   }
 }

@@ -37,7 +37,7 @@
     user-select: none; /* Standard syntax */
 }
 
-.reducedWindow > .handleBar > .Button {
+.reducedWindow > .handleBar > .ButtonWindow {
     display: none;
 }
 
@@ -88,47 +88,4 @@
     background: var(--purple-100, #F5F1FC);
     padding: 8px;
     height: calc(100% - 55px); /* @TODO change it */
-}
-
-.Button {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-.Button > div {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    border: 1px solid var(--base-black, #000);
-    background: var(--purple-gradient-400, linear-gradient(180deg, #6D559C 66.15%, #4C3778 86.98%));
-
-    /* Elevation / 1dp */
-    box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24);
-}
-
-.Button > div > div {
-    display: flex;
-    padding: 3px;
-    justify-content: center;
-    align-items: center;
-    border-radius: 4px;
-    border-top: 1px solid var(--base-white, #FFF);
-    border-right: 1px solid var(--base-white, #FFF);
-    border-left: 1px solid var(--base-white, #FFF);
-}
-
-.Button > div > div > div {
-    display: flex;
-    align-items: flex-start;
-}
-
-
-.Button > div :hover {
-
-    background: var(--purple-400, #6C559C);
-    /* Elevation / 1dp */
-    box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24);
-    cursor: pointer;
 }
