@@ -4,7 +4,7 @@ RUN npm install -g npm@10.1.0
 
 WORKDIR /app
 
-COPY ../apps/ .
+COPY apps/ .
 
 RUN npm install
 
