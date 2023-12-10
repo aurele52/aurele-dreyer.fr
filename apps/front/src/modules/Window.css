@@ -71,16 +71,6 @@
     flex: 1 0 0;
 }
 
-.WindowName > div {
-    color: var(--base-black, #000);
-
-    /* Heading/500 */
-    font-size: 1.5rem;
-    font-style: normal;
-    font-weight: 1000;
-    line-height: 18px; /* 100% */
-}
-
 .Window > .content {
     display: flex;
     gap: 3px;

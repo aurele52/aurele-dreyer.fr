@@ -32,8 +32,8 @@ export function Navbar({ dispatch }: NavbarProps) {
   const handleChat = () => {
     const newWindow = {
       WindowName: "Chat",
-      width: "500",
-      height: "500",
+      width: "387",
+      height: "450",
       id: 0,
       content: { type: 'CHAT' },
     };

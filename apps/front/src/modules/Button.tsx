@@ -123,11 +123,9 @@ type ButtonProps = {
 
 function Button({ icon, content, color, className, ...props }: ButtonProps) {
   return (
-    <div className={`${color} ${className || ''}`}>
-      <button {...props} className="Button">
+      <button {...props} className={`${color} ${className || ''} Button`}>
         <div className={`ButtonInner ${content && 'ButtonText'}`}>{icon && Icons[icon]}{content}</div>
       </button>
-    </div>
   );
 }
 

@@ -130,8 +130,8 @@ export function Window({
         onMouseUp={state.isReduced ? handleMouseUp : undefined}
       >
         <div className="handleBar">
-          <div className="WindowName">
-            <div>{WindowName.toUpperCase()}</div>
+          <div className="WindowName heading-500">
+            {WindowName}
           </div>
           <Button icon="Reduce" color="purple" onClick={handleReduce} className="ButtonWindow"/>
           <Button icon="Enlarge" color="purple" onClick={handleEnlarge} className="ButtonWindow"/>

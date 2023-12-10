@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-//import { Channel } from './interfaces/channel.interface';
 import { PrismaService } from '../prisma.service';
 import { Channel, Prisma } from '@prisma/client';
 
@@ -14,18 +13,11 @@ export class ChannelService {
   }
 
   async channelsCurrentUser(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ChannelWhereUniqueInput;
-    orderBy?: Prisma.ChannelOrderByWithRelationInput;
     currUserId: number;
   }): Promise<Channel[]> {
-    const { skip, take, cursor, orderBy, currUserId } = params;
+    const { currUserId } = params;
     return (
       await this.prisma.channel.findMany({
-        skip,
-        take,
-        cursor,
         where: {
           userChannels: {
             some: {
@@ -33,7 +25,6 @@ export class ChannelService {
             },
           },
         },
-        orderBy,
         include: {
           userChannels: {
             include: {
@@ -49,5 +40,26 @@ export class ChannelService {
       interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
         ?.User.username,
     }));
+  }
+
+  async otherChannels(params: { currUserId: number }): Promise<Channel[]> {
+    const { currUserId } = params;
+    return await this.prisma.channel.findMany({
+      where: {
+        type: { in: ['PUBLIC', 'PROTECTED'] },
+        userChannels: {
+          none: {
+            user_id: currUserId,
+          },
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
   }
 }

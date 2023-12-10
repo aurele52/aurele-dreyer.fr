@@ -4,17 +4,33 @@ import axios from "axios";
 import List from "./List";
 import Channel from "./Channel";
 import Button from "./Button";
+import { addWindow } from "../reducers";
+import { connect, ConnectedProps } from "react-redux";
 
-function Chat() {
-  const apiUrl = "/api/channels";
-  const { data: channels, isLoading } = useQuery<
+interface ChatProps extends ReduxProps {}
+
+export function Chat({ dispatch }: ChatProps) {
+  const apiUrl = "/api/chats";
+
+  const { data: chats, isLoading } = useQuery<
     { id: number; name: string; type: string; image: string; interlocutor: string }[]
   >({
-    queryKey: ["channels"],
+    queryKey: ["chats"],
     queryFn: async () => {
       return axios.get(apiUrl).then((response) => response.data);
     },
   });
+
+  const handleFindChannel = () => {
+    const newWindow = {
+      WindowName: "Find Channel",
+      width: "242",
+      height: "390",
+      id: 0,
+      content: { type: 'FINDCHAN' },
+    };
+    dispatch(addWindow(newWindow));
+  };
 
   if (isLoading) {
     return <div>Tmp Loading...</div>;
@@ -23,27 +39,33 @@ function Chat() {
   return (
     <div className="Chat">
       <List>
-        {channels?.map((channel) => {
+        {chats?.map((chat) => {
           return (
-            <div className="chatRow" key={channel.id}>
+            <div className="chatRow" key={chat.id}>
               <Button icon="TripleDot" color="pink"/>
               <Channel
-                name={channel.type === "DM" ? channel.interlocutor : channel.name}
+                name={chat.type === "DM" ? chat.interlocutor : chat.name}
                 className={
-                  channel.type === "DM" ? channel.type.toLowerCase() : ""
+                  chat.type === "DM" ? chat.type.toLowerCase() : ""
                 }
-                image={channel.type === "DM" ? channel.image : undefined }
+                image={chat.type === "DM" ? chat.image : undefined }
               />
             </div>
           );
         })}
       </List>
       <div className="ChatFooter">
-        <Button content="find channel" color="purple"/>
+        <Button content="find channel" color="purple" onClick={handleFindChannel}/>
         <Button content="create channel" color="purple"/>
       </div>
     </div>
   );
 }
 
-export default Chat;
+const mapDispatchToProps = null;
+
+const connector = connect(mapDispatchToProps);
+type ReduxProps = ConnectedProps<typeof connector>;
+
+const ConnectedChat = connector(Chat);
+export default ConnectedChat;

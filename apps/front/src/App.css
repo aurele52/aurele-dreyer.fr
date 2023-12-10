@@ -14,33 +14,10 @@
   overflow: hidden;
 }
 
-.custom-scrollbar {
-  padding-right: 10px;
-  --bg-scroll-color: var(--purple-300, #BBA0E9);
-  --scroll-color: rgba(56, 34, 101, 0.5); 
-  --scroll-color-hover: rgba(56, 34, 101, 0.65); 
-}
-.custom-scrollbar.sb-dark {
-  --bg-scroll-color: var(--purple-300, #BBA0E9);
-  --scroll-color: rgba(56, 34, 101, 0.5); 
-  --scroll-color-hover: rgba(56, 34, 101, 0.65); 
-}
-
-.custom-scrollbar::-webkit-scrollbar {
-  width: 20px;
-}
-
-.custom-scrollbar::-webkit-scrollbar-track {
-  opacity: 0.2;
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--scroll-color);
-  border-radius: 10px;
-  border: 5px solid var(--bg-scroll-color);
-}
-
-.custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-color-hover);
-  border-radius: 10px;
+.heading-500 {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 18px;
+  text-transform: uppercase;
 }

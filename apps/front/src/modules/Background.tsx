@@ -7,6 +7,7 @@ import Play from "./Play";
 import Chat from "./Chat";
 import Ladder from "./Ladder";
 import Profile from "./Profile";
+import FindChan from "./FindChan";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -28,6 +29,7 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === 'LADDER' && <Ladder />}
               {window.content.type === 'CHAT' && <Chat />}
               {window.content.type === 'PROFILE' && <Profile />}
+              {window.content.type === 'FINDCHAN' && <FindChan />}
             </Window>
           );
         })}

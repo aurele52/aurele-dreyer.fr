@@ -34,7 +34,7 @@ export interface AppState<T = WindowData> {
     initialState,
     reducers: {
       addWindow: (state, action: PayloadAction<WindowData>) => {
-        let res = action.payload;
+        const res = action.payload;
         res.id = state.id;
         console.log(res);
         state.windows.push(res);
