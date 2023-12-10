@@ -23,7 +23,7 @@
   --scroll-color: rgba(187, 161, 242, 0.5); 
   --scroll-color-hover: rgba(187, 161, 242, 0.65); 
 }
-.custom-scrollbar.list-dark {
+.custom-scrollbar.dark-list {
   --bg-scroll-color: var(--purple-300, #BBA0E9);
   --scroll-color: rgba(56, 34, 101, 0.5); 
   --scroll-color-hover: rgba(56, 34, 101, 0.65); 

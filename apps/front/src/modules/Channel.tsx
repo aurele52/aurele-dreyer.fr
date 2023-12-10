@@ -6,11 +6,12 @@ type ChannelProps = {
   image?: string;
 } & React.HTMLAttributes<HTMLDivElement>;
 
-function Channel({ name, image, className, ...props }: ChannelProps) {
+function Channel({ name, image, className, children, ...props }: ChannelProps) {
   return (
     <div {...props} className={`channel ${className ? className : ""}`}>
       {image && <img src={image} className="avatar"/>}
       <p className="truncate">{name}</p>
+      {children}
     </div>
   );
 }

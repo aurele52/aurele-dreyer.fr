@@ -4,6 +4,7 @@ import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
 import { delWindow } from "../reducers";
 import Button from "./Button";
+import { HandleBarButton } from "../utils/WindowTypes";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;
@@ -11,6 +12,8 @@ interface WindowProps extends ReduxProps {
   height: string;
   id: number;
   children: ReactNode;
+  modal: boolean;
+  handleBarButton: number;
 }
 
 export function Window({
@@ -20,6 +23,8 @@ export function Window({
   height,
   id,
   children,
+  //modal,
+  handleBarButton,
 }: WindowProps) {
   const [state, setState] = useState({
     width,
@@ -130,12 +135,31 @@ export function Window({
         onMouseUp={state.isReduced ? handleMouseUp : undefined}
       >
         <div className="handleBar">
-          <div className="WindowName heading-500">
-            {WindowName}
-          </div>
-          <Button icon="Reduce" color="purple" onClick={handleReduce} className="ButtonWindow"/>
-          <Button icon="Enlarge" color="purple" onClick={handleEnlarge} className="ButtonWindow"/>
-          <Button icon="Close" color="purple" onClick={handleClose} className="ButtonWindow"/>
+          <div className="WindowName heading-500">{WindowName}</div>
+          {!!(handleBarButton & HandleBarButton.Reduce) && (
+            <Button
+              icon="Reduce"
+              color="purple"
+              onClick={handleReduce}
+              className="ButtonWindow"
+            />
+          )}
+          {!!(handleBarButton & HandleBarButton.Enlarge) && (
+            <Button
+              icon="Enlarge"
+              color="purple"
+              onClick={handleEnlarge}
+              className="ButtonWindow"
+            />
+          )}
+          {!!(handleBarButton & HandleBarButton.Close) && (
+            <Button
+              icon="Close"
+              color="purple"
+              onClick={handleClose}
+              className="ButtonWindow"
+            />
+          )}
         </div>
         <div className="content">{children}</div>
       </div>

@@ -6,6 +6,7 @@ import Channel from "./Channel";
 import Button from "./Button";
 import { addWindow } from "../reducers";
 import { connect, ConnectedProps } from "react-redux";
+import { HandleBarButton } from "../utils/WindowTypes";
 
 interface ChatProps extends ReduxProps {}
 
@@ -25,9 +26,12 @@ export function Chat({ dispatch }: ChatProps) {
     const newWindow = {
       WindowName: "Find Channel",
       width: "242",
-      height: "390",
+      height: "390",  
       id: 0,
       content: { type: 'FINDCHAN' },
+      toggle: false,
+      modal: true,
+      handleBarButton: HandleBarButton.Close,
     };
     dispatch(addWindow(newWindow));
   };
