@@ -1,32 +1,65 @@
 import { Injectable } from '@nestjs/common';
-//import { Channel } from './interfaces/channel.interface';
 import { PrismaService } from '../prisma.service';
-import { Channel, Prisma } from '@prisma/client';
+import { Channel } from '@prisma/client';
 
 @Injectable()
 export class ChannelService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.ChannelCreateInput): Promise<Channel> {
+  async createChannel(data): Promise<Channel> {
     return this.prisma.channel.create({
       data,
     });
   }
 
-  async channels(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ChannelWhereUniqueInput;
-    where?: Prisma.ChannelWhereInput;
-    orderBy?: Prisma.ChannelOrderByWithRelationInput;
+  async channelsCurrentUser(params: {
+    currUserId: number;
   }): Promise<Channel[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.channel.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
+    const { currUserId } = params;
+    return (
+      await this.prisma.channel.findMany({
+        where: {
+          userChannels: {
+            some: {
+              user_id: currUserId,
+            },
+          },
+        },
+        include: {
+          userChannels: {
+            include: {
+              User: true,
+            },
+          },
+        },
+      })
+    ).map((el) => ({
+      ...el,
+      image: el.userChannels.find((uc) => uc.User?.id !== currUserId)?.User
+        .avatar_url,
+      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
+        ?.User.username,
+    }));
+  }
+
+  async otherChannels(params: { currUserId: number }): Promise<Channel[]> {
+    const { currUserId } = params;
+    return await this.prisma.channel.findMany({
+      where: {
+        type: { in: ['PUBLIC', 'PROTECTED'] },
+        userChannels: {
+          none: {
+            user_id: currUserId,
+          },
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
     });
   }
 }
