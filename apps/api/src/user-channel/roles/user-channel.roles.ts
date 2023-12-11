@@ -1,5 +1,5 @@
 export enum UserChannelRoles {
-    MEMBER = 'MEMBER',
-    ADMIN = 'ADMIN',
-    OWNER = 'OWNER',
+  MEMBER = 'MEMBER',
+  ADMIN = 'ADMIN',
+  OWNER = 'OWNER',
 }

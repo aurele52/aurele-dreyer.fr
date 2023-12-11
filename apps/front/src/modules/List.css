@@ -5,6 +5,11 @@
   display: flex;
   flex-direction: column;
   gap: 6px;
+  border-radius: 10px;
+  border-top: 3px solid var(--purple-100, #F5F1FC);
+  border-right: 2px solid var(--purple-100, #F5F1FC);
+  border-bottom: 1px solid var(--purple-100, #F5F1FC);
+  border-left: 2px solid var(--purple-100, #F5F1FC);
 }
 
 .List.dark-list {

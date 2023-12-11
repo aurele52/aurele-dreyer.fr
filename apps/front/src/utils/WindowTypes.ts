@@ -1,4 +1,4 @@
-export enum HandleBarButton {
+export enum HBButton {
   Reduce = 1 << 0,
   Enlarge = 1 << 1,
   Close = 1 << 2,

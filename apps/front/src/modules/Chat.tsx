@@ -6,14 +6,14 @@ import Channel from "./Channel";
 import Button from "./Button";
 import { addWindow } from "../reducers";
 import { connect, ConnectedProps } from "react-redux";
-import { HandleBarButton } from "../utils/WindowTypes";
+import { HBButton } from "../utils/WindowTypes";
 
 interface ChatProps extends ReduxProps {}
 
 export function Chat({ dispatch }: ChatProps) {
   const apiUrl = "/api/chats";
 
-  const { data: chats, isLoading } = useQuery<
+  const { data: chats } = useQuery<
     { id: number; name: string; type: string; image: string; interlocutor: string }[]
   >({
     queryKey: ["chats"],
@@ -31,14 +31,10 @@ export function Chat({ dispatch }: ChatProps) {
       content: { type: 'FINDCHAN' },
       toggle: false,
       modal: true,
-      handleBarButton: HandleBarButton.Close,
+      handleBarButton: HBButton.Close,
     };
     dispatch(addWindow(newWindow));
   };
-
-  if (isLoading) {
-    return <div>Tmp Loading...</div>;
-  }
 
   return (
     <div className="Chat">

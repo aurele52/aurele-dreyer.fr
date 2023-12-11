@@ -8,14 +8,14 @@ async function createUsers() {
 
   const users = [];
 
-  const userStatus = ['ONLINE', 'OFFLINE', 'INGAME'];
+  //const userStatus = ['ONLINE', 'OFFLINE', 'INGAME'];
 
   for (let i = 0; i < amountOfUsers; i++) {
     const user = {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
-      user_state: userStatus[faker.number.int({ min: 0, max: 2 })],
+      //user_state: userStatus[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };

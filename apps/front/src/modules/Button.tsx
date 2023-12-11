@@ -113,6 +113,33 @@ const Icons = {
       />
     </svg>
   ),
+  Plus: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+    >
+      <rect x="8" width="2" height="2" fill="white" />
+      <rect x="8" y="2" width="2" height="2" fill="white" />
+      <rect x="8" y="4" width="2" height="2" fill="white" />
+      <rect x="8" y="6" width="2" height="2" fill="white" />
+      <rect x="8" y="8" width="2" height="2" fill="white" />
+      <rect x="10" y="8" width="2" height="2" fill="white" />
+      <rect x="12" y="8" width="2" height="2" fill="white" />
+      <rect x="14" y="8" width="2" height="2" fill="white" />
+      <rect x="16" y="8" width="2" height="2" fill="white" />
+      <rect x="8" y="10" width="2" height="2" fill="white" />
+      <rect x="8" y="12" width="2" height="2" fill="white" />
+      <rect x="8" y="14" width="2" height="2" fill="white" />
+      <rect x="8" y="16" width="2" height="2" fill="white" />
+      <rect x="6" y="8" width="2" height="2" fill="white" />
+      <rect x="4" y="8" width="2" height="2" fill="white" />
+      <rect x="2" y="8" width="2" height="2" fill="white" />
+      <rect y="8" width="2" height="2" fill="white" />
+    </svg>
+  ),
 };
 
 type ButtonProps = {
@@ -123,9 +150,12 @@ type ButtonProps = {
 
 function Button({ icon, content, color, className, ...props }: ButtonProps) {
   return (
-      <button {...props} className={`${color} ${className || ''} Button`}>
-        <div className={`ButtonInner ${content && 'ButtonText'}`}>{icon && Icons[icon]}{content}</div>
-      </button>
+    <button {...props} className={`${color} ${className || ""} Button`}>
+      <div className={`ButtonInner ${content && "ButtonText"}`}>
+        {icon && Icons[icon]}
+        {content}
+      </div>
+    </button>
   );
 }
 

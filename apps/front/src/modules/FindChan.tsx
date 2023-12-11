@@ -1,14 +1,14 @@
 import "./FindChan.css";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
 import List from "./List";
 import Channel from "./Channel";
 import Button from "./Button";
 
 function FindChan() {
-  const apiUrl = "/api/channels";
+  const queryClient = useQueryClient();
 
-  const { data: channels, isLoading } = useQuery<
+  const { data: channels } = useQuery<
     {
       id: number;
       name: string;
@@ -17,25 +17,43 @@ function FindChan() {
   >({
     queryKey: ["channels"],
     queryFn: async () => {
-      return axios.get(apiUrl).then((response) => response.data);
+      return axios.get("/api/channels").then((response) => response.data);
     },
   });
 
-  if (isLoading) {
-    return <div>Tmp Loading...</div>;
-  }
+  const { mutateAsync: createUserChannel } = useMutation({
+    mutationFn: async (param: { channelId: number }) => {
+      return axios.post("/api/user-channel", param);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["channels"] });
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
+
+  const handleAddChannel = async (channelId: number) => {
+    await createUserChannel({ channelId });
+  };
 
   return (
     <div className="FindChan">
       <List dark={false}>
         {channels?.map((channel) => {
           return (
-            <Channel name={channel.name}>
-              <div>
-                <Button icon="TripleDot" color="pink" />
-                <Button icon="TripleDot" color="pink" />
-              </div>
-            </Channel>
+            <div key={channel.id}>
+              <Channel name={channel.name}>
+                <div className="ButtonFindChan">
+                  <Button icon="TripleDot" color="pink" />
+                  <Button
+                    icon="Plus"
+                    color="pink"
+                    onClick={() => {
+                      handleAddChannel(channel.id);
+                    }}
+                  />
+                </div>
+              </Channel>
+            </div>
           );
         })}
       </List>

@@ -1,19 +1,21 @@
-import { Body, Controller, Post, Get } from '@nestjs/common';
-import { UserChannel } from './interfaces/user-channel.interface';
+import { Body, Controller, Post } from '@nestjs/common';
 import { UserChannelService } from './user-channel.service';
-import { CreateUserChannelDto } from './dto/create-user-channel.dto';
+import { CurrentUser } from 'src/decorators/user.decorator';
+import { UserChannel as UserChannelModel } from '@prisma/client';
 
-@Controller('Database/user-channel')
+@Controller()
 export class UserChannelController {
-    constructor(private userChannelService: UserChannelService){}
+  constructor(private readonly userChannelService: UserChannelService) {}
 
-    @Post()
-    async add(@Body() createUserChannelDto: CreateUserChannelDto) {
-        this.userChannelService.add(createUserChannelDto);
-    }
-
-    @Get()
-    async findAll(): Promise<UserChannel[]> {
-        return this.userChannelService.findAll();
-    }
+  @Post('/user-channel')
+  async add(
+    @Body('channelId') channelId,
+    @CurrentUser() user,
+  ): Promise<UserChannelModel> {
+    const userChannel = await this.userChannelService.createUserChannel({
+      currUserId: user.id,
+      channelId: channelId,
+    });
+    return userChannel;
+  }
 }

@@ -9,8 +9,10 @@ type ChannelProps = {
 function Channel({ name, image, className, children, ...props }: ChannelProps) {
   return (
     <div {...props} className={`channel ${className ? className : ""}`}>
-      {image && <img src={image} className="avatar"/>}
-      <p className="truncate">{name}</p>
+      <div className="truncate avatar-chan">
+        {image && <img src={image} className="avatar" />}
+        <p className="truncate">{name}</p>
+      </div>
       {children}
     </div>
   );

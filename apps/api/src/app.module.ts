@@ -7,6 +7,7 @@ import { GameModule } from './game/game.module';
 import { AuthModule } from './auth/auth.module';
 import { ChannelModule } from './channel/channel.module';
 import { PrismaService } from './prisma.service';
+import { UserChannelModule } from './user-channel/user-channel.module';
 
 @Module({
   imports: [
@@ -16,6 +17,7 @@ import { PrismaService } from './prisma.service';
     GameModule,
     AuthModule,
     ChannelModule,
+    UserChannelModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

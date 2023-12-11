@@ -4,7 +4,7 @@ import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
 import { delWindow } from "../reducers";
 import Button from "./Button";
-import { HandleBarButton } from "../utils/WindowTypes";
+import { HBButton } from "../utils/WindowTypes";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;
@@ -136,7 +136,7 @@ export function Window({
       >
         <div className="handleBar">
           <div className="WindowName heading-500">{WindowName}</div>
-          {!!(handleBarButton & HandleBarButton.Reduce) && (
+          {!!(handleBarButton & HBButton.Reduce) && (
             <Button
               icon="Reduce"
               color="purple"
@@ -144,7 +144,7 @@ export function Window({
               className="ButtonWindow"
             />
           )}
-          {!!(handleBarButton & HandleBarButton.Enlarge) && (
+          {!!(handleBarButton & HBButton.Enlarge) && (
             <Button
               icon="Enlarge"
               color="purple"
@@ -152,7 +152,7 @@ export function Window({
               className="ButtonWindow"
             />
           )}
-          {!!(handleBarButton & HandleBarButton.Close) && (
+          {!!(handleBarButton & HBButton.Close) && (
             <Button
               icon="Close"
               color="purple"

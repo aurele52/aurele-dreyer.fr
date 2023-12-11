@@ -10,6 +10,7 @@
   align-items: center;
   flex-grow: 1;
   min-width: 0;
+  justify-content: space-between;
 }
 
 .channel.dm {
@@ -17,13 +18,13 @@
 }
 
 .channel:hover {
- --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
+  --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
   background: var(--bg-channel-color-hover);
   cursor: pointer;
 }
 
 .channel.dm:hover {
- --bg-channel-color-hover: var(--purple-200, #E5D9FD);
+  --bg-channel-color-hover: var(--purple-200, #E5D9FD);
 }
 
 .avatar {
@@ -31,5 +32,13 @@
   border-radius: 5px;
   object-fit: contain;
   width: auto;
-  height: 70%;
+  height: 65%;
+}
+
+.avatar-chan {
+  display: flex;
+  height: inherit;
+  gap: 10px;
+  align-items: center;
+
 }

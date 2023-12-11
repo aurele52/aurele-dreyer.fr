@@ -1,7 +1,7 @@
 import './Navbar.css';
 import { connect, ConnectedProps } from "react-redux";
 import { addWindow } from "../reducers";
-import { HandleBarButton } from '../utils/WindowTypes';
+import { HBButton } from '../utils/WindowTypes';
 
 interface NavbarProps extends ReduxProps {}
 
@@ -15,7 +15,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       content: { type: 'PLAY' },
       toggle: true,
       modal: false,
-      handleBarButton: HandleBarButton.Reduce + HandleBarButton.Enlarge + HandleBarButton.Close,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Play");
@@ -30,7 +30,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       content: { type: 'LADDER' },
       toggle: true,
       modal: false,
-      handleBarButton: HandleBarButton.Reduce + HandleBarButton.Enlarge + HandleBarButton.Close,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Ladder");
@@ -45,7 +45,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       content: { type: 'CHAT' },
       toggle: true,
       modal: false,
-      handleBarButton: HandleBarButton.Reduce + HandleBarButton.Enlarge + HandleBarButton.Close,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Chat");
@@ -60,7 +60,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       content: { type: 'PROFILE' },
       toggle: true,
       modal: false,
-      handleBarButton: HandleBarButton.Reduce + HandleBarButton.Enlarge + HandleBarButton.Close,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Profile");
