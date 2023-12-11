@@ -1,4 +1,5 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
+import { WinColor } from "./utils/WindowTypes";
 
 interface WindowData {
   WindowName: string;
@@ -9,6 +10,7 @@ interface WindowData {
   toggle: boolean;
   modal: boolean;
   handleBarButton: number;
+  color: WinColor;
 }
 
 export interface AppState<T = WindowData> {
@@ -32,7 +34,7 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE'];
+      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN'];
 
       if (restrictedTypes.includes(action.payload.content.type) &&
           windowExists(state.windows, action.payload.content.type)) {

@@ -1,7 +1,7 @@
 import './Navbar.css';
 import { connect, ConnectedProps } from "react-redux";
 import { addWindow } from "../reducers";
-import { HBButton } from '../utils/WindowTypes';
+import { HBButton, WinColor } from '../utils/WindowTypes';
 
 interface NavbarProps extends ReduxProps {}
 
@@ -16,9 +16,9 @@ export function Navbar({ dispatch }: NavbarProps) {
       toggle: true,
       modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Play");
   };
 
   const handleLadder = () => {
@@ -31,6 +31,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       toggle: true,
       modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Ladder");
@@ -46,9 +47,9 @@ export function Navbar({ dispatch }: NavbarProps) {
       toggle: true,
       modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Chat");
   };
 
   const handleProfile = () => {
@@ -61,9 +62,9 @@ export function Navbar({ dispatch }: NavbarProps) {
       toggle: true,
       modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Profile");
   };
 
   return (

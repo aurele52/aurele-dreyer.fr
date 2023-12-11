@@ -1,0 +1,62 @@
+.NewChan {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 100%;
+  gap: 10px;
+}
+
+.formNewChan {
+  overflow-y: auto;
+  padding: 8px 6px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  border-radius: 10px;
+  border-top: 3px solid var(--base-black, #000);
+  border-right: 2px solid var(--base-black, #000);
+  border-bottom: 1px solid var(--base-black, #000);
+  border-left: 2px solid var(--base-black, #000);
+  background: var(--purple-250, #DECDFF);
+}
+
+.labelFormNewChan {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-transform: uppercase;
+}
+
+.inputFormNewChan {
+  flex-grow: 1;
+}
+
+.elFormNewChan {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.listCheckboxFormNewChan {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+.checkboxFormNewChan {
+  align-items: baseline;
+}
+
+.passwordNewChan {
+  padding: 10px 0 0 20px;
+  display: flex;
+  flex-direction: column;
+}
+
+.passwordInputNewChan {
+  display: flex;
+  gap: 10px;
+}
