@@ -1,10 +1,10 @@
 import { ChannelTypes } from '../types/channel.types';
+import { Prisma } from '@prisma/client';
 
-export class CreateChannelDto {
-  readonly id: number;
+export class CreateChannelDto implements Prisma.ChannelCreateInput {
   readonly name: string;
+  readonly topic: string;
   readonly type: ChannelTypes;
-  readonly password: string;
-  readonly created_at: Date;
-  readonly updated_at: Date;
+  readonly password?: string;
+  readonly passwordConfirmation?: string;
 }

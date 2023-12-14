@@ -40,7 +40,7 @@ export function Chat({ dispatch }: ChatProps) {
   const handleCreateChannel = () => {
     const newWindow = {
       WindowName: "New Channel",
-      width: "465",
+      width: "485",
       height: "362",  
       id: 0,
       content: { type: 'NEWCHAN' },

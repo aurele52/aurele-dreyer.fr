@@ -39,6 +39,7 @@ async function createChannels() {
     const type = chanType[faker.number.int({ min: 0, max: 2 })];
     const channel = {
       name: faker.word.words({ count: { min: 1, max: 3 } }),
+      topic: faker.lorem.lines({ min: 1, max: 4 }),
       type: type,
       password: type === 'PROTECTED' ? faker.word.words() : undefined,
       created_at: faker.date.past(),
@@ -67,6 +68,7 @@ async function createDMs() {
     await prisma.channel.create({
       data: {
         name: faker.word.words({ count: { min: 1, max: 3 } }),
+        topic: faker.lorem.lines({ min: 1, max: 4 }),
         type: 'DM',
         created_at: faker.date.past(),
         updated_at: faker.date.recent(),
