@@ -2,7 +2,11 @@ import "./NewChan.css";
 import Button from "./Button";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import axios, { AxiosResponse, AxiosError } from "axios";
+
+interface ValidationErrorResponse {
+  [key: string]: string[];
+}
 
 function NewChan() {
   const queryClient = useQueryClient();
@@ -13,8 +17,12 @@ function NewChan() {
     setSelectedOption(event.target.value);
   };
 
-  const { mutateAsync: createChannel } = useMutation({
-    mutationFn: async ( param: Record<string, FormDataEntryValue> ) => {
+  const { mutateAsync: createChannel, error } = useMutation<
+    AxiosResponse,
+    AxiosError<ValidationErrorResponse>,
+    Record<string, FormDataEntryValue>
+  >({
+    mutationFn: async (param: Record<string, FormDataEntryValue>) => {
       return axios.post("/api/channel", param);
     },
     onSuccess: () => {
@@ -31,16 +39,44 @@ function NewChan() {
     await createChannel(formData);
   };
 
+  const dataError = error?.response?.data;
+
   return (
     <form onSubmit={handleSubmit} className="NewChan">
-      <div className="formNewChan">
+      <div className="formNewChan custom-scrollbar lilac-list">
         <div className="elFormNewChan">
           <label className="labelFormNewChan">Channel Name:</label>
-          <input className="inputFormNewChan" placeholder="Type here" name="name"></input>
+          <div className="inputErrFormNewChan">
+            <input
+              className={`inputFormNewChan ${
+                dataError?.name ? "errorBorderFormNewChan" : ""
+              }`}
+              placeholder="Type here"
+              name="name"
+            ></input>
+            {dataError?.name ? (
+              <p className="errorFormNewChan">{dataError["name"]}</p>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
         <div className="elFormNewChan">
           <label className="labelFormNewChan">Topic:</label>
-          <input className="inputFormNewChan" placeholder="Type here" name="topic"></input>
+          <div className="inputErrFormNewChan">
+            <input
+              className={`inputFormNewChan ${
+                dataError?.topic ? "errorBorderFormNewChan" : ""
+              }`}
+              placeholder="Type here"
+              name="topic"
+            ></input>
+            {dataError?.topic ? (
+              <p className="errorFormNewChan">{dataError["topic"]}</p>
+            ) : (
+              ""
+            )}
+          </div>
         </div>
         <div className="elFormNewChan typeFormNewChan">
           <label className="labelFormNewChan">Type:</label>
@@ -84,25 +120,57 @@ function NewChan() {
               </label>
               <p className="descCheckboxNewChan">PASSWORD PROTECTED</p>
             </div>
+            {dataError?.type ? (
+              <p className="errorFormNewChan">{dataError["type"]}</p>
+            ) : (
+              ""
+            )}
             <div>
               <div className="passwordNewChan">
                 <div className="passwordInputNewChan">
                   <label className="descInputNewChan">CHOOSE PASSWORD:</label>
-                  <input
-                    className="inputFormNewChan"
-                    placeholder="Type here"
-                    disabled={selectedOption !== "PROTECTED"}
-                  ></input>
+                  <div className="inputErrFormNewChan">
+                    <input
+                      className={`inputFormNewChan ${
+                        dataError?.password ? "errorBorderFormNewChan" : ""
+                      }`}
+                      placeholder="Type here"
+                      name="password"
+                      disabled={selectedOption !== "PROTECTED"}
+                    ></input>
+                    {dataError?.password ? (
+                      <p className="errorFormNewChan">
+                        {dataError["password"]}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
                 <div className="passwordInputNewChan">
                   <label className="descInputNewChan">
                     ENTER SAME PASSWORD:
                   </label>
-                  <input
-                    className="inputFormNewChan"
-                    placeholder="Type here"
-                    disabled={selectedOption !== "PROTECTED"}
-                  ></input>
+
+                  <div className="inputErrFormNewChan">
+                    <input
+                      className={`inputFormNewChan ${
+                        dataError?.passwordConfirmation
+                          ? "errorBorderFormNewChan"
+                          : ""
+                      }`}
+                      placeholder="Type here"
+                      name="passwordConfirmation"
+                      disabled={selectedOption !== "PROTECTED"}
+                    ></input>
+                    {dataError?.passwordConfirmation ? (
+                      <p className="errorFormNewChan">
+                        {dataError["passwordConfirmation"]}
+                      </p>
+                    ) : (
+                      ""
+                    )}
+                  </div>
                 </div>
               </div>
             </div>

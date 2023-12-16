@@ -6,10 +6,12 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 export class ChannelService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createChannel(createChannelDto: CreateChannelDto) {
+  async createChannel(
+    channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
+  ) {
     return this.prisma.channel.create({
       data: {
-        ...createChannelDto,
+        ...channelData,
       },
     });
   }

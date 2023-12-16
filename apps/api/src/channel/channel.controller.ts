@@ -1,7 +1,6 @@
 import { Controller, Get, Post, Body } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
-import { Channel as ChannelModel } from '@prisma/client';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
@@ -14,7 +13,7 @@ export class ChannelController {
   ) {}
 
   @Get('/chats')
-  async findCurrUserChannels(@CurrentUser() user): Promise<ChannelModel[]> {
+  async findCurrUserChannels(@CurrentUser() user) {
     const channels = await this.channelService.channelsCurrentUser({
       currUserId: user.id,
     });
@@ -22,7 +21,7 @@ export class ChannelController {
   }
 
   @Get('/channels')
-  async findOtherChannels(@CurrentUser() user): Promise<ChannelModel[]> {
+  async findOtherChannels(@CurrentUser() user) {
     return this.channelService.otherChannels({ currUserId: user.id });
   }
 
@@ -31,8 +30,10 @@ export class ChannelController {
     @CurrentUser() user,
     @Body() createChannelDto: CreateChannelDto,
   ) {
+    const { passwordConfirmation: _, ...channelData } = createChannelDto;
+
     const channel = await this.channelService.createChannel({
-      ...createChannelDto,
+      ...channelData,
     });
     await this.userChannelService.createUserChannel({
       currUserId: user.id,
