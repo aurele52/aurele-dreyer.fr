@@ -41,7 +41,7 @@ function FindChan() {
         {channels?.map((channel) => {
           return (
             <div key={channel.id}>
-              <Channel name={channel.name}>
+              <Channel name={channel.name} clickable={false}>
                 <div className="ButtonFindChan">
                   <Button icon="TripleDot" color="pink" />
                   <Button

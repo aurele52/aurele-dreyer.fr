@@ -65,6 +65,7 @@ export function Chat({ dispatch }: ChatProps) {
                   chat.type === "DM" ? chat.type.toLowerCase() : ""
                 }
                 image={chat.type === "DM" ? chat.image : undefined }
+                clickable={true}
               />
             </div>
           );

@@ -118,62 +118,64 @@ function NewChan() {
                 />
                 <span className="checkmarkFormNewChan"></span>
               </label>
-              <p className="descCheckboxNewChan">PASSWORD PROTECTED</p>
+              <div className="pwdProtectedNewChan">
+                <p className="descCheckboxNewChan">PASSWORD PROTECTED</p>
+                <div
+                  className={`passwordNewChan ${
+                    selectedOption !== "PROTECTED" ? "passwordHidden" : ""
+                  }`}
+                >
+                  <div className="passwordInputNewChan">
+                    <label className="descInputNewChan">CHOOSE PASSWORD:</label>
+                    <div className="inputErrFormNewChan">
+                      <input
+                        className={`inputFormNewChan ${
+                          dataError?.password ? "errorBorderFormNewChan" : ""
+                        }`}
+                        placeholder="Type here"
+                        name="password"
+                      ></input>
+                      {dataError?.password ? (
+                        <p className="errorFormNewChan">
+                          {dataError["password"]}
+                        </p>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                  <div className="passwordInputNewChan">
+                    <label className="descInputNewChan">
+                      ENTER SAME PASSWORD:
+                    </label>
+
+                    <div className="inputErrFormNewChan">
+                      <input
+                        className={`inputFormNewChan ${
+                          dataError?.passwordConfirmation
+                            ? "errorBorderFormNewChan"
+                            : ""
+                        }`}
+                        placeholder="Type here"
+                        name="passwordConfirmation"
+                      ></input>
+                      {dataError?.passwordConfirmation ? (
+                        <p className="errorFormNewChan">
+                          {dataError["passwordConfirmation"]}
+                        </p>
+                      ) : (
+                        ""
+                      )}
+                    </div>
+                  </div>
+                </div>
+              </div>
             </div>
             {dataError?.type ? (
               <p className="errorFormNewChan">{dataError["type"]}</p>
             ) : (
               ""
             )}
-            <div>
-              <div className="passwordNewChan">
-                <div className="passwordInputNewChan">
-                  <label className="descInputNewChan">CHOOSE PASSWORD:</label>
-                  <div className="inputErrFormNewChan">
-                    <input
-                      className={`inputFormNewChan ${
-                        dataError?.password ? "errorBorderFormNewChan" : ""
-                      }`}
-                      placeholder="Type here"
-                      name="password"
-                      disabled={selectedOption !== "PROTECTED"}
-                    ></input>
-                    {dataError?.password ? (
-                      <p className="errorFormNewChan">
-                        {dataError["password"]}
-                      </p>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-                <div className="passwordInputNewChan">
-                  <label className="descInputNewChan">
-                    ENTER SAME PASSWORD:
-                  </label>
-
-                  <div className="inputErrFormNewChan">
-                    <input
-                      className={`inputFormNewChan ${
-                        dataError?.passwordConfirmation
-                          ? "errorBorderFormNewChan"
-                          : ""
-                      }`}
-                      placeholder="Type here"
-                      name="passwordConfirmation"
-                      disabled={selectedOption !== "PROTECTED"}
-                    ></input>
-                    {dataError?.passwordConfirmation ? (
-                      <p className="errorFormNewChan">
-                        {dataError["passwordConfirmation"]}
-                      </p>
-                    ) : (
-                      ""
-                    )}
-                  </div>
-                </div>
-              </div>
-            </div>
           </div>
         </div>
       </div>
