@@ -1,4 +1,5 @@
 import "./Button.css";
+import { HTMLAttributes } from "react";
 
 const Icons = {
   TripleDot: (
@@ -146,11 +147,12 @@ type ButtonProps = {
   color: string;
   icon?: keyof typeof Icons;
   content?: string;
-} & React.HTMLAttributes<HTMLButtonElement>;
+  type?: "button" | "submit" | "reset";
+} & HTMLAttributes<HTMLButtonElement>;
 
-function Button({ icon, content, color, className, ...props }: ButtonProps) {
+function Button({ icon, content, color, className, type, ...props }: ButtonProps) {
   return (
-    <button {...props} className={`${color} ${className || ""} Button`}>
+    <button type={type} {...props} className={`${color} ${className || ""} Button`}>
       <div className={`ButtonInner ${content && "ButtonText"}`}>
         {icon && Icons[icon]}
         {content}

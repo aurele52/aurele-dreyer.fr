@@ -21,22 +21,6 @@
     position: fixed;
 }
 
-.reducedWindow > .handleBar {
-    display: flex;
-    width:100px;
-    padding: 4px 10px 5px 10px;
-    align-items: center;
-    gap: 5px;
-    align-self: stretch;
-    border-radius: 10px 10px 0px 0px;
-    border-bottom: 3px solid var(--base-black, #000);
-    background: linear-gradient(180deg, #E980BB 0%, #BBA0E9 9.9%);
-    cursor: grab;
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
-}
-
 .reducedWindow > .handleBar > .ButtonWindow {
     display: none;
 }
@@ -44,8 +28,7 @@
 .reducedWindow > .content {
     display: none;
 }
-
-.Window > .handleBar {
+.handleBar {
     display: flex;
     min-width: 250px;
     padding: 4px 10px 5px 10px;
@@ -54,11 +37,27 @@
     align-self: stretch;
     border-radius: 10px 10px 0px 0px;
     border-bottom: 3px solid var(--base-black, #000);
-    background: linear-gradient(180deg, #E980BB 0%, #BBA0E9 9.9%);
     cursor: grab;
     -webkit-user-select: none; /* Safari */
     -ms-user-select: none; /* IE 10 and IE 11 */
     user-select: none; /* Standard syntax */
+    text-transform: uppercase;
+}
+
+.handleBar.purpleHandleBar {
+    background: linear-gradient(180deg, #E980BB 0%, #BBA0E9 9.9%);
+}
+
+.handleBar.lilacHandleBar {
+    background: linear-gradient(180deg, #FFAEE6 0.63%, #DECDFF 10.94%);
+}
+
+.handleBar.redHandleBar {
+    background: #F06E8D;
+}
+
+.reducedWindow > .handleBar {
+    width:100px;
 }
 
 .Window > .handleBar :active {

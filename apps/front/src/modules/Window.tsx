@@ -4,7 +4,7 @@ import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
 import { delWindow } from "../reducers";
 import Button from "./Button";
-import { HBButton } from "../utils/WindowTypes";
+import { HBButton, WinColor } from "../utils/WindowTypes";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;
@@ -14,6 +14,7 @@ interface WindowProps extends ReduxProps {
   children: ReactNode;
   modal: boolean;
   handleBarButton: number;
+  color: WinColor;
 }
 
 export function Window({
@@ -25,6 +26,7 @@ export function Window({
   children,
   //modal,
   handleBarButton,
+  color,
 }: WindowProps) {
   const [state, setState] = useState({
     width,
@@ -134,7 +136,7 @@ export function Window({
         onMouseDown={state.isReduced ? handleMouseDown : undefined}
         onMouseUp={state.isReduced ? handleMouseUp : undefined}
       >
-        <div className="handleBar">
+        <div className={`handleBar ${color}`}>
           <div className="WindowName heading-500">{WindowName}</div>
           {!!(handleBarButton & HBButton.Reduce) && (
             <Button

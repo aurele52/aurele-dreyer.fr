@@ -34,6 +34,12 @@
   --scroll-color-hover: rgba(56, 34, 101, 0.65); 
 }
 
+.custom-scrollbar.lilac-list {
+  --bg-scroll-color: var(--purple-250, #DECDFF);;
+  --scroll-color: rgba(56, 34, 101, 0.5); 
+  --scroll-color-hover: rgba(56, 34, 101, 0.65); 
+}
+
 .custom-scrollbar::-webkit-scrollbar {
   width: 20px;
 }

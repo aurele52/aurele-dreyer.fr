@@ -1,20 +1,22 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { Channel } from '@prisma/client';
+import { CreateChannelDto } from './dto/create-channel.dto';
 
 @Injectable()
 export class ChannelService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async createChannel(data): Promise<Channel> {
+  async createChannel(
+    channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
+  ) {
     return this.prisma.channel.create({
-      data,
+      data: {
+        ...channelData,
+      },
     });
   }
 
-  async channelsCurrentUser(params: {
-    currUserId: number;
-  }): Promise<Channel[]> {
+  async channelsCurrentUser(params: { currUserId: number }) {
     const { currUserId } = params;
     return (
       await this.prisma.channel.findMany({
@@ -42,7 +44,7 @@ export class ChannelService {
     }));
   }
 
-  async otherChannels(params: { currUserId: number }): Promise<Channel[]> {
+  async otherChannels(params: { currUserId: number }) {
     const { currUserId } = params;
     return await this.prisma.channel.findMany({
       where: {

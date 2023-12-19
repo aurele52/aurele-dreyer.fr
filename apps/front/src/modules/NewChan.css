@@ -1,0 +1,126 @@
+.NewChan {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 100%;
+  gap: 10px;
+}
+
+.formNewChan {
+  overflow-y: auto;
+  padding: 8px 6px;
+  flex-grow: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  border-radius: 10px;
+  border-top: 3px solid var(--base-black, #000);
+  border-right: 2px solid var(--base-black, #000);
+  border-bottom: 1px solid var(--base-black, #000);
+  border-left: 2px solid var(--base-black, #000);
+  background: var(--purple-250, #DECDFF);
+}
+
+.labelFormNewChan {
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.inputFormNewChan {
+  flex-grow: 1;
+  border-radius: 15px;
+  border: none;
+  padding: 5px 10px;
+}
+
+.inputFormNewChan:focus {
+  outline: none;
+}
+
+.elFormNewChan {
+  display: flex;
+  flex-direction: row;
+  gap: 10px;
+}
+
+.listCheckboxFormNewChan {
+  display: flex;
+  flex-direction: column;
+  width: 100%;
+  gap: 10px;
+}
+
+.typeFormNewChan {
+  align-items: baseline;
+}
+
+.passwordNewChan {
+  padding: 0 0 0 31px;
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.passwordInputNewChan {
+  display: flex;
+  gap: 10px;
+}
+
+.descCheckboxNewChan {
+  margin: 0;
+  font-size: 14px;
+  padding: 2px 0 0 0;
+}
+
+.descInputNewChan {
+  font-size: 14px;
+  align-self: center;
+}
+
+.labelCheckboxNewChan input {
+  visibility: hidden;
+  position: absolute;
+}
+
+.labelCheckboxNewChan .checkmarkFormNewChan {
+  height: 20px;
+  width: 20px;
+  display: inline-block;
+  position: relative;
+  border-radius: 4px;
+  border: 1px solid var(--border-default, #E6E8F0);
+  background: var(--base-white, #FFF);
+}
+
+.labelCheckboxNewChan input:checked + .checkmarkFormNewChan {
+  background: #FAF7A4;
+  box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24);
+}
+
+.labelCheckboxNewChan input:checked + .checkmarkFormNewChan:after {
+  content: url('/checkmark.svg');
+  position: absolute;
+  left: 4px;
+  bottom: 1px;
+}
+
+.errorFormNewChan {
+  margin: 0;
+  font-size: 12px;
+  padding-left: 10px;
+  color: #F06E8D;
+}
+
+.inputErrFormNewChan {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.errorBorderFormNewChan {
+  border: 2px solid #F06E8D;
+}

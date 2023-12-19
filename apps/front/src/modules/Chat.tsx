@@ -6,7 +6,7 @@ import Channel from "./Channel";
 import Button from "./Button";
 import { addWindow } from "../reducers";
 import { connect, ConnectedProps } from "react-redux";
-import { HBButton } from "../utils/WindowTypes";
+import { HBButton, WinColor } from "../utils/WindowTypes";
 
 interface ChatProps extends ReduxProps {}
 
@@ -32,6 +32,22 @@ export function Chat({ dispatch }: ChatProps) {
       toggle: false,
       modal: true,
       handleBarButton: HBButton.Close,
+      color: WinColor.LILAC,
+    };
+    dispatch(addWindow(newWindow));
+  };
+  
+  const handleCreateChannel = () => {
+    const newWindow = {
+      WindowName: "New Channel",
+      width: "485",
+      height: "362",  
+      id: 0,
+      content: { type: 'NEWCHAN' },
+      toggle: false,
+      modal: true,
+      handleBarButton: HBButton.Close,
+      color: WinColor.LILAC,
     };
     dispatch(addWindow(newWindow));
   };
@@ -56,7 +72,7 @@ export function Chat({ dispatch }: ChatProps) {
       </List>
       <div className="ChatFooter">
         <Button content="find channel" color="purple" onClick={handleFindChannel}/>
-        <Button content="create channel" color="purple"/>
+        <Button content="create channel" color="purple" onClick={handleCreateChannel}/>
       </div>
     </div>
   );
