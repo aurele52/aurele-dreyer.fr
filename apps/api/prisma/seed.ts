@@ -8,14 +8,11 @@ async function createUsers() {
 
   const users = [];
 
-  //const userStatus = ['ONLINE', 'OFFLINE', 'INGAME'];
-
   for (let i = 0; i < amountOfUsers; i++) {
     const user = {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
-      //user_state: userStatus[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -58,12 +55,18 @@ async function createChannels() {
 async function createDMs() {
   const userPool = await prisma.user.findMany();
   const amountOfChannels = 15;
+  const idPairs: [number, number][] = [];
 
   for (let i = 0; i < amountOfChannels; i++) {
-    const userA =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
-    const userB =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    let a = 0;
+    let b = 0;
+    while (a === b || idPairs.includes([a, b]) || idPairs.includes([b, a])) {
+      a = faker.number.int({ min: 0, max: userPool.length - 1 });
+      b = faker.number.int({ min: 0, max: userPool.length - 1 });
+    }
+    idPairs.push([a, b]);
+    const userA = userPool[a];
+    const userB = userPool[b];
 
     await prisma.channel.create({
       data: {
