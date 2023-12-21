@@ -64,4 +64,19 @@ export class ChannelService {
       },
     });
   }
+
+  async channel(id: number) {
+    return this.prisma.channel.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
+  }
 }

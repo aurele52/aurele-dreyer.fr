@@ -59,10 +59,18 @@
 }
 
 .passwordNewChan {
-  padding: 0 0 0 31px;
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 5px;
+  padding-top: 7px;
+}
+
+.pwdProtectedNewChan {
+  flex-grow: 1;
+}
+
+.passwordNewChan.passwordHidden {
+  display: none;
 }
 
 .passwordInputNewChan {

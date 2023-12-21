@@ -2,9 +2,9 @@ import { ReactNode, useState, useRef, useEffect } from "react";
 import "./Window.css";
 import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
-import { delWindow } from "../reducers";
-import Button from "./Button";
-import { HBButton, WinColor } from "../utils/WindowTypes";
+import { delWindow } from "../../reducers";
+import Button from "../Button/Button";
+import { HBButton, WinColor } from "../../utils/WindowTypes";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;

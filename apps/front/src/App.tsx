@@ -1,6 +1,6 @@
 import "./App.css";
-import Navbar from "./modules/Navbar";
-import Background from "./modules/Background";
+import Navbar from "./components/Navbar/Navbar";
+import Background from "./components/Background/Background";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
 const queryClient = new QueryClient();

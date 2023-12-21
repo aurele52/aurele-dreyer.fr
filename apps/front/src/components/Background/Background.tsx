@@ -1,14 +1,15 @@
 import "./Background.css";
 import { connect } from "react-redux";
-import { AppState } from "../reducers";
+import { AppState } from "../../reducers";
 import { ConnectedProps } from "react-redux";
-import Window from "./Window";
-import Play from "./Play";
-import Chat from "./Chat";
-import Ladder from "./Ladder";
-import Profile from "./Profile";
-import FindChan from "./FindChan";
-import NewChan from "./NewChan";
+import Window from "../Window/Window";
+import Play from "../Play/Play";
+import Chat from "../Chat/Chat";
+import Ladder from "../Ladder/Ladder";
+import Profile from "../Profile/Profile";
+import FindChan from "../FindChan/FindChan";
+import NewChan from "../NewChan/NewChan";
+import AboutChan from "../AboutChan/AboutChan";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -34,6 +35,7 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "PROFILE" && <Profile />}
               {window.content.type === "FINDCHAN" && <FindChan />}
               {window.content.type === "NEWCHAN" && <NewChan />}
+              {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || -1} />}
             </Window>
           );
         })}

@@ -17,7 +17,7 @@
   --bg-channel-color: var(--purple-gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
 }
 
-.channel:hover {
+.channel.chanClickable:hover {
   --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
   background: var(--bg-channel-color-hover);
   cursor: pointer;

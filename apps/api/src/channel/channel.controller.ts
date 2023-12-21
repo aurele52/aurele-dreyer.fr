@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
@@ -41,5 +41,10 @@ export class ChannelController {
       role: UserChannelRoles.OWNER,
     });
     return channel;
+  }
+
+  @Get('/channel/:id')
+  async findChannel(@Param('id') id: number) {
+    return this.channelService.channel(id);
   }
 }
