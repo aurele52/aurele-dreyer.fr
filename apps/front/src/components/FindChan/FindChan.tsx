@@ -1,9 +1,9 @@
 import "./FindChan.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import List from "./List";
-import Channel from "./Channel";
-import Button from "./Button";
+import List from "../List/List";
+import Channel from "../Channel/Channel";
+import Button from "../Button/Button";
 
 function FindChan() {
   const queryClient = useQueryClient();

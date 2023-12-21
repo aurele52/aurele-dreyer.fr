@@ -6,7 +6,7 @@ interface WindowData {
   width: string;
   height: string;
   id: number;
-  content: { type: string };
+  content: { type: string, id?: number};
   toggle: boolean;
   modal: boolean;
   handleBarButton: number;
@@ -34,7 +34,7 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN'];
+      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN', 'ABOUTCHAN'];
 
       if (restrictedTypes.includes(action.payload.content.type) &&
           windowExists(state.windows, action.payload.content.type)) {

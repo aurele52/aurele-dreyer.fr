@@ -1,5 +1,5 @@
 import "./NewChan.css";
-import Button from "./Button";
+import Button from "../Button/Button";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import axios, { AxiosResponse, AxiosError } from "axios";
