@@ -19,7 +19,6 @@ root.render(
         <Routes>
           <Route path="/" element={<App />} errorElement={<ErrorPage />}/>
           <Route path="/auth" element={<Auth />} />
-          <Route path="api/auth/callback" element={<Auth />} />
         </Routes>
       </BrowserRouter>
     </React.StrictMode>
