@@ -8,6 +8,7 @@ import { AuthModule } from './auth/auth.module';
 import { ChannelModule } from './channel/channel.module';
 import { PrismaService } from './prisma.service';
 import { UserChannelModule } from './user-channel/user-channel.module';
+import { ProfileModule } from './profile/profile.module';
 
 @Module({
   imports: [
@@ -18,6 +19,7 @@ import { UserChannelModule } from './user-channel/user-channel.module';
     AuthModule,
     ChannelModule,
     UserChannelModule,
+    ProfileModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

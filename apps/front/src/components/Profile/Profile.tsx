@@ -10,21 +10,18 @@ interface ProfileProps extends ReduxProps {}
 export function Profile({ dispatch }: ProfileProps) {
   const apiUrl = "/api/profile";
 
-  const { data: games } = useQuery<
-    {
-      id: number;
-      player1: string;
-      player2: string;
-      type: string;
-      image: string;
-      interlocutor: string;
-    }[]
+  const { data: user } = useQuery<
+  {
+    id: number;
+    username: string;
+  }
   >({
-    queryKey: ["chats"],
-    queryFn: async () => {
+    queryKey: ["user", 1],
+    queryFn: async ()=> {
       return axios.get(apiUrl).then((response) => response.data);
-    },
-  });
+    }
+  })
+  console.log(user?.username);
 
   return (
     <div className="Profile">
@@ -35,7 +32,7 @@ export function Profile({ dispatch }: ProfileProps) {
               </div>
               
               <div className="Text">
-                <div className="Name">ADESGRAN</div>
+                <div className="Name">{user?.username}</div>
                 <div className="Stats">
                   <div>
                     <div className="Rank">
