@@ -54,8 +54,23 @@
   background: var(--purple-400, #6C559C);
 }
 
+.red.Button>.ButtonInner:hover {
+  border-top: 1px solid var(--Pink-400, #F06E8D); 
+  border-right: 1px solid var(--Pink-400, #F06E8D); 
+  border-left: 1px solid var(--Pink-400, #F06E8D); 
+}
+
+.red.Button {
+  background: var(--Pink-Gradient-400, linear-gradient(180deg, #F06E8D 75%, #E9436B 92.19%)); 
+}
+
+.red.Button:hover {
+  background: var(--Pink-400, #F06E8D); 
+}
+
 .pink,
-.purple {
+.purple,
+.red {
   display: flex;
 }
 
