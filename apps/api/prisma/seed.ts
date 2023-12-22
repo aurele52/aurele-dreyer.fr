@@ -147,12 +147,18 @@ async function createUserAchievements() {
 async function createMatches() {
   const userPool = await prisma.user.findMany();
   const amountOfChannels = 15;
+  const idPairs: [number, number][] = [];
 
   for (let i = 0; i < amountOfChannels; i++) {
-    const userA =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
-    const userB =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    let a = 0;
+    let b = 0;
+    while (a === b || idPairs.includes([a, b]) || idPairs.includes([b, a])) {
+      a = faker.number.int({ min: 0, max: userPool.length - 1 });
+      b = faker.number.int({ min: 0, max: userPool.length - 1 });
+    }
+    idPairs.push([a, b]);
+    const userA = userPool[a];
+    const userB = userPool[b];
 
     await prisma.match.create({
       data: {
