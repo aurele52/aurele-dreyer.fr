@@ -1,4 +1,4 @@
-import Button from "./modules/Button";
+import Button from "./components/Button/Button";
 
 function Auth() {
 
