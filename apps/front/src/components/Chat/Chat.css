@@ -1,0 +1,18 @@
+.Chat {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 100%;
+  gap: 10px;
+}
+
+.chatRow {
+  display: flex;
+  gap: 6px;
+}
+
+.ChatFooter {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 10px;
+}

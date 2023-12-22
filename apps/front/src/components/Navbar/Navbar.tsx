@@ -1,6 +1,7 @@
-import './Navbar.css';
+import "./Navbar.css";
 import { connect, ConnectedProps } from "react-redux";
-import { addWindow } from "../reducers";
+import { addWindow } from "../../reducers";
+import { HBButton, WinColor } from "../../utils/WindowTypes";
 
 interface NavbarProps extends ReduxProps {}
 
@@ -11,10 +12,13 @@ export function Navbar({ dispatch }: NavbarProps) {
       width: "500",
       height: "500",
       id: 0,
-      content: { type: 'PLAY' },
+      content: { type: "PLAY" },
+      toggle: true,
+      modal: false,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Play");
   };
 
   const handleLadder = () => {
@@ -23,7 +27,11 @@ export function Navbar({ dispatch }: NavbarProps) {
       width: "500",
       height: "500",
       id: 0,
-      content: { type: 'LADDER' },
+      content: { type: "LADDER" },
+      toggle: true,
+      modal: false,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
     console.log("Handle Ladder");
@@ -32,13 +40,16 @@ export function Navbar({ dispatch }: NavbarProps) {
   const handleChat = () => {
     const newWindow = {
       WindowName: "Chat",
-      width: "500",
-      height: "500",
+      width: "387",
+      height: "450",
       id: 0,
-      content: { type: 'CHAT' },
+      content: { type: "CHAT" },
+      toggle: true,
+      modal: false,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Chat");
   };
 
   const handleProfile = () => {
@@ -47,10 +58,13 @@ export function Navbar({ dispatch }: NavbarProps) {
       width: "500",
       height: "500",
       id: 0,
-      content: { type: 'PROFILE' },
+      content: { type: "PROFILE" },
+      toggle: true,
+      modal: false,
+      handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+      color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Profile");
   };
 
   return (

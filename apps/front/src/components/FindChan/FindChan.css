@@ -1,0 +1,13 @@
+.FindChan {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+  max-width: 100%;
+  gap: 10px;
+}
+
+.ButtonFindChan {
+  display: flex;
+  gap: 3px;
+  flex-direction: row-reverse;
+}

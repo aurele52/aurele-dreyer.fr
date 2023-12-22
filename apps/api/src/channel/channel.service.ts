@@ -1,32 +1,82 @@
 import { Injectable } from '@nestjs/common';
-//import { Channel } from './interfaces/channel.interface';
 import { PrismaService } from '../prisma.service';
-import { Channel, Prisma } from '@prisma/client';
+import { CreateChannelDto } from './dto/create-channel.dto';
 
 @Injectable()
 export class ChannelService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(data: Prisma.ChannelCreateInput): Promise<Channel> {
+  async createChannel(
+    channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
+  ) {
     return this.prisma.channel.create({
-      data,
+      data: {
+        ...channelData,
+      },
     });
   }
 
-  async channels(params: {
-    skip?: number;
-    take?: number;
-    cursor?: Prisma.ChannelWhereUniqueInput;
-    where?: Prisma.ChannelWhereInput;
-    orderBy?: Prisma.ChannelOrderByWithRelationInput;
-  }): Promise<Channel[]> {
-    const { skip, take, cursor, where, orderBy } = params;
-    return this.prisma.channel.findMany({
-      skip,
-      take,
-      cursor,
-      where,
-      orderBy,
+  async channelsCurrentUser(params: { currUserId: number }) {
+    const { currUserId } = params;
+    return (
+      await this.prisma.channel.findMany({
+        where: {
+          userChannels: {
+            some: {
+              user_id: currUserId,
+            },
+          },
+        },
+        include: {
+          userChannels: {
+            include: {
+              User: true,
+            },
+          },
+        },
+      })
+    ).map((el) => ({
+      ...el,
+      image: el.userChannels.find((uc) => uc.User?.id !== currUserId)?.User
+        .avatar_url,
+      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
+        ?.User.username,
+    }));
+  }
+
+  async otherChannels(params: { currUserId: number }) {
+    const { currUserId } = params;
+    return await this.prisma.channel.findMany({
+      where: {
+        type: { in: ['PUBLIC', 'PROTECTED'] },
+        userChannels: {
+          none: {
+            user_id: currUserId,
+          },
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
+  }
+
+  async channel(id: number) {
+    return this.prisma.channel.findUnique({
+      where: {
+        id,
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
     });
   }
 }

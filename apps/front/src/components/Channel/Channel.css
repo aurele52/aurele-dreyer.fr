@@ -1,0 +1,44 @@
+.channel {
+  --bg-channel-color: var(--pink-purple-mix-gradient-chat, linear-gradient(180deg, #F8E5F8 65.1%, #EDC6F7 87.5%));
+  border-radius: 7px;
+  background: var(--bg-channel-color);
+  display: flex;
+  height: 50px;
+  padding: 3px 12px;
+  border: 1px solid var(--base-black, #000);
+  gap: 10px;
+  align-items: center;
+  flex-grow: 1;
+  min-width: 0;
+  justify-content: space-between;
+}
+
+.channel.dm {
+  --bg-channel-color: var(--purple-gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
+}
+
+.channel.chanClickable:hover {
+  --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
+  background: var(--bg-channel-color-hover);
+  cursor: pointer;
+}
+
+.channel.dm:hover {
+  --bg-channel-color-hover: var(--purple-200, #E5D9FD);
+}
+
+.avatar {
+  border: 4px solid var(--base-white, #FFF);
+  border-radius: 5px;
+  object-fit: contain;
+  width: auto;
+  height: 65%;
+}
+
+.avatar-chan {
+  display: flex;
+  height: inherit;
+  gap: 10px;
+  align-items: center;
+
+}
