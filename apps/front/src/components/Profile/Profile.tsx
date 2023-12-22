@@ -10,47 +10,75 @@ interface ProfileProps extends ReduxProps {}
 export function Profile({ dispatch }: ProfileProps) {
   const apiUrl = "/api/profile";
 
-  const { data: user } = useQuery<
+  const { data: profile } = useQuery<
   {
     id: number;
     username: string;
+    avatar_url: string;
+    win_count: number;
+    loose_count: number;
+    achievement_lvl: number;
+    rank: number
+
   }
   >({
-    queryKey: ["user", 1],
+    queryKey: ["user"],
     queryFn: async ()=> {
-      return axios.get(apiUrl).then((response) => response.data);
+      return axios.get("/api/profile/user/1").then((response) => response.data);
     }
   })
-  console.log(user?.username);
 
+  const { data: historic } = useQuery<
+  {
+    id: number;
+    player1: string;
+    player2: string;
+    score1: number;
+    score2: number;
+
+  }
+  >({
+    queryKey: ["user"],
+    queryFn: async ()=> {
+      return axios.get("/api/profile/historic/1").then((response) => response.data);
+    }
+  })
   return (
     <div className="Profile">
             <div className="Header">
               
               <div className="Avatar">
-                <img src={"https://images.fineartamerica.com/images/artworkimages/mediumlarge/2/cat-face-square-format-bill-kesler.jpg"} className="Frame" alt="adesgran" />
+                <img src={profile?.avatar_url} className="Frame" alt={profile?.username.toLowerCase()} />
               </div>
               
               <div className="Text">
-                <div className="Name">{user?.username}</div>
+                <div className="Name">{profile?.username ?? "No name"}</div>
                 <div className="Stats">
                   <div>
                     <div className="Rank">
                       <div className="Position">
-                        <div>{"Rank #42"}</div>
+                        <div>Rank #{profile?.rank ?? 0}</div>
                       </div>
-                      <div className="Ratio">
-                        <div>W 0 / L 16</div>
+                      <div style={{paddingRight: "4px"}} className="Ratio">
+                        <div>W {profile?.win_count ?? 0} / L {profile?.loose_count ?? 0}</div>
                       </div>
+                      <Button
+                          icon="Plus"
+                          color="pink"
+                          style={{display: "flex"}}
+                        />
                     </div>
                   </div>
                 </div>
                 <div className="Achievements">
-                  <div>Achievements lvl. 0</div>
+                  <div style={{paddingRight: "4px"}}>Achievements lvl. {profile?.achievement_lvl}</div>
+                  <Button
+                          icon="Plus"
+                          color="pink"
+                          style={{display: "flex"}}
+                        />
                 </div>
-              </div>
-              
-              <div className="Buttons">
+                <div className="Buttons">
               <Button
                   content="friends list"
                   color="purple"
@@ -63,6 +91,9 @@ export function Profile({ dispatch }: ProfileProps) {
                 />
               </div>
             </div>
+              </div>
+              
+              
             
             <div className="Body">
               <div className="History">

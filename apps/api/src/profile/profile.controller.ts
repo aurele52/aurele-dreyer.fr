@@ -6,7 +6,7 @@ export class ProfileController {
     constructor(private readonly profileService: ProfileService) {}
 
     @Get('/user/:id')
-    async findChannel(@Param('id') id: number) {
+    async findProfile(@Param('id') id: number) {
         return this.profileService.profile(id);
     }
 }

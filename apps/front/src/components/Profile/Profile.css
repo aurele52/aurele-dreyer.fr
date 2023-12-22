@@ -135,7 +135,7 @@
     letter-spacing: 0.07px;
 }
 
-.Header > .Buttons {
+.Header > .Text > .Buttons {
     display: flex;
     min-width: 115px;
     padding: 0px 5px;

@@ -14,4 +14,9 @@ export class AppController {
   root() {
     return { message: 'Hiiiii' };
   }
+
+  @Get('/id')
+  getId() {
+    return 1;
+  }
 }
