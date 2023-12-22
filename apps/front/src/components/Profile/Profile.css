@@ -11,7 +11,7 @@
     background: var(--Purple-100, #F5F1FC);
 }
 
-.Header {
+.Profile > .Header {
     display: flex;
     padding: 5px;
     align-items: center;
@@ -21,14 +21,14 @@
     flex-wrap: wrap;
 }
 
-.Header > .Avatar {
+.Profile > .Header > .Avatar {
     display: flex;
     padding: 10px;
     flex-direction: column;
     align-items: flex-start;
 }
 
-.Header > .Avatar > .Frame {
+.Profile > .Header > .Avatar > .Frame {
     width: 64px;
     height: 64px;
     border-radius: var(--radius-radius-rounded, 8px);
@@ -36,7 +36,7 @@
     background: var(--colors-grey-grey-400, #888);
 }
 
-.Header > .Text {
+.Profile > .Header > .Text {
     display: flex;
     min-width: 240px;
     flex-direction: column;
@@ -46,7 +46,7 @@
     flex: 1 0 0;
 }
 
-.Header > .Text > .Name {
+.Profile > .Header > .Text > .Name {
     align-self: stretch;
     color: var(--Base-Black, #000);
     /* Heading/600 */
@@ -57,35 +57,35 @@
     line-height: 24px; /* 100% */
 }
 
-.Header > .Text > .Stats {
+.Profile > .Header > .Text > .Stats {
     display: flex;
     align-items: center;
     gap: 2px;
     align-self: stretch;
 }
 
-.Header > .Text > .Stats > div {
+.Profile > .Header > .Text > .Stats > div {
     display: flex;
     align-items: center;
     gap: 2px;
     align-self: stretch;
 }
 
-.Header > .Text > .Stats > div > .Rank {
+.Profile > .Header > .Text > .Stats > div > .Rank {
     display: flex;
     align-items: center;
     gap: 2px;
     flex: 1 0 0;
 }
 
-.Header > .Text > .Stats > div > .Rank > .Position {
+.Profile > .Header > .Text > .Stats > div > .Rank > .Position {
     display: flex;
     width: 84px;
     align-items: center;
     gap: 3px;
 }
 
-.Header > .Text > .Stats > div > .Rank > .Position > div {
+.Profile > .Header > .Text > .Stats > div > .Rank > .Position > div {
     display: inline-block;
     color: var(--Base-Black, #000);
 
@@ -98,13 +98,13 @@
 }
 
 
-.Header > .Text > .Stats > div > .Rank > .Ratio {
+.Profile > .Header > .Text > .Stats > div > .Rank > .Ratio {
     display: flex;
     align-items: center;
     gap: 2px;
 }
 
-.Header > .Text > .Stats > div > .Rank > .Ratio > div {
+.Profile > .Header > .Text > .Stats > div > .Rank > .Ratio > div {
     color: var(--Base-Black, #000);
 
     /* Text/400/Regular */
@@ -116,14 +116,14 @@
     letter-spacing: 0.07px;
 }
 
-.Header > .Text > .Achievements {
+.Profile > .Header > .Text > .Achievements {
     display: flex;
     align-items: center;
     gap: 3px;
     align-self: stretch;
 }
 
-.Header > .Text > .Achievements > div {
+.Profile > .Header > .Text > .Achievements > div {
     color: var(--Base-Black, #000);
 
     /* Text/400/Regular */
@@ -135,7 +135,7 @@
     letter-spacing: 0.07px;
 }
 
-.Header > .Text > .Buttons {
+.Profile > .Header > .Text > .Buttons {
     display: flex;
     min-width: 115px;
     padding: 0px 5px;
@@ -147,7 +147,7 @@
     flex-wrap: wrap;
 }
 
-.Body {
+.Profile > .Body {
     display: flex;
     align-items: flex-start;
     flex: 1 0 0;
@@ -160,15 +160,127 @@
     background: var(--Purple-300, #BBA0E9);
 }
 
-.Body > .History {
+.Profile > .Body > .Historic {
     display: flex;
     flex-direction: column;
     align-items: flex-start;
     flex: 1 0 0;
     align-self: stretch;
+
 }
 
-.Footer {
+.Profile > .Body > .Historic > .List {
+    display: flex;
+    padding: 5px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 5px;
+    flex: 1 0 0;
+    align-self: stretch;
+}
+
+.Match {
+    display: flex;
+    min-width: 260px;
+    padding: 10px;
+    align-items: center;
+    gap: 10px;
+    align-self: stretch;
+    border-radius: var(--radius-radius-rounded, 8px);
+    border: 1px solid var(--Base-Black, #000);
+    background: var(--Purple-100, #F5F1FC);
+}
+
+.Match > .WinPlayer {
+    border-radius: var(--radius-radius-rounded, 8px);
+    border: 1px solid var(--Base-Black, #000);
+    background: var(--Turquoise-Gradient-200, linear-gradient(180deg, #9BE9E0 66.15%, #61CEC5 86.98%));
+}
+
+.Match > .LoosePlayer {
+    border-radius: var(--radius-radius-rounded, 8px);
+    border: 1px solid var(--Base-Black, #000);
+    background: var(--Pink-Gradient-200, linear-gradient(180deg, #FFCBE7 75.69%, #FAAAD7 91.84%));
+}
+
+.Match > .Player {
+    display: flex;
+    min-width: 80px;
+    min-height: 93px;
+    align-items: center;
+    flex: 1 0 0;
+    
+}
+
+.Match > .Player > div {
+    display: flex;
+    min-width: 68px; 
+    min-height: 83px;
+    padding: 5px;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    align-content: space-between;
+    flex: 1 0 0;
+    border-radius: var(--radius-radius-rounded, 8px);
+    border-top: 2px solid var(--Base-White, #FFF);
+    border-right: 1px solid var(--Base-White, #FFF);
+    border-left: 1px solid var(--Base-White, #FFF);
+}
+
+.Match > .Player > div > .Outline {
+    display: flex;
+    padding: 5px;
+    justify-content: center;
+    align-items: center;
+}
+
+.Match > .Player > div > .Outline > .Avatar{
+    display: flex;
+    padding: 5px;
+    flex-direction: column;
+    align-items: flex-start;
+}
+
+.Match > .Player > div > .Outline >.Avatar > .Picture {
+    width: 48px;
+    height: 48px;
+    border-radius: var(--radius-radius-rounded, 8px);
+    border: 5px solid var(--colors-grey-white, #FFF);
+    background: var(--colors-grey-grey-400, #888);
+}
+
+.Match > .Player > div > .Username {
+    display: flex;
+    padding: 0px 1px;
+    justify-content: center;
+    align-items: center;
+    gap: 5px;
+    align-self: stretch;
+}
+
+.Match > .Score {
+    display: flex;
+    min-width: 60px;
+    justify-content: center;
+    align-items: center;
+}
+
+.Match > .Score > div {
+    flex: 1 0 0;
+    color: var(--Base-White, #FFF);
+    text-align: center;
+    
+    /* Heading/600 */
+    font-family: Chakra Petch;
+    font-size: 24px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 24px; /* 100% */
+    -webkit-text-stroke: 1px #000;
+}
+
+.Profile > .Footer {
     display: flex;
     padding: 5px 20px 5px 10px;
     align-items: center;
@@ -176,4 +288,20 @@
     gap: 15px;
     align-self: stretch;
     flex-wrap: wrap;
+}
+
+.CrownLeft {
+    display: flex;
+    align-items: flex-start;
+    gap: 10px;
+    position: absolute;
+    left: -3px;
+    top: -6px;
+}
+
+.CrownLeft > div {
+    width: 24px;
+    height: 20px;
+    transform: rotate(-25deg);
+    background: url("../../../public/crown.png"), lightgray -5.034px -8.481px / 133.333% 160% no-repeat;
 }

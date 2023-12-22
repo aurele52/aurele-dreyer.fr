@@ -3,6 +3,7 @@ import './Profile.css';
 import { connect, ConnectedProps } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
+import List from '../List/List';
 
 
 interface ProfileProps extends ReduxProps {}
@@ -33,12 +34,14 @@ export function Profile({ dispatch }: ProfileProps) {
     id: number;
     player1: string;
     player2: string;
+    player1_avatar: string;
+    player2_avatar: string;
     score1: number;
     score2: number;
 
-  }
+  }[]
   >({
-    queryKey: ["user"],
+    queryKey: ["historic"],
     queryFn: async ()=> {
       return axios.get("/api/profile/historic/1").then((response) => response.data);
     }
@@ -96,8 +99,45 @@ export function Profile({ dispatch }: ProfileProps) {
               
             
             <div className="Body">
-              <div className="History">
-                {/* TO FILL */}
+              <div className="Historic">
+                <List>
+                  {historic?.map((match) => {
+                    return (
+                      <div className='Match'>
+                        <div className={`Player ${match.score1 > match.score2 ? 'WinPlayer' : 'LoosePlayer'}`}>
+                          <div>
+                            <div className='Outline'>
+                              <div className='Avatar'>
+                                <img src={match?.player1_avatar} className="Picture" alt={match?.player1.toLowerCase()} />
+                              </div>
+                            </div>
+                            <div className='Username'>
+                              {match?.player1}
+                            </div>
+                          </div>
+                        </div>
+                        <div className='Score'>
+                          <div>
+                            {match?.score1 + " - " + match?.score2}
+                          </div>
+                          
+                        </div>
+                        <div className={`Player ${match.score1 < match.score2 ? 'WinPlayer' : 'LoosePlayer'}`}>
+                          <div>
+                            <div className='Outline'>
+                              <div className='Avatar'>
+                                <img src={match?.player2_avatar} className="Picture" alt={match?.player2.toLowerCase()} />
+                              </div>
+                              <div className='Crown'><div></div></div>
+                            </div>
+                            <div className='Username'>
+                              {match?.player2}
+                            </div>
+                          </div>
+                        </div>
+                      </div>
+                  )})}
+                </List>
               </div>
             </div>
             

@@ -9,4 +9,9 @@ export class ProfileController {
     async findProfile(@Param('id') id: number) {
         return this.profileService.profile(id);
     }
+
+    @Get('/historic/:id')
+    async getHistoric(@Param('id') id: number) {
+        return this.profileService.historic(id);
+    }
 }

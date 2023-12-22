@@ -56,4 +56,58 @@ export class ProfileService {
 
         return res;
     }
+
+    async historic(id: number) {
+    
+        const matches = await this.prisma.matchPlayer.findMany({
+            where: {
+                user_id: id,
+            },
+            include: {
+                match: {
+                    include: {
+                        players: {
+                            include: {
+                                user: true,
+                            },
+                        },
+                    },
+                },
+            },
+            orderBy: {
+                match: {
+                    updated_at: 'desc',
+                },
+            },
+        });
+    
+        console.log('Matches:', matches);
+    
+        const matchHistory = matches.map((matchPlayer) => {
+            const match = matchPlayer.match;
+
+            const user1 = match.players[0].user.id === id ? match.players[0].user : match.players[1].user ;
+            const user2 = match.players[0].user.id === id ? match.players[1].user : match.players[0].user ;
+          
+            const player1 = user1.username;
+            const player2 = user2.username;
+          
+            const player1_avatar = user1.avatar_url;
+            const player2_avatar = user2.avatar_url;
+            const score1 = match.players[0].score;
+            const score2 = match.players[1].score;
+    
+            return {
+                id: match.id,
+                player1: player1,
+                player2: player2,
+                player1_avatar: player1_avatar,
+                player2_avatar: player2_avatar,
+                score1: score1,
+                score2: score2,
+            };
+        });
+        return matchHistory;
+    }
+    
 }
