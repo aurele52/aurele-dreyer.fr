@@ -53,23 +53,43 @@ export function Window({
       });
       rndRef.current?.updateSize({
         height: state.height,
-        width: "",
+        width: state.width,
       });
     }
   };
 
   const handleReduce = () => {
-    setState({
-      ...state,
-      isReduced: !state.isReduced,
-      clickStartTime: 0,
-      windowResizeLock: !state.isReduced,
-      windowMoveLock: false,
+    console.log(state.isReduced);
+    if (state.isReduced)
+    {
+      console.log("Unreduce");
+      setState({
+        ...state,
+        isReduced: false,
+        clickStartTime: 0,
+        windowMoveLock: false,
+        windowResizeLock: false,
+      });
+      rndRef.current?.updateSize({
+        height: state.height,
+        width: state.width,
+      });
+    }
+    else
+    {
+      console.log("Reduce");
+      setState({
+        ...state,
+        isReduced: !state.isReduced,
+        clickStartTime: 0,
+        windowResizeLock: !state.isReduced,
+        windowMoveLock: false,
     });
     rndRef.current?.updateSize({
-      height: "100",
-      width: "",
+        height: "100",
+        width: state.width,
     });
+  }
   };
 
   const handleEnlarge = () => {
