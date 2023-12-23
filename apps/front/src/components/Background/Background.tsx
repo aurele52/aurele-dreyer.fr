@@ -10,6 +10,7 @@ import Profile from "../Profile/Profile";
 import FindChan from "../FindChan/FindChan";
 import NewChan from "../NewChan/NewChan";
 import AboutChan from "../AboutChan/AboutChan";
+import Achievements from "../Achievements/Achievements";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -36,6 +37,7 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "FINDCHAN" && <FindChan />}
               {window.content.type === "NEWCHAN" && <NewChan />}
               {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || -1} />}
+              {window.content.type === "ACHIEVEMENTS" && <Achievements />}
             </Window>
           );
         })}

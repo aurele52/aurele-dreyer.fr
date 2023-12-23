@@ -1,3 +1,17 @@
+.loadingSpinner {
+    animation: spin 1s linear infinite;
+  }
+  
+  @keyframes spin {
+    from {
+      transform: rotate(0deg);
+    }
+    to {
+      transform: rotate(360deg);
+    }
+  }
+  
+
 .Profile {
     display: flex;
     min-height: 100px;
@@ -116,22 +130,22 @@
     letter-spacing: 0.07px;
 }
 
-.Profile > .Header > .Text > .Achievements {
+.Profile > .Header > .Text > .ProfileAchievements {
     display: flex;
     align-items: center;
     gap: 3px;
     align-self: stretch;
 }
 
-.Profile > .Header > .Text > .Achievements > div {
+.Profile > .Header > .Text > .ProfileAchievements > div {
     color: var(--Base-Black, #000);
 
     /* Text/400/Regular */
     font-family: Chakra Petch;
-    font-size: 14px;
+    font-size: 16px;
     font-style: normal;
     font-weight: 400;
-    line-height: 14px; /* 100% */
+    line-height: 16px; /* 100% */
     letter-spacing: 0.07px;
 }
 

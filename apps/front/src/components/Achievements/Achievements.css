@@ -1,0 +1,67 @@
+.Achievements {
+    display: flex;
+    justify-content: center;
+    align-items: flex-start;
+    flex: 1 0 0;
+    align-self: stretch;
+}
+
+.Achievement {
+    display: flex;
+    min-width: 240px;
+    flex-direction: column;
+    align-items: flex-start;
+    align-self: stretch;
+    border-radius: var(--radius-radius-rounded, 8px);
+    border: 1px solid var(--Base-Black, #000);
+    background: var(--Purple-Gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
+}
+
+.Achievement > div {
+    display: flex;
+    padding: 7px 10px;
+    flex-direction: column;
+    align-items: flex-start;
+    gap: 3px;
+    align-self: stretch;
+    border-radius: var(--radius-radius-rounded, 8px);
+    border-top: 2px solid var(--Base-White, #FFF);
+    border-right: 1px solid var(--Base-White, #FFF);
+    border-left: 1px solid var(--Base-White, #FFF);
+}
+
+.Achievement > div > .Name {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    align-self: stretch;
+    overflow: hidden;
+    color: var(--Turquoise-400, #0BA);
+    text-overflow: ellipsis;
+    
+    /* Heading/400 */
+    font-family: Chakra Petch;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 700;
+    line-height: 14px; /* 100% */
+    letter-spacing: 0.07px;
+}
+
+.Achievement > div > .Description {
+    display: -webkit-box;
+    -webkit-box-orient: vertical;
+    -webkit-line-clamp: 1;
+    align-self: stretch;
+    overflow: hidden;
+    color: var(--Base-Black, #000);
+    text-overflow: ellipsis;
+    
+    /* Text/400/Regular */
+    font-family: Chakra Petch;
+    font-size: 14px;
+    font-style: normal;
+    font-weight: 400;
+    line-height: 14px; /* 100% */
+    letter-spacing: 0.07px;
+}

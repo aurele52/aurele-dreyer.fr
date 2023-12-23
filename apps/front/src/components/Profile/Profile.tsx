@@ -4,14 +4,48 @@ import { connect, ConnectedProps } from 'react-redux';
 import { useQuery } from '@tanstack/react-query';
 import axios from 'axios';
 import List from '../List/List';
+import { HBButton, WinColor } from "../../utils/WindowTypes";
+import { addWindow } from "../../reducers";
+import { FaSpinner } from 'react-icons/fa';
 
 
-interface ProfileProps extends ReduxProps {}
+interface ProfileProps extends ReduxProps {
+  targetId?: number;
+}
 
-export function Profile({ dispatch }: ProfileProps) {
-  const apiUrl = "/api/profile";
+export function Profile({ dispatch, targetId }: ProfileProps) {
 
-  const { data: profile } = useQuery<
+  const { data: userId, isLoading: userIdLoading, error: userIdError } = useQuery<number>({
+    queryKey: ['userId'],
+    queryFn: async () => {
+      if (targetId !== undefined) {
+        return targetId;
+      }
+      try {
+        const response = await axios.get('/api/id');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+        throw error;
+      }
+    },
+  });
+
+
+  const { data: currentUserId, isLoading: currentUserIdLoading, error: currentUserIdError } = useQuery<number>({
+    queryKey: ['currentUserId'],
+    queryFn: async () => {
+      try {
+        const response = await axios.get('/api/id');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+        throw error;
+      }
+    },
+  });
+
+  const { data: profile, isLoading: profileLoading, error: profileError } = useQuery<
   {
     id: number;
     username: string;
@@ -25,11 +59,18 @@ export function Profile({ dispatch }: ProfileProps) {
   >({
     queryKey: ["user"],
     queryFn: async ()=> {
-      return axios.get("/api/profile/user/1").then((response) => response.data);
-    }
+      try{
+        const response = await axios.get(`/api/profile/user/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching user:', error);
+        throw error;
+      }
+    },
+    enabled: !!userId,
   })
 
-  const { data: historic } = useQuery<
+  const { data: historic, isLoading: historicLoading, error: historicError } = useQuery<
   {
     id: number;
     player1: string;
@@ -43,9 +84,99 @@ export function Profile({ dispatch }: ProfileProps) {
   >({
     queryKey: ["historic"],
     queryFn: async ()=> {
-      return axios.get("/api/profile/historic/1").then((response) => response.data);
-    }
+      try{
+        const response = await axios.get(`/api/profile/historic/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching historic:', error);
+        throw error;
+      }
+    },
+    enabled: !!userId,
   })
+
+  if (historicLoading || profileLoading || userIdLoading || currentUserIdLoading) {
+    return (
+      <div className="Ladder">
+        <FaSpinner className="loadingSpinner" />
+      </div>
+    )
+  }
+
+  if (userIdError) {
+    return <div>Error loading users: {userIdError.message}</div>;
+  }
+
+  if (profileError) {
+    return <div>Error loading users: {profileError.message}</div>;
+  }
+
+  if (historicError) {
+    return <div>Error loading users: {historicError.message}</div>;
+  }
+
+  if (currentUserIdError) {
+    return <div>Error loading users: {currentUserIdError.message}</div>;
+  }
+
+
+  const handleOpenLadder = () => {
+    const newWindow = {
+      WindowName: "Ladder",
+      width: "400",
+      height: "600",
+      id: 0,
+      content: { type: "LADDER" },
+      toggle: false,
+      modal: true,
+      handleBarButton: 7,
+      color: WinColor.LILAC,
+      targetId: userId,
+    };
+    dispatch(addWindow(newWindow));
+  };
+
+  const handleOpenAchievements = () => {
+    const newWindow = {
+      WindowName: "Achievements",
+      width: "400",
+      height: "600",
+      id: 0,
+      content: { type: "ACHIEVEMENTS" },
+      toggle: false,
+      modal: true,
+      handleBarButton: HBButton.Close,
+      color: WinColor.LILAC,
+      targetId: userId,
+    };
+    dispatch(addWindow(newWindow));
+  };
+
+  const buttons = (
+    <div className="Buttons">
+              <Button
+                  content={userId === currentUserId ? "friends list" : "add friend"}
+                  color="purple"
+                  style={{display: "flex"}}
+                />
+                <Button
+                  content={userId === currentUserId ? "blocked list" : "block"}
+                  color="purple"
+                  style={{display: "flex"}}
+                />
+              </div>
+  );
+
+  const footer = (
+    <div className="Footer">
+      <Button
+        content="delete account"
+        color="red"
+        style={{display: "flex"}}
+      />
+    </div>
+  )
+
   return (
     <div className="Profile">
             <div className="Header">
@@ -69,30 +200,21 @@ export function Profile({ dispatch }: ProfileProps) {
                           icon="Plus"
                           color="pink"
                           style={{display: "flex"}}
+                          onClick={handleOpenLadder}
                         />
                     </div>
                   </div>
                 </div>
-                <div className="Achievements">
+                <div className="ProfileAchievements">
                   <div style={{paddingRight: "4px"}}>Achievements lvl. {profile?.achievement_lvl}</div>
                   <Button
                           icon="Plus"
                           color="pink"
                           style={{display: "flex"}}
+                          onClick={handleOpenAchievements}
                         />
                 </div>
-                <div className="Buttons">
-              <Button
-                  content="friends list"
-                  color="purple"
-                  style={{display: "flex"}}
-                />
-                <Button
-                  content="blocked list"
-                  color="purple"
-                  style={{display: "flex"}}
-                />
-              </div>
+                {buttons}
             </div>
               </div>
               
@@ -103,7 +225,7 @@ export function Profile({ dispatch }: ProfileProps) {
                 <List>
                   {historic?.map((match) => {
                     return (
-                      <div className='Match'>
+                      <div className='Match' key={match.id}>
                         <div className={`Player ${match.score1 > match.score2 ? 'WinPlayer' : 'LoosePlayer'}`}>
                           <div>
                             <div className='Outline'>
@@ -140,14 +262,7 @@ export function Profile({ dispatch }: ProfileProps) {
                 </List>
               </div>
             </div>
-            
-            <div className="Footer">
-              <Button
-                content="delete account"
-                color="red"
-                style={{display: "flex"}}
-              />
-            </div>
+            {footer}
     </div>
   )
 }

@@ -6,9 +6,14 @@ export class ProfileController {
     constructor(private readonly profileService: ProfileService) {}
 
     @Get('/user/:id')
-    async findProfile(@Param('id') id: number) {
-        return this.profileService.profile(id);
-    }
+    async getProfile(@Param('id') id: string) {
+        const userId = parseInt(id, 10);
+        if (!userId)
+            return null;
+        const userProfile = await this.profileService.profile(userId);
+        
+        return userProfile;
+      }
 
     @Get('/historic/:id')
     async getHistoric(@Param('id') id: number) {

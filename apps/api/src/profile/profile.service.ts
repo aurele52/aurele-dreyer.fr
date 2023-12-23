@@ -81,8 +81,6 @@ export class ProfileService {
             },
         });
     
-        console.log('Matches:', matches);
-    
         const matchHistory = matches.map((matchPlayer) => {
             const match = matchPlayer.match;
 
