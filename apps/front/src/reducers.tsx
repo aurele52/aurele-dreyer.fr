@@ -26,7 +26,10 @@ const initialState: AppState = {
   id: 10,
 };
 
-function windowExists(windows: WindowData[], type: string) {
+function windowExists(windows: WindowData[], type: string, name: string) {
+  if (type === 'PROFILE') {
+    return windows.some(window => window.WindowName === name)
+  }
   return windows.some(window => window.content.type === type);
 }
 
@@ -35,11 +38,12 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'NEWCHAN', 'SELFPROFILE', 'ABOUTCHAN', 'ACHIEVEMENTS'];
+      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'NEWCHAN', 'PROFILE', 'ABOUTCHAN', 'ACHIEVEMENTS'];
 
       if (restrictedTypes.includes(action.payload.content.type) &&
-          windowExists(state.windows, action.payload.content.type)) {
-          const windowIndex = state.windows.findIndex(window => window.content.type === action.payload.content.type);
+          windowExists(state.windows, action.payload.content.type, action.payload.WindowName)) {
+          const windowIndex = state.windows.findIndex(window => window.content.type === action.payload.content.type
+            && window.WindowName === action.payload.WindowName);
           if (state.windows[windowIndex].toggle) {
             state.windows.splice(windowIndex, 1);
           }

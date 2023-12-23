@@ -57,7 +57,7 @@ export function Navbar({ dispatch }: NavbarProps) {
       width: "500",
       height: "500",
       id: 0,
-      content: { type: "SELFPROFILE" },
+      content: { type: "PROFILE" },
       toggle: true,
       modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
