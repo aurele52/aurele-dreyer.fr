@@ -11,6 +11,7 @@ import { UserChannelModule } from './user-channel/user-channel.module';
 import { ProfileModule } from './profile/profile.module';
 import { LadderModule } from './ladder/ladder.module';
 import { AchievementsModule } from './achievements/achievements.module';
+import { FriendslistModule } from './friendslist/friendslist.module';
 
 @Module({
   imports: [
@@ -24,6 +25,7 @@ import { AchievementsModule } from './achievements/achievements.module';
     ProfileModule,
     LadderModule,
     AchievementsModule,
+    FriendslistModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],
