@@ -1,0 +1,23 @@
+.AboutChan {
+  display: flex;
+  flex-direction: column;
+  overflow-x: auto;
+  gap: 10px;
+}
+
+.chanDescription {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  width: 60%;
+}
+
+.headerAboutChan {
+  display: flex;
+}
+
+.joinBtn {
+  display: flex;
+  justify-content: center;
+  flex-grow: 1;
+}
