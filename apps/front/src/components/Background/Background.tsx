@@ -34,10 +34,10 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "PLAY" && <Play />}
               {window.content.type === "LADDER" && <Ladder />}
               {window.content.type === "CHAT" && <Chat />}
-              {window.content.type === "PROFILE" && <Profile />}
+              {window.content.type === "PROFILE" && <Profile id={window.id} targetId={window.content.id || undefined} />}
               {window.content.type === "FINDCHAN" && <FindChan />}
               {window.content.type === "NEWCHAN" && <NewChan />}
-              {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || -1} />}
+              {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || undefined} />}
               {window.content.type === "ACHIEVEMENTS" && <Achievements />}
               {window.content.type === "FRIENDSLIST" && <FriendsList />}
             </Window>

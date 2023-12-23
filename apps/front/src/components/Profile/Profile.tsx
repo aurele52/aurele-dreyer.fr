@@ -11,12 +11,13 @@ import { FaSpinner } from 'react-icons/fa';
 
 interface ProfileProps extends ReduxProps {
   targetId?: number;
+  id: number
 }
 
-export function Profile({ dispatch, targetId }: ProfileProps) {
+export function Profile({ dispatch, id, targetId }: ProfileProps) {
 
   const { data: userId, isLoading: userIdLoading, error: userIdError } = useQuery<number>({
-    queryKey: ['userId'],
+    queryKey: ['userId', id],
     queryFn: async () => {
       if (targetId !== undefined) {
         return targetId;
@@ -33,7 +34,7 @@ export function Profile({ dispatch, targetId }: ProfileProps) {
 
 
   const { data: currentUserId, isLoading: currentUserIdLoading, error: currentUserIdError } = useQuery<number>({
-    queryKey: ['currentUserId'],
+    queryKey: ['currentUserId', userId],
     queryFn: async () => {
       try {
         const response = await axios.get('/api/id');
@@ -57,7 +58,7 @@ export function Profile({ dispatch, targetId }: ProfileProps) {
 
   }
   >({
-    queryKey: ["user"],
+    queryKey: ["user", userId],
     queryFn: async ()=> {
       try{
         const response = await axios.get(`/api/profile/user/${userId}`);
@@ -82,7 +83,7 @@ export function Profile({ dispatch, targetId }: ProfileProps) {
 
   }[]
   >({
-    queryKey: ["historic"],
+    queryKey: ["historic", userId],
     queryFn: async ()=> {
       try{
         const response = await axios.get(`/api/profile/historic/${userId}`);
