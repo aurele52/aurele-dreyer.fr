@@ -11,13 +11,13 @@ import { FaSpinner } from 'react-icons/fa';
 
 interface ProfileProps extends ReduxProps {
   targetId?: number;
-  id: number
+  winId: number
 }
 
-export function Profile({ dispatch, id, targetId }: ProfileProps) {
+export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 
   const { data: userId, isLoading: userIdLoading, error: userIdError } = useQuery<number>({
-    queryKey: ['userId', id],
+    queryKey: ['userId', winId],
     queryFn: async () => {
       if (targetId !== undefined) {
         return targetId;

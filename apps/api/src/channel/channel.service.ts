@@ -39,12 +39,6 @@ export class ChannelService {
       ...el,
       interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
         ?.User,
-      /*
-      image: el.userChannels.find((uc) => uc.User?.id !== currUserId)?.User
-        .avatar_url,
-      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
-        ?.User.username,
-        */
     }));
   }
 
@@ -82,5 +76,19 @@ export class ChannelService {
         },
       },
     });
+  }
+
+  async isUserMember(channelId: number, userId: number) {
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelId,
+        userChannels: {
+          some: {
+            user_id: userId,
+          },
+        },
+      },
+    });
+    return channel !== null;
   }
 }

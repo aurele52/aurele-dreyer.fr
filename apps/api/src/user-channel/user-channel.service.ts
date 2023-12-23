@@ -29,4 +29,12 @@ export class UserChannelService {
     });
     return createUserChannel;
   }
+
+  async deleteUserChannel(id: number) {
+    return await this.prisma.userChannel.delete({
+      where: {
+        id,
+      },
+    });
+  }
 }
