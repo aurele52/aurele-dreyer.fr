@@ -11,6 +11,7 @@ interface WindowData {
   modal: boolean;
   handleBarButton: number;
   color: WinColor;
+  targetId?: number;
 }
 
 export interface AppState<T = WindowData> {
@@ -34,7 +35,7 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN', 'ABOUTCHAN'];
+      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN', 'ABOUTCHAN', 'ACHIEVEMENTS'];
 
       if (restrictedTypes.includes(action.payload.content.type) &&
           windowExists(state.windows, action.payload.content.type)) {
