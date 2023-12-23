@@ -124,13 +124,13 @@ async function createUserAchievements() {
 
   const userAchievements = [];
 
-  const achievements = ['WINS10PLUS', 'POINTS100PLUS', 'WINSINLESSTHAN1M'];
+  const achievements = ['WELCOME', 'TASTEOFV', 'WINS10PLUS', 'WIN10RAW', 'NEMESIS', 'FIRST', 'POINTS100PLUS', 'WINSINLESSTHAN1M', 'ENDLESSSTAMINA'];
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
     const userAchievement = {
       user_id:
         userPool[faker.number.int({ min: 0, max: userPool.length - 1 })].id,
-      achievement: achievements[faker.number.int({ min: 0, max: 2 })],
+      achievement: achievements[faker.number.int({ min: 0, max: 8 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -146,7 +146,7 @@ async function createUserAchievements() {
 
 async function createMatches() {
   const userPool = await prisma.user.findMany();
-  const amountOfChannels = 15;
+  const amountOfChannels = 500;
   const idPairs: [number, number][] = [];
 
   for (let i = 0; i < amountOfChannels; i++) {

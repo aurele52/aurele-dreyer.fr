@@ -24,7 +24,6 @@ export function Window({
   height,
   id,
   children,
-  //modal,
   handleBarButton,
   color,
 }: WindowProps) {
@@ -108,7 +107,6 @@ export function Window({
         y: state.posY,
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [state.windowMoveLock]);
 
   const handleClose = () => {
