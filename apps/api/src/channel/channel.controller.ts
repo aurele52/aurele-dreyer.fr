@@ -47,4 +47,9 @@ export class ChannelController {
   async findChannel(@Param('id') id: number) {
     return this.channelService.channel(id);
   }
+
+  @Get('/channel/:id/me')
+  async isCurrentUserMember(@Param('id') id: number, @CurrentUser() user) {
+    return this.channelService.isUserMember(id, user.id);
+  }
 }

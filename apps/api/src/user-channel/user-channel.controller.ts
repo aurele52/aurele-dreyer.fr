@@ -1,4 +1,4 @@
-import { Body, Controller, Post } from '@nestjs/common';
+import { Body, Controller, Delete, Param, Post } from '@nestjs/common';
 import { UserChannelService } from './user-channel.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UserChannelRoles } from './roles/user-channel.roles';
@@ -15,5 +15,10 @@ export class UserChannelController {
       role: UserChannelRoles.MEMBER,
     });
     return userChannel;
+  }
+
+  @Delete('/user-channel/:id')
+  async delete(@Param('id') id: number) {
+    return await this.userChannelService.deleteUserChannel(id);
   }
 }
