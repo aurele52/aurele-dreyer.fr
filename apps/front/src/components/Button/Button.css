@@ -68,9 +68,24 @@
   background: var(--Pink-400, #F06E8D); 
 }
 
+.blue.Button {
+  background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
+}
+
+.blue.Button:hover {
+  background: linear-gradient(120deg, #3071D2 46.53%, #09E1C7 79.49%);
+}
+
+.blue.button > .ButtonInner:hover {
+  border-top: 1px solid linear-gradient(120deg, #3071D2 46.53%, #09E1C7 79.49%);
+  border-right: 1px solid linear-gradient(120deg, #3071D2 46.53%, #09E1C7 79.49%);
+  border-left: 1px solid linear-gradient(120deg, #3071D2 46.53%, #09E1C7 79.49%);
+}
+
 .pink,
 .purple,
-.red {
+.red,
+.blue {
   display: flex;
 }
 
