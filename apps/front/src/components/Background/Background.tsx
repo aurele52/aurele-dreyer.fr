@@ -18,10 +18,10 @@ export function Background({ windows }: BackgroundProps) {
   return (
     <div id="Background">
       {Array.isArray(windows) &&
-        windows.map((window, index) => {
+        windows.map((window) => {
           return (
             <Window
-              key={index}
+              key={window.id}
               WindowName={window.WindowName}
               width={window.width}
               height={window.height}
