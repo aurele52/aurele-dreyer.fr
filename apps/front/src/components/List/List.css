@@ -10,6 +10,7 @@
   border-right: 2px solid var(--purple-100, #F5F1FC);
   border-bottom: 1px solid var(--purple-100, #F5F1FC);
   border-left: 2px solid var(--purple-100, #F5F1FC);
+  min-height: 60px;
 }
 
 .List.dark-list {

@@ -32,7 +32,14 @@
   border-radius: 5px;
   object-fit: contain;
   width: auto;
+}
+
+.avatar.insideCard {
   height: 65%;
+}
+
+.avatar.outsideCard {
+  height: 48px;
 }
 
 .avatar-chan {

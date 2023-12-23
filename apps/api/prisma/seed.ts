@@ -171,12 +171,12 @@ async function createMatches() {
               {
                 user_id: userA.id,
                 score: faker.number.int({ min: 0, max: 11 }),
-                winner: faker.number.int() % 2 === 0,
+                winner: faker.datatype.boolean(),
               },
               {
                 user_id: userB.id,
                 score: faker.number.int({ min: 0, max: 11 }),
-                winner: faker.number.int() % 2 === 0,
+                winner: faker.datatype.boolean(),
               },
             ],
           },
