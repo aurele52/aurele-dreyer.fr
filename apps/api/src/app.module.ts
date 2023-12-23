@@ -10,6 +10,7 @@ import { PrismaService } from './prisma.service';
 import { UserChannelModule } from './user-channel/user-channel.module';
 import { ProfileModule } from './profile/profile.module';
 import { LadderModule } from './ladder/ladder.module';
+import { AchievementsModule } from './achievements/achievements.module';
 
 @Module({
   imports: [
@@ -22,6 +23,7 @@ import { LadderModule } from './ladder/ladder.module';
     UserChannelModule,
     ProfileModule,
     LadderModule,
+    AchievementsModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

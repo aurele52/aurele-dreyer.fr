@@ -1,12 +1,19 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
-import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class LadderService {
+    private ladder: {
+        id: number;
+        username: string;
+        avatar_url: string;
+        win_count: number;
+        rank: number;
+    }[] = [];
+
     constructor(private readonly prisma: PrismaService) {}
 
-    async listLadder() {
+    private async generateLadder() {
         const users = await this.prisma.user.findMany();
 
         const winCounts = await Promise.all(
@@ -41,6 +48,18 @@ export class LadderService {
         return ladder;
     }
 
+    async updateLadder() {
+        this.ladder = await this.generateLadder();
+    }
+
+    async listLadder() {
+        if (this.ladder.length === 0) {
+            await this.updateLadder();
+        }
+
+        return this.ladder;
+    }
+
     async getRank(id: number) {
         const ladder = await this.listLadder();
 
@@ -49,6 +68,7 @@ export class LadderService {
         if (!user) {
             throw new NotFoundException(`User with ID ${id} not found`);
         }
+
         return user.rank;
     }
 }
