@@ -34,7 +34,6 @@ export function Navbar({ dispatch }: NavbarProps) {
       color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
-    console.log("Handle Ladder");
   };
 
   const handleChat = () => {

@@ -10,18 +10,17 @@ import { HBButton, WinColor } from "../../utils/WindowTypes";
 
 interface ChatProps extends ReduxProps {}
 
+type ChatType = {
+  id: number;
+  name: string;
+  type: string;
+  interlocutor: {avatar_url: string, username: string, id: number};
+}
+
 export function Chat({ dispatch }: ChatProps) {
   const apiUrl = "/api/chats";
 
-  const { data: chats } = useQuery<
-    {
-      id: number;
-      name: string;
-      type: string;
-      image: string;
-      interlocutor: string;
-    }[]
-  >({
+  const { data: chats } = useQuery<ChatType[]>({
     queryKey: ["chats"],
     queryFn: async () => {
       return axios.get(apiUrl).then((response) => response.data);
@@ -58,22 +57,43 @@ export function Chat({ dispatch }: ChatProps) {
     dispatch(addWindow(newWindow));
   };
 
-  const handleAbout = (isDm: boolean, chatId: number, chatName: string) => {
+  const detailsWindow = (isDm: boolean, id: number, name: string) => {
+    let newWindow;
     if (!isDm) {
-      const newWindow = {
-        WindowName: "About " + chatName,
+      newWindow = {
+        WindowName: "About " + name,
         width: "453",
         height: "527",
         id: 0,
-        content: { type: "ABOUTCHAN", id: chatId },
+        content: { type: "ABOUTCHAN", id: id },
         toggle: false,
         modal: false,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };
-      dispatch(addWindow(newWindow));
+    } else {
+      newWindow = {
+        WindowName: name,
+        width: "500",
+        height: "500",
+        id: 0,
+        content: { type: "PROFILE", id: id },
+        toggle: false,
+        modal: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
     }
+    dispatch(addWindow(newWindow));
   };
+
+  const handleDetails = (chat: ChatType) => {
+    if (chat.type === 'DM') {
+      detailsWindow(true, chat.interlocutor.id, chat.interlocutor.username);
+    } else {
+      detailsWindow(false, chat.id, chat.name);
+    }
+  }
 
   return (
     <div className="Chat">
@@ -86,13 +106,13 @@ export function Chat({ dispatch }: ChatProps) {
                 color="pink"
                 title="About"
                 onClick={() =>
-                  handleAbout(chat.type === "DM", chat.id, chat.name)
+                  handleDetails(chat)
                 }
               />
               <Channel
-                name={chat.type === "DM" ? chat.interlocutor : chat.name}
+                name={chat.type === "DM" ? chat.interlocutor.username : chat.name}
                 className={chat.type === "DM" ? chat.type.toLowerCase() : ""}
-                image={chat.type === "DM" ? chat.image : undefined}
+                image={chat.type === "DM" ? chat.interlocutor.avatar_url : undefined}
                 clickable={true}
               />
             </div>

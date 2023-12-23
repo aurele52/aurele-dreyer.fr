@@ -37,10 +37,14 @@ export class ChannelService {
       })
     ).map((el) => ({
       ...el,
+      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
+        ?.User,
+      /*
       image: el.userChannels.find((uc) => uc.User?.id !== currUserId)?.User
         .avatar_url,
       interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
         ?.User.username,
+        */
     }));
   }
 

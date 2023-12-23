@@ -1,11 +1,147 @@
 import './Ladder.css';
+import { connect, ConnectedProps } from 'react-redux';
+import { useQuery } from '@tanstack/react-query';
+import axios from 'axios';
+import List from '../List/List';
+import { FaSpinner } from 'react-icons/fa'; 
 
-function Ladder() {
-  return (
-    <div className="Ladder">
-            
-    </div>
-  )
+interface LadderProps extends ReduxProps {
+  targetId?: number;
 }
 
-export default Ladder;
+export function Ladder({ dispatch, targetId }: LadderProps) {
+
+  const { data: userId, isLoading: userIdLoading, error: userIdError } = useQuery<number>({
+    queryKey: ['userId'],
+    queryFn: async () => {
+      if (targetId !== undefined) {
+        return targetId;
+      }
+  
+      try {
+        const response = await axios.get('/api/id');
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching userId:', error);
+        throw error;
+      }
+    },
+  });
+  
+  const { data: users, isLoading: usersLoading, error: usersError } = useQuery<
+    {
+      id: number,
+      username: string,
+      avatar_url: string,
+      win_count: number,
+      rank: number
+    }[]
+  >({
+    queryKey: ['users'],
+    queryFn: async () => {
+      return axios.get('/api/ladder/list').then((response) => response.data);
+    },
+  });
+  
+  const { data: userRank, isLoading: userRankLoading, error: userRankError } = useQuery<number>({
+    queryKey: ['userRank', userId],
+    queryFn: async () => {
+      try {
+        const response = await axios.get(`/api/ladder/rank/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error('Error fetching userRank:', error);
+        throw error;
+      }
+    },
+    enabled: !!userId,
+  });
+  
+  const { data: user } = useQuery<
+    {
+      id: number;
+      username: string;
+      avatar_url: string;
+      win_count: number;
+    }
+  >({
+    queryKey: ['user'],
+    queryFn: async () => {
+      return axios.get(`/api/profile/user/${userId}`).then((response) => response.data);
+    },
+    enabled: !!userId,
+  });
+
+  if (usersLoading || userRankLoading || userIdLoading) {
+    return (
+      <div className="Ladder">
+        <FaSpinner className="loadingSpinner" />
+      </div>
+    )
+  }
+
+  if (usersError) {
+    return <div>Error loading users: {usersError.message}</div>;
+  }
+
+  if (userRankError) {
+    return <div>Error fetching userRank: {userRankError.message}</div>;
+  }
+
+  if (userIdError) {
+    return <div>Error loading user: {userIdError.message}</div>;
+  }
+
+  return (
+    <div className="Ladder">
+      <List>
+        {users?.map((user) => {
+          const isSelfUser = user.id === userId;
+          const divClass = isSelfUser ? 'SelfUser' : 'OtherUser';
+          return (
+            <div className={`User ${divClass}`} key={user.id}>
+              <div className='Rank'>
+                <div>#{user?.rank ?? 0}</div>
+              </div>
+              <div className='Avatar'>
+                <img src={user?.avatar_url} className="Frame" alt={user?.username.toLowerCase()} />
+              </div>
+              <div className='PlayerName'>
+                <div>{user.username}</div>
+              </div>
+              <div className='Stat'>
+                <div>{user?.win_count ?? 0} win</div>
+              </div>
+            </div>
+          );
+        })}
+      </List>
+      {userRank && userRank > 30 && (
+        <div className='SelfRank'>
+          <div className='User SelfUser' key={user?.id}>
+            <div className='Rank'>
+              <div>#{userRank ?? 0}</div>
+            </div>
+            <div className='Avatar'>
+              <img src={user?.avatar_url} className="Frame" alt={user?.username.toLowerCase()} />
+            </div>
+            <div className='PlayerName'>
+              <div>{user?.username}</div>
+            </div>
+            <div className='Stat'>
+              <div>{user?.win_count ?? 0} win</div>
+            </div>
+          </div>
+        </div>
+      )}
+    </div>
+  );
+}
+
+const mapDispatchToProps = null;
+
+const connector = connect(mapDispatchToProps);
+type ReduxProps = ConnectedProps<typeof connector>;
+
+const ConnectedLadder = connector(Ladder);
+export default ConnectedLadder;

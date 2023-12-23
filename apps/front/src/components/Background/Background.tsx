@@ -10,6 +10,8 @@ import Profile from "../Profile/Profile";
 import FindChan from "../FindChan/FindChan";
 import NewChan from "../NewChan/NewChan";
 import AboutChan from "../AboutChan/AboutChan";
+import Achievements from "../Achievements/Achievements";
+import FriendsList from "../FriendsList/FriendsList";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -17,10 +19,10 @@ export function Background({ windows }: BackgroundProps) {
   return (
     <div id="Background">
       {Array.isArray(windows) &&
-        windows.map((window, index) => {
+        windows.map((window) => {
           return (
             <Window
-              key={index}
+              key={window.id}
               WindowName={window.WindowName}
               width={window.width}
               height={window.height}
@@ -32,10 +34,12 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "PLAY" && <Play />}
               {window.content.type === "LADDER" && <Ladder />}
               {window.content.type === "CHAT" && <Chat />}
-              {window.content.type === "PROFILE" && <Profile />}
+              {window.content.type === "PROFILE" && <Profile id={window.id} targetId={window.content.id || undefined} />}
               {window.content.type === "FINDCHAN" && <FindChan />}
               {window.content.type === "NEWCHAN" && <NewChan />}
-              {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || -1} />}
+              {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || undefined} />}
+              {window.content.type === "ACHIEVEMENTS" && <Achievements />}
+              {window.content.type === "FRIENDSLIST" && <FriendsList />}
             </Window>
           );
         })}
