@@ -38,8 +38,7 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'NEWCHAN', 'PROFILE', 'ABOUTCHAN', 'ACHIEVEMENTS'];
-
+      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN', 'ABOUTCHAN', 'ACHIEVEMENTS', 'FRIENDSLIST'];
       if (restrictedTypes.includes(action.payload.content.type) &&
           windowExists(state.windows, action.payload.content.type, action.payload.WindowName)) {
           const windowIndex = state.windows.findIndex(window => window.content.type === action.payload.content.type

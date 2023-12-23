@@ -153,12 +153,29 @@ export function Profile({ dispatch, id, targetId }: ProfileProps) {
     dispatch(addWindow(newWindow));
   };
 
+  const handleOpenFriendsList = () => {
+    const newWindow = {
+      WindowName: "Friends List",
+      width: "400",
+      height: "600",
+      id: 0,
+      content: { type: "FRIENDSLIST" },
+      toggle: false,
+      modal: true,
+      handleBarButton: HBButton.Close,
+      color: WinColor.PURPLE,
+      targetId: userId,
+    };
+    dispatch(addWindow(newWindow));
+  };
+
   const buttons = (
     <div className="Buttons">
               <Button
                   content={userId === currentUserId ? "friends list" : "add friend"}
                   color="purple"
                   style={{display: "flex"}}
+                  onClick={handleOpenFriendsList}
                 />
                 <Button
                   content={userId === currentUserId ? "blocked list" : "block"}

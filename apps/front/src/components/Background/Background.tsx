@@ -11,6 +11,7 @@ import FindChan from "../FindChan/FindChan";
 import NewChan from "../NewChan/NewChan";
 import AboutChan from "../AboutChan/AboutChan";
 import Achievements from "../Achievements/Achievements";
+import FriendsList from "../FriendsList/FriendsList";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -38,6 +39,7 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "NEWCHAN" && <NewChan />}
               {window.content.type === "ABOUTCHAN" && <AboutChan chanId={window.content.id || undefined} />}
               {window.content.type === "ACHIEVEMENTS" && <Achievements />}
+              {window.content.type === "FRIENDSLIST" && <FriendsList />}
             </Window>
           );
         })}
