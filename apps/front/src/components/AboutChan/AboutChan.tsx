@@ -7,7 +7,7 @@ import Button from "../Button/Button";
 import Channel from "../Channel/Channel";
 
 interface AboutChanProps {
-  chanId: number;
+  chanId: number | undefined;
 }
 
 type ChannelData = {
