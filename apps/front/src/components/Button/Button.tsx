@@ -374,6 +374,68 @@ const Icons = {
       <rect x="10" y="1" width="2" height="2" fill="white" />
     </svg>
   ),
+  Cross: (
+    <svg
+      xmlns="http://www.w3.org/2000/svg"
+      width="18"
+      height="18"
+      viewBox="0 0 18 18"
+      fill="none"
+    >
+      <g clip-path="url(#clip0_389_7902)">
+        <rect width="2" height="2" fill="white" />
+        <rect y="2" width="2" height="2" fill="white" />
+        <rect x="2" width="2" height="2" fill="white" />
+        <rect x="2" y="4" width="2" height="2" fill="white" />
+        <rect x="4" y="2" width="2" height="2" fill="white" />
+        <rect x="4" y="6" width="2" height="2" fill="white" />
+        <rect x="6" y="4" width="2" height="2" fill="white" />
+        <rect x="2" y="2" width="2" height="2" fill="white" />
+        <rect x="4" y="4" width="2" height="2" fill="white" />
+        <rect x="6" y="6" width="2" height="2" fill="white" />
+        <rect x="8" y="6" width="2" height="2" fill="white" />
+        <rect x="10" y="4" width="2" height="2" fill="white" />
+        <rect x="12" y="2" width="2" height="2" fill="white" />
+        <rect x="14" width="2" height="2" fill="white" />
+        <rect x="8" y="8" width="2" height="2" fill="white" />
+        <rect x="10" y="6" width="2" height="2" fill="white" />
+        <rect x="10" y="8" width="2" height="2" fill="white" />
+        <rect x="10" y="10" width="2" height="2" fill="white" />
+        <rect x="12" y="10" width="2" height="2" fill="white" />
+        <rect x="12" y="12" width="2" height="2" fill="white" />
+        <rect x="10" y="12" width="2" height="2" fill="white" />
+        <rect x="14" y="12" width="2" height="2" fill="white" />
+        <rect x="12" y="4" width="2" height="2" fill="white" />
+        <rect x="12" y="6" width="2" height="2" fill="white" />
+        <rect x="14" y="2" width="2" height="2" fill="white" />
+        <rect x="14" y="4" width="2" height="2" fill="white" />
+        <rect x="16" width="2" height="2" fill="white" />
+        <rect x="16" y="2" width="2" height="2" fill="white" />
+        <rect x="6" y="10" width="2" height="2" fill="white" />
+        <rect x="6" y="8" width="2" height="2" fill="white" />
+        <rect x="6" y="12" width="2" height="2" fill="white" />
+        <rect x="4" y="12" width="2" height="2" fill="white" />
+        <rect x="4" y="10" width="2" height="2" fill="white" />
+        <rect x="4" y="14" width="2" height="2" fill="white" />
+        <rect x="2" y="14" width="2" height="2" fill="white" />
+        <rect x="2" y="12" width="2" height="2" fill="white" />
+        <rect x="2" y="16" width="2" height="2" fill="white" />
+        <rect y="16" width="2" height="2" fill="white" />
+        <rect y="14" width="2" height="2" fill="white" />
+        <rect x="8" y="10" width="2" height="2" fill="white" />
+        <rect x="14" y="14" width="2" height="2" fill="white" />
+        <rect x="12" y="14" width="2" height="2" fill="white" />
+        <rect x="16" y="14" width="2" height="2" fill="white" />
+        <rect x="16" y="16" width="2" height="2" fill="white" />
+        <rect x="14" y="16" width="2" height="2" fill="white" />
+      </g>
+      <defs>
+        <clipPath id="clip0_389_7902">
+          <rect width="18" height="18" fill="white" />
+        </clipPath>
+      </defs>
+    </svg>
+  ),
 };
 
 type ButtonProps = {

@@ -33,7 +33,7 @@ type FriendShipData = {
   id: number;
   user1_id: number;
   user2_id: number;
-  status: "FRIEND" | "BLOCKED" | "PENDING";
+  status: "FRIENDS" | "BLOCKED" | "PENDING";
 };
 
 function AboutChan({ chanId, dispatch }: AboutChanProps) {
@@ -128,7 +128,12 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       const friendship = friendships?.find(
         (f) => f.user1_id === id || f.user2_id === id
       );
-      return friendship === undefined ? "EmptyHeart" : "Heart";
+      if (friendship === undefined)
+        return "EmptyHeart";
+      if (friendship.status === "FRIENDS")
+        return "Heart";
+      if (friendship.status === "PENDING")
+        return "Cross";
     }
     return "EmptyHeart";
   };
