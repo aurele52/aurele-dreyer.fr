@@ -107,17 +107,15 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 									<img
 										className="Frame"
 										src={friend?.avatar_url}
+										onClick={() =>
+											handleOpenProfile(
+												friend.userid,
+												friend.username
+											)
+										}
 									></img>
 								</div>
-								<div
-									className="User"
-									onClick={() =>
-										handleOpenProfile(
-											friend.userid,
-											friend.username
-										)
-									}
-								>
+								<div className="User">
 									<div className="Frame">
 										<div className="Player">
 											<div className="Name">
