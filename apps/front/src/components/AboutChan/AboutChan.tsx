@@ -33,6 +33,7 @@ type FriendShipData = {
   id: number;
   user1_id: number;
   user2_id: number;
+  status: "FRIEND" | "BLOCKED" | "PENDING";
 };
 
 function AboutChan({ chanId, dispatch }: AboutChanProps) {
@@ -64,10 +65,7 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
   const { data: friendships } = useQuery<FriendShipData[]>({
     queryKey: ["friendships", chanId],
     queryFn: async () => {
-      return axios.get("/api/friendships").then((response) => {
-        console.log("API response data:", response);
-        return response.data;
-      });
+      return axios.get("/api/friendships").then((response) => response.data);
     },
   });
 

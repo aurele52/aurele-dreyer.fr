@@ -13,6 +13,7 @@ async function createUsers() {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
+      token: faker.number.int().toString(),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -120,7 +121,7 @@ async function createMessages() {
 async function createUserAchievements() {
   const userPool = await prisma.user.findMany();
 
-  const amountOfUserAchievements = 100;
+  const amountOfUserAchievements = 50;
 
   const userAchievements = [];
 
@@ -136,16 +137,27 @@ async function createUserAchievements() {
     'ENDLESSSTAMINA',
   ];
 
+  const addedAchievements = new Set();
+
   for (let i = 0; i < amountOfUserAchievements; i++) {
+    let user = userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    let achievement;
+
+    while (!achievement || addedAchievements.has(`${user.id}_${achievement}`)) {
+      achievement = achievements[faker.number.int({ min: 0, max: 8 })];
+      user = userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    }
+
     const userAchievement = {
-      user_id:
-        userPool[faker.number.int({ min: 0, max: userPool.length - 1 })].id,
-      achievement: achievements[faker.number.int({ min: 0, max: 8 })],
+      user_id: user.id,
+      achievement: achievement,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
 
     userAchievements.push(userAchievement);
+
+    addedAchievements.add(`${user.id}_${achievement}`);
   }
 
   const addUserAchievements = async () =>
@@ -200,6 +212,7 @@ async function createFirendships() {
   const amountOfFriendships = 200;
   const userPool = await prisma.user.findMany();
   const friendships = [];
+  const status = ['FRIENDS', 'PENDING', 'BLOCKED'];
 
   for (let i = 0; i < amountOfFriendships; i++) {
     const userA =
@@ -209,6 +222,7 @@ async function createFirendships() {
     const friendship = {
       user1_id: userA.id,
       user2_id: userB.id,
+      status: status[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
