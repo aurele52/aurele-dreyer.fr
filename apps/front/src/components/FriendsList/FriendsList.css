@@ -98,15 +98,6 @@
 	background: var(--colors-grey-grey-400, #888);
 }
 
-.FriendsListUser > .Avatar > .Frame:hover {
-	width: 48px;
-	height: 48px;
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 5px solid var(--colors-grey-white, #faaad7);
-	background: var(--colors-grey-grey-400, #888);
-	cursor: pointer;
-}
-
 .FriendsListUser > .User {
 	display: flex;
 	min-width: 101px;
