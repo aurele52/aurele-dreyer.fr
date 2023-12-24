@@ -1,19 +1,13 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Controller, Get } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
-import { CreateFriendshipDto } from './dto/create-friendship.dto';
-import { Friendship } from './interfaces/friendship.interface';
+import { CurrentUser } from 'src/decorators/user.decorator';
 
-@Controller('Database/friendship')
+@Controller()
 export class FriendshipController {
-    constructor(private friendshipService: FriendshipService){}
+  constructor(private readonly friendshipService: FriendshipService) {}
 
-    @Post()
-    async create(@Body() createFriendshipDto: CreateFriendshipDto) {
-        this.friendshipService.create(createFriendshipDto);
-    }
-
-    @Get()
-    async finAll(): Promise<Friendship[]> {
-        return this.friendshipService.findAll();
-    }
+  @Get('/friendships')
+  async getCurrUserFriendships(@CurrentUser() currUser) {
+    return await this.friendshipService.userFriendships(currUser.id);
+  }
 }

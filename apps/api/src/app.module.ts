@@ -12,6 +12,7 @@ import { ProfileModule } from './profile/profile.module';
 import { LadderModule } from './ladder/ladder.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { FriendslistModule } from './friendslist/friendslist.module';
+import { FriendshipModule } from './friendship/friendship.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { FriendslistModule } from './friendslist/friendslist.module';
     LadderModule,
     AchievementsModule,
     FriendslistModule,
+    FriendshipModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -35,7 +35,6 @@ function NewChan() {
     e.preventDefault();
     const target = e.target as HTMLFormElement;
     const formData = Object.fromEntries(new FormData(target));
-    console.log(formData);
     await createChannel(formData);
   };
 
