@@ -137,16 +137,25 @@ async function createUserAchievements() {
     'ENDLESSSTAMINA',
   ];
 
-  for (let i = 0; i < amountOfUserAchievements; i++) {
-    const userAchievement = {
-      user_id:
-        userPool[faker.number.int({ min: 0, max: userPool.length - 1 })].id,
-      achievement: achievements[faker.number.int({ min: 0, max: 8 })],
-      created_at: faker.date.past(),
-      updated_at: faker.date.recent(),
-    };
+  const addedAchievements = new Set();
 
-    userAchievements.push(userAchievement);
+  for (let i = 0; i < amountOfUserAchievements; i++) {
+    const user =
+      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    const achievement = achievements[faker.number.int({ min: 0, max: 8 })];
+
+    if (!addedAchievements.has(`${user.id}_${achievement}`)) {
+      const userAchievement = {
+        user_id: user.id,
+        achievement: achievement,
+        created_at: faker.date.past(),
+        updated_at: faker.date.recent(),
+      };
+
+      userAchievements.push(userAchievement);
+
+      addedAchievements.add(`${user.id}_${achievement}`);
+    }
   }
 
   const addUserAchievements = async () =>

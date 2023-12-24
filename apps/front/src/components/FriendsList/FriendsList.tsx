@@ -37,6 +37,10 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			userid: number;
 			username: string;
 			avatar_url: string;
+			frienship: {
+				status: string;
+				sender_id: number;
+			};
 			online: boolean;
 		}[]
 	>({
@@ -103,16 +107,20 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 					{friendsList?.map((friend, index) => {
 						return (
 							<div className="FriendsListUser" key={index}>
+								<Button
+									icon="TripleDot"
+									color="pink"
+									onClick={() =>
+										handleOpenProfile(
+											friend.userid,
+											friend.username
+										)
+									}
+								/>
 								<div className="Avatar">
 									<img
 										className="Frame"
 										src={friend?.avatar_url}
-										onClick={() =>
-											handleOpenProfile(
-												friend.userid,
-												friend.username
-											)
-										}
 									></img>
 								</div>
 								<div className="User">
