@@ -44,7 +44,8 @@ model User {
   id               Int               @id @default(autoincrement())
   username         String            @unique
   avatar_url       String
-  auth42_id        String
+  auth42_id        String            @unique
+  token            String            @unique
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   userChannels     UserChannel[]
@@ -52,6 +53,11 @@ model User {
   achievement      UserAchievement[]
   friendship_user1 Friendship[]      @relation("user1_friendship")
   friendship_user2 Friendship[]      @relation("user2_friendship")
+  sent_requests    FriendRequest[]   @relation("sent_requests")
+  received_requests FriendRequest[]  @relation("received_requests")
+  blocked_list     Blocklist[]       @relation("block")
+  blocked_by       Blocklist[]       @relation("blocked")
+
 }
 
 model Message {
@@ -93,17 +99,42 @@ model UserAchievement {
   created_at  DateTime    @default(now())
   updated_at  DateTime    @updatedAt
   user        User        @relation(fields: [user_id], references: [id])
+
+  @@unique([achievement, user_id])
 }
 
 model Friendship {
   id         Int      @id @default(autoincrement())
   user1_id   Int
   user2_id   Int
-  blocked_by Int      @default(0)
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   user1      User     @relation("user1_friendship", fields: [user1_id], references: [id])
   user2      User     @relation("user2_friendship", fields: [user2_id], references: [id])
+}
+
+model FriendRequest {
+  id             Int      @id @default(autoincrement())
+  sender_id      Int
+  receiver_id    Int
+  created_at     DateTime @default(now())
+  updated_at     DateTime @updatedAt
+  sender         User     @relation("sent_requests", fields: [sender_id], references: [id])
+  receiver       User     @relation("received_requests", fields: [receiver_id], references: [id])
+
+  @@unique([sender_id, receiver_id])
+}
+
+model Blocklist {
+  id         Int      @id @default(autoincrement())
+  user_id    Int
+  blocked_id Int
+  created_at DateTime @default(now())
+  updated_at DateTime @updatedAt
+  user       User     @relation("block", fields: [user_id], references: [id])
+  blocked    User     @relation("blocked", fields: [blocked_id], references: [id])
+
+  @@unique([user_id, blocked_id])
 }
 
 enum ChanType {
