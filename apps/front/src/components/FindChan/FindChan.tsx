@@ -4,8 +4,13 @@ import axios from "axios";
 import List from "../List/List";
 import Channel from "../Channel/Channel";
 import Button from "../Button/Button";
+import { HBButton, WinColor } from "../../utils/WindowTypes";
+import { addWindow } from "../../reducers";
+import { connect, ConnectedProps } from "react-redux";
 
-function FindChan() {
+interface FindChanProps extends ReduxProps {}
+
+function FindChan({dispatch}: FindChanProps) {
   const queryClient = useQueryClient();
 
   const { data: channels } = useQuery<
@@ -35,6 +40,22 @@ function FindChan() {
     await createUserChannel({ channelId });
   };
 
+  const handleDetailsChan = (name: string, id: number) => {
+    const newWindow = {
+        WindowName: "About" + name,
+        width: "453",
+        height: "527",
+        id: 0,
+        content: { type: "ABOUTCHAN", id: id },
+        toggle: false,
+        modal: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
+    dispatch(addWindow(newWindow));
+
+  }
+
   return (
     <div className="FindChan">
       <List dark={false}>
@@ -43,7 +64,7 @@ function FindChan() {
             <div key={channel.id}>
               <Channel name={channel.name} clickable={false}>
                 <div className="ButtonFindChan">
-                  <Button icon="TripleDot" color="pink" />
+                  <Button icon="TripleDot" color="pink" onClick={() => handleDetailsChan(channel.name, channel.id)} />
                   <Button
                     icon="Plus"
                     color="pink"
@@ -61,4 +82,10 @@ function FindChan() {
   );
 }
 
-export default FindChan;
+const mapDispatchToProps = null;
+
+const connector = connect(mapDispatchToProps);
+type ReduxProps = ConnectedProps<typeof connector>;
+
+const ConnectedFindChat = connector(FindChan);
+export default ConnectedFindChat;

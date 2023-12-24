@@ -6,7 +6,7 @@ interface WindowData {
   width: string;
   height: string;
   id: number;
-  content: { type: string, id?: number};
+  content: { type: string; id?: number };
   toggle: boolean;
   modal: boolean;
   handleBarButton: number;
@@ -27,10 +27,10 @@ const initialState: AppState = {
 };
 
 function windowExists(windows: WindowData[], type: string, name: string) {
-  if (type === 'PROFILE') {
-    return windows.some(window => window.WindowName === name)
+  if (type === "PROFILE" || type === "ABOUTCHAN") {
+    return windows.some((window) => window.WindowName === name);
   }
-  return windows.some(window => window.content.type === type);
+  return windows.some((window) => window.content.type === type);
 }
 
 const windowsSlice = createSlice({
@@ -38,15 +38,34 @@ const windowsSlice = createSlice({
   initialState,
   reducers: {
     addWindow: (state, action: PayloadAction<WindowData>) => {
-      const restrictedTypes = ['CHAT', 'FINDCHAN', 'LADDER', 'PROFILE', 'NEWCHAN', 'ABOUTCHAN', 'ACHIEVEMENTS', 'FRIENDSLIST'];
-      if (restrictedTypes.includes(action.payload.content.type) &&
-          windowExists(state.windows, action.payload.content.type, action.payload.WindowName)) {
-          const windowIndex = state.windows.findIndex(window => window.content.type === action.payload.content.type
-            && window.WindowName === action.payload.WindowName);
-          if (state.windows[windowIndex].toggle) {
-            state.windows.splice(windowIndex, 1);
-          }
-          return;
+      const restrictedTypes = [
+        "CHAT",
+        "FINDCHAN",
+        "LADDER",
+        "NEWCHAN",
+        "PROFILE",
+        "ABOUTCHAN",
+        "ACHIEVEMENTS",
+        "ABOUTCHAN",
+      ];
+
+      if (
+        restrictedTypes.includes(action.payload.content.type) &&
+        windowExists(
+          state.windows,
+          action.payload.content.type,
+          action.payload.WindowName
+        )
+      ) {
+        const windowIndex = state.windows.findIndex(
+          (window) =>
+            window.content.type === action.payload.content.type &&
+            window.WindowName === action.payload.WindowName
+        );
+        if (state.windows[windowIndex].toggle) {
+          state.windows.splice(windowIndex, 1);
+        }
+        return;
       }
       const res = action.payload;
       res.id = state.id;
