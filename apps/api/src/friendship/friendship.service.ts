@@ -1,15 +1,15 @@
 import { Injectable } from '@nestjs/common';
-import { Friendship } from './interfaces/friendship.interface';
+import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class FriendshipService {
-    private readonly friendships: Friendship[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-    create(friendship: Friendship) {
-        this.friendships.push(friendship);
-    }
-
-    findAll(): Friendship[] {
-        return this.friendships;
-    }
+  async userFriendships(id: number) {
+    return await this.prisma.friendship.findMany({
+      where: {
+        OR: [{ user1_id: id }, { user2_id: id }],
+      },
+    });
+  }
 }

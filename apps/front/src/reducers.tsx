@@ -27,10 +27,10 @@ const initialState: AppState = {
 };
 
 function windowExists(windows: WindowData[], type: string, name: string) {
-  if (type === "PROFILE" || type === "ABOUTCHAN") {
-    return windows.some((window) => window.WindowName === name);
-  }
-  return windows.some((window) => window.content.type === type);
+  return (
+    windows.some((window) => window.content.type === type) &&
+    windows.some((window) => window.WindowName === name)
+  );
 }
 
 const windowsSlice = createSlice({

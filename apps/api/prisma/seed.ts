@@ -124,7 +124,17 @@ async function createUserAchievements() {
 
   const userAchievements = [];
 
-  const achievements = ['WELCOME', 'TASTEOFV', 'WINS10PLUS', 'WIN10RAW', 'NEMESIS', 'FIRST', 'POINTS100PLUS', 'WINSINLESSTHAN1M', 'ENDLESSSTAMINA'];
+  const achievements = [
+    'WELCOME',
+    'TASTEOFV',
+    'WINS10PLUS',
+    'WIN10RAW',
+    'NEMESIS',
+    'FIRST',
+    'POINTS100PLUS',
+    'WINSINLESSTHAN1M',
+    'ENDLESSSTAMINA',
+  ];
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
     const userAchievement = {

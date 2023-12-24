@@ -120,7 +120,7 @@ console.log(friendsList);
                                           color='pink'
                                         />
                                         <Button
-                                          icon='Hearth'
+                                          icon='Heart'
                                           color='pink'
                                         />
                                     </div>
