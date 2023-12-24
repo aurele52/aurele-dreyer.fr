@@ -13,6 +13,7 @@ async function createUsers() {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
+      token: faker.number.int().toString(),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
@@ -120,11 +121,21 @@ async function createMessages() {
 async function createUserAchievements() {
   const userPool = await prisma.user.findMany();
 
-  const amountOfUserAchievements = 100;
+  const amountOfUserAchievements = 50;
 
   const userAchievements = [];
 
-  const achievements = ['WELCOME', 'TASTEOFV', 'WINS10PLUS', 'WIN10RAW', 'NEMESIS', 'FIRST', 'POINTS100PLUS', 'WINSINLESSTHAN1M', 'ENDLESSSTAMINA'];
+  const achievements = [
+    'WELCOME',
+    'TASTEOFV',
+    'WINS10PLUS',
+    'WIN10RAW',
+    'NEMESIS',
+    'FIRST',
+    'POINTS100PLUS',
+    'WINSINLESSTHAN1M',
+    'ENDLESSSTAMINA',
+  ];
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
     const userAchievement = {
