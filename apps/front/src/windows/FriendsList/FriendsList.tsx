@@ -2,11 +2,11 @@ import "./FriendsList.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../List/List";
+import List from "../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../Button/Button";
+import Button from "../../shared/ui-components/Button/Button";
 import { addWindow } from "../../reducers";
-import { WinColor } from "../../utils/WindowTypes";
+import { WinColor } from "../../shared/utils/WindowTypes";
 
 interface FriendsListProps extends ReduxProps {}
 
@@ -37,10 +37,6 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			userid: number;
 			username: string;
 			avatar_url: string;
-			frienship: {
-				status: string;
-				sender_id: number;
-			};
 			online: boolean;
 		}[]
 	>({
@@ -145,7 +141,7 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 													color="pink"
 												/>
 												<Button
-													icon="Hearth"
+													icon="Heart"
 													color="pink"
 												/>
 											</div>
