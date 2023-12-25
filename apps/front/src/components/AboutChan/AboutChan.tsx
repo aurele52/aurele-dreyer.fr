@@ -29,6 +29,13 @@ type ChannelData = {
   }[];
 };
 
+type FriendShipData = {
+  id: number;
+  user1_id: number;
+  user2_id: number;
+  status: "FRIEND" | "BLOCKED" | "PENDING";
+};
+
 function AboutChan({ chanId, dispatch }: AboutChanProps) {
   const queryClient = useQueryClient();
 
@@ -52,6 +59,13 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
     queryKey: ["isMember", chanId],
     queryFn: async () => {
       return axios.get(chanApiUrl + "/me").then((response) => response.data);
+    },
+  });
+
+  const { data: friendships } = useQuery<FriendShipData[]>({
+    queryKey: ["friendships", chanId],
+    queryFn: async () => {
+      return axios.get("/api/friendships").then((response) => response.data);
     },
   });
 
@@ -87,33 +101,36 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       const userChannel = channel.userChannels.find(
         (uc) => uc.user_id === userId
       );
-      console.log(
-        "channel_id:",
-        channel.id,
-        "user_id",
-        userId,
-        "userChannel_id",
-        userChannel?.id
-      );
       if (userChannel) {
         deleteUserChannel(userChannel?.id);
       }
     }
   };
 
-  const handleProfile = (userId: number, username: string) => {
+  const handleProfile = (id: number, username: string) => {
+    const name = userId === id ? "Profile" : username;
     const newWindow = {
-      WindowName: username,
+      WindowName: name,
       width: "500",
       height: "500",
       id: 0,
-      content: { type: "PROFILE", id: userId },
+      content: { type: "PROFILE", id: id },
       toggle: false,
       modal: false,
       handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
       color: WinColor.PURPLE,
     };
     dispatch(addWindow(newWindow));
+  };
+
+  const isFriend = (id: number) => {
+    if (friendships) {
+      const friendship = friendships?.find(
+        (f) => f.user1_id === id || f.user2_id === id
+      );
+      return friendship === undefined ? "EmptyHeart" : "Heart";
+    }
+    return "EmptyHeart";
   };
 
   return (
@@ -152,7 +169,19 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
                 onClick={() => handleProfile(user.id, user.username)}
               />
               <img src={user.avatar_url} className="avatar outsideCard" />
-              <Channel name={user.username} className="dm" clickable={false} />
+              <Channel name={user.username} className="dm" clickable={false}>
+                {user.id !== userId ? (
+                  <div className="btnCardAboutChan">
+                    <Button content="Match!" color="blue" />
+                    <div className="btnIconAboutChan">
+                      <Button icon="Chat" color="pink" />
+                      <Button icon={isFriend(user.id)} color="pink" />
+                    </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+              </Channel>
             </div>
           );
         })}
@@ -179,4 +208,3 @@ type ReduxProps = ConnectedProps<typeof connector>;
 
 const ConnectedAboutChat = connector(AboutChan);
 export default ConnectedAboutChat;
-

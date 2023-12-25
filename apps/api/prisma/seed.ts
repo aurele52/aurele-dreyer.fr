@@ -140,22 +140,24 @@ async function createUserAchievements() {
   const addedAchievements = new Set();
 
   for (let i = 0; i < amountOfUserAchievements; i++) {
-    const user =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
-    const achievement = achievements[faker.number.int({ min: 0, max: 8 })];
+    let user = userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    let achievement;
 
-    if (!addedAchievements.has(`${user.id}_${achievement}`)) {
-      const userAchievement = {
-        user_id: user.id,
-        achievement: achievement,
-        created_at: faker.date.past(),
-        updated_at: faker.date.recent(),
-      };
-
-      userAchievements.push(userAchievement);
-
-      addedAchievements.add(`${user.id}_${achievement}`);
+    while (!achievement || addedAchievements.has(`${user.id}_${achievement}`)) {
+      achievement = achievements[faker.number.int({ min: 0, max: 8 })];
+      user = userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
     }
+
+    const userAchievement = {
+      user_id: user.id,
+      achievement: achievement,
+      created_at: faker.date.past(),
+      updated_at: faker.date.recent(),
+    };
+
+    userAchievements.push(userAchievement);
+
+    addedAchievements.add(`${user.id}_${achievement}`);
   }
 
   const addUserAchievements = async () =>
@@ -210,6 +212,7 @@ async function createFirendships() {
   const amountOfFriendships = 200;
   const userPool = await prisma.user.findMany();
   const friendships = [];
+  const status = ['FRIENDS', 'PENDING', 'BLOCKED'];
 
   for (let i = 0; i < amountOfFriendships; i++) {
     const userA =
@@ -219,6 +222,7 @@ async function createFirendships() {
     const friendship = {
       user1_id: userA.id,
       user2_id: userB.id,
+      status: status[faker.number.int({ min: 0, max: 2 })],
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };

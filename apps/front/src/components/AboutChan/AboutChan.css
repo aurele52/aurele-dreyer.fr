@@ -27,3 +27,13 @@
   justify-content: flex-start;
   padding: 0 10px;
 }
+
+.btnCardAboutChan {
+  display: flex;
+  gap: 10px;
+}
+
+.btnIconAboutChan {
+  display: flex;
+  gap: 4px;
+}
