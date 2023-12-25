@@ -1,6 +1,7 @@
 import { Controller, Get, Query, Redirect } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
+
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
@@ -24,6 +25,6 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    return this.authService.acceptUser(code, state);
+    return this.authService.signIn(code, state);
   }
 }
