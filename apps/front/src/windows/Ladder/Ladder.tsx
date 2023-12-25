@@ -2,10 +2,10 @@ import "./Ladder.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../List/List";
+import List from "../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import { addWindow } from "../../reducers";
-import { WinColor } from "../../utils/WindowTypes";
+import { WinColor } from "../../shared/utils/WindowTypes";
 
 interface LadderProps extends ReduxProps {
 	targetId?: number;

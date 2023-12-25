@@ -1,10 +1,10 @@
-import Button from "../Button/Button";
+import Button from "../../shared/ui-components/Button/Button";
 import "./Profile.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../List/List";
-import { HBButton, WinColor } from "../../utils/WindowTypes";
+import List from "../../shared/ui-components/List/List";
+import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 

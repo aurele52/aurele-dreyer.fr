@@ -2,7 +2,7 @@ import { ReactNode, useState, useRef, useEffect } from "react";
 import "./Window.css";
 import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
-import { delWindow } from "../../reducers";
+import { delWindow } from "../../../reducers";
 import Button from "../Button/Button";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
 
