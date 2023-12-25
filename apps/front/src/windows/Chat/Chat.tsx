@@ -2,7 +2,7 @@ import "./Chat.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import List from "../../shared/ui-components/List/List";
-import Channel from "../Channel/Channel";
+import Channel from "./Channel/Channel";
 import Button from "../../shared/ui-components/Button/Button";
 import { addWindow } from "../../reducers";
 import { connect, ConnectedProps } from "react-redux";

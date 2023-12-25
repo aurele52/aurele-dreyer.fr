@@ -1,11 +1,11 @@
 import "./FindChan.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../../shared/ui-components/List/List";
-import Channel from "../../windows/Channel/Channel";
-import Button from "../../shared/ui-components/Button/Button";
-import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import List from "../../../shared/ui-components/List/List";
+import Channel from "../Channel/Channel";
+import Button from "../../../shared/ui-components/Button/Button";
+import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
+import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
 
 interface FindChanProps extends ReduxProps {}
