@@ -1,12 +1,12 @@
 import axios from "axios";
 import "./AboutChan.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { capitalize } from "../../shared/utils/StringUtils";
-import List from "../../shared/ui-components/List/List";
-import Button from "../../shared/ui-components/Button/Button";
+import { capitalize } from "../../../shared/utils/StringUtils";
+import List from "../../../shared/ui-components/List/List";
+import Button from "../../../shared/ui-components/Button/Button";
 import Channel from "../Channel/Channel";
-import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
+import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
 
 interface AboutChanProps extends ReduxProps {
