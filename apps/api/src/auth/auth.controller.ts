@@ -1,6 +1,7 @@
-import { Controller, Get, Query, Redirect } from '@nestjs/common';
+import { Controller, Get, Query, Redirect, UseGuards } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
+import { Public } from './decorators/public.decorator';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
@@ -10,6 +11,7 @@ function generateRandomState(): string {
 export class AuthController {
   constructor(private readonly authService: AuthService) {}
 
+  @Public()
   @Get('/')
   @Redirect()
   redirectTo42Auth() {
@@ -20,6 +22,7 @@ export class AuthController {
     return { url: url_auth42 };
   }
 
+  @Public()
   @Redirect()
   @Get('/callback')
   async callbackFrom42Auth(
@@ -27,6 +30,6 @@ export class AuthController {
     @Query('state') state: string,
   ) {
     const token = await this.authService.signIn(code, state);
-    return {url: `http://localhost:5173/auth/redirect/${token.access_token}`}
+    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 }
