@@ -1,18 +1,15 @@
 import "./FriendsList.css";
-import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../shared/ui-components/Button/Button";
+import { Button } from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import { User } from "../../../shared/ui-components/User/User";
 import store from "../../../store";
 
-interface FriendsListProps {}
-
-export function FriendsList({}: FriendsListProps) {
+export function FriendsList() {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -54,27 +51,25 @@ export function FriendsList({}: FriendsListProps) {
 		enabled: !!userId,
 	});
 
-	if (friendsListLoading || userIdLoading) {
-		return (
-			<div className="FriendsList">
-				<FaSpinner className="loadingSpinner" />
-			</div>
-		);
-	}
+  if (friendsListLoading || userIdLoading) {
+    return (
+      <div className="FriendsList">
+        <FaSpinner className="loadingSpinner" />
+      </div>
+    );
+  }
 
-	if (friendsListError) {
-		return <div>Error loading users: {friendsListError.message}</div>;
-	}
+  if (friendsListError) {
+    return <div>Error loading users: {friendsListError.message}</div>;
+  }
 
-	if (userIdError) {
-		return <div>Error loading user: {userIdError.message}</div>;
-	}
+  if (userIdError) {
+    return <div>Error loading user: {userIdError.message}</div>;
+  }
 
 	const handleOpenProfile = (id: number, username: string) => {
 		const newWindow = {
 			WindowName: username,
-			width: "400",
-			height: "600",
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,

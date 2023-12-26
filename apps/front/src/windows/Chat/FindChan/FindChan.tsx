@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import Channel from "../../../shared/ui-components/Channel/Channel";
-import Button from "../../../shared/ui-components/Button/Button";
+import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";

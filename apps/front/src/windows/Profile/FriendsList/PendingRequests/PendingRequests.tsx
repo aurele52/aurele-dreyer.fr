@@ -3,12 +3,11 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../../shared/ui-components/Button/Button";
+import { Button } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
-interface PendingRequestsProps {}
 
-export function PendingRequests({}: PendingRequestsProps) {
+export function PendingRequests() {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -61,13 +60,9 @@ export function PendingRequests({}: PendingRequestsProps) {
 		return <FaSpinner className="loadingSpinner" />;
 	}
 
-	if (pendingRequestsError) {
-		return <div>Error loading users: {pendingRequestsError.message}</div>;
-	}
-
-	if (userIdError) {
-		return <div>Error loading user: {userIdError.message}</div>;
-	}
+  if (userIdError) {
+    return <div>Error loading user: {userIdError.message}</div>;
+  }
 
 	return (
 		<div className="PendingRequestsComponent">

@@ -3,14 +3,13 @@ import "./AboutChan.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
 import List from "../../../shared/ui-components/List/List";
-import Button from "../../../shared/ui-components/Button/Button";
+import { Button, HeartButton } from "../../../shared/ui-components/Button/Button";
 import Channel from "../../../shared/ui-components/Channel/Channel";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
-import { connect, ConnectedProps } from "react-redux";
-import { ModalType, addModal } from "../../../shared/utils/AddModal";
+import store from "../../../store";
 
-interface AboutChanProps extends ReduxProps {
+interface AboutChanProps {
   chanId: number | undefined;
 }
 
@@ -37,7 +36,7 @@ type FriendShipData = {
   status: "FRIENDS" | "BLOCKED" | "PENDING";
 };
 
-function AboutChan({ chanId, dispatch }: AboutChanProps) {
+function AboutChan({ chanId }: AboutChanProps) {
   const queryClient = useQueryClient();
 
   const chanApiUrl = "/channel/" + chanId;
@@ -120,19 +119,7 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
       color: WinColor.PURPLE,
     };
-    dispatch(addWindow(newWindow));
-  };
-
-  const isFriend = (id: number) => {
-    if (friendships) {
-      const friendship = friendships?.find(
-        (f) => f.user1_id === id || f.user2_id === id
-      );
-      if (friendship === undefined) return "EmptyHeart";
-      if (friendship.status === "FRIENDS") return "Heart";
-      if (friendship.status === "PENDING") return "PendingHeart";
-    }
-    return "EmptyHeart";
+    store.dispatch(addWindow(newWindow));
   };
 
   const isBlocked = (id: number) => {
@@ -143,25 +130,6 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       if (friendship && friendship.status === "BLOCKED") return true;
     }
     return false;
-  };
-
-  const isBlockedByMe = (id: number) => {
-    if (friendships) {
-      const friendship = friendships?.find((f) => f.user2_id === id);
-      if (friendship && friendship.status === "BLOCKED") return true;
-    }
-    return false;
-  };
-
-  const handleFriendshipBtn = (id: number, name: string) => {
-    const friendship = isFriend(id);
-
-    if (friendship === "Heart") {
-      addModal(
-        ModalType.WARNING,
-        `Are you sure you want to remove ${name} from your friends?`
-      );
-    }
   };
 
   return (
@@ -205,26 +173,13 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
                 className={`dm ${isBlocked(user.id) ? "blocked" : ""}`}
                 clickable={false}
               >
-                {user.id !== userId && !isBlocked(user.id) ? (
+                {user.id !== userId ? (
                   <div className="btnCardAboutChan">
                     <Button content="Match!" color="blue" />
                     <div className="btnIconAboutChan">
                       <Button icon="Chat" color="pink" />
-                      <Button
-                        icon={isFriend(user.id)}
-                        color="pink"
-                        onClick={() =>
-                          handleFriendshipBtn(user.id, user.username)
-                        }
-                      />
+                      <HeartButton userId={user.id} username={user.username}/>                    
                     </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                {isBlockedByMe(user.id) ? (
-                  <div className="btnIconAboutChan">
-                    <Button icon="Unblock" color="pink" />
                   </div>
                 ) : (
                   ""
@@ -249,10 +204,4 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
   );
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedAboutChat = connector(AboutChan);
-export default ConnectedAboutChat;
+export default AboutChan;

@@ -1,10 +1,9 @@
 import "./User.css";
 import "./ReducedUser.css";
-import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../shared/ui-components/Button/Button";
+import { Button } from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";

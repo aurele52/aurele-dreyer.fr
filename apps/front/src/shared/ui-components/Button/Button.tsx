@@ -1,7 +1,27 @@
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import "./Button.css";
-import { HTMLAttributes } from "react";
+import { HTMLAttributes, ReactElement, useEffect, useState } from "react";
+import api from "../../../axios";
+import { ModalType, addModal } from "../../utils/AddModal";
+import { HBButton, WinColor } from "../../utils/WindowTypes";
+import store from "../../../store";
+import { addWindow } from "../../../reducers";
 
-const Icons = {
+type IconKey =
+  | "TripleDot"
+  | "Reduce"
+  | "Enlarge"
+  | "Close"
+  | "Plus"
+  | "Lens"
+  | "Chat"
+  | "Heart"
+  | "EmptyHeart"
+  | "Cross"
+  | "PendingHeart"
+  | "Unblock";
+
+const Icons: { [key in IconKey]: ReactElement } = {
   TripleDot: (
     <svg
       width="18"
@@ -535,7 +555,7 @@ type ButtonProps = {
   type?: "button" | "submit" | "reset";
 } & HTMLAttributes<HTMLButtonElement>;
 
-function Button({
+export function Button({
   icon,
   content,
   color,
@@ -557,4 +577,133 @@ function Button({
   );
 }
 
-export default Button;
+type HeartButtonProps = {
+  userId: number;
+  username: string;
+} & HTMLAttributes<HTMLButtonElement>;
+
+type FriendShipData = {
+  id: number;
+  user1_id: number;
+  user2_id: number;
+  status: "FRIENDS" | "BLOCKED" | "PENDING";
+};
+
+export function HeartButton({
+  className,
+  userId,
+  username,
+  ...props
+}: HeartButtonProps) {
+  const queryClient = useQueryClient();
+
+  const { data: friendships } = useQuery<FriendShipData[]>({
+    queryKey: ["friendships", userId],
+    queryFn: async () => {
+      return api.get("/friendships").then((response) => response.data);
+    },
+  });
+
+  const { mutateAsync: deleteFriendship } = useMutation({
+    mutationFn: async () => {
+      return api.delete("/relationship/friends/" + userId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friendships", userId] });
+    },
+  });
+
+  const { mutateAsync: deleteBlockedFriendship } = useMutation({
+    mutationFn: async () => {
+      return api.delete("/relationship/blocked/" + userId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friendships", userId] });
+    },
+  });
+
+  const { mutateAsync: createFriendship } = useMutation({
+    mutationFn: async (user2_id: number) => {
+      return api.post("/friendship", { user2_id });
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["friendships", userId] });
+    },
+  });
+
+  const [friendStatus, setFriendStatus] = useState<IconKey>("EmptyHeart");
+
+  useEffect(() => {
+    let status: IconKey = "EmptyHeart";
+
+    if (friendships) {
+      const friendship = friendships.find(
+        (f) => f.user1_id === userId || f.user2_id === userId
+      );
+      if (friendship === undefined) status = "EmptyHeart";
+      else if (friendship.status === "FRIENDS") status = "Heart";
+      else if (friendship.status === "PENDING") status = "PendingHeart";
+      else if (friendship.status === "BLOCKED") status = "Unblock";
+    }
+    setFriendStatus(status);
+  }, [friendships, userId]);
+
+  const isBlocked = (id: number) => {
+    if (friendships) {
+      const friendship = friendships?.find(
+        (f) => f.user1_id === id || f.user2_id === id
+      );
+      if (friendship && friendship.status === "BLOCKED") return true;
+    }
+    return false;
+  };
+
+  const isBlockedByMe = (id: number) => {
+    if (friendships) {
+      const friendship = friendships?.find((f) => f.user2_id === id);
+      if (friendship && friendship.status === "BLOCKED") return true;
+    }
+    return false;
+  };
+
+  const handleFriendshipBtn = () => {
+    if (friendStatus === "Heart") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to remove ${username} from your friends?`,
+        deleteFriendship
+      );
+    } else if (friendStatus === "PendingHeart") {
+      const newWindow = {
+        WindowName: "PENDING FRIEND REQUESTS",
+        width: "300",
+        height: "300",
+        id: 0,
+        content: { type: "PENDREQ" },
+        toggle: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
+      store.dispatch(addWindow(newWindow));
+    } else if (friendStatus === "EmptyHeart") {
+      createFriendship(userId);
+    } else if (friendStatus === "Unblock") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to unblock ${username}?`,
+        deleteBlockedFriendship
+      );
+    }
+  };
+
+  return !isBlocked(userId) || isBlockedByMe(userId) ? (
+    <button
+      type="button"
+      {...props}
+      className={`pink ${className || ""} Button`}
+      onClick={handleFriendshipBtn}
+    >
+      <div className={`ButtonInner`}>{Icons[friendStatus]}</div>
+    </button>
+  ) : null;
+}
