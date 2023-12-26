@@ -19,11 +19,13 @@ const authRedirectRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "auth/redirect/$token",
   beforeLoad: async ({ params }) => {
-    window.localStorage.setItem("token", params.token);
-    api.defaults.headers.common = { Authorization: `Bearer ${params.token}` };
-    throw redirect({
-      to: "/",
-    });
+    if (!!params.token) {
+      window.localStorage.setItem("token", params.token);
+      api.defaults.headers.common = { Authorization: `Bearer ${params.token}` };
+      throw redirect({
+        to: "/",
+      });
+    }
   },
 });
 

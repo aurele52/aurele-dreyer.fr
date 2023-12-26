@@ -1,4 +1,4 @@
-import Button from "./components/Button/Button";
+import Button from "./shared/ui-components/Button/Button";
 
 function Auth() {
   return (
