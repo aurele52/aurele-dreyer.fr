@@ -13,6 +13,7 @@ import AboutChan from "../../windows/Chat/AboutChan/AboutChan";
 import Achievements from "../../windows/Achievements/Achievements";
 import FriendsList from "../../windows/Profile/FriendsList/FriendsList";
 import Modal from "../../shared/ui-components/Modal/Modal";
+import { PendingRequests } from "../../windows/Profile/FriendsList/PendingRequests/PendingRequests";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -33,6 +34,7 @@ export function Background({ windows }: BackgroundProps) {
     ACHIEVEMENTS: { width: "300px", height: "300px" },
     FRIENDSLIST: { width: "450px", height: "600px" },
     MODAL: { width: "390px", height: "200px" },
+    PENDREQ: { width: "300px", height: "300px" },
   };
 
   return (
@@ -78,10 +80,13 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "FRIENDSLIST" && <FriendsList />}
               {window.content.type === "MODAL" && (
                 <Modal
-                  text={window.modal?.text}
-                  action={window.modal?.action || undefined}
+                  content={window.modal?.content}
+                  type={window.modal?.type}
+                  winId={window.id}
+                  action={window.modal?.action}
                 />
               )}
+              {window.content.type === "PENDREQ" && <PendingRequests />}
             </Window>
           );
         })}

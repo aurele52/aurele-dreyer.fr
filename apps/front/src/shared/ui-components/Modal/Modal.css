@@ -1,5 +1,30 @@
+.Modal {
+  display: flex;
+  flex-direction: column;
+}
+
 .textModal {
   display: flex;
   flex-direction: column;
   gap: 8px;
+}
+
+.bodyModal {
+  display: flex;
+  flex-direction: row;
+  gap: 15px;
+  padding: 0 4px 0 12px;
+}
+
+.bodyModal>svg {
+  width: 90px;
+  height: auto;
+}
+
+.btnModal {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-grow: 1;
+  gap: 50px;
 }

@@ -3,12 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
-import Button from "../../shared/ui-components/Button/Button";
+import { Button } from "../../shared/ui-components/Button/Button";
 import { addWindow } from "../../reducers";
-import { connect, ConnectedProps } from "react-redux";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-
-interface ChatProps extends ReduxProps {}
+import store from "../../store";
 
 type ChatType = {
   id: number;
@@ -17,7 +15,7 @@ type ChatType = {
   interlocutor: { avatar_url: string; username: string; id: number };
 };
 
-export function Chat({ dispatch }: ChatProps) {
+function Chat() {
   const apiUrl = "/api/chats";
 
   const { data: chats } = useQuery<ChatType[]>({
@@ -38,7 +36,7 @@ export function Chat({ dispatch }: ChatProps) {
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const handleCreateChannel = () => {
@@ -52,7 +50,7 @@ export function Chat({ dispatch }: ChatProps) {
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const detailsWindow = (isDm: boolean, id: number, name: string) => {
@@ -80,7 +78,7 @@ export function Chat({ dispatch }: ChatProps) {
         color: WinColor.PURPLE,
       };
     }
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const handleDetails = (chat: ChatType) => {
@@ -133,10 +131,4 @@ export function Chat({ dispatch }: ChatProps) {
   );
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedChat = connector(Chat);
-export default ConnectedChat;
+export default Chat;
