@@ -158,8 +158,6 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 	const handleOpenAchievements = () => {
 		const newWindow = {
 			WindowName: "Achievements",
-			width: "400",
-			height: "600",
 			id: 0,
 			content: { type: "ACHIEVEMENTS" },
 			toggle: false,
@@ -173,12 +171,23 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 	const handleOpenFriendsList = () => {
 		const newWindow = {
 			WindowName: "Friends List",
-			width: "400",
-			height: "600",
 			id: 0,
 			content: { type: "FRIENDSLIST" },
 			toggle: false,
 			handleBarButton: HBButton.Close,
+			color: WinColor.PURPLE,
+			targetId: userId,
+		};
+		dispatch(addWindow(newWindow));
+	};
+
+	const handleOpenBlockedList = () => {
+		const newWindow = {
+			WindowName: "Blocked Users",
+			id: 0,
+			content: { type: "BLOCKEDUSERS" },
+			toggle: false,
+			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: userId,
 		};
@@ -217,6 +226,10 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		}
 	};
 
+	const handleBlockUser = async (id: number) => {
+		console.error("No function to block user : ", id);
+	};
+
 	const buttons = (
 		<div className="Buttons">
 			<Button
@@ -233,6 +246,11 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 				content={selfProfile ? "blocked list" : "block"}
 				color="purple"
 				style={{ display: "flex" }}
+				onClick={
+					selfProfile
+						? handleOpenBlockedList
+						: () => handleBlockUser(userId ?? 0)
+				}
 			/>
 		</div>
 	);

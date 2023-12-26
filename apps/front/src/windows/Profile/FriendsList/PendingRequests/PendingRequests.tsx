@@ -1,16 +1,14 @@
-import "./FriendsList.css";
-import { connect, ConnectedProps } from "react-redux";
+import "./PendingRequests.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import Button from "../../../../shared/ui-components/Button/Button";
-import { addWindow } from "../../../../reducers";
-import { WinColor } from "../../../../shared/utils/WindowTypes";
+import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
-interface PendingRequestsProps extends ReduxProps {}
+interface PendingRequestsProps {}
 
-export function PendingRequests({ dispatch }: PendingRequestsProps) {
+export function PendingRequests({}: PendingRequestsProps) {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -34,19 +32,23 @@ export function PendingRequests({ dispatch }: PendingRequestsProps) {
 		error: pendingRequestsError,
 	} = useQuery<
 		{
-			userid: number;
-			username: string;
-			avatar_url: string;
-			online: boolean;
+			id: number;
+			senderId: number;
+			type: "received" | "sent";
 		}[]
 	>({
 		queryKey: ["pendingRequests", userId],
 		queryFn: async () => {
 			try {
 				const response = await axios.get(
-					`/api/PendingRequests/pending/${userId}`
+					`/api/friendships/pendinglistList`
 				);
-				return response.data;
+				return response.data.map(
+					(request: { id: number; senderId: number }) => ({
+						...request,
+						type: request.senderId === userId ? "sent" : "received",
+					})
+				);
 			} catch (error) {
 				console.error("Error fetching PendingRequests:", error);
 				throw error;
@@ -54,8 +56,6 @@ export function PendingRequests({ dispatch }: PendingRequestsProps) {
 		},
 		enabled: !!userId,
 	});
-
-	console.log(pendingRequests);
 
 	if (pendingRequestsLoading || userIdLoading) {
 		return (
@@ -74,26 +74,27 @@ export function PendingRequests({ dispatch }: PendingRequestsProps) {
 	}
 
 	return (
-		<div className="PendingRequests">
+		<div className="PendingRequestsComponent">
 			<div className="Body">
-				<List>
-					{pendingRequests?.map((user, index) => {
-						return (
-							<div className="PendingRequestsUser" key={index}>
-								content
-							</div>
-						);
-					})}
+				<List dark={false}>
+					<div className="SectionName">Received</div>
+					{pendingRequests
+						?.filter((request) => request.type === "received")
+						.map((user, key) => (
+							<ReducedUser key={key} userId={user.id}>
+								<Button icon="Heart" color="pink" />
+							</ReducedUser>
+						))}
+					<div className="SectionName">Sent</div>
+					{pendingRequests
+						?.filter((request) => request.type === "sent")
+						.map((user, key) => (
+							<ReducedUser key={key} userId={user.id}>
+								<Button icon="Heart" color="pink" />
+							</ReducedUser>
+						))}
 				</List>
 			</div>
 		</div>
 	);
 }
-
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedPendingRequests = connector(PendingRequests);
-export default ConnectedPendingRequests;

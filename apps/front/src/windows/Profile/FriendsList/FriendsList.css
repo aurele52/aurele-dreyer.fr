@@ -227,3 +227,18 @@
 	align-items: center;
 	gap: var(--radius-radius-minimal, 4px);
 }
+
+.FriendsList > .Footer {
+	display: flex;
+	padding: 5px 10px;
+	align-items: center;
+	align-content: center;
+	gap: 10px;
+	align-self: stretch;
+	flex-wrap: wrap;
+}
+
+.FriendsList > .Footer > .Frame {
+	height: 15px;
+	flex: 1 0 0;
+}

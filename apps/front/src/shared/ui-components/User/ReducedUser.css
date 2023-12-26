@@ -1,0 +1,77 @@
+.ReducedUserComponent {
+	display: flex;
+	align-items: center;
+	gap: 5px;
+	align-self: stretch;
+}
+
+.ReducedUserComponent > .User {
+	display: flex;
+	min-width: 101px;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	flex: 1 0 0;
+	flex-wrap: wrap;
+	border-radius: var(--radius-radius-minimal, 4px);
+	border: 1px solid var(--Base-Black, #000);
+	background: var(
+		--Purple-Gradient-200,
+		linear-gradient(180deg, #ece5f8 66.15%, #d0b9f8 86.98%)
+	);
+}
+
+.ReducedUserComponent > .User > .Frame {
+	display: flex;
+	padding: 5px;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	gap: 5px;
+	flex: 1 0 0;
+	flex-wrap: wrap;
+	border-radius: 5px;
+	border-top: 2px solid var(--Base-White, #fff);
+	border-right: 1px solid var(--Base-White, #fff);
+	border-left: 1px solid var(--Base-White, #fff);
+}
+
+.ReducedUserComponent > .User > .Frame > .Avatar {
+	display: flex;
+	flex-direction: column;
+	align-items: flex-start;
+}
+
+.ReducedUserComponent > .User > .Frame > .Avatar > .Frame {
+	width: 32px;
+	height: 32px;
+	border-radius: var(--radius-radius-rounded, 8px);
+	border: 3px solid var(--colors-grey-white, #fff);
+	background: var(--colors-grey-grey-400, #888);
+}
+
+.ReducedUserComponent > .User > .Frame > .Player {
+	display: flex;
+	min-width: 80px;
+	padding: 5px;
+	flex-direction: column;
+	align-items: flex-start;
+	flex: 1 0 0;
+}
+
+.ReducedUserComponent > .User > .Frame > .Player > .Name {
+	display: -webkit-box;
+	-webkit-box-orient: vertical;
+	-webkit-line-clamp: 1;
+	align-self: stretch;
+	overflow: hidden;
+	text-overflow: ellipsis;
+	color: var(--Base-Black, #000);
+
+	/* Heading/500 */
+	font-family: Chakra Petch;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 18px; /* 100% */
+}
