@@ -10,8 +10,8 @@ export class AppController {
     return this.appService.getHello();
   } */
   @Get()
-  @Render('index')
   root() {
+    console.log('Trying to acces root');
     return { message: 'Hiiiii' };
   }
 

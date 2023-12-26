@@ -1,15 +1,65 @@
 import { Injectable } from '@nestjs/common';
-import { User } from './interfaces/user.interface';
+import { PrismaService } from 'src/prisma.service';
+import { NotFoundException } from '@nestjs/common';
 
 @Injectable()
 export class UserService {
-    private readonly users: User[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-    create(user: User) {
-        this.users.push(user);
+  async getOtherUser(selfId: number, userId: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: userId,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
     }
 
-    findAll(): User[] {
-        return this.users;
+    const friendship = await this.prisma.friendship.findFirst({
+      where: {
+        OR: [
+          {
+            user1_id: selfId,
+            user2_id: userId,
+          },
+          {
+            user1_id: userId,
+            user2_id: selfId,
+          },
+        ],
+      },
+    });
+
+    const res = {
+      id: user.id,
+      username: user.username,
+      avatar_url: user.avatar_url,
+      status: 'ONLINE',
+      friendshipStatus: friendship?.status || 'NONE',
+    };
+
+    return res;
+  }
+
+  async getUser(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
+
+    const res = {
+      id: user.id,
+      username: user.username,
+      avatar_url: user.avatar_url,
+    };
+
+    return res;
+  }
 }

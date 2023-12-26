@@ -12,6 +12,9 @@ import NewChan from "../../windows/Chat/NewChan/NewChan";
 import AboutChan from "../../windows/Chat/AboutChan/AboutChan";
 import Achievements from "../../windows/Achievements/Achievements";
 import FriendsList from "../../windows/Profile/FriendsList/FriendsList";
+import Modal from "../../shared/ui-components/Modal/Modal";
+import { PendingRequests } from "../../windows/Profile/FriendsList/PendingRequests/PendingRequests";
+import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -22,7 +25,7 @@ export function Background({ windows }: BackgroundProps) {
 	}
 
 	const windowDimensions: Record<string, WindowDimensions> = {
-		PLAY: { width: "300px", height: "600px" },
+		PLAY: { width: "820px", height: "540px" },
 		LADDER: { width: "450px", height: "600px" },
 		CHAT: { width: "400px", height: "400px" },
 		PROFILE: { width: "500px", height: "500px" },
@@ -31,6 +34,9 @@ export function Background({ windows }: BackgroundProps) {
 		ABOUTCHAN: { width: "500px", height: "500px" },
 		ACHIEVEMENTS: { width: "300px", height: "300px" },
 		FRIENDSLIST: { width: "450px", height: "600px" },
+		MODAL: { width: "390px", height: "200px" },
+		PENDINGREQUESTS: { width: "300px", height: "400px" },
+		BLOCKEDUSERS: { width: "300px", height: "400px" },
 	};
 
 	return (
@@ -57,7 +63,6 @@ export function Background({ windows }: BackgroundProps) {
 							width={width}
 							height={height}
 							id={window.id}
-							modal={window.modal}
 							handleBarButton={window.handleBarButton}
 							color={window.color}
 						>
@@ -82,6 +87,18 @@ export function Background({ windows }: BackgroundProps) {
 							)}
 							{window.content.type === "FRIENDSLIST" && (
 								<FriendsList />
+							)}
+							{window.content.type === "MODAL" && (
+								<Modal
+									text={window.modal?.text}
+									action={window.modal?.action || undefined}
+								/>
+							)}
+							{window.content.type === "PENDINGREQUESTS" && (
+								<PendingRequests />
+							)}
+							{window.content.type === "BLOCKEDUSERS" && (
+								<BlockedUsers />
 							)}
 						</Window>
 					);
