@@ -5,23 +5,15 @@ import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import store from "./store";
 import { Provider } from "react-redux";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
 import Auth from "./Auth.tsx";
-import ErrorPage from "./ErrorPage.tsx";
-
+import { router } from "./router.ts";
+import { RouterProvider } from "@tanstack/react-router";
 const root = ReactDOM.createRoot(
   document.getElementById("root") as HTMLElement
 );
 root.render(
   <Provider store={store}>
-    <React.StrictMode>
-      <BrowserRouter>
-        <Routes>
-          <Route path="/" element={<App />} errorElement={<ErrorPage />}/>
-          <Route path="/auth" element={<Auth />} />
-        </Routes>
-      </BrowserRouter>
-    </React.StrictMode>
+    <RouterProvider router={router} />
   </Provider>
 );
 

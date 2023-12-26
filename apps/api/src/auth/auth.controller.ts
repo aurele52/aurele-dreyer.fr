@@ -20,11 +20,13 @@ export class AuthController {
     return { url: url_auth42 };
   }
 
+  @Redirect()
   @Get('/callback')
   async callbackFrom42Auth(
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    return this.authService.signIn(code, state);
+    const token = await this.authService.signIn(code, state);
+    return {url: `http://localhost:5173/auth/redirect/${token.access_token}`}
   }
 }

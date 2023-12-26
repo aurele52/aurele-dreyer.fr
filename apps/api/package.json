@@ -22,7 +22,7 @@
     "seed": "ts-node prisma/seed.ts",
     "prisma:studio": "npm run with-env prisma studio",
     "prisma:reset": "npm run with-env -- prisma db push --force-reset && npm run seed",
-    "with-env": "dotenv -e ../../.env.localhost -- $@"
+    "with-env": "dotenv -e ../../.env.local -- $@"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",

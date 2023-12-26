@@ -77,7 +77,7 @@ export class AuthService {
       const user = await this.getOrCreateUser(access_token_42, user_info);
       const token = await this.generateJWTToken(user);
 
-      return { token, user };
+      return token;
     } catch (error) {
       console.log(error);
       return error;
