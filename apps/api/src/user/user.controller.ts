@@ -1,19 +1,18 @@
-import { Body, Controller, Get, Post } from '@nestjs/common';
+import { Body, Controller, Get, Param } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
-import { User } from './interfaces/user.interface';
+import { CurrentUser } from 'src/decorators/user.decorator';
 
-@Controller('Database/user')
+@Controller('user')
 export class UserController {
-    constructor(private userService: UserService){}
+  constructor(private userService: UserService) {}
 
-    @Post()
-    async create(@Body() createUserDto: CreateUserDto) {
-        this.userService.create(createUserDto);
-    }
+  @Get('/:userid')
+  async getOtherUser(@CurrentUser() selfid, @Param('userid') userid: number) {
+    return this.userService.getOtherUser(selfid.id, userid);
+  }
 
-    @Get()
-    async findAll(): Promise<User[]> {
-        return this.userService.findAll();
-    }
+  @Get()
+  async getUser(@CurrentUser() selfid) {
+    return this.userService.getUser(selfid.id);
+  }
 }

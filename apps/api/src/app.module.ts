@@ -1,6 +1,4 @@
 import { Module } from '@nestjs/common';
-import { ServeStaticModule } from '@nestjs/serve-static';
-import { join } from 'path';
 import { AppController } from './app.controller';
 import { AppService } from './app.service';
 import { GameModule } from './game/game.module';
@@ -14,12 +12,10 @@ import { AchievementsModule } from './achievements/achievements.module';
 import { FriendslistModule } from './friendslist/friendslist.module';
 import { FriendshipModule } from './friendship/friendship.module';
 import { PongGateway } from './game/pong.gateway';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..', 'front', 'dist'),
-    }),
     GameModule,
     AuthModule,
     ChannelModule,
@@ -29,6 +25,7 @@ import { PongGateway } from './game/pong.gateway';
     AchievementsModule,
     FriendslistModule,
     FriendshipModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService, PongGateway],

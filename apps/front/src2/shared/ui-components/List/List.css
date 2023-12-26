@@ -1,61 +1,62 @@
 .List {
-  overflow-y: auto;
-  padding: 8px 0 8px 6px;
-  flex-grow: 1;
-  display: flex;
-  flex-direction: column;
-  gap: 6px;
-  border-radius: 10px;
-  border-top: 3px solid var(--purple-100, #F5F1FC);
-  border-right: 2px solid var(--purple-100, #F5F1FC);
-  border-bottom: 1px solid var(--purple-100, #F5F1FC);
-  border-left: 2px solid var(--purple-100, #F5F1FC);
-  min-height: 60px;
+	overflow-y: auto;
+	padding: 8px 0 8px 6px;
+	display: flex;
+	flex-direction: column;
+	gap: 6px;
+	border-radius: 10px;
+	border-top: 3px solid var(--purple-100, #f5f1fc);
+	border-right: 2px solid var(--purple-100, #f5f1fc);
+	border-bottom: 1px solid var(--purple-100, #f5f1fc);
+	border-left: 2px solid var(--purple-100, #f5f1fc);
+	min-height: 60px;
+	align-items: flex-start;
+	flex: 1 0 0;
+	align-self: stretch;
 }
 
 .List.dark-list {
-  border-radius: 10px;
-  border-top: 3px solid var(--base-black, #000);
-  border-right: 2px solid var(--base-black, #000);
-  border-bottom: 1px solid var(--base-black, #000);
-  border-left: 2px solid var(--base-black, #000);
-  background: var(--purple-300, #BBA0E9);
-
+	border-radius: 10px;
+	border-top: 3px solid var(--base-black, #000);
+	border-right: 2px solid var(--base-black, #000);
+	border-bottom: 1px solid var(--base-black, #000);
+	border-left: 2px solid var(--base-black, #000);
+	background: var(--purple-300, #bba0e9);
 }
 
 .custom-scrollbar {
-  padding-right: 10px;
-  --bg-scroll-color: var(--purple-100, #F5F1FC);
-  --scroll-color: rgba(187, 161, 242, 0.5); 
-  --scroll-color-hover: rgba(187, 161, 242, 0.65); 
+	padding-right: 10px;
+	--bg-scroll-color: var(--purple-100, #f5f1fc);
+	--scroll-color: rgba(187, 161, 242, 0.5);
+	--scroll-color-hover: rgba(187, 161, 242, 0.65);
 }
 .custom-scrollbar.dark-list {
-  --bg-scroll-color: var(--purple-300, #BBA0E9);
-  --scroll-color: rgba(56, 34, 101, 0.5); 
-  --scroll-color-hover: rgba(56, 34, 101, 0.65); 
+	--bg-scroll-color: var(--purple-300, #bba0e9);
+	--scroll-color: rgba(56, 34, 101, 0.5);
+	--scroll-color-hover: rgba(56, 34, 101, 0.65);
 }
 
 .custom-scrollbar.lilac-list {
-  --bg-scroll-color: var(--purple-250, #DECDFF);;
-  --scroll-color: rgba(56, 34, 101, 0.5); 
-  --scroll-color-hover: rgba(56, 34, 101, 0.65); 
+	--bg-scroll-color: var(--purple-250, #decdff);
+	--scroll-color: rgba(56, 34, 101, 0.5);
+	--scroll-color-hover: rgba(56, 34, 101, 0.65);
 }
 
 .custom-scrollbar::-webkit-scrollbar {
-  width: 20px;
+	width: 20px;
 }
 
 .custom-scrollbar::-webkit-scrollbar-track {
-  opacity: 0.2;
+	opacity: 0.2;
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb {
-  background: var(--scroll-color);
-  border-radius: 10px;
-  border: 5px solid var(--bg-scroll-color);
+	background: var(--scroll-color);
+	border-radius: 10px;
+	border: 5px solid var(--bg-scroll-color);
 }
 
 .custom-scrollbar::-webkit-scrollbar-thumb:hover {
-  background: var(--scroll-color-hover);
-  border-radius: 10px;
+	background: var(--scroll-color-hover);
+	border-radius: 10px;
 }
