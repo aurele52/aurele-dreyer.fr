@@ -1,17 +1,19 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WinColor } from "./shared/utils/WindowTypes";
+import { ActionType } from "./shared/utils/AddModal";
 import { ReactNode } from "react";
-import { ActionType, ModalType } from "./shared/utils/AddModal";
 
 interface WindowData {
-  WindowName: string;
-  id: number;
-  content: { type: string; id?: number };
-  toggle: boolean;
-  modal?: { type: ModalType, content: ReactNode, action?: ActionType };
-  handleBarButton: number;
-  color: WinColor;
-  targetId?: number;
+	WindowName: string;
+	width?: string;
+	height?: string;
+	id: number;
+	content: { type: string; id?: number };
+	toggle: boolean;
+	modal?: { text: ReactNode; action?: ActionType };
+	handleBarButton: number;
+	color: WinColor;
+	targetId?: number;
 }
 
 export interface AppState<T = WindowData> {
@@ -47,12 +49,8 @@ const windowsSlice = createSlice({
 				"ABOUTCHAN",
 				"ACHIEVEMENTS",
 				"ABOUTCHAN",
-<<<<<<< HEAD
 				"PENDINGREQUESTS",
 				"BLOCKEDUSERS",
-				"ADDFRIENDS",
-=======
->>>>>>> audreyer
 			];
 
 			if (
