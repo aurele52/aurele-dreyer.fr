@@ -22,7 +22,7 @@ export function Background({ windows }: BackgroundProps) {
 	}
 
 	const windowDimensions: Record<string, WindowDimensions> = {
-		PLAY: { width: "300px", height: "600px" },
+		PLAY: { width: "820px", height: "540px" },
 		LADDER: { width: "450px", height: "600px" },
 		CHAT: { width: "400px", height: "400px" },
 		PROFILE: { width: "500px", height: "500px" },
