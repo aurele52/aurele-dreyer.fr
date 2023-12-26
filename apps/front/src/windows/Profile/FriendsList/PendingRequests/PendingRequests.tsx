@@ -41,7 +41,7 @@ export function PendingRequests({}: PendingRequestsProps) {
 		queryFn: async () => {
 			try {
 				const response = await axios.get(
-					`/api/friendships/pendinglistList`
+					`/api/friendships/pendingList`
 				);
 				return response.data.map(
 					(request: { id: number; senderId: number }) => ({
@@ -58,11 +58,7 @@ export function PendingRequests({}: PendingRequestsProps) {
 	});
 
 	if (pendingRequestsLoading || userIdLoading) {
-		return (
-			<div className="PendingRequests">
-				<FaSpinner className="loadingSpinner" />
-			</div>
-		);
+		return <FaSpinner className="loadingSpinner" />;
 	}
 
 	if (pendingRequestsError) {
