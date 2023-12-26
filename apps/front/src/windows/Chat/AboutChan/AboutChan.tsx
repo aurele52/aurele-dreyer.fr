@@ -1,4 +1,4 @@
-import axios from "axios";
+import api from "../../../axios";
 import "./AboutChan.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
@@ -40,39 +40,39 @@ type FriendShipData = {
 function AboutChan({ chanId, dispatch }: AboutChanProps) {
   const queryClient = useQueryClient();
 
-  const chanApiUrl = "/api/channel/" + chanId;
+  const chanApiUrl = "/channel/" + chanId;
 
   const { data: channel } = useQuery<ChannelData>({
     queryKey: ["chanAbout", chanId],
     queryFn: async () => {
-      return axios.get(chanApiUrl).then((response) => response.data);
+      return api.get(chanApiUrl).then((response) => response.data);
     },
   });
 
   const { data: userId } = useQuery<number>({
     queryKey: ["userId", chanId],
     queryFn: async () => {
-      return axios.get("/api/id").then((response) => response.data);
+      return api.get("/id").then((response) => response.data);
     },
   });
 
   const { data: isMember } = useQuery<boolean>({
     queryKey: ["isMember", chanId],
     queryFn: async () => {
-      return axios.get(chanApiUrl + "/me").then((response) => response.data);
+      return api.get(chanApiUrl + "/me").then((response) => response.data);
     },
   });
 
   const { data: friendships } = useQuery<FriendShipData[]>({
     queryKey: ["friendships", chanId],
     queryFn: async () => {
-      return axios.get("/api/friendships").then((response) => response.data);
+      return api.get("/friendships").then((response) => response.data);
     },
   });
 
   const { mutateAsync: createUserChannel } = useMutation({
     mutationFn: async (param: { channelId: number }) => {
-      return axios.post("/api/user-channel", param);
+      return api.post("/user-channel", param);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channels"] });
@@ -84,7 +84,7 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
 
   const { mutateAsync: deleteUserChannel } = useMutation({
     mutationFn: async (userChannelId: number) => {
-      return axios.delete("/api/user-channel/" + userChannelId);
+      return api.delete("/user-channel/" + userChannelId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channels"] });

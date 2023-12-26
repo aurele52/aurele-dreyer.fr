@@ -1,7 +1,7 @@
 import "./FriendsList.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import Button from "../../../shared/ui-components/Button/Button";
@@ -20,7 +20,7 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 		queryKey: ["userId"],
 		queryFn: async () => {
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching userId:", error);
@@ -41,8 +41,8 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 		queryKey: ["friendsList", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get(
-					`/api/FriendsList/list/${userId}`
+				const response = await api.get(
+					`/FriendsList/list/${userId}`
 				);
 				return response.data;
 			} catch (error) {

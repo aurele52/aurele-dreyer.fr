@@ -2,7 +2,8 @@ import "./NewChan.css";
 import Button from "../../../shared/ui-components/Button/Button";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import axios, { AxiosResponse, AxiosError } from "axios";
+import api from "../../../axios";
+import { AxiosResponse, AxiosError } from "axios";
 
 interface ValidationErrorResponse {
 	[key: string]: string[];
@@ -23,7 +24,7 @@ function NewChan() {
 		Record<string, FormDataEntryValue>
 	>({
 		mutationFn: async (param: Record<string, FormDataEntryValue>) => {
-			return axios.post("/api/channel", param);
+			return api.post("/channel", param);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["channels"] });

@@ -2,7 +2,7 @@ import "./User.css";
 import "./ReducedUser.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
 import Button from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
@@ -24,7 +24,7 @@ export function User({ userId, channelId }: UserProps) {
 		queryKey: ["selfId"],
 		queryFn: async () => {
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching selfId:", error);
@@ -48,7 +48,7 @@ export function User({ userId, channelId }: UserProps) {
 		queryFn: async () => {
 			try {
 				console.log("ID : ", userId);
-				const response = await axios.get(`/api/user/${userId}`);
+				const response = await api.get(`/user/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching User:", error);
@@ -233,7 +233,7 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 		queryKey: ["selfId"],
 		queryFn: async () => {
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching selfId:", error);
@@ -255,7 +255,7 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 		queryKey: ["user", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get(`/api/user/${userId}`);
+				const response = await api.get(`/user/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching User:", error);

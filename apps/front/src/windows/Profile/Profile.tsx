@@ -2,7 +2,7 @@ import Button from "../../shared/ui-components/Button/Button";
 import "./Profile.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { addWindow } from "../../reducers";
@@ -25,7 +25,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 				return targetId;
 			}
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching userId:", error);
@@ -42,7 +42,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		queryKey: ["currentUserId", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching userId:", error);
@@ -67,7 +67,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		queryKey: ["user", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get(`/api/profile/user/${userId}`);
+				const response = await api.get(`/profile/user/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching user:", error);
@@ -97,8 +97,8 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		queryKey: ["historic", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get(
-					`/api/profile/historic/${userId}`
+				const response = await api.get(
+					`/profile/historic/${userId}`
 				);
 				return response.data;
 			} catch (error) {
@@ -216,7 +216,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		if (!senderId || !receiverId) return;
 		console.log("senderId : ", senderId, "  reveiverId : ", receiverId);
 		try {
-			const response = await axios.post("/api/friendslist/add", {
+			const response = await api.post("/friendslist/add", {
 				senderId: senderId,
 				receiverId: receiverId,
 			});

@@ -16,7 +16,7 @@ export class AuthController {
   @Redirect()
   redirectTo42Auth() {
     const api42_id = process.env.API42_ID;
-    const api42_callback = process.env.API42_CALLBACK;
+    const api42_callback = "http://localhost:3000/api/auth/callback";
     const state = generateRandomState();
     const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
     return { url: url_auth42 };

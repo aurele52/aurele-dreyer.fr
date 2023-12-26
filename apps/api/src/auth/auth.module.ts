@@ -13,15 +13,10 @@ import { PrismaService } from 'src/prisma.service';
     signOptions: { expiresIn: '3d' },
   }),],
   controllers: [AuthController],
-  providers: [AuthService, PrismaService, {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },],
-  // providers: [
-  //   Auth42({
-  //     clientId: process.env.API42_ID,
-  //     clientSecret: process.env.API42_SECRET
-  //   })
-  // ],
+  providers: [AuthService, PrismaService]
+  // providers: [AuthService, PrismaService, {
+  //   provide: APP_GUARD,
+  //   useClass: AuthGuard,
+  // },],  // 💡 Replace with these providers to activate authentification
 })
 export class AuthModule {}
