@@ -13,7 +13,7 @@ interface UserProps extends ReduxProps {
 	channelId?: number;
 }
 
-export function User({ dispatch, key, userId }: UserProps) {
+export function User({ dispatch, key, userId, channelId }: UserProps) {
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
@@ -79,7 +79,6 @@ export function User({ dispatch, key, userId }: UserProps) {
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,
-			modal: true,
 			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: id,
@@ -166,6 +165,12 @@ export function User({ dispatch, key, userId }: UserProps) {
 		/>
 	);
 
+	const channelSettingsButton = channelId ? (
+		<Button icon="Unblock" color="darkYellow" />
+	) : (
+		<div></div>
+	);
+
 	const buttons =
 		user.friendshipStatus === "BLOCKED" ? (
 			<div className="Buttons">
@@ -210,6 +215,7 @@ export function User({ dispatch, key, userId }: UserProps) {
 					{buttons}
 				</div>
 			</div>
+			{channelSettingsButton}
 		</div>
 	);
 }
