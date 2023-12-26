@@ -7,8 +7,12 @@ export class UserController {
   constructor(private userService: UserService) {}
 
   @Get('/:userid')
-  async getUser(@CurrentUser() selfid, @Param('userid') userid: number) {
-    console.log('HERE');
-    return this.userService.getUser(selfid.id, userid);
+  async getOtherUser(@CurrentUser() selfid, @Param('userid') userid: number) {
+    return this.userService.getOtherUser(selfid.id, userid);
+  }
+
+  @Get()
+  async getUser(@CurrentUser() selfid) {
+    return this.userService.getUser(selfid.id);
   }
 }

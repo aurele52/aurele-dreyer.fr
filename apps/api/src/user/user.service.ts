@@ -6,7 +6,7 @@ import { NotFoundException } from '@nestjs/common';
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async getUser(selfId: number, userId: number) {
+  async getOtherUser(selfId: number, userId: number) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -38,6 +38,26 @@ export class UserService {
       avatar_url: user.avatar_url,
       status: 'ONLINE',
       friendshipStatus: friendship?.status || 'NONE',
+    };
+
+    return res;
+  }
+
+  async getUser(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    const res = {
+      id: user.id,
+      username: user.username,
+      avatar_url: user.avatar_url,
     };
 
     return res;

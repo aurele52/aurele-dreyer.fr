@@ -1,6 +1,6 @@
 import "./Chat.css";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
 import { Button } from "../../shared/ui-components/Button/Button";
@@ -15,21 +15,17 @@ type ChatType = {
   interlocutor: { avatar_url: string; username: string; id: number };
 };
 
-function Chat() {
-  const apiUrl = "/api/chats";
-
+export function Chat() {
   const { data: chats } = useQuery<ChatType[]>({
     queryKey: ["chats"],
     queryFn: async () => {
-      return axios.get(apiUrl).then((response) => response.data);
+      return api.get("/chats").then((response) => response.data);
     },
   });
 
   const handleFindChannel = () => {
     const newWindow = {
       WindowName: "Find Channel",
-      width: "242",
-      height: "390",
       id: 0,
       content: { type: "FINDCHAN" },
       toggle: false,
@@ -42,8 +38,6 @@ function Chat() {
   const handleCreateChannel = () => {
     const newWindow = {
       WindowName: "New Channel",
-      width: "485",
-      height: "362",
       id: 0,
       content: { type: "NEWCHAN" },
       toggle: false,
@@ -58,8 +52,6 @@ function Chat() {
     if (!isDm) {
       newWindow = {
         WindowName: "About " + name,
-        width: "453",
-        height: "527",
         id: 0,
         content: { type: "ABOUTCHAN", id: id },
         toggle: false,
@@ -69,8 +61,6 @@ function Chat() {
     } else {
       newWindow = {
         WindowName: name,
-        width: "500",
-        height: "500",
         id: 0,
         content: { type: "PROFILE", id: id },
         toggle: false,

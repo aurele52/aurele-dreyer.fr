@@ -1,4 +1,4 @@
-.PendingRequestsComponent {
+.BlockedUsersComponent {
 	display: flex;
 	padding: 5px;
 	flex-direction: column;
@@ -8,7 +8,7 @@
 	align-self: stretch;
 }
 
-.PendingRequestsComponent > .Body {
+.BlockedUsersComponent > .Body {
 	display: flex;
 	justify-content: center;
 	align-items: flex-start;
@@ -16,7 +16,7 @@
 	align-self: stretch;
 }
 
-.PendingRequestsComponent > .Body > .List > .SectionName {
+.BlockedUsersComponent > .Body > .List > .SectionName {
 	display: flex;
 	padding: 0px 2px;
 	justify-content: space-between;
@@ -27,7 +27,7 @@
 	flex-wrap: wrap;
 }
 
-.PendingRequestsComponent > .Body > .List > .SectionName > div {
+.BlockedUsersComponent > .Body > .List > .SectionName > div {
 	color: var(--text-text-primary, #000);
 	font-family: Chakra Petch;
 	font-size: 12px;

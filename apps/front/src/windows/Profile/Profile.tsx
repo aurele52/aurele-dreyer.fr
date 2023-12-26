@@ -2,7 +2,7 @@ import { Button } from "../../shared/ui-components/Button/Button";
 import "./Profile.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { addWindow } from "../../reducers";
@@ -14,98 +14,100 @@ interface ProfileProps extends ReduxProps {
 }
 
 export function Profile({ dispatch, winId, targetId }: ProfileProps) {
-  const {
-    data: userId,
-    isLoading: userIdLoading,
-    error: userIdError,
-  } = useQuery<number>({
-    queryKey: ["userId", winId],
-    queryFn: async () => {
-      if (targetId !== undefined) {
-        return targetId;
-      }
-      try {
-        const response = await axios.get("/api/id");
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching userId:", error);
-        throw error;
-      }
-    },
-  });
+	const {
+		data: userId,
+		isLoading: userIdLoading,
+		error: userIdError,
+	} = useQuery<number>({
+		queryKey: ["userId", winId],
+		queryFn: async () => {
+			if (targetId !== undefined) {
+				return targetId;
+			}
+			try {
+				const response = await api.get("/id");
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching userId:", error);
+				throw error;
+			}
+		},
+	});
 
-  const {
-    data: currentUserId,
-    isLoading: currentUserIdLoading,
-    error: currentUserIdError,
-  } = useQuery<number>({
-    queryKey: ["currentUserId", userId],
-    queryFn: async () => {
-      try {
-        const response = await axios.get("/api/id");
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching userId:", error);
-        throw error;
-      }
-    },
-  });
+	const {
+		data: currentUserId,
+		isLoading: currentUserIdLoading,
+		error: currentUserIdError,
+	} = useQuery<number>({
+		queryKey: ["currentUserId", userId],
+		queryFn: async () => {
+			try {
+				const response = await api.get("/id");
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching userId:", error);
+				throw error;
+			}
+		},
+	});
 
-  const {
-    data: profile,
-    isLoading: profileLoading,
-    error: profileError,
-  } = useQuery<{
-    id: number;
-    username: string;
-    avatar_url: string;
-    win_count: number;
-    loose_count: number;
-    achievement_lvl: number;
-    rank: number;
-  }>({
-    queryKey: ["user", userId],
-    queryFn: async () => {
-      try {
-        const response = await axios.get(`/api/profile/user/${userId}`);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching user:", error);
-        throw error;
-      }
-    },
-    enabled: !!userId,
-  });
+	const {
+		data: profile,
+		isLoading: profileLoading,
+		error: profileError,
+	} = useQuery<{
+		id: number;
+		username: string;
+		avatar_url: string;
+		win_count: number;
+		loose_count: number;
+		achievement_lvl: number;
+		rank: number;
+	}>({
+		queryKey: ["user", userId],
+		queryFn: async () => {
+			try {
+				const response = await api.get(`/profile/user/${userId}`);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching user:", error);
+				throw error;
+			}
+		},
+		enabled: !!userId,
+	});
 
-  const {
-    data: historic,
-    isLoading: historicLoading,
-    error: historicError,
-  } = useQuery<
-    {
-      id: number;
-      player1: string;
-      player2: string;
-      player1_id: number;
-      player2_id: number;
-      player1_avatar: string;
-      player2_avatar: string;
-      score1: number;
-      score2: number;
-    }[]
-  >({
-    queryKey: ["historic", userId],
-    queryFn: async () => {
-      try {
-        const response = await axios.get(`/api/profile/historic/${userId}`);
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching historic:", error);
-        throw error;
-      }
-    },
-    enabled: !!userId,
-  });
+	const {
+		data: historic,
+		isLoading: historicLoading,
+		error: historicError,
+	} = useQuery<
+		{
+			id: number;
+			player1: string;
+			player2: string;
+			player1_id: number;
+			player2_id: number;
+			player1_avatar: string;
+			player2_avatar: string;
+			score1: number;
+			score2: number;
+		}[]
+	>({
+		queryKey: ["historic", userId],
+		queryFn: async () => {
+			try {
+				const response = await api.get(
+					`/profile/historic/${userId}`
+				);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching historic:", error);
+				throw error;
+			}
+		},
+		enabled: !!userId,
+	});
 
   const selfProfile = userId === currentUserId;
 
@@ -153,87 +155,105 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
     dispatch(addWindow(newWindow));
   };
 
-  const handleOpenAchievements = () => {
-    const newWindow = {
-      WindowName: "Achievements",
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "ACHIEVEMENTS" },
-      toggle: false,
-      handleBarButton: HBButton.Close,
-      color: WinColor.LILAC,
-      targetId: userId,
-    };
-    dispatch(addWindow(newWindow));
-  };
+	const handleOpenAchievements = () => {
+		const newWindow = {
+			WindowName: "Achievements",
+			id: 0,
+			content: { type: "ACHIEVEMENTS" },
+			toggle: false,
+			handleBarButton: HBButton.Close,
+			color: WinColor.LILAC,
+			targetId: userId,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
-  const handleOpenFriendsList = () => {
-    const newWindow = {
-      WindowName: "Friends List",
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "FRIENDSLIST" },
-      toggle: false,
-      handleBarButton: HBButton.Close,
-      color: WinColor.PURPLE,
-      targetId: userId,
-    };
-    dispatch(addWindow(newWindow));
-  };
+	const handleOpenFriendsList = () => {
+		const newWindow = {
+			WindowName: "Friends List",
+			id: 0,
+			content: { type: "FRIENDSLIST" },
+			toggle: false,
+			handleBarButton: HBButton.Close,
+			color: WinColor.PURPLE,
+			targetId: userId,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
-  const handleOpenProfile = (id: number, username: string) => {
-    const newWindow = {
-      WindowName: username,
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "PROFILE", id: id },
-      toggle: false,
-      handleBarButton: 7,
-      color: WinColor.PURPLE,
-      targetId: id,
-    };
-    dispatch(addWindow(newWindow));
-  };
+	const handleOpenBlockedList = () => {
+		const newWindow = {
+			WindowName: "Blocked Users",
+			id: 0,
+			content: { type: "BLOCKEDUSERS" },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
+			targetId: userId,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
-  const handleFriendRequest = async (
-    senderId: number | undefined,
-    receiverId: number | undefined
-  ) => {
-    if (!senderId || !receiverId) return;
-    console.log("senderId : ", senderId, "  reveiverId : ", receiverId);
-    try {
-      const response = await axios.post("/api/friendslist/add", {
-        senderId: senderId,
-        receiverId: receiverId,
-      });
-      console.log("Friend request sent successfully", response.data);
-    } catch (error) {
-      console.error("Error sending friend request", error);
-    }
-  };
+	const handleOpenProfile = (id: number, username: string) => {
+		const newWindow = {
+			WindowName: username,
+			width: "400",
+			height: "600",
+			id: 0,
+			content: { type: "PROFILE", id: id },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
+			targetId: id,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
-  const buttons = (
-    <div className="Buttons">
-      <Button
-        content={selfProfile ? "friends list" : "add friend"}
-        color="purple"
-        style={{ display: "flex" }}
-        onClick={
-          selfProfile
-            ? handleOpenFriendsList
-            : () => handleFriendRequest(currentUserId, userId)
-        }
-      />
-      <Button
-        content={selfProfile ? "blocked list" : "block"}
-        color="purple"
-        style={{ display: "flex" }}
-      />
-    </div>
-  );
+	const handleFriendRequest = async (
+		senderId: number | undefined,
+		receiverId: number | undefined
+	) => {
+		if (!senderId || !receiverId) return;
+		console.log("senderId : ", senderId, "  reveiverId : ", receiverId);
+		try {
+			const response = await api.post("/friendslist/add", {
+				senderId: senderId,
+				receiverId: receiverId,
+			});
+			console.log("Friend request sent successfully", response.data);
+		} catch (error) {
+			console.error("Error sending friend request", error);
+		}
+	};
+
+	const handleBlockUser = async (id: number) => {
+		console.error("No function to block user : ", id);
+	};
+
+	const buttons = (
+		<div className="Buttons">
+			<Button
+				content={selfProfile ? "friends list" : "add friend"}
+				color="purple"
+				style={{ display: "flex" }}
+				onClick={
+					selfProfile
+						? handleOpenFriendsList
+						: () => handleFriendRequest(currentUserId, userId)
+				}
+			/>
+			<Button
+				content={selfProfile ? "blocked list" : "block"}
+				color="purple"
+				style={{ display: "flex" }}
+				onClick={
+					selfProfile
+						? handleOpenBlockedList
+						: () => handleBlockUser(userId ?? 0)
+				}
+			/>
+		</div>
+	);
 
   const footer = selfProfile ?? (
     <div className="Footer">

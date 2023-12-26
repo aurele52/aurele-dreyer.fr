@@ -1,7 +1,7 @@
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import "./Button.css";
 import { HTMLAttributes, ReactElement, useEffect, useState } from "react";
-import axios from "axios";
+import api from "../../../axios";
 import { ModalType, addModal } from "../../utils/AddModal";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
 import store from "../../../store";
@@ -600,13 +600,13 @@ export function HeartButton({
   const { data: friendships } = useQuery<FriendShipData[]>({
     queryKey: ["friendships", userId],
     queryFn: async () => {
-      return axios.get("/api/friendships").then((response) => response.data);
+      return api.get("/friendships").then((response) => response.data);
     },
   });
 
   const { mutateAsync: deleteFriendship } = useMutation({
     mutationFn: async () => {
-      return axios.delete("/api/relationship/friends/" + userId);
+      return api.delete("/relationship/friends/" + userId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendships", userId] });
@@ -615,7 +615,7 @@ export function HeartButton({
 
   const { mutateAsync: deleteBlockedFriendship } = useMutation({
     mutationFn: async () => {
-      return axios.delete("/api/relationship/blocked/" + userId);
+      return api.delete("/relationship/blocked/" + userId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendships", userId] });
@@ -624,7 +624,7 @@ export function HeartButton({
 
   const { mutateAsync: createFriendship } = useMutation({
     mutationFn: async (user2_id: number) => {
-      return axios.post("/api/friendship", { user2_id });
+      return api.post("/friendship", { user2_id });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["friendships", userId] });

@@ -22,11 +22,12 @@
     "seed": "ts-node prisma/seed.ts",
     "prisma:studio": "npm run with-env prisma studio",
     "prisma:reset": "npm run with-env -- prisma db push --force-reset && npm run seed",
-    "with-env": "dotenv -e ../../.env.localhost -- $@"
+    "with-env": "dotenv -e ../../.env.local -- $@"
   },
   "dependencies": {
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
+    "@nestjs/jwt": "^10.2.0",
     "@nestjs/platform-express": "^10.0.0",
     "@nestjs/serve-static": "^4.0.0",
     "@prisma/client": "^5.7.0",

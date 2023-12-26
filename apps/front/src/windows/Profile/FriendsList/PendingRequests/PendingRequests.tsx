@@ -1,85 +1,91 @@
-import "../FriendsList.css";
+import "./PendingRequests.css";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
+import { Button } from "../../../../shared/ui-components/Button/Button";
+import { ReducedUser } from "../../../../shared/ui-components/User/User";
+
 
 export function PendingRequests() {
-  const {
-    data: userId,
-    isLoading: userIdLoading,
-    error: userIdError,
-  } = useQuery<number>({
-    queryKey: ["userId"],
-    queryFn: async () => {
-      try {
-        const response = await axios.get("/api/id");
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching userId:", error);
-        throw error;
-      }
-    },
-  });
+	const {
+		data: userId,
+		isLoading: userIdLoading,
+		error: userIdError,
+	} = useQuery<number>({
+		queryKey: ["userId"],
+		queryFn: async () => {
+			try {
+				const response = await api.get("/id");
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching userId:", error);
+				throw error;
+			}
+		},
+	});
 
-  const {
-    data: pendingRequests,
-    isLoading: pendingRequestsLoading,
-    error: pendingRequestsError,
-  } = useQuery<
-    {
-      userid: number;
-      username: string;
-      avatar_url: string;
-      online: boolean;
-    }[]
-  >({
-    queryKey: ["pendingRequests", userId],
-    queryFn: async () => {
-      try {
-        const response = await axios.get(
-          `/api/PendingRequests/pending/${userId}`
-        );
-        return response.data;
-      } catch (error) {
-        console.error("Error fetching PendingRequests:", error);
-        throw error;
-      }
-    },
-    enabled: !!userId,
-  });
+	const {
+		data: pendingRequests,
+		isLoading: pendingRequestsLoading,
+		error: pendingRequestsError,
+	} = useQuery<
+		{
+			id: number;
+			senderId: number;
+			type: "received" | "sent";
+		}[]
+	>({
+		queryKey: ["pendingRequests", userId],
+		queryFn: async () => {
+			try {
+				const response = await api.get(
+					`/friendships/pendinglistList`
+				);
+				return response.data.map(
+					(request: { id: number; senderId: number }) => ({
+						...request,
+						type: request.senderId === userId ? "sent" : "received",
+					})
+				);
+			} catch (error) {
+				console.error("Error fetching PendingRequests:", error);
+				throw error;
+			}
+		},
+		enabled: !!userId,
+	});
 
-  console.log(pendingRequests);
-
-  if (pendingRequestsLoading || userIdLoading) {
-    return (
-      <div className="PendingRequests">
-        <FaSpinner className="loadingSpinner" />
-      </div>
-    );
-  }
-
-  if (pendingRequestsError) {
-    return <div>Error loading users: {pendingRequestsError.message}</div>;
-  }
+	if (pendingRequestsLoading || userIdLoading) {
+		return <FaSpinner className="loadingSpinner" />;
+	}
 
   if (userIdError) {
     return <div>Error loading user: {userIdError.message}</div>;
   }
 
-  return (
-    <div className="PendingRequests">
-      <div className="Body">
-        <List>
-          {pendingRequests?.map((user, index) => {
-            return (
-              <div className="PendingRequestsUser" key={index}>
-                content
-              </div>
-            );
-          })}
-        </List>
-      </div>
-    </div>
-  );
+	return (
+		<div className="PendingRequestsComponent">
+			<div className="Body">
+				<List dark={false}>
+					<div className="SectionName">Received</div>
+					{pendingRequests
+						?.filter((request) => request.type === "received")
+						.map((user, key) => (
+							<ReducedUser key={key} userId={user.id}>
+								<Button icon="Heart" color="pink" />
+							</ReducedUser>
+						))}
+					<div className="SectionName">Sent</div>
+					{pendingRequests
+						?.filter((request) => request.type === "sent")
+						.map((user, key) => (
+							<ReducedUser key={key} userId={user.id}>
+								<Button icon="Heart" color="pink" />
+							</ReducedUser>
+						))}
+				</List>
+			</div>
+		</div>
+	);
 }
