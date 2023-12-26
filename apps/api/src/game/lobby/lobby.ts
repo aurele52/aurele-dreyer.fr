@@ -1,10 +1,10 @@
 import { Server } from 'http';
 import { Socket } from 'socket.io';
-import { v4 } from 'uuid';
+import { v4 as uuidv4 } from 'uuid';
 import { AuthenticatedSocket } from '../types';
 
 export class Lobby {
-  public readonly id: string = v4();
+  public readonly id: string = uuidv4();
 
   public readonly clients: Map<Socket['id'], AuthenticatedSocket> = new Map<
     Socket['id'],
