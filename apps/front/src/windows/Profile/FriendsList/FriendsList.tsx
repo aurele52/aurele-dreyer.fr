@@ -7,7 +7,7 @@ import { FaSpinner } from "react-icons/fa";
 import Button from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
-import User from "../../../shared/ui-components/User/User";
+import { User } from "../../../shared/ui-components/User/User";
 
 interface FriendsListProps extends ReduxProps {}
 
@@ -70,7 +70,6 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 	}
 
 	const handleOpenProfile = (id: number, username: string) => {
-		console.log("User ID : ", id);
 		const newWindow = {
 			WindowName: username,
 			width: "400",
@@ -81,6 +80,18 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: id,
+		};
+		dispatch(addWindow(newWindow));
+	};
+
+	const handlePendingRequests = () => {
+		const newWindow = {
+			WindowName: "Pending Requests",
+			id: 0,
+			content: { type: "PENDINGREQUESTS" },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
 		};
 		dispatch(addWindow(newWindow));
 	};
@@ -98,57 +109,17 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 					{friendsList?.map((friend, index) => {
 						console.log("ID :  ", friend.userid);
 						return <User key={index} userId={friend.userid} />;
-						/* return (
-							<div className="FriendsListUser" key={index}>
-								<Button
-									icon="TripleDot"
-									color="pink"
-									onClick={() =>
-										handleOpenProfile(
-											friend.userid,
-											friend.username
-										)
-									}
-								/>
-								<div className="Avatar">
-									<img
-										className="Frame"
-										src={friend?.avatar_url}
-									></img>
-								</div>
-								<div className="User">
-									<div className="Frame">
-										<div className="Player">
-											<div className="Name">
-												<div>{friend?.username}</div>
-											</div>
-											<div className="Status">
-												<div className="Icon"></div>
-												<div className="Text"></div>
-											</div>
-										</div>
-										<div className="Buttons">
-											<Button
-												content="Match"
-												color="blue"
-											/>
-											<div className="Other">
-												<Button
-													icon="Chat"
-													color="pink"
-												/>
-												<Button
-													icon="Heart"
-													color="pink"
-												/>
-											</div>
-										</div>
-									</div>
-								</div>
-							</div>
-						); */
 					})}
 				</List>
+			</div>
+			<div className="Footer">
+				<Button
+					content="Pending Requests"
+					color="purple"
+					onClick={handlePendingRequests}
+				/>
+				<div className="Frame"></div>
+				<Button content="Add Friends" color="purple" />
 			</div>
 		</div>
 	);
