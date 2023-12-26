@@ -13,6 +13,7 @@ import { LadderModule } from './ladder/ladder.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { FriendslistModule } from './friendslist/friendslist.module';
 import { FriendshipModule } from './friendship/friendship.module';
+import { PongGateway } from './game/pong.gateway';
 
 @Module({
   imports: [
@@ -30,6 +31,6 @@ import { FriendshipModule } from './friendship/friendship.module';
     FriendshipModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService],
+  providers: [AppService, PrismaService, PongGateway],
 })
 export class AppModule {}
