@@ -1,6 +1,6 @@
 import "./Chat.css";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
 import Button from "../../shared/ui-components/Button/Button";
@@ -18,12 +18,10 @@ type ChatType = {
 };
 
 export function Chat({ dispatch }: ChatProps) {
-  const apiUrl = "/api/chats";
-
   const { data: chats } = useQuery<ChatType[]>({
     queryKey: ["chats"],
     queryFn: async () => {
-      return axios.get(apiUrl).then((response) => response.data);
+      return api.get("/chats").then((response) => response.data);
     },
   });
 

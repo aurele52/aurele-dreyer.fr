@@ -1,6 +1,6 @@
 import "./FindChan.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import Channel from "../../../shared/ui-components/Channel/Channel";
 import Button from "../../../shared/ui-components/Button/Button";
@@ -22,13 +22,13 @@ function FindChan({ dispatch }: FindChanProps) {
   >({
     queryKey: ["channels"],
     queryFn: async () => {
-      return axios.get("/api/channels").then((response) => response.data);
+      return api.get("/channels").then((response) => response.data);
     },
   });
 
   const { mutateAsync: createUserChannel } = useMutation({
     mutationFn: async (param: { channelId: number }) => {
-      return axios.post("/api/user-channel", param);
+      return api.post("/user-channel", param);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channels"] });

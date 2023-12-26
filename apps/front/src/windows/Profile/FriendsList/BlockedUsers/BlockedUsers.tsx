@@ -1,6 +1,6 @@
 import "./BlockedUsers.css";
 import { useQuery } from "@tanstack/react-query";
-import axios from "axios";
+import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import Button from "../../../../shared/ui-components/Button/Button";
@@ -17,7 +17,7 @@ export function BlockedUsers({}: BlockedUsersProps) {
 		queryKey: ["userId"],
 		queryFn: async () => {
 			try {
-				const response = await axios.get("/api/id");
+				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching userId:", error);
@@ -38,8 +38,8 @@ export function BlockedUsers({}: BlockedUsersProps) {
 		queryKey: ["blockedUsers", userId],
 		queryFn: async () => {
 			try {
-				const response = await axios.get(
-					`/api/friendships/blockedList`
+				const response = await api.get(
+					`/friendships/blockedList`
 				);
 				return response.data;
 			} catch (error) {
