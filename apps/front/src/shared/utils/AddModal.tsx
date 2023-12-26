@@ -1,6 +1,6 @@
-import { addWindow } from "../reducers";
+import { addWindow } from "../../reducers";
 import { HBButton, WinColor } from "./WindowTypes";
-import store from "../store";
+import store from "../../store";
 import { ReactNode } from "react";
 
 export enum ModalType {
@@ -12,11 +12,7 @@ export enum ModalType {
 
 export type ActionType = () => boolean;
 
-export function addModal(
-  type: ModalType,
-  str: string,
-  action?: ActionType
-) {
+export function addModal(type: ModalType, str: string, action?: ActionType) {
   let color;
   if (type === ModalType.WARNING || ModalType.ERROR) color = WinColor.RED;
   else color = WinColor.PURPLE;

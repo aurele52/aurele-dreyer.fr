@@ -1,12 +1,12 @@
 import "./Chat.css";
 import { useQuery } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../List/List";
-import Channel from "../Channel/Channel";
-import Button from "../Button/Button";
+import List from "../../shared/ui-components/List/List";
+import Channel from "../../shared/ui-components/Channel/Channel";
+import Button from "../../shared/ui-components/Button/Button";
 import { addWindow } from "../../reducers";
 import { connect, ConnectedProps } from "react-redux";
-import { HBButton, WinColor } from "../../utils/WindowTypes";
+import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 
 interface ChatProps extends ReduxProps {}
 
@@ -14,8 +14,8 @@ type ChatType = {
   id: number;
   name: string;
   type: string;
-  interlocutor: {avatar_url: string, username: string, id: number};
-}
+  interlocutor: { avatar_url: string; username: string; id: number };
+};
 
 export function Chat({ dispatch }: ChatProps) {
   const apiUrl = "/api/chats";
@@ -84,12 +84,12 @@ export function Chat({ dispatch }: ChatProps) {
   };
 
   const handleDetails = (chat: ChatType) => {
-    if (chat.type === 'DM') {
+    if (chat.type === "DM") {
       detailsWindow(true, chat.interlocutor.id, chat.interlocutor.username);
     } else {
       detailsWindow(false, chat.id, chat.name);
     }
-  }
+  };
 
   return (
     <div className="Chat">
@@ -101,14 +101,16 @@ export function Chat({ dispatch }: ChatProps) {
                 icon="TripleDot"
                 color="pink"
                 title="About"
-                onClick={() =>
-                  handleDetails(chat)
-                }
+                onClick={() => handleDetails(chat)}
               />
               <Channel
-                name={chat.type === "DM" ? chat.interlocutor.username : chat.name}
+                name={
+                  chat.type === "DM" ? chat.interlocutor.username : chat.name
+                }
                 className={chat.type === "DM" ? chat.type.toLowerCase() : ""}
-                image={chat.type === "DM" ? chat.interlocutor.avatar_url : undefined}
+                image={
+                  chat.type === "DM" ? chat.interlocutor.avatar_url : undefined
+                }
                 clickable={true}
               />
             </div>

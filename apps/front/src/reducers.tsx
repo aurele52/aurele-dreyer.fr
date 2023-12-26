@@ -1,6 +1,6 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
-import { WinColor } from "./utils/WindowTypes";
-import { ActionType } from "./utils/AddModal";
+import { WinColor } from "./shared/utils/WindowTypes";
+import { ActionType } from "./shared/utils/AddModal";
 import { ReactNode } from "react";
 
 interface WindowData {

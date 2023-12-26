@@ -1,16 +1,16 @@
 import "./FindChan.css";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import axios from "axios";
-import List from "../List/List";
-import Channel from "../Channel/Channel";
-import Button from "../Button/Button";
-import { HBButton, WinColor } from "../../utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import List from "../../../shared/ui-components/List/List";
+import Channel from "../../../shared/ui-components/Channel/Channel";
+import Button from "../../../shared/ui-components/Button/Button";
+import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
+import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
 
 interface FindChanProps extends ReduxProps {}
 
-function FindChan({dispatch}: FindChanProps) {
+function FindChan({ dispatch }: FindChanProps) {
   const queryClient = useQueryClient();
 
   const { data: channels } = useQuery<
@@ -42,18 +42,17 @@ function FindChan({dispatch}: FindChanProps) {
 
   const handleDetailsChan = (name: string, id: number) => {
     const newWindow = {
-        WindowName: "About" + name,
-        width: "453",
-        height: "527",
-        id: 0,
-        content: { type: "ABOUTCHAN", id: id },
-        toggle: false,
-        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-        color: WinColor.PURPLE,
-      };
+      WindowName: "About" + name,
+      width: "453",
+      height: "527",
+      id: 0,
+      content: { type: "ABOUTCHAN", id: id },
+      toggle: false,
+      handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+      color: WinColor.PURPLE,
+    };
     dispatch(addWindow(newWindow));
-
-  }
+  };
 
   return (
     <div className="FindChan">
@@ -63,7 +62,11 @@ function FindChan({dispatch}: FindChanProps) {
             <div key={channel.id}>
               <Channel name={channel.name} clickable={false}>
                 <div className="ButtonFindChan">
-                  <Button icon="TripleDot" color="pink" onClick={() => handleDetailsChan(channel.name, channel.id)} />
+                  <Button
+                    icon="TripleDot"
+                    color="pink"
+                    onClick={() => handleDetailsChan(channel.name, channel.id)}
+                  />
                   <Button
                     icon="Plus"
                     color="pink"

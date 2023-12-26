@@ -1,14 +1,14 @@
 import axios from "axios";
 import "./AboutChan.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { capitalize } from "../../utils/StringUtils";
-import List from "../List/List";
-import Button from "../Button/Button";
-import Channel from "../Channel/Channel";
-import { HBButton, WinColor } from "../../utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import { capitalize } from "../../../shared/utils/StringUtils";
+import List from "../../../shared/ui-components/List/List";
+import Button from "../../../shared/ui-components/Button/Button";
+import Channel from "../../../shared/ui-components/Channel/Channel";
+import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
+import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
-import { ModalType, addModal } from "../../utils/AddModal";
+import { ModalType, addModal } from "../../../shared/utils/AddModal";
 
 interface AboutChanProps extends ReduxProps {
   chanId: number | undefined;
@@ -157,7 +157,10 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
     const friendship = isFriend(id);
 
     if (friendship === "Heart") {
-      addModal(ModalType.WARNING, `Are you sure you want to remove ${name} from your friends?`);
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to remove ${name} from your friends?`
+      );
     }
   };
 
@@ -210,7 +213,9 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
                       <Button
                         icon={isFriend(user.id)}
                         color="pink"
-                        onClick={() => handleFriendshipBtn(user.id, user.username)}
+                        onClick={() =>
+                          handleFriendshipBtn(user.id, user.username)
+                        }
                       />
                     </div>
                   </div>
