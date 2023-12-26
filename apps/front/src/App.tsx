@@ -1,20 +1,19 @@
-import { useState } from 'react';
-import './css/App.css';
-import Redux from './pages/redux';
-import HomePage from './pages/HomePage';
+import "./App.css";
+import Navbar from "./main-page/Navbar/Navbar";
+import Background from "./main-page/Background/Background";
+import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 
+const queryClient = new QueryClient();
 
-export default function App() {
-	const [homeDisplay, setHomeDisplay]	= useState(true);
-	const [reduxDisplay, setReduxDisplay]	= useState(false);
-	function toggleReduxDisplay() {
-		setHomeDisplay(false);
-		setReduxDisplay(true);
-	}
-		return (
-			<div>
-				{homeDisplay === true && <HomePage toggleReduxDisplay={toggleReduxDisplay}/>}
-				{reduxDisplay === true && <Redux />}
+function App() {
+	return (
+		<QueryClientProvider client={queryClient}>
+			<div className="App">
+				<Navbar />
+				<Background />
 			</div>
-		);
+		</QueryClientProvider>
+	);
 }
+
+export default App;

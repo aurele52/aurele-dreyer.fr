@@ -3,12 +3,17 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
+  WsResponse,
   // WebSocketServer,
 } from '@nestjs/websockets';
 // import { Server } from 'http';
 import { Socket } from 'socket.io';
-// import { AuthenticatedSocket } from './types';
-// import { CreateLobbyDto } from './dto/createLobby.dto';
+import { AuthenticatedSocket } from './types';
+import { CreateLobbyDto } from './dto/createLobby.dto';
+import { lobbyManager } from './lobby/lobbyManager';
+import { lobby } from './lobby/lobby';
+import { ServerPayloads } from './ServerPayloads';
+
 export interface info {
   y: number;
   x: number;
@@ -16,6 +21,7 @@ export interface info {
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
+  constructor(private readonly lobbyManager: lobbyManager) {}
   // @WebSocketServer()
   // server: Server;
   afterInit() {
@@ -35,30 +41,28 @@ export class PongGateway {
     console.log(`${client.id}`, data); // Broadcast the message to all connected clients
   }
 
-  // @SubscribeMessage('client.createLobby')
-  // onLobbyCreate(
-  //   client: AuthenticatedSocket,
-  //   data: CreateLobbyDto,
-  // ): WsResponse<ServerPayloads[ServerEvents.GameMessage]> {
-  //   const lobby = this.lobbyManager.createLobby(
-  //     data.mode,
-  //     data.delayBetweenRounds,
-  //   );
-  //   lobby.addClient(client);
-  //
-  //   return {
-  //     event: 'server.gameMessage',
-  //     data: {
-  //       color: 'green',
-  //       message: 'Lobby created',
-  //     },
-  //   };
-  // }
+  @SubscribeMessage('client.createLobby')
+  onLobbyCreate(
+    client: AuthenticatedSocket,
+    data: CreateLobbyDto,
+  ): WsResponse<ServerPayloads['server.gameMessage']> {
+    console.log('yes');
+    const lobby = this.lobbyManager.createLobby(data.isOnline, data.isPublic);
+    if (lobby) lobby.addClient(client);
+
+    return {
+      event: 'server.gameMessage',
+      data: {
+        color: 'green',
+        message: 'Lobby created',
+      },
+    };
+  }
 
   @SubscribeMessage('client.data')
   handleData(@MessageBody() data: info, @ConnectedSocket() client: Socket) {
     client.emit('server.data', data);
-    console.log(`${client.id}`, data.x); // Broadcast the message to all connected clients
+    console.log(`${client.id}`, data.x);
   }
 
   handleDisconnect(client: any) {

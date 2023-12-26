@@ -28,6 +28,6 @@ import { UserModule } from './user/user.module';
     UserModule,
   ],
   controllers: [AppController],
-  providers: [AppService, PrismaService, PongGateway],
+  providers: [AppService, PrismaService],
 })
 export class AppModule {}

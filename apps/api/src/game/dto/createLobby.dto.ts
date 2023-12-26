@@ -2,5 +2,7 @@ import { IsString } from 'class-validator';
 
 export class CreateLobbyDto {
   @IsString()
-  mode: 'local' | 'online';
+  isOnline: 'isLocal' | 'isOnline';
+  @IsString()
+  isPublic: 'isPublic' | 'isPrivate' | 'isFriendOnly';
 }

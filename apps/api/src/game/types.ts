@@ -1,12 +1,13 @@
 import { Socket } from 'socket.io';
-import { Lobby } from './lobby/lobby';
+import { lobby } from './lobby/lobby';
 
 export type AuthenticatedSocket = Socket & {
   data: {
-    lobby: null | Lobby;
+    lobby: null | lobby;
   };
 
   emit: <T>(ev: string, data: T) => boolean;
 };
 
-export type LobbyMode = 'duo' | 'solo';
+export type LobbyOnline = 'isOnline' | 'isLocal';
+export type LobbyPublic = 'isPrivate' | 'isPublic' | 'isFriendOnly';
