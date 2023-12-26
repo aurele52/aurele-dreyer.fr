@@ -2,16 +2,16 @@ import "./Background.css";
 import { connect } from "react-redux";
 import { AppState } from "../../reducers";
 import { ConnectedProps } from "react-redux";
-import Window from "../Window/Window";
-import Play from "../Play/Play";
-import Chat from "../Chat/Chat";
-import Ladder from "../Ladder/Ladder";
-import Profile from "../Profile/Profile";
-import FindChan from "../FindChan/FindChan";
-import NewChan from "../NewChan/NewChan";
-import AboutChan from "../AboutChan/AboutChan";
-import Achievements from "../Achievements/Achievements";
-import FriendsList from "../FriendsList/FriendsList";
+import Window from "../../shared/ui-components/Window/Window";
+import Play from "../../windows/Play/Play";
+import Chat from "../../windows/Chat/Chat";
+import Ladder from "../../windows/Ladder/Ladder";
+import Profile from "../../windows/Profile/Profile";
+import FindChan from "../../windows/Chat/FindChan/FindChan";
+import NewChan from "../../windows/Chat/NewChan/NewChan";
+import AboutChan from "../../windows/Chat/AboutChan/AboutChan";
+import Achievements from "../../windows/Achievements/Achievements";
+import FriendsList from "../../windows/Profile/FriendsList/FriendsList";
 
 interface BackgroundProps extends ReduxProps {}
 

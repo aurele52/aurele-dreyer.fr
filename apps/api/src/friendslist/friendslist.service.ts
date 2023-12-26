@@ -29,13 +29,10 @@ export class FriendslistService {
         userid: user.id,
         username: user.username,
         avatar_url: user.avatar_url,
-        frienship: {
-          status: friend.status,
-          sender_id: friend.user1_id,
-        },
-        online: true, ///TO CHANGE
+        online: true, /// TO CHANGE
       };
     });
+
     return friendsList;
   }
 
