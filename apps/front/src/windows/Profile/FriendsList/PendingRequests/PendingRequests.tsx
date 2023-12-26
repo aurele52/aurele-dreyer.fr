@@ -58,11 +58,7 @@ export function PendingRequests({}: PendingRequestsProps) {
 	});
 
 	if (pendingRequestsLoading || userIdLoading) {
-		return (
-			<div className="PendingRequests">
-				<FaSpinner className="loadingSpinner" />
-			</div>
-		);
+		return <FaSpinner className="loadingSpinner" />;
 	}
 
 	if (pendingRequestsError) {

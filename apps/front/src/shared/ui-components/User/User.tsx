@@ -16,6 +16,9 @@ interface UserProps {
 }
 
 export function User({ userId, channelId }: UserProps) {
+	if (!userId) {
+		return <div></div>;
+	}
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
@@ -47,7 +50,6 @@ export function User({ userId, channelId }: UserProps) {
 		queryKey: ["user", userId],
 		queryFn: async () => {
 			try {
-				console.log("ID : ", userId);
 				const response = await api.get(`/user/${userId}`);
 				return response.data;
 			} catch (error) {
@@ -225,6 +227,9 @@ interface ReducedUserProps {
 }
 
 export function ReducedUser({ children, userId }: ReducedUserProps) {
+	if (!userId) {
+		return <div></div>;
+	}
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
