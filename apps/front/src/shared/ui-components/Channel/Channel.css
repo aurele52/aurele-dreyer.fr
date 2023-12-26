@@ -17,6 +17,10 @@
   --bg-channel-color: var(--purple-gradient-200, linear-gradient(180deg, #ECE5F8 66.15%, #D0B9F8 86.98%));
 }
 
+.channel.dm.blocked {
+  --bg-channel-color: var(--Purple-Gradient-300, linear-gradient(180deg, #BBA0E9 67.71%, #9673D1 93.23%));
+}
+
 .channel.chanClickable:hover {
   --bg-channel-color-hover: var(--pink-purple-mix-chat, #F8E5F8);
   background: var(--bg-channel-color-hover);

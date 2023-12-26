@@ -78,7 +78,6 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,
-			modal: true,
 			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: id,
