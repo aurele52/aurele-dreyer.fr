@@ -106,7 +106,7 @@
 	);
 }
 
-.lightYello:hover {
+.lightYellow:hover {
 	background: var(--Yellow-100, #faf7a4);
 }
 
@@ -123,7 +123,7 @@
 	);
 }
 
-.darkYello:hover {
+.darkYellow:hover {
 	background: var(--Yellow-300, #d3c43d);
 }
 
