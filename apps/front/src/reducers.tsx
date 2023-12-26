@@ -47,12 +47,9 @@ const windowsSlice = createSlice({
 				"ABOUTCHAN",
 				"ACHIEVEMENTS",
 				"ABOUTCHAN",
-<<<<<<< HEAD
 				"PENDINGREQUESTS",
 				"BLOCKEDUSERS",
 				"ADDFRIENDS",
-=======
->>>>>>> audreyer
 			];
 
 			if (
