@@ -8,6 +8,7 @@ import Channel from "../Channel/Channel";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
 import { addWindow } from "../../reducers";
 import { connect, ConnectedProps } from "react-redux";
+import { ModalType, addModal } from "../../utils/AddModal";
 
 interface AboutChanProps extends ReduxProps {
   chanId: number | undefined;
@@ -116,7 +117,6 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       id: 0,
       content: { type: "PROFILE", id: id },
       toggle: false,
-      modal: false,
       handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
       color: WinColor.PURPLE,
     };
@@ -128,14 +128,37 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       const friendship = friendships?.find(
         (f) => f.user1_id === id || f.user2_id === id
       );
-      if (friendship === undefined)
-        return "EmptyHeart";
-      if (friendship.status === "FRIENDS")
-        return "Heart";
-      if (friendship.status === "PENDING")
-        return "Cross";
+      if (friendship === undefined) return "EmptyHeart";
+      if (friendship.status === "FRIENDS") return "Heart";
+      if (friendship.status === "PENDING") return "PendingHeart";
     }
     return "EmptyHeart";
+  };
+
+  const isBlocked = (id: number) => {
+    if (friendships) {
+      const friendship = friendships?.find(
+        (f) => f.user1_id === id || f.user2_id === id
+      );
+      if (friendship && friendship.status === "BLOCKED") return true;
+    }
+    return false;
+  };
+
+  const isBlockedByMe = (id: number) => {
+    if (friendships) {
+      const friendship = friendships?.find((f) => f.user2_id === id);
+      if (friendship && friendship.status === "BLOCKED") return true;
+    }
+    return false;
+  };
+
+  const handleFriendshipBtn = (id: number, name: string) => {
+    const friendship = isFriend(id);
+
+    if (friendship === "Heart") {
+      addModal(ModalType.WARNING, `Are you sure you want to remove ${name} from your friends?`);
+    }
   };
 
   return (
@@ -147,7 +170,7 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
           </div>
           <div className="heading-500">{channel?.topic}</div>
           <div className="text-400">
-            Type {capitalize(channel?.type || "PUBLIC")}
+            {capitalize(channel?.type || "PUBLIC")} Channel
           </div>
           <div className="text-400">{channel?.userChannels.length} members</div>
         </div>
@@ -174,14 +197,29 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
                 onClick={() => handleProfile(user.id, user.username)}
               />
               <img src={user.avatar_url} className="avatar outsideCard" />
-              <Channel name={user.username} className="dm" clickable={false}>
-                {user.id !== userId ? (
+              <Channel
+                name={user.username}
+                className={`dm ${isBlocked(user.id) ? "blocked" : ""}`}
+                clickable={false}
+              >
+                {user.id !== userId && !isBlocked(user.id) ? (
                   <div className="btnCardAboutChan">
                     <Button content="Match!" color="blue" />
                     <div className="btnIconAboutChan">
                       <Button icon="Chat" color="pink" />
-                      <Button icon={isFriend(user.id)} color="pink" />
+                      <Button
+                        icon={isFriend(user.id)}
+                        color="pink"
+                        onClick={() => handleFriendshipBtn(user.id, user.username)}
+                      />
                     </div>
+                  </div>
+                ) : (
+                  ""
+                )}
+                {isBlockedByMe(user.id) ? (
+                  <div className="btnIconAboutChan">
+                    <Button icon="Unblock" color="pink" />
                   </div>
                 ) : (
                   ""

@@ -35,7 +35,6 @@ export function Chat({ dispatch }: ChatProps) {
       id: 0,
       content: { type: "FINDCHAN" },
       toggle: false,
-      modal: true,
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
@@ -50,7 +49,6 @@ export function Chat({ dispatch }: ChatProps) {
       id: 0,
       content: { type: "NEWCHAN" },
       toggle: false,
-      modal: true,
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
@@ -67,7 +65,6 @@ export function Chat({ dispatch }: ChatProps) {
         id: 0,
         content: { type: "ABOUTCHAN", id: id },
         toggle: false,
-        modal: false,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };
@@ -79,7 +76,6 @@ export function Chat({ dispatch }: ChatProps) {
         id: 0,
         content: { type: "PROFILE", id: id },
         toggle: false,
-        modal: false,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };

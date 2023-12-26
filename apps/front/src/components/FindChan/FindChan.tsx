@@ -48,7 +48,6 @@ function FindChan({dispatch}: FindChanProps) {
         id: 0,
         content: { type: "ABOUTCHAN", id: id },
         toggle: false,
-        modal: false,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };

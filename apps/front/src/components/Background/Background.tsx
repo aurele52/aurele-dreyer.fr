@@ -12,6 +12,7 @@ import NewChan from "../NewChan/NewChan";
 import AboutChan from "../AboutChan/AboutChan";
 import Achievements from "../Achievements/Achievements";
 import FriendsList from "../FriendsList/FriendsList";
+import Modal from "../Modal/Modal";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -31,6 +32,7 @@ export function Background({ windows }: BackgroundProps) {
 		ABOUTCHAN: { width: "500px", height: "500px" },
 		ACHIEVEMENTS: { width: "300px", height: "300px" },
 		FRIENDSLIST: { width: "450px", height: "600px" },
+		MODAL: { width: "390px", height: "200px" },
 	};
 
 	return (
@@ -57,7 +59,6 @@ export function Background({ windows }: BackgroundProps) {
 							width={width}
 							height={height}
 							id={window.id}
-							modal={window.modal}
 							handleBarButton={window.handleBarButton}
 							color={window.color}
 						>
@@ -83,6 +84,7 @@ export function Background({ windows }: BackgroundProps) {
 							{window.content.type === "FRIENDSLIST" && (
 								<FriendsList />
 							)}
+							{window.content.type === "MODAL" && <Modal text={window.modal?.text} action={window.modal?.action || undefined} />}
 						</Window>
 					);
 				})}

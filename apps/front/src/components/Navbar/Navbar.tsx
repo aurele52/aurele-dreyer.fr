@@ -14,7 +14,6 @@ export function Navbar({ dispatch }: NavbarProps) {
       id: 0,
       content: { type: "PLAY" },
       toggle: true,
-      modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
       color: WinColor.PURPLE,
     };
@@ -29,7 +28,6 @@ export function Navbar({ dispatch }: NavbarProps) {
       id: 0,
       content: { type: "LADDER" },
       toggle: true,
-      modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
       color: WinColor.PURPLE,
     };
@@ -44,7 +42,6 @@ export function Navbar({ dispatch }: NavbarProps) {
       id: 0,
       content: { type: "CHAT" },
       toggle: true,
-      modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
       color: WinColor.PURPLE,
     };
@@ -59,7 +56,6 @@ export function Navbar({ dispatch }: NavbarProps) {
       id: 0,
       content: { type: "PROFILE" },
       toggle: true,
-      modal: false,
       handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
       color: WinColor.PURPLE,
     };

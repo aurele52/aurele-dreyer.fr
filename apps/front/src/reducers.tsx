@@ -1,5 +1,7 @@
 import { createSlice, PayloadAction } from "@reduxjs/toolkit";
 import { WinColor } from "./utils/WindowTypes";
+import { ActionType } from "./utils/AddModal";
+import { ReactNode } from "react";
 
 interface WindowData {
   WindowName: string;
@@ -8,7 +10,7 @@ interface WindowData {
   id: number;
   content: { type: string; id?: number };
   toggle: boolean;
-  modal: boolean;
+  modal?: { text: ReactNode; action?: ActionType };
   handleBarButton: number;
   color: WinColor;
   targetId?: number;
