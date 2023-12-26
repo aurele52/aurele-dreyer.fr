@@ -11,9 +11,11 @@ export class FriendslistService {
         OR: [
           {
             user1_id: id,
+            status: 'FRIENDS',
           },
           {
             user2_id: id,
+            status: 'FRIENDS',
           },
         ],
       },
@@ -29,7 +31,7 @@ export class FriendslistService {
         userid: user.id,
         username: user.username,
         avatar_url: user.avatar_url,
-        online: true, /// TO CHANGE
+        online: true,
       };
     });
 
@@ -77,5 +79,60 @@ export class FriendslistService {
     });
 
     return newFriendship;
+  }
+
+  async getPotentialFriends(placeholderValue: string, selfId: number) {
+    try {
+      const normalizedPlaceholder = placeholderValue.toLowerCase();
+
+      const potentialFriends = await this.prisma.user.findMany({
+        where: {
+          username: {
+            contains: normalizedPlaceholder,
+            mode: 'insensitive',
+          },
+          AND: {
+            AND: [
+              {
+                id: {
+                  not: selfId,
+                },
+              },
+              {
+                friendship_user1: {
+                  none: {
+                    OR: [
+                      { status: { equals: 'FRIENDS' }, user2_id: selfId },
+                      { status: { equals: 'BLOCKED' }, user2_id: selfId },
+                    ],
+                  },
+                },
+              },
+              {
+                friendship_user2: {
+                  none: {
+                    OR: [
+                      { status: { equals: 'FRIENDS' }, user1_id: selfId },
+                      { status: { equals: 'BLOCKED' }, user1_id: selfId },
+                    ],
+                  },
+                },
+              },
+            ],
+          },
+        },
+        select: {
+          id: true,
+        },
+        orderBy: {
+          username: 'asc',
+        },
+      });
+
+      return potentialFriends.map((user) => user.id);
+    } catch (error) {
+      console.error('Error fetching potential friends:', error);
+      throw error;
+    }
   }
 }

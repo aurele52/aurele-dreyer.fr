@@ -8,10 +8,11 @@ import Button from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import { User } from "../../../shared/ui-components/User/User";
+import store from "../../../store";
 
-interface FriendsListProps extends ReduxProps {}
+interface FriendsListProps {}
 
-export function FriendsList({ dispatch }: FriendsListProps) {
+export function FriendsList({}: FriendsListProps) {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -81,7 +82,7 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			color: WinColor.PURPLE,
 			targetId: id,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	const handlePendingRequests = () => {
@@ -93,7 +94,19 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			handleBarButton: 7,
 			color: WinColor.PURPLE,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
+	};
+
+	const handleOpenAddFriends = () => {
+		const newWindow = {
+			WindowName: "Add Friends",
+			id: 0,
+			content: { type: "ADDFRIENDS" },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
 	};
 
 	return (
@@ -107,7 +120,6 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			<div className="Body">
 				<List>
 					{friendsList?.map((friend, index) => {
-						console.log("ID :  ", friend.userid);
 						return <User key={index} userId={friend.userid} />;
 					})}
 				</List>
@@ -119,16 +131,14 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 					onClick={handlePendingRequests}
 				/>
 				<div className="Frame"></div>
-				<Button content="Add Friends" color="purple" />
+				<Button
+					content="Add Friends"
+					color="purple"
+					onClick={handleOpenAddFriends}
+				/>
 			</div>
 		</div>
 	);
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedFriendsList = connector(FriendsList);
-export default ConnectedFriendsList;
+export default FriendsList;

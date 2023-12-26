@@ -1,5 +1,6 @@
-import { Controller, Get, Param, Post, Body } from '@nestjs/common';
+import { Controller, Get, Param, Post, Body, Query } from '@nestjs/common';
 import { FriendslistService } from './friendslist.service';
+import { CurrentUser } from 'src/decorators/user.decorator';
 
 @Controller('friendslist')
 export class FriendslistController {
@@ -16,5 +17,16 @@ export class FriendslistController {
   ) {
     const { senderId, receiverId } = body;
     return this.friendslistService.sendFriendRequest(senderId, receiverId);
+  }
+
+  @Get('/potentialFriends')
+  async getPotentialFriends(
+    @CurrentUser() user,
+    @Query('placeholderValue') placeholderValue: string,
+  ) {
+    return this.friendslistService.getPotentialFriends(
+      placeholderValue,
+      user.id,
+    );
   }
 }
