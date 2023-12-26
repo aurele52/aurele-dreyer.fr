@@ -13,12 +13,10 @@ import { LadderModule } from './ladder/ladder.module';
 import { AchievementsModule } from './achievements/achievements.module';
 import { FriendslistModule } from './friendslist/friendslist.module';
 import { FriendshipModule } from './friendship/friendship.module';
+import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    ServeStaticModule.forRoot({
-      rootPath: join(__dirname, '../..', 'front', 'dist'),
-    }),
     GameModule,
     AuthModule,
     ChannelModule,
@@ -28,6 +26,7 @@ import { FriendshipModule } from './friendship/friendship.module';
     AchievementsModule,
     FriendslistModule,
     FriendshipModule,
+    UserModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

@@ -7,6 +7,7 @@ import { FaSpinner } from "react-icons/fa";
 import Button from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
+import User from "../../../shared/ui-components/User/User";
 
 interface FriendsListProps extends ReduxProps {}
 
@@ -35,9 +36,6 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 	} = useQuery<
 		{
 			userid: number;
-			username: string;
-			avatar_url: string;
-			online: boolean;
 		}[]
 	>({
 		queryKey: ["friendsList", userId],
@@ -55,11 +53,9 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 		enabled: !!userId,
 	});
 
-	console.log(friendsList);
-
 	if (friendsListLoading || userIdLoading) {
 		return (
-			<div className="Ladder">
+			<div className="FriendsList">
 				<FaSpinner className="loadingSpinner" />
 			</div>
 		);
@@ -101,7 +97,9 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 			<div className="Body">
 				<List>
 					{friendsList?.map((friend, index) => {
-						return (
+						console.log("ID :  ", friend.userid);
+						return <User key={index} userId={friend.userid} />;
+						/* return (
 							<div className="FriendsListUser" key={index}>
 								<Button
 									icon="TripleDot"
@@ -149,7 +147,7 @@ export function FriendsList({ dispatch }: FriendsListProps) {
 									</div>
 								</div>
 							</div>
-						);
+						); */
 					})}
 				</List>
 			</div>
