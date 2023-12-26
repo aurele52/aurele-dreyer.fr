@@ -41,6 +41,9 @@
 	flex: 1 0 0;
 	flex-wrap: wrap;
 	border-radius: 5px;
+	border-top: 2px solid var(--Base-White, #fff);
+	border-right: 1px solid var(--Base-White, #fff);
+	border-left: 1px solid var(--Base-White, #fff);
 }
 
 .UserComponent > .User > .Frame > .Player {
