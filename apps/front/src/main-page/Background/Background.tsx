@@ -92,6 +92,7 @@ export function Background({ windows }: BackgroundProps) {
 									type={window.modal?.type}
 									winId={window.id}
 									action={window.modal?.action}
+                  targetId={window.modal?.targetId}
 								/>
 							)}
 							{window.content.type === "PENDINGREQUESTS" && (

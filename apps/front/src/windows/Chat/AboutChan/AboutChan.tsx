@@ -4,10 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
 import List from "../../../shared/ui-components/List/List";
 import { Button } from "../../../shared/ui-components/Button/Button";
-import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
-import { addWindow } from "../../../reducers";
-import store from "../../../store";
-import { User } from "../../../shared/ui-components/User/User";
+import { User, UserRole } from "../../../shared/ui-components/User/User";
 
 interface AboutChanProps {
   chanId: number | undefined;
@@ -20,6 +17,7 @@ type ChannelData = {
   topic: string;
   userChannels: {
     id: number;
+    role: UserRole;
     user_id: number;
     User: {
       id: number;
@@ -93,21 +91,6 @@ function AboutChan({ chanId }: AboutChanProps) {
     }
   };
 
-  const handleProfile = (id: number, username: string) => {
-    const name = userId === id ? "Profile" : username;
-    const newWindow = {
-      WindowName: name,
-      width: "500",
-      height: "500",
-      id: 0,
-      content: { type: "PROFILE", id: id },
-      toggle: false,
-      handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-      color: WinColor.PURPLE,
-    };
-    store.dispatch(addWindow(newWindow));
-  };
-
   return (
     <div className="AboutChan custom-scrollbar">
       <div className="headerAboutChan">
@@ -136,7 +119,7 @@ function AboutChan({ chanId }: AboutChanProps) {
       <List>
         {channel?.userChannels.map((uc, index) => {
           const user = uc.User;
-					return <User key={index} userId={user.id} />;
+					return <User key={index} userId={user.id} channel={{channelId: channel?.id, userRole: uc.role}} />;
         })}
       </List>
       <div className="leaveChanBtn">

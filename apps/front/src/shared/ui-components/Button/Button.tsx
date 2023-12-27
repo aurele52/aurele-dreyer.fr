@@ -730,32 +730,10 @@ export function HeartButton({
 }: HeartButtonProps) {
 	const queryClient = useQueryClient();
 
-	const { data: friendships } = useQuery<FriendShipData[]>({
-		queryKey: ["friendships", userId],
+	const { data: friendship } = useQuery<FriendShipData>({
+		queryKey: ["friendship", userId],
 		queryFn: async () => {
-			return api.get("/friendships").then((response) => response.data);
-		},
-	});
-
-	const { mutateAsync: deleteFriendship } = useMutation({
-		mutationFn: async () => {
-			return api.delete("/relationship/friends/" + userId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["friendships", userId],
-			});
-		},
-	});
-
-	const { mutateAsync: deleteBlockedFriendship } = useMutation({
-		mutationFn: async () => {
-			return api.delete("/relationship/blocked/" + userId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["friendships", userId],
-			});
+			return api.get("/friendship/" + userId).then((response) => response.data);
 		},
 	});
 
@@ -765,7 +743,7 @@ export function HeartButton({
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
-				queryKey: ["friendships", userId],
+				queryKey: ["friendship", userId],
 			});
 		},
 	});
@@ -775,68 +753,58 @@ export function HeartButton({
 	useEffect(() => {
 		let status: IconKey = "EmptyHeart";
 
-		if (friendships) {
-			const friendship = friendships.find(
-				(f) => f.user1_id === userId || f.user2_id === userId
-			);
+		if (friendship) {
 			if (friendship === undefined) status = "EmptyHeart";
 			else if (friendship.status === "FRIENDS") status = "Heart";
 			else if (friendship.status === "PENDING") status = "PendingHeart";
 			else if (friendship.status === "BLOCKED") status = "Unblock";
 		}
 		setFriendStatus(status);
-	}, [friendships, userId]);
+	}, [friendship, userId]);
 
-	const isBlocked = (id: number) => {
-		if (friendships) {
-			const friendship = friendships?.find(
-				(f) => f.user1_id === id || f.user2_id === id
-			);
-			if (friendship && friendship.status === "BLOCKED") return true;
-		}
+	const isBlocked = () => {
+		if (friendship && friendship.status === "BLOCKED") return true;
 		return false;
 	};
 
-	const isBlockedByMe = (id: number) => {
-		if (friendships) {
-			const friendship = friendships?.find((f) => f.user2_id === id);
-			if (friendship && friendship.status === "BLOCKED") return true;
-		}
+	const isBlockedByMe = () => {
+		if (friendship?.user2_id === userId && friendship.status === "BLOCKED") return true;
 		return false;
 	};
 
-	const handleFriendshipBtn = () => {
-		if (friendStatus === "Heart") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to remove ${username} from your friends?`,
-				deleteFriendship
-			);
-		} else if (friendStatus === "PendingHeart") {
-			const newWindow = {
-				WindowName: "PENDING FRIEND REQUESTS",
-				width: "300",
-				height: "300",
-				id: 0,
-				content: { type: "PENDINGREQUESTS" },
-				toggle: false,
-				handleBarButton:
-					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-				color: WinColor.PURPLE,
-			};
-			store.dispatch(addWindow(newWindow));
-		} else if (friendStatus === "EmptyHeart") {
-			createFriendship(userId);
-		} else if (friendStatus === "Unblock") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to unblock ${username}?`,
-				deleteBlockedFriendship
-			);
-		}
-	};
+  const handleFriendshipBtn = () => {
+    if (friendStatus === "Heart") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to remove ${username} from your friends?`,
+        'deleteFriendship',
+        userId,
+      );
+    } else if (friendStatus === "PendingHeart") {
+      const newWindow = {
+        WindowName: "PENDING FRIEND REQUESTS",
+        width: "300",
+        height: "300",
+        id: 0,
+        content: { type: "PENDINGREQUESTS" },
+        toggle: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
+      store.dispatch(addWindow(newWindow));
+    } else if (friendStatus === "EmptyHeart") {
+      createFriendship(userId);
+    } else if (friendStatus === "Unblock") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to unblock ${username}?`,
+        'deleteBlockedFriendship',
+        userId,
+      );
+    }
+  };
 
-	return !isBlocked(userId) || isBlockedByMe(userId) ? (
+	return !isBlocked() || isBlockedByMe() ? (
 		<button
 			type="button"
 			{...props}

@@ -12,62 +12,65 @@ import { WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
 import { ReactNode } from "react";
 
+export type UserRole = "MEMBER" | "ADMIN" | "OWNER";
+
 interface UserProps {
 	userId: number;
 	channel?: {
 		channelId: number;
-		userRole: "USER" | "ADMIN" | "OWNER";
+		userRole: UserRole;
 	};
 }
 
 export function User({ userId, channel }: UserProps) {
-	if (!userId) {
-		return <div></div>;
-	}
-	const {
-		data: selfId,
-		isLoading: selfIdLoading,
-		error: selfIdError,
-	} = useQuery<number>({
-		queryKey: ["selfId"],
-		queryFn: async () => {
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching selfId:", error);
-				throw error;
-			}
-		},
-	});
+    const {
+    data: selfId,
+    isLoading: selfIdLoading,
+    error: selfIdError,
+  } = useQuery<number>({
+    queryKey: ["selfId"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/id");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
 
-	const {
-		data: user,
-		isLoading: userLoading,
-		error: userError,
-	} = useQuery<{
-		id: number;
-		username: string;
-		avatar_url: string;
-		status: string;
-		friendshipStatus: string; //If not friends : 'NONE'
-	}>({
-		queryKey: ["user", userId],
-		queryFn: async () => {
-			try {
-				const response = await api.get(`/user/${userId}`);
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching User:", error);
-				throw error;
-			}
-		},
-		enabled: !!selfId,
-	});
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useQuery<{
+    id: number;
+    username: string;
+    avatar_url: string;
+    status: string;
+    friendshipStatus: string; //If not friends : 'NONE'
+  }>({
+    queryKey: ["user", userId],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/user/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching User:", error);
+        throw error;
+      }
+    },
+    enabled: !!selfId,
+  });
 
-	if (userLoading || selfIdLoading) {
-		return <FaSpinner className="loadingSpinner" />;
-	}
+  if (!userId) {
+    return <div></div>;
+  }
+  
+  if (userLoading || selfIdLoading) {
+    return <FaSpinner className="loadingSpinner" />;
+  }
 
 	if (userError) {
 		return <div>Error loading users: {userError.message}</div>;
@@ -78,10 +81,9 @@ export function User({ userId, channel }: UserProps) {
 	}
 
 	const handleOpenProfile = (id: number, username: string) => {
+    const name = selfId === id ? "Profile" : username;
 		const newWindow = {
-			WindowName: username,
-			width: "400",
-			height: "600",
+			WindowName: name,
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,
@@ -92,9 +94,10 @@ export function User({ userId, channel }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleMatch = (id: number, username: string) => {
-		//To Fill
-	};
+  /*
+  const handleMatch = (id: number, username: string) => {
+    //To Fill
+  };
 
 	const handleOpenSettings = (id: number, username: string) => {
 		//To Fill
@@ -104,9 +107,10 @@ export function User({ userId, channel }: UserProps) {
 		//To Fill
 	};
 
-	const handleUnblockUser = (id: number, username: string) => {
-		//To Fill
-	};
+  const handleUnblockUser = (id: number, username: string) => {
+    //To Fill
+  };
+*/
 
 	if (!user) {
 		return (
@@ -134,14 +138,14 @@ export function User({ userId, channel }: UserProps) {
 		<Button
 			icon="Chat"
 			color="pink"
-			onClick={() => handleOpenChat(userId, user.username)}
+			/*onClick={() => handleOpenChat(userId, user.username)}*/
 		/>
 	);
 	const matchButton = (
 		<Button
 			content="Match"
 			color="blue"
-			onClick={() => handleMatch(userId, user.username)}
+			/*onClick={() => handleMatch(userId, user.username)}*/
 		/>
 	);
 
@@ -308,52 +312,54 @@ interface ReducedUserProps {
 }
 
 export function ReducedUser({ children, userId }: ReducedUserProps) {
-	if (!userId) {
-		return <div></div>;
-	}
-	const {
-		data: selfId,
-		isLoading: selfIdLoading,
-		error: selfIdError,
-	} = useQuery<number>({
-		queryKey: ["selfId"],
-		queryFn: async () => {
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching selfId:", error);
-				throw error;
-			}
-		},
-	});
+  
+  const {
+    data: selfId,
+    isLoading: selfIdLoading,
+    error: selfIdError,
+  } = useQuery<number>({
+    queryKey: ["selfId"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/id");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
 
-	const {
-		data: user,
-		isLoading: userLoading,
-		error: userError,
-	} = useQuery<{
-		id: number;
-		username: string;
-		avatar_url: string;
-		friendshipStatus: string;
-	}>({
-		queryKey: ["user", userId],
-		queryFn: async () => {
-			try {
-				const response = await api.get(`/user/${userId}`);
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching User:", error);
-				throw error;
-			}
-		},
-		enabled: !!selfId,
-	});
+  const {
+    data: user,
+    isLoading: userLoading,
+    error: userError,
+  } = useQuery<{
+    id: number;
+    username: string;
+    avatar_url: string;
+    friendshipStatus: string;
+  }>({
+    queryKey: ["user", userId],
+    queryFn: async () => {
+      try {
+        const response = await api.get(`/user/${userId}`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching User:", error);
+        throw error;
+      }
+    },
+    enabled: !!selfId,
+  });
 
-	if (userLoading || selfIdLoading) {
-		return <FaSpinner className="loadingSpinner" />;
-	}
+  if (!userId) {
+    return <div></div>;
+  }
+  
+  if (userLoading || selfIdLoading) {
+    return <FaSpinner className="loadingSpinner" />;
+  }
 
 	if (userError) {
 		return <div>Error loading users: {userError.message}</div>;
