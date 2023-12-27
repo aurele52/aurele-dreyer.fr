@@ -16,6 +16,7 @@ import Modal from "../../shared/ui-components/Modal/Modal";
 import { PendingRequests } from "../../windows/Profile/FriendsList/PendingRequests/PendingRequests";
 import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
+import { useEffect } from "react";
 
 interface BackgroundProps extends ReduxProps {}
 

@@ -37,6 +37,9 @@ function Modal({ content, type, winId, action, targetId }: ModalProps) {
 			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
+			});
 		},
 	});
 
@@ -54,6 +57,9 @@ function Modal({ content, type, winId, action, targetId }: ModalProps) {
 			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
+			});
 		},
 	});
 
@@ -70,6 +76,9 @@ function Modal({ content, type, winId, action, targetId }: ModalProps) {
 			});
 			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
 			});
 		},
 	});
