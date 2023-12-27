@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { NotFoundException } from '@nestjs/common';
+import { FriendshipStatus } from '@prisma/client';
 
 @Injectable()
 export class UserService {
@@ -32,12 +33,24 @@ export class UserService {
       },
     });
 
+    const status = () => {
+      if (friendship?.status === undefined) {
+        return 'NONE';
+      } else if (friendship?.status === 'BLOCKED') {
+        return friendship?.user1_id === selfId
+          ? 'BLOCKEDBYME'
+          : 'BLOCKEDBYUSER';
+      } else {
+        return friendship?.status;
+      }
+    };
+
     const res = {
       id: user.id,
       username: user.username,
       avatar_url: user.avatar_url,
       status: 'ONLINE',
-      friendshipStatus: friendship?.status || 'NONE',
+      friendshipStatus: status(),
     };
 
     return res;

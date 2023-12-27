@@ -679,7 +679,7 @@ export function HeartButton({
         width: "300",
         height: "300",
         id: 0,
-        content: { type: "PENDREQ" },
+        content: { type: "PENDINGREQUESTS" },
         toggle: false,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,

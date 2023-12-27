@@ -36,7 +36,7 @@ export function Background({ windows }: BackgroundProps) {
     ACHIEVEMENTS: { width: "300px", height: "300px" },
     FRIENDSLIST: { width: "450px", height: "600px" },
     MODAL: { width: "390px", height: "200px" },
-    PENDINGREQUESTS: { width: "300px", height: "400px" },
+    PENDINGREQUESTS: { width: "300px", height: "300px" },
     BLOCKEDUSERS: { width: "300px", height: "400px" },
     ADDFRIENDS: { width: "300px", height: "400px" },
   };
