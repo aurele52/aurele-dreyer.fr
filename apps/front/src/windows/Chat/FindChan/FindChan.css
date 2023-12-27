@@ -11,3 +11,8 @@
   gap: 3px;
   flex-direction: row-reverse;
 }
+
+.wrapChannelFindChan {
+  display: flex;
+  align-self: stretch;
+}

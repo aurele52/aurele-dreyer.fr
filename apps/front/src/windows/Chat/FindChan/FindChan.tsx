@@ -59,7 +59,7 @@ function FindChan({ dispatch }: FindChanProps) {
       <List dark={false}>
         {channels?.map((channel) => {
           return (
-            <div key={channel.id}>
+            <div key={channel.id} className="wrapChannelFindChan">
               <Channel name={channel.name} clickable={false}>
                 <div className="ButtonFindChan">
                   <Button

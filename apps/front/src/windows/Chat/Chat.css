@@ -9,6 +9,7 @@
 .chatRow {
   display: flex;
   gap: 6px;
+  align-self: stretch;
 }
 
 .ChatFooter {
