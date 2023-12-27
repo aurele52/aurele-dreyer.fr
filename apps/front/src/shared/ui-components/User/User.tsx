@@ -18,10 +18,7 @@ interface UserProps {
 }
 
 export function User({ userId, channelId }: UserProps) {
-  if (!userId) {
-    return <div></div>;
-  }
-  const {
+    const {
     data: selfId,
     isLoading: selfIdLoading,
     error: selfIdError,
@@ -62,6 +59,10 @@ export function User({ userId, channelId }: UserProps) {
     enabled: !!selfId,
   });
 
+  if (!userId) {
+    return <div></div>;
+  }
+  
   if (userLoading || selfIdLoading) {
     return <FaSpinner className="loadingSpinner" />;
   }
@@ -75,10 +76,9 @@ export function User({ userId, channelId }: UserProps) {
   }
 
 	const handleOpenProfile = (id: number, username: string) => {
+    const name = selfId === id ? "Profile" : username;
 		const newWindow = {
-			WindowName: username,
-			width: "400",
-			height: "600",
+			WindowName: name,
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,
@@ -89,6 +89,7 @@ export function User({ userId, channelId }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
+  /*
   const handleMatch = (id: number, username: string) => {
     //To Fill
   };
@@ -104,6 +105,7 @@ export function User({ userId, channelId }: UserProps) {
   const handleUnblockUser = (id: number, username: string) => {
     //To Fill
   };
+*/
 
   if (!user) {
     return (
@@ -131,14 +133,14 @@ export function User({ userId, channelId }: UserProps) {
 		<Button
 			icon="Chat"
 			color="pink"
-			onClick={() => handleOpenChat(userId, user.username)}
+			/*onClick={() => handleOpenChat(userId, user.username)}*/
 		/>
 	);
 	const matchButton = (
 		<Button
 			content="Match"
 			color="blue"
-			onClick={() => handleMatch(userId, user.username)}
+			/*onClick={() => handleMatch(userId, user.username)}*/
 		/>
 	);
 
@@ -210,9 +212,7 @@ interface ReducedUserProps {
 }
 
 export function ReducedUser({ children, userId }: ReducedUserProps) {
-  if (!userId) {
-    return <div></div>;
-  }
+  
   const {
     data: selfId,
     isLoading: selfIdLoading,
@@ -253,6 +253,10 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
     enabled: !!selfId,
   });
 
+  if (!userId) {
+    return <div></div>;
+  }
+  
   if (userLoading || selfIdLoading) {
     return <FaSpinner className="loadingSpinner" />;
   }

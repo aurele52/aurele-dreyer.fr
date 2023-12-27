@@ -5,7 +5,7 @@ import { ConnectedProps, connect } from "react-redux";
 import { delWindow } from "../../../reducers";
 import { Button } from "../Button/Button";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
-import { ActionType, ModalType } from "../../utils/AddModal";
+import { ModalType } from "../../utils/AddModal";
 
 interface WindowProps extends ReduxProps {
   WindowName: string;
@@ -15,7 +15,7 @@ interface WindowProps extends ReduxProps {
   children: ReactNode;
   handleBarButton: number;
   color: WinColor;
-  modal?: { type: ModalType; content: ReactNode; action?: ActionType };
+  modal?: { type: ModalType; content: ReactNode; action?: string; targetId?: number };
 }
 
 export function Window({
