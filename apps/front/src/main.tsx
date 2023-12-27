@@ -1,11 +1,8 @@
-import React from "react";
 import ReactDOM from "react-dom/client";
 import "./index.css";
-import App from "./App";
 import reportWebVitals from "./reportWebVitals";
 import store from "./store";
 import { Provider } from "react-redux";
-import Auth from "./Auth.tsx";
 import { router } from "./router.ts";
 import { RouterProvider } from "@tanstack/react-router";
 const root = ReactDOM.createRoot(

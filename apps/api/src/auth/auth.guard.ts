@@ -33,7 +33,7 @@ export class AuthGuard implements CanActivate {
       const payload = await this.jwt.verifyAsync(token, {
         secret: process.env.APP_SECRET,
       });
-      request['user'] = payload;
+      request['jwt'] = payload;
     } catch {
       throw new UnauthorizedException();
     }

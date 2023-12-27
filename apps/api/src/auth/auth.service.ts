@@ -64,7 +64,7 @@ export class AuthService {
   }
 
   async generateJWTToken(user: User) {
-    const payload = { sub: user.id, username: user.username };
+    const payload = { id: user.id, username: user.username, connected_at: new Date() };
     return {
       access_token: await this.jwt.signAsync(payload),
     };

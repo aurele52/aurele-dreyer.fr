@@ -1,7 +1,6 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./Auth";
-import api from "./axios";
 
 const rootRoute = new RootRoute();
 
@@ -21,7 +20,6 @@ const authRedirectRoute = new Route({
   beforeLoad: async ({ params }) => {
     if (!!params.token) {
       window.localStorage.setItem("token", params.token);
-      api.defaults.headers.common = { Authorization: `Bearer ${params.token}` };
       throw redirect({
         to: "/",
       });
