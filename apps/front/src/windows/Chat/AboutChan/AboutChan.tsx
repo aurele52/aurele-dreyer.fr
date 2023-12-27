@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
 import List from "../../../shared/ui-components/List/List";
 import { Button } from "../../../shared/ui-components/Button/Button";
-import { User } from "../../../shared/ui-components/User/User";
+import { User, UserRole } from "../../../shared/ui-components/User/User";
 
 interface AboutChanProps {
   chanId: number | undefined;
@@ -17,6 +17,7 @@ type ChannelData = {
   topic: string;
   userChannels: {
     id: number;
+    role: UserRole;
     user_id: number;
     User: {
       id: number;
@@ -118,7 +119,7 @@ function AboutChan({ chanId }: AboutChanProps) {
       <List>
         {channel?.userChannels.map((uc, index) => {
           const user = uc.User;
-					return <User key={index} userId={user.id} channelId={channel?.id} />;
+					return <User key={index} userId={user.id} channel={{channelId: channel?.id, userRole: uc.role}} />;
         })}
       </List>
       <div className="leaveChanBtn">

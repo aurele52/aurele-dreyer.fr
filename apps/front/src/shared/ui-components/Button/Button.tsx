@@ -535,7 +535,7 @@ const Icons: { [key in IconKey]: ReactElement } = {
 			viewBox="0 0 18 18"
 			fill="none"
 		>
-			<g clip-path="url(#clip0_389_7902)">
+			<g clipPath="url(#clip0_389_7902)">
 				<rect width="2" height="2" fill="white" />
 				<rect y="2" width="2" height="2" fill="white" />
 				<rect x="2" width="2" height="2" fill="white" />
@@ -630,7 +630,7 @@ const Icons: { [key in IconKey]: ReactElement } = {
 			viewBox="0 0 18 18"
 			fill="none"
 		>
-			<g clip-path="url(#clip0_389_7946)">
+			<g clipPath="url(#clip0_389_7946)">
 				<rect x="8" width="2" height="2" fill="white" />
 				<rect x="6" width="2" height="2" fill="white" />
 				<rect x="10" width="2" height="2" fill="white" />
@@ -777,7 +777,7 @@ export function HeartButton({
       addModal(
         ModalType.WARNING,
         `Are you sure you want to remove ${username} from your friends?`,
-        "deleteFriendship",
+        'deleteFriendship',
         userId,
       );
     } else if (friendStatus === "PendingHeart") {
@@ -798,7 +798,7 @@ export function HeartButton({
       addModal(
         ModalType.WARNING,
         `Are you sure you want to unblock ${username}?`,
-        "deleteBlockedFriendship",
+        'deleteBlockedFriendship',
         userId,
       );
     }

@@ -63,7 +63,17 @@
 	align-self: stretch;
 }
 
-.UserComponent > .User > .Frame > .Player > .Name > div {
+.UserComponent > .User > .Frame > .Player > .Name > .Icon {
+	display: flex;
+	align-items: flex-start;
+}
+
+.UserComponent > .User > .Frame > .Player > .Name > .Icon > svg {
+	width: 18px;
+	height: 18px;
+}
+
+.UserComponent > .User > .Frame > .Player > .Name > .Text {
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;

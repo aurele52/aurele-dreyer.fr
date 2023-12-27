@@ -1,6 +1,6 @@
 import { Controller, Get, Render } from '@nestjs/common';
 import { AppService } from './app.service';
-import { CurrentUser } from './decorators/user.decorator';
+import { CurrentUserID } from 'src/decorators/user.decorator';
 
 @Controller()
 export class AppController {
@@ -17,7 +17,7 @@ export class AppController {
   }
 
   @Get('/id')
-  getId(@CurrentUser() user) {
-    return user.id;
+  getId(@CurrentUserID() id) {
+    return id;
   }
 }

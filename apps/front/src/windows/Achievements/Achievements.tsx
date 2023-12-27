@@ -5,11 +5,11 @@ import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 
-interface AchievementsProps extends ReduxProps {
+interface AchievementsProps {
 	targetId?: number;
 }
 
-export function Achievements({ dispatch, targetId }: AchievementsProps) {
+export function Achievements({ targetId }: AchievementsProps) {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -43,9 +43,7 @@ export function Achievements({ dispatch, targetId }: AchievementsProps) {
 		queryKey: ["achievements", userId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/achievements/list/${userId}`
-				);
+				const response = await api.get(`/achievements/list/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching achievements:", error);
@@ -54,8 +52,6 @@ export function Achievements({ dispatch, targetId }: AchievementsProps) {
 		},
 		enabled: !!userId,
 	});
-
-	console.log(achievements);
 
 	if (achievementsLoading || userIdLoading) {
 		return (
@@ -93,10 +89,4 @@ export function Achievements({ dispatch, targetId }: AchievementsProps) {
 	);
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedLadder = connector(Achievements);
-export default ConnectedLadder;
+export default Achievements;

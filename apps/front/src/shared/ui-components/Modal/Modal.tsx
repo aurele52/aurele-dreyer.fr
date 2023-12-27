@@ -15,7 +15,7 @@ interface ModalProps {
   targetId?: number;
 }
 
-type ActionKey = 'deleteFriendship' | 'deleteBlockedFriendship';
+export type ActionKey = 'deleteFriendship' | 'deleteBlockedFriendship';
 
 function Modal({ content, type, winId, action, targetId }: ModalProps) {
 
