@@ -11,6 +11,14 @@ export class FriendshipController {
     return await this.friendshipService.userFriendships(currUser.id);
   }
 
+  @Get('/getFriendship/:id')
+  async getCurrUserFriendship(
+    @CurrentUser() currUser,
+    @Param('id') targetId: number,
+  ) {
+    return await this.friendshipService.userFriendship(currUser.id, targetId);
+  }
+
   @Delete('/relationship/friends/:id')
   async deleteFriends(@Param('id') user1_id: number, @CurrentUser() user2) {
     return await this.friendshipService.deleteFriends(user1_id, user2.id);

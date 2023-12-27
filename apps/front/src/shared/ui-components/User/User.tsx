@@ -4,8 +4,8 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
 import {
-  Button,
-  HeartButton,
+	Button,
+	HeartButton,
 } from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
@@ -74,32 +74,20 @@ export function User({ userId, channelId }: UserProps) {
     return <div>Error loading user: {selfIdError.message}</div>;
   }
 
-  const handleOpenProfile = (id: number, username: string) => {
-    const newWindow = {
-      WindowName: username,
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "PROFILE", id: id },
-      toggle: false,
-      handleBarButton: 7,
-      color: WinColor.PURPLE,
-      targetId: id,
-    };
-    store.dispatch(addWindow(newWindow));
-  };
-
-  const handleAddFriend = (id: number, username: string) => {
-    //To Fill
-  };
-
-  const handleAcceptPending = (id: number, username: string) => {
-    //To Fill
-  };
-
-  const handleRemovePending = (id: number, username: string) => {
-    //To Fill
-  };
+	const handleOpenProfile = (id: number, username: string) => {
+		const newWindow = {
+			WindowName: username,
+			width: "400",
+			height: "600",
+			id: 0,
+			content: { type: "PROFILE", id: id },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
+			targetId: id,
+		};
+		store.dispatch(addWindow(newWindow));
+	};
 
   const handleMatch = (id: number, username: string) => {
     //To Fill
@@ -139,28 +127,20 @@ export function User({ userId, channelId }: UserProps) {
       </div>
     );
 
-  const chatButton = (
-    <Button
-      icon="Chat"
-      color="pink"
-      onClick={() => handleOpenChat(userId, user.username)}
-    />
-  );
-
-  const blockButton = (
-    <Button
-      icon="Close"
-      color="pink"
-      onClick={() => handleUnblockUser(userId, user.username)}
-    />
-  ); //Need to check who is blocked and change icon
-  const matchButton = (
-    <Button
-      content="Match"
-      color="blue"
-      onClick={() => handleMatch(userId, user.username)}
-    />
-  );
+	const chatButton = (
+		<Button
+			icon="Chat"
+			color="pink"
+			onClick={() => handleOpenChat(userId, user.username)}
+		/>
+	);
+	const matchButton = (
+		<Button
+			content="Match"
+			color="blue"
+			onClick={() => handleMatch(userId, user.username)}
+		/>
+	);
 
   const channelSettingsButton = channelId ? (
     <Button icon="Unblock" color="darkYellow" />
