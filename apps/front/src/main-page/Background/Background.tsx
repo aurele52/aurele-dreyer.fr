@@ -25,21 +25,21 @@ export function Background({ windows }: BackgroundProps) {
 		height: string;
 	}
 
-  const windowDimensions: Record<string, WindowDimensions> = {
-    PLAY: { width: "820px", height: "540px" },
-    LADDER: { width: "450px", height: "600px" },
-    CHAT: { width: "400px", height: "400px" },
-    PROFILE: { width: "500px", height: "500px" },
-    FINDCHAN: { width: "400px", height: "400px" },
-    NEWCHAN: { width: "400px", height: "400px" },
-    ABOUTCHAN: { width: "500px", height: "500px" },
-    ACHIEVEMENTS: { width: "300px", height: "300px" },
-    FRIENDSLIST: { width: "450px", height: "600px" },
-    MODAL: { width: "390px", height: "200px" },
-    PENDINGREQUESTS: { width: "300px", height: "300px" },
-    BLOCKEDUSERS: { width: "300px", height: "400px" },
-    ADDFRIENDS: { width: "300px", height: "400px" },
-  };
+	const windowDimensions: Record<string, WindowDimensions> = {
+		PLAY: { width: "820px", height: "540px" },
+		LADDER: { width: "450px", height: "600px" },
+		CHAT: { width: "400px", height: "400px" },
+		PROFILE: { width: "500px", height: "500px" },
+		FINDCHAN: { width: "400px", height: "400px" },
+		NEWCHAN: { width: "400px", height: "400px" },
+		ABOUTCHAN: { width: "500px", height: "500px" },
+		ACHIEVEMENTS: { width: "300px", height: "300px" },
+		FRIENDSLIST: { width: "450px", height: "600px" },
+		MODAL: { width: "390px", height: "200px" },
+		PENDINGREQUESTS: { width: "300px", height: "300px" },
+		BLOCKEDUSERS: { width: "300px", height: "400px" },
+		ADDFRIENDS: { width: "300px", height: "400px" },
+	};
 
 	return (
 		<div id="Background">
@@ -69,7 +69,6 @@ export function Background({ windows }: BackgroundProps) {
 							{window.content.type === "CHAT" && <Chat />}
 							{window.content.type === "PROFILE" && (
 								<Profile
-									winId={window.id}
 									targetId={window.content.id || undefined}
 								/>
 							)}
@@ -92,7 +91,7 @@ export function Background({ windows }: BackgroundProps) {
 									type={window.modal?.type}
 									winId={window.id}
 									action={window.modal?.action}
-                  targetId={window.modal?.targetId}
+									targetId={window.modal?.targetId}
 								/>
 							)}
 							{window.content.type === "PENDINGREQUESTS" && (
