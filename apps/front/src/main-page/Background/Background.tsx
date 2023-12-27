@@ -25,21 +25,21 @@ export function Background({ windows }: BackgroundProps) {
 		height: string;
 	}
 
-	const windowDimensions: Record<string, WindowDimensions> = {
-		PLAY: { width: "820px", height: "540px" },
-		LADDER: { width: "450px", height: "600px" },
-		CHAT: { width: "400px", height: "400px" },
-		PROFILE: { width: "500px", height: "500px" },
-		FINDCHAN: { width: "400px", height: "400px" },
-		NEWCHAN: { width: "400px", height: "400px" },
-		ABOUTCHAN: { width: "500px", height: "500px" },
-		ACHIEVEMENTS: { width: "300px", height: "300px" },
-		FRIENDSLIST: { width: "450px", height: "600px" },
-		MODAL: { width: "390px", height: "200px" },
-		PENDINGREQUESTS: { width: "300px", height: "400px" },
-		BLOCKEDUSERS: { width: "300px", height: "400px" },
-		ADDFRIENDS: { width: "300px", height: "400px" },
-	};
+  const windowDimensions: Record<string, WindowDimensions> = {
+    PLAY: { width: "820px", height: "540px" },
+    LADDER: { width: "450px", height: "600px" },
+    CHAT: { width: "400px", height: "400px" },
+    PROFILE: { width: "500px", height: "500px" },
+    FINDCHAN: { width: "400px", height: "400px" },
+    NEWCHAN: { width: "400px", height: "400px" },
+    ABOUTCHAN: { width: "500px", height: "500px" },
+    ACHIEVEMENTS: { width: "300px", height: "300px" },
+    FRIENDSLIST: { width: "450px", height: "600px" },
+    MODAL: { width: "390px", height: "200px" },
+    PENDINGREQUESTS: { width: "300px", height: "300px" },
+    BLOCKEDUSERS: { width: "300px", height: "400px" },
+    ADDFRIENDS: { width: "300px", height: "400px" },
+  };
 
 	return (
 		<div id="Background">
