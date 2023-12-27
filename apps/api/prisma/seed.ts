@@ -56,16 +56,18 @@ async function createChannels() {
 async function createDMs() {
   const userPool = await prisma.user.findMany();
   const amountOfChannels = 15;
-  const idPairs: [number, number][] = [];
+  const idPairs: Set<string> = new Set();
 
   for (let i = 0; i < amountOfChannels; i++) {
     let a = 0;
     let b = 0;
-    while (a === b || idPairs.includes([a, b]) || idPairs.includes([b, a])) {
+    do {
       a = faker.number.int({ min: 0, max: userPool.length - 1 });
       b = faker.number.int({ min: 0, max: userPool.length - 1 });
-    }
-    idPairs.push([a, b]);
+    } while (a === b || idPairs.has(`${a},${b}`) || idPairs.has(`${b},${a}`));
+
+    idPairs.add(`${a},${b}`);
+
     const userA = userPool[a];
     const userB = userPool[b];
 
@@ -169,16 +171,18 @@ async function createUserAchievements() {
 async function createMatches() {
   const userPool = await prisma.user.findMany();
   const amountOfChannels = 500;
-  const idPairs: [number, number][] = [];
+  const idPairs: Set<string> = new Set();
 
   for (let i = 0; i < amountOfChannels; i++) {
     let a = 0;
     let b = 0;
-    while (a === b || idPairs.includes([a, b]) || idPairs.includes([b, a])) {
+    do {
       a = faker.number.int({ min: 0, max: userPool.length - 1 });
       b = faker.number.int({ min: 0, max: userPool.length - 1 });
-    }
-    idPairs.push([a, b]);
+    } while (a === b || idPairs.has(`${a},${b}`) || idPairs.has(`${b},${a}`));
+
+    idPairs.add(`${a},${b}`);
+
     const userA = userPool[a];
     const userB = userPool[b];
 
@@ -213,12 +217,21 @@ async function createFirendships() {
   const userPool = await prisma.user.findMany();
   const friendships = [];
   const status = ['FRIENDS', 'PENDING', 'BLOCKED'];
+  const idPairs: Set<string> = new Set();
 
   for (let i = 0; i < amountOfFriendships; i++) {
-    const userA =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
-    const userB =
-      userPool[faker.number.int({ min: 0, max: userPool.length - 1 })];
+    let a = 0;
+    let b = 0;
+    do {
+      a = faker.number.int({ min: 0, max: userPool.length - 1 });
+      b = faker.number.int({ min: 0, max: userPool.length - 1 });
+    } while (a === b || idPairs.has(`${a},${b}`) || idPairs.has(`${b},${a}`));
+
+    idPairs.add(`${a},${b}`);
+
+    const userA = userPool[a];
+    const userB = userPool[b];
+
     const friendship = {
       user1_id: userA.id,
       user2_id: userB.id,
