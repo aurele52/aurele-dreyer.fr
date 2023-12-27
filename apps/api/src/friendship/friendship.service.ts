@@ -14,6 +14,41 @@ export class FriendshipService {
     });
   }
 
+  async userFriendship(selfId: number, targetId: number) {
+    const friendship = await this.prisma.friendship.findFirst({
+      where: {
+        OR: [
+          {
+            AND: [
+              {
+                user1_id: selfId,
+              },
+              {
+                user2_id: targetId,
+              },
+            ],
+          },
+          {
+            AND: [
+              {
+                user2_id: selfId,
+              },
+              {
+                user1_id: targetId,
+              },
+            ],
+          },
+        ],
+      },
+    });
+    return {
+      id: friendship.id,
+      user1_id: friendship.user1_id,
+      user2_id: friendship.user2_id,
+      status: friendship.status,
+    };
+  }
+
   async deleteFriends(user1_id, user2_id) {
     return await this.prisma.friendship.deleteMany({
       where: {
