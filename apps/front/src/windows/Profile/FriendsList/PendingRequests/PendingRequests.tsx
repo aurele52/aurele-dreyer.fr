@@ -6,7 +6,6 @@ import { FaSpinner } from "react-icons/fa";
 import { Button } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
-
 export function PendingRequests() {
 	const {
 		data: userId,
@@ -25,11 +24,7 @@ export function PendingRequests() {
 		},
 	});
 
-	const {
-		data: pendingRequests,
-		isLoading: pendingRequestsLoading,
-		error: pendingRequestsError,
-	} = useQuery<
+	const { data: pendingRequests, error: pendingRequestsError } = useQuery<
 		{
 			id: number;
 			senderId: number;
@@ -39,9 +34,9 @@ export function PendingRequests() {
 		queryKey: ["pendingRequests", userId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/friendships/pendinglistList`
-				);
+				const response = await api.get(`/friendships/pendinglist`);
+				if (response.status === 404 || response.data === undefined)
+					return [];
 				return response.data.map(
 					(request: { id: number; senderId: number }) => ({
 						...request,
@@ -56,30 +51,49 @@ export function PendingRequests() {
 		enabled: !!userId,
 	});
 
-	if (pendingRequestsLoading || userIdLoading) {
+	if (userIdLoading) {
 		return <FaSpinner className="loadingSpinner" />;
 	}
 
-  if (userIdError) {
-    return <div>Error loading user: {userIdError.message}</div>;
-  }
+	if (userIdError) {
+		return <div>Error loading user: {userIdError.message}</div>;
+	}
+
+	if (pendingRequestsError) {
+		return (
+			<div>Error loading Requests: {pendingRequestsError.message}</div> //How to handle this
+		);
+	}
 
 	return (
 		<div className="PendingRequestsComponent">
 			<div className="Body">
 				<List dark={false}>
-					<div className="SectionName">Received</div>
+					{pendingRequests?.filter(
+						(request) => request.type === "received"
+					).length ? (
+						<div className="SectionName">Received</div>
+					) : (
+						""
+					)}
+
 					{pendingRequests
 						?.filter((request) => request.type === "received")
-						.map((user, key) => (
+						?.map((user, key) => (
 							<ReducedUser key={key} userId={user.id}>
 								<Button icon="Heart" color="pink" />
 							</ReducedUser>
 						))}
-					<div className="SectionName">Sent</div>
+					{pendingRequests?.filter(
+						(request) => request.type === "sent"
+					).length ? (
+						<div className="SectionName">Sent</div>
+					) : (
+						""
+					)}
 					{pendingRequests
 						?.filter((request) => request.type === "sent")
-						.map((user, key) => (
+						?.map((user, key) => (
 							<ReducedUser key={key} userId={user.id}>
 								<Button icon="Heart" color="pink" />
 							</ReducedUser>

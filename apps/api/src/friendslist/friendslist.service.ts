@@ -10,12 +10,24 @@ export class FriendslistService {
       where: {
         OR: [
           {
-            user1_id: id,
-            status: 'FRIENDS',
+            AND: [
+              {
+                user1_id: id,
+              },
+              {
+                status: 'FRIENDS',
+              },
+            ],
           },
           {
-            user2_id: id,
-            status: 'FRIENDS',
+            AND: [
+              {
+                user2_id: id,
+              },
+              {
+                status: 'FRIENDS',
+              },
+            ],
           },
         ],
       },
@@ -129,7 +141,9 @@ export class FriendslistService {
         },
       });
 
-      return potentialFriends.map((user) => user.id);
+      const res = potentialFriends?.map((user) => user.id);
+
+      return res;
     } catch (error) {
       console.error('Error fetching potential friends:', error);
       throw error;
