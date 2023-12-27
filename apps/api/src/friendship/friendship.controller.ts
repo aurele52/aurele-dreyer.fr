@@ -21,7 +21,7 @@ export class FriendshipController {
 
   @Delete('/relationship/friends/:id')
   async deleteFriends(@Param('id') user1_id: number, @CurrentUser() user2) {
-    return await this.friendshipService.deleteFriends(user1_id, user2.id);
+    return await this.friendshipService.deleteFriendship(user1_id, user2.id);
   }
 
   @Delete('/relationship/blocked/:id')
@@ -34,8 +34,18 @@ export class FriendshipController {
     @CurrentUser() user1,
     @Body('user2_id') user2_id: number,
   ) {
-    console.log(user2_id);
     return await this.friendshipService.createFriendship(user1.id, user2_id);
+  }
+
+  @Post('/block/:id')
+  async createBlockedFriendship(
+    @Param('id') user2_id: number,
+    @CurrentUser() user1,
+  ) {
+    return await this.friendshipService.createBlockedFriendship(
+      user1.id,
+      user2_id,
+    );
   }
 
   @Get('/friendships/pendingList')

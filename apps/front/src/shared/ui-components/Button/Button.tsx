@@ -836,6 +836,9 @@ export function HeartButton({
 			queryClient.invalidateQueries({
 				queryKey: ["friendship", userId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["addFriendsList"],
+			});
 		},
 	});
 
