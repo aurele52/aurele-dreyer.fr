@@ -63,6 +63,12 @@ function Modal({ content, type, winId, action, targetId }: ModalProps) {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
+				queryKey: ["friendship", targetId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["blockedUsers"],
+			});
+			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
 		},
