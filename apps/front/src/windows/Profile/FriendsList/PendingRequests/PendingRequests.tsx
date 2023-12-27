@@ -3,7 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import { Button } from "../../../../shared/ui-components/Button/Button";
+import {
+	Button,
+	HeartButton,
+} from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
 export function PendingRequests() {
@@ -25,20 +28,36 @@ export function PendingRequests() {
 	});
 
 	const { data: pendingRequests, error: pendingRequestsError } = useQuery<
-		{
-			id: number;
-			senderId: number;
-			type: "received" | "sent";
-		}[]
+		| {
+				id: number;
+				username: string;
+				senderId: number;
+				type: "received" | "sent";
+		  }[]
+		| null
 	>({
 		queryKey: ["pendingRequests", userId],
-		queryFn: async () => {
+		queryFn: async (): Promise<
+			| {
+					id: number;
+					username: string;
+					senderId: number;
+					type: "received" | "sent";
+			  }[]
+			| null
+		> => {
 			try {
-				const response = await api.get(`/friendships/pendinglist`);
+				console.log("Send request");
+				const response = await api.get(`/friendships/pendingList`);
 				if (response.status === 404 || response.data === undefined)
 					return [];
+				if (!Array.isArray(response.data)) return null;
 				return response.data.map(
-					(request: { id: number; senderId: number }) => ({
+					(request: {
+						id: number;
+						username: string;
+						senderId: number;
+					}) => ({
 						...request,
 						type: request.senderId === userId ? "sent" : "received",
 					})
@@ -65,6 +84,18 @@ export function PendingRequests() {
 		);
 	}
 
+	if (!Array.isArray(pendingRequests)) {
+		return (
+			<div className="PendingRequestsComponent">
+				<div className="Body">
+					<List dark={false}>
+						<div></div>
+					</List>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="PendingRequestsComponent">
 			<div className="Body">
@@ -81,7 +112,10 @@ export function PendingRequests() {
 						?.filter((request) => request.type === "received")
 						?.map((user, key) => (
 							<ReducedUser key={key} userId={user.id}>
-								<Button icon="Heart" color="pink" />
+								<HeartButton
+									userId={user.id}
+									username={user.username}
+								/>
 							</ReducedUser>
 						))}
 					{pendingRequests?.filter(

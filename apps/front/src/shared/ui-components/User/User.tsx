@@ -3,7 +3,10 @@ import "./ReducedUser.css";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
-import { Button } from "../../../shared/ui-components/Button/Button";
+import {
+	Button,
+	HeartButton,
+} from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
@@ -86,18 +89,6 @@ export function User({ userId, channelId }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleAddFriend = (id: number, username: string) => {
-		//To Fill
-	};
-
-	const handleAcceptPending = (id: number, username: string) => {
-		//To Fill
-	};
-
-	const handleRemovePending = (id: number, username: string) => {
-		//To Fill
-	};
-
 	const handleMatch = (id: number, username: string) => {
 		//To Fill
 	};
@@ -143,20 +134,6 @@ export function User({ userId, channelId }: UserProps) {
 			onClick={() => handleOpenChat(userId, user.username)}
 		/>
 	);
-	const heartButton = (
-		<Button
-			icon="Heart"
-			color="pink"
-			onClick={() => handleAddFriend(userId, user.username)}
-		/>
-	); //To change
-	const blockButton = (
-		<Button
-			icon="Close"
-			color="pink"
-			onClick={() => handleUnblockUser(userId, user.username)}
-		/>
-	); //Need to check who is blocked and change icon
 	const matchButton = (
 		<Button
 			content="Match"
@@ -174,14 +151,16 @@ export function User({ userId, channelId }: UserProps) {
 	const buttons =
 		user.friendshipStatus === "BLOCKED" ? (
 			<div className="Buttons">
-				<div className="Other">{blockButton}</div>
+				<div className="Other">
+					<HeartButton userId={userId} username={user.username} />
+				</div>
 			</div>
 		) : (
 			<div className="Buttons">
 				{matchButton}
 				<div className="Other">
 					{chatButton}
-					{heartButton}
+					<HeartButton userId={userId} username={user.username} />
 				</div>
 			</div>
 		);
