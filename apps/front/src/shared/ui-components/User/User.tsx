@@ -146,7 +146,7 @@ export function User({ userId, channel }: UserProps) {
 	);
 
 	const channelSettingsButton = channel ? (
-		<Button icon="Unblock" color="darkYellow" />
+		<Button icon="Wrench" color="darkYellow" />
 	) : (
 		<div></div>
 	);
@@ -290,7 +290,7 @@ export function User({ userId, channel }: UserProps) {
 							<div></div>
 						)}
 						<div className="Name">
-							<div>{user.username}</div>
+							<div className="Text">{user.username}</div>
 						</div>
 						{status}
 					</div>
@@ -384,7 +384,9 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 				<div className="User">
 					<div className="Frame">
 						<div className="Player">
-							<div className="Name">Unexisting User</div>
+							<div className="Name">
+								<div className="Text">Unexisting User</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -416,7 +418,9 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 						<img className="Frame" src={user.avatar_url}></img>
 					</div>
 					<div className="Player">
-						<div className="Name">{user.username}</div>
+						<div className="Name">
+							<div className="Text">{user.username}</div>
+						</div>
 					</div>
 					{children ?? children}
 				</div>

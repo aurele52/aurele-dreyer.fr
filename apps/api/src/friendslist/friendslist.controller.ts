@@ -13,10 +13,11 @@ export class FriendslistController {
 
   @Post('/add')
   async sendFriendRequest(
-    @Body() body: { senderId: number; receiverId: number },
+    @Body() body: { receiverId: number },
+    @CurrentUser() user,
   ) {
-    const { senderId, receiverId } = body;
-    return this.friendslistService.sendFriendRequest(senderId, receiverId);
+    const { receiverId } = body;
+    return this.friendslistService.sendFriendRequest(user.id, receiverId);
   }
 
   @Get('/potentialFriends')
