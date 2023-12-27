@@ -944,7 +944,8 @@ export function PendingButton({
       return api.patch("/friendship/accept/" + userId);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["pendingRequests", userId] });
+      queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["friendsList"] });
     },
   });
 
@@ -956,6 +957,7 @@ export function PendingButton({
 			queryClient.invalidateQueries({
 				queryKey: ["friendship", userId],
 			});
+      queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
 		},
 	});
 
