@@ -23,7 +23,6 @@ interface UserProps {
 }
 
 export function User({ userId, channel }: UserProps) {
-	console.log("Channel : ", channel);
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
