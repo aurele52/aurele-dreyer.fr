@@ -7,50 +7,13 @@ import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
+import store from "../../store";
 
-interface ProfileProps extends ReduxProps {
+interface ProfileProps {
 	targetId?: number;
-	winId: number;
 }
 
-export function Profile({ dispatch, winId, targetId }: ProfileProps) {
-	const {
-		data: userId,
-		isLoading: userIdLoading,
-		error: userIdError,
-	} = useQuery<number>({
-		queryKey: ["userId", winId],
-		queryFn: async () => {
-			if (targetId !== undefined) {
-				return targetId;
-			}
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
-			}
-		},
-	});
-
-	const {
-		data: currentUserId,
-		isLoading: currentUserIdLoading,
-		error: currentUserIdError,
-	} = useQuery<number>({
-		queryKey: ["currentUserId", userId],
-		queryFn: async () => {
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
-			}
-		},
-	});
-
+export function Profile({ targetId }: ProfileProps) {
 	const {
 		data: profile,
 		isLoading: profileLoading,
@@ -64,17 +27,18 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		achievement_lvl: number;
 		rank: number;
 	}>({
-		queryKey: ["user", userId],
+		queryKey: ["user", targetId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(`/profile/user/${userId}`);
+				const response = targetId
+					? await api.get(`/profile/user/${targetId}`)
+					: await api.get(`/profile/user`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching user:", error);
 				throw error;
 			}
 		},
-		enabled: !!userId,
 	});
 
 	const {
@@ -94,36 +58,28 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			score2: number;
 		}[]
 	>({
-		queryKey: ["historic", userId],
+		queryKey: ["historic", targetId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(`/profile/historic/${userId}`);
+				const response = targetId
+					? await api.get(`/profile/historic/${targetId}`)
+					: await api.get(`/profile/historic`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching historic:", error);
 				throw error;
 			}
 		},
-		enabled: !!userId,
 	});
 
-	const selfProfile = userId === currentUserId;
+	const selfProfile = targetId ? false : true;
 
-	if (
-		historicLoading ||
-		profileLoading ||
-		userIdLoading ||
-		currentUserIdLoading
-	) {
+	if (historicLoading || profileLoading) {
 		return (
 			<div className="Ladder">
 				<FaSpinner className="loadingSpinner" />
 			</div>
 		);
-	}
-
-	if (userIdError) {
-		return <div>Error loading users: {userIdError.message}</div>;
 	}
 
 	if (profileError) {
@@ -132,10 +88,6 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 
 	if (historicError) {
 		return <div>Error loading users: {historicError.message}</div>;
-	}
-
-	if (currentUserIdError) {
-		return <div>Error loading users: {currentUserIdError.message}</div>;
 	}
 
 	const handleOpenLadder = () => {
@@ -148,9 +100,9 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			toggle: false,
 			handleBarButton: 7,
 			color: WinColor.LILAC,
-			targetId: userId,
+			targetId: targetId,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	const handleOpenAchievements = () => {
@@ -161,9 +113,9 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			toggle: false,
 			handleBarButton: HBButton.Close,
 			color: WinColor.LILAC,
-			targetId: userId,
+			targetId: targetId,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	const handleOpenFriendsList = () => {
@@ -174,9 +126,9 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			toggle: false,
 			handleBarButton: HBButton.Close,
 			color: WinColor.PURPLE,
-			targetId: userId,
+			targetId: targetId,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	const handleOpenBlockedList = () => {
@@ -187,9 +139,8 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			toggle: false,
 			handleBarButton: 7,
 			color: WinColor.PURPLE,
-			targetId: userId,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	const handleOpenProfile = (id: number, username: string) => {
@@ -204,19 +155,16 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 			color: WinColor.PURPLE,
 			targetId: id,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleFriendRequest = async (
-		senderId: number | undefined,
-		receiverId: number | undefined
-	) => {
-		if (!senderId || !receiverId) return;
+	const handleFriendRequest = async (receiverId: number | undefined) => {
+		if (!receiverId) return;
 		try {
 			const response = await api.post("/friendslist/add", {
-				senderId: senderId,
 				receiverId: receiverId,
 			});
+			return response.data;
 		} catch (error) {
 			console.error("Error sending friend request", error);
 		}
@@ -235,7 +183,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 				onClick={
 					selfProfile
 						? handleOpenFriendsList
-						: () => handleFriendRequest(currentUserId, userId)
+						: () => handleFriendRequest(targetId)
 				}
 			/>
 			<Button
@@ -245,7 +193,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 				onClick={
 					selfProfile
 						? handleOpenBlockedList
-						: () => handleBlockUser(userId ?? 0)
+						: () => handleBlockUser(targetId ?? 0)
 				}
 			/>
 		</div>
@@ -393,10 +341,5 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		</div>
 	);
 }
-const mapDispatchToProps = null;
 
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedProfile = connector(Profile);
-export default ConnectedProfile;
+export default Profile;

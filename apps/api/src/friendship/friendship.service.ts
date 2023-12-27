@@ -116,7 +116,7 @@ export class FriendshipService {
     const res = invitations.map((invit) => {
       return {
         id: invit.user1_id === id ? invit.user2_id : invit.user1_id,
-        senderId: invit.user1_id,
+        type: invit.user1_id === id ? 'sent' : 'received',
         username:
           invit.user1_id === id ? invit.user2.username : invit.user1.username,
       };

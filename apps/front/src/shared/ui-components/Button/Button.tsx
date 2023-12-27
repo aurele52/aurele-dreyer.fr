@@ -19,7 +19,8 @@ type IconKey =
 	| "EmptyHeart"
 	| "Cross"
 	| "PendingHeart"
-	| "Unblock";
+	| "Unblock"
+	| "Wrench";
 
 const Icons: { [key in IconKey]: ReactElement } = {
 	TripleDot: (
@@ -677,6 +678,37 @@ const Icons: { [key in IconKey]: ReactElement } = {
 					<rect width="18" height="18" fill="white" />
 				</clipPath>
 			</defs>
+		</svg>
+	),
+	Wrench: (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect x="11" y="1" width="2" height="2" fill="white" />
+			<rect x="9" y="1" width="2" height="2" fill="white" />
+			<rect x="7" y="5" width="2" height="2" fill="white" />
+			<rect x="7" y="7" width="2" height="2" fill="white" />
+			<rect x="5" y="9" width="2" height="2" fill="white" />
+			<rect x="3" y="11" width="2" height="2" fill="white" />
+			<rect x="9" y="7" width="2" height="2" fill="white" />
+			<rect x="11" y="9" width="2" height="2" fill="white" />
+			<rect x="9" y="9" width="2" height="2" fill="white" />
+			<rect x="7" y="11" width="2" height="2" fill="white" />
+			<rect x="5" y="13" width="2" height="2" fill="white" />
+			<rect x="3" y="15" width="2" height="2" fill="white" />
+			<rect x="1" y="13" width="2" height="2" fill="white" />
+			<rect x="1" y="15" width="2" height="2" fill="white" />
+			<rect x="3" y="13" width="2" height="2" fill="white" />
+			<rect x="5" y="11" width="2" height="2" fill="white" />
+			<rect x="7" y="9" width="2" height="2" fill="white" />
+			<rect x="13" y="9" width="2" height="2" fill="white" />
+			<rect x="15" y="5" width="2" height="2" fill="white" />
+			<rect x="15" y="7" width="2" height="2" fill="white" />
+			<rect x="7" y="3" width="2" height="2" fill="white" />
 		</svg>
 	),
 };
