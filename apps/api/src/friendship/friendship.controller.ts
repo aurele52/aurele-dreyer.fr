@@ -11,7 +11,7 @@ export class FriendshipController {
     return await this.friendshipService.userFriendships(currUser.id);
   }
 
-  @Get('/getFriendship/:id')
+  @Get('/friendship/:id')
   async getCurrUserFriendship(
     @CurrentUser() currUser,
     @Param('id') targetId: number,

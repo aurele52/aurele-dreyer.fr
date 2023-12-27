@@ -6,17 +6,18 @@ import { CurrentUser } from 'src/decorators/user.decorator';
 export class FriendslistController {
   constructor(private readonly friendslistService: FriendslistService) {}
 
-  @Get('/list/:id')
-  async getList(@Param('id') id: number) {
-    return this.friendslistService.getList(id);
+  @Get('/list')
+  async getList(@CurrentUser() user) {
+    return this.friendslistService.getList(user.id);
   }
 
   @Post('/add')
   async sendFriendRequest(
-    @Body() body: { senderId: number; receiverId: number },
+    @Body() body: { receiverId: number },
+    @CurrentUser() user,
   ) {
-    const { senderId, receiverId } = body;
-    return this.friendslistService.sendFriendRequest(senderId, receiverId);
+    const { receiverId } = body;
+    return this.friendslistService.sendFriendRequest(user.id, receiverId);
   }
 
   @Get('/potentialFriends')

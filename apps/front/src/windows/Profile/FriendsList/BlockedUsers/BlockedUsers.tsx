@@ -10,23 +10,6 @@ interface BlockedUsersProps {}
 
 export function BlockedUsers({}: BlockedUsersProps) {
 	const {
-		data: userId,
-		isLoading: userIdLoading,
-		error: userIdError,
-	} = useQuery<number>({
-		queryKey: ["userId"],
-		queryFn: async () => {
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
-			}
-		},
-	});
-
-	const {
 		data: blockedUsers,
 		isLoading: blockedUsersLoading,
 		error: blockedUsersError,
@@ -36,7 +19,7 @@ export function BlockedUsers({}: BlockedUsersProps) {
 			username: string;
 		}[]
 	>({
-		queryKey: ["blockedUsers", userId],
+		queryKey: ["blockedUsers"],
 		queryFn: async () => {
 			try {
 				const response = await api.get(`/friendships/blockedList`);
@@ -46,19 +29,14 @@ export function BlockedUsers({}: BlockedUsersProps) {
 				throw error;
 			}
 		},
-		enabled: !!userId,
 	});
 
-	if (blockedUsersLoading || userIdLoading) {
+	if (blockedUsersLoading) {
 		return <FaSpinner className="loadingSpinner" />;
 	}
 
 	if (blockedUsersError) {
 		return <div>Error loading users: {blockedUsersError.message}</div>;
-	}
-
-	if (userIdError) {
-		return <div>Error loading user: {userIdError.message}</div>;
 	}
 
 	if (!Array.isArray(blockedUsers)) {

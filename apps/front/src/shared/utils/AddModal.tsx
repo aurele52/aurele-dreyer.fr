@@ -1,5 +1,6 @@
 import { addWindow } from "../../reducers";
 import store from "../../store";
+import { ActionKey } from "../ui-components/Modal/Modal";
 import { WinColor } from "./WindowTypes";
 import { ReactElement, ReactNode } from "react";
 
@@ -2051,27 +2052,26 @@ export enum ModalType {
 	REQUESTED = "REQUESTED",
 }
 
-export type ActionType = () => void;
-
 export function addModal(
-	type: ModalType,
-	content: ReactNode,
-	action?: ActionType
+  type: ModalType,
+  content: ReactNode,
+  action?: ActionKey,
+  userId?: number,
 ) {
 	let color;
 	if (type === ModalType.WARNING || ModalType.ERROR) color = WinColor.RED;
 	else color = WinColor.PURPLE;
 
-	const newWindow = {
-		WindowName: type,
-		width: "390",
-		height: "199",
-		id: 0,
-		content: { type: "MODAL" },
-		toggle: false,
-		modal: { type, content, action },
-		handleBarButton: 0,
-		color,
-	};
-	store.dispatch(addWindow(newWindow));
+  const newWindow = {
+    WindowName: type,
+    width: "390",
+    height: "199",
+    id: 0,
+    content: { type: "MODAL" },
+    toggle: false,
+    modal: { type, content, action, targetId: userId},
+    handleBarButton: 0,
+    color,
+  };
+  store.dispatch(addWindow(newWindow));
 }

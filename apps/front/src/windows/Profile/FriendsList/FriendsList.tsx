@@ -11,23 +11,6 @@ import store from "../../../store";
 
 export function FriendsList() {
 	const {
-		data: userId,
-		isLoading: userIdLoading,
-		error: userIdError,
-	} = useQuery<number>({
-		queryKey: ["userId"],
-		queryFn: async () => {
-			try {
-				const response = await api.get("/id");
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
-			}
-		},
-	});
-
-	const {
 		data: friendsList,
 		isLoading: friendsListLoading,
 		error: friendsListError,
@@ -36,49 +19,29 @@ export function FriendsList() {
 			userid: number;
 		}[]
 	>({
-		queryKey: ["friendsList", userId],
+		queryKey: ["friendsList"],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/FriendsList/list/${userId}`
-				);
+				const response = await api.get(`/FriendsList/list`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching FriendsList:", error);
 				throw error;
 			}
 		},
-		enabled: !!userId,
 	});
 
-  if (friendsListLoading || userIdLoading) {
-    return (
-      <div className="FriendsList">
-        <FaSpinner className="loadingSpinner" />
-      </div>
-    );
-  }
+	if (friendsListLoading) {
+		return (
+			<div className="FriendsList">
+				<FaSpinner className="loadingSpinner" />
+			</div>
+		);
+	}
 
-  if (friendsListError) {
-    return <div>Error loading users: {friendsListError.message}</div>;
-  }
-
-  if (userIdError) {
-    return <div>Error loading user: {userIdError.message}</div>;
-  }
-
-	const handleOpenProfile = (id: number, username: string) => {
-		const newWindow = {
-			WindowName: username,
-			id: 0,
-			content: { type: "PROFILE", id: id },
-			toggle: false,
-			handleBarButton: 7,
-			color: WinColor.PURPLE,
-			targetId: id,
-		};
-		store.dispatch(addWindow(newWindow));
-	};
+	if (friendsListError) {
+		return <div>Error loading users: {friendsListError.message}</div>;
+	}
 
 	const handlePendingRequests = () => {
 		const newWindow = {

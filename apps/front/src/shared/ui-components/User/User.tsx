@@ -12,18 +12,18 @@ import { WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
 import { ReactNode } from "react";
 
+export type UserRole = "MEMBER" | "ADMIN" | "OWNER";
+
 interface UserProps {
 	userId: number;
 	channel?: {
 		channelId: number;
-		userRole: "USER" | "ADMIN" | "OWNER";
+		userRole: UserRole;
 	};
 }
 
 export function User({ userId, channel }: UserProps) {
-	if (!userId) {
-		return <div></div>;
-	}
+	console.log("Channel : ", channel);
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
@@ -65,6 +65,10 @@ export function User({ userId, channel }: UserProps) {
 		enabled: !!selfId,
 	});
 
+	if (!userId) {
+		return <div></div>;
+	}
+
 	if (userLoading || selfIdLoading) {
 		return <FaSpinner className="loadingSpinner" />;
 	}
@@ -78,10 +82,9 @@ export function User({ userId, channel }: UserProps) {
 	}
 
 	const handleOpenProfile = (id: number, username: string) => {
+		const name = selfId === id ? "Profile" : username;
 		const newWindow = {
-			WindowName: username,
-			width: "400",
-			height: "600",
+			WindowName: name,
 			id: 0,
 			content: { type: "PROFILE", id: id },
 			toggle: false,
@@ -92,9 +95,10 @@ export function User({ userId, channel }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleMatch = (id: number, username: string) => {
-		//To Fill
-	};
+	/*
+  const handleMatch = (id: number, username: string) => {
+    //To Fill
+  };
 
 	const handleOpenSettings = (id: number, username: string) => {
 		//To Fill
@@ -104,9 +108,10 @@ export function User({ userId, channel }: UserProps) {
 		//To Fill
 	};
 
-	const handleUnblockUser = (id: number, username: string) => {
-		//To Fill
-	};
+  const handleUnblockUser = (id: number, username: string) => {
+    //To Fill
+  };
+*/
 
 	if (!user) {
 		return (
@@ -134,19 +139,19 @@ export function User({ userId, channel }: UserProps) {
 		<Button
 			icon="Chat"
 			color="pink"
-			onClick={() => handleOpenChat(userId, user.username)}
+			/*onClick={() => handleOpenChat(userId, user.username)}*/
 		/>
 	);
 	const matchButton = (
 		<Button
 			content="Match"
 			color="blue"
-			onClick={() => handleMatch(userId, user.username)}
+			/*onClick={() => handleMatch(userId, user.username)}*/
 		/>
 	);
 
 	const channelSettingsButton = channel ? (
-		<Button icon="Unblock" color="darkYellow" />
+		<Button icon="Wrench" color="darkYellow" />
 	) : (
 		<div></div>
 	);
@@ -273,24 +278,24 @@ export function User({ userId, channel }: UserProps) {
 			>
 				<div className="Frame">
 					<div className="Player">
-						{channel ? (
-							<div className="Icon">
-								{(() => {
-									switch (channel.userRole) {
-										case "ADMIN":
-											return crownSvg;
-										case "OWNER":
-											return starSvg;
-										default:
-											return null; // You can handle other cases if needed
-									}
-								})()}
-							</div>
-						) : (
-							<div></div>
-						)}
 						<div className="Name">
-							<div>{user.username}</div>
+							{channel ? (
+								<div className="Icon">
+									{(() => {
+										switch (channel.userRole) {
+											case "OWNER":
+												return crownSvg;
+											case "ADMIN":
+												return starSvg;
+											default:
+												return null; // You can handle other cases if needed
+										}
+									})()}
+								</div>
+							) : (
+								<div></div>
+							)}
+							<div className="Text">{user.username}</div>
 						</div>
 						{status}
 					</div>
@@ -308,9 +313,6 @@ interface ReducedUserProps {
 }
 
 export function ReducedUser({ children, userId }: ReducedUserProps) {
-	if (!userId) {
-		return <div></div>;
-	}
 	const {
 		data: selfId,
 		isLoading: selfIdLoading,
@@ -351,6 +353,10 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 		enabled: !!selfId,
 	});
 
+	if (!userId) {
+		return <div></div>;
+	}
+
 	if (userLoading || selfIdLoading) {
 		return <FaSpinner className="loadingSpinner" />;
 	}
@@ -384,7 +390,9 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 				<div className="User">
 					<div className="Frame">
 						<div className="Player">
-							<div className="Name">Unexisting User</div>
+							<div className="Name">
+								<div className="Text">Unexisting User</div>
+							</div>
 						</div>
 					</div>
 				</div>
@@ -416,7 +424,9 @@ export function ReducedUser({ children, userId }: ReducedUserProps) {
 						<img className="Frame" src={user.avatar_url}></img>
 					</div>
 					<div className="Player">
-						<div className="Name">{user.username}</div>
+						<div className="Name">
+							<div className="Text">{user.username}</div>
+						</div>
 					</div>
 					{children ?? children}
 				</div>
