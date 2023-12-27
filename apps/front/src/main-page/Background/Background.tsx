@@ -20,10 +20,10 @@ import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFrie
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-  interface WindowDimensions {
-    width: string;
-    height: string;
-  }
+	interface WindowDimensions {
+		width: string;
+		height: string;
+	}
 
   const windowDimensions: Record<string, WindowDimensions> = {
     PLAY: { width: "820px", height: "540px" },
@@ -41,61 +41,77 @@ export function Background({ windows }: BackgroundProps) {
     ADDFRIENDS: { width: "300px", height: "400px" },
   };
 
-  return (
-    <div id="Background">
-      {Array.isArray(windows) &&
-        windows.map((window) => {
-          const dimensions = windowDimensions[window.content.type] || {
-            width: "500px",
-            height: "600px",
-          };
-          const { width, height } = dimensions;
-          return (
-            <Window
-              key={window.id}
-              WindowName={window.WindowName}
-              width={width}
-              height={height}
-              id={window.id}
-              handleBarButton={window.handleBarButton}
-              color={window.color}
-            >
-              {window.content.type === "PLAY" && <Play />}
-              {window.content.type === "LADDER" && <Ladder />}
-              {window.content.type === "CHAT" && <Chat />}
-              {window.content.type === "PROFILE" && (
-                <Profile
-                  winId={window.id}
-                  targetId={window.content.id || undefined}
-                />
-              )}
-              {window.content.type === "FINDCHAN" && <FindChan />}
-              {window.content.type === "NEWCHAN" && <NewChan />}
-              {window.content.type === "ABOUTCHAN" && (
-                <AboutChan chanId={window.content.id || undefined} />
-              )}
-              {window.content.type === "ACHIEVEMENTS" && <Achievements />}
-              {window.content.type === "FRIENDSLIST" && <FriendsList />}
-              {window.content.type === "MODAL" && (
-                <Modal
-                  content={window.modal?.content}
-                  type={window.modal?.type}
-                  winId={window.id}
-                  action={window.modal?.action}
-                />
-              )}
-              {window.content.type === "PENDINGREQUESTS" && <PendingRequests />}
-              {window.content.type === "BLOCKEDUSERS" && <BlockedUsers />}
-              {window.content.type === "ADDFRIENDS" && <AddFriends />}
-            </Window>
-          );
-        })}
-    </div>
-  );
+	return (
+		<div id="Background">
+			{Array.isArray(windows) &&
+				windows.map((window) => {
+					const dimensions = windowDimensions[
+						window.content.type
+					] || {
+						width: "500px",
+						height: "600px",
+					};
+					const { width, height } = dimensions;
+					return (
+						<Window
+							key={window.id}
+							WindowName={window.WindowName}
+							width={width}
+							height={height}
+							id={window.id}
+							handleBarButton={window.handleBarButton}
+							color={window.color}
+						>
+							{window.content.type === "PLAY" && <Play />}
+							{window.content.type === "LADDER" && (
+								<Ladder targetId={window.targetId} />
+							)}
+							{window.content.type === "CHAT" && <Chat />}
+							{window.content.type === "PROFILE" && (
+								<Profile
+									winId={window.id}
+									targetId={window.content.id || undefined}
+								/>
+							)}
+							{window.content.type === "FINDCHAN" && <FindChan />}
+							{window.content.type === "NEWCHAN" && <NewChan />}
+							{window.content.type === "ABOUTCHAN" && (
+								<AboutChan
+									chanId={window.content.id || undefined}
+								/>
+							)}
+							{window.content.type === "ACHIEVEMENTS" && (
+								<Achievements targetId={window.targetId} />
+							)}
+							{window.content.type === "FRIENDSLIST" && (
+								<FriendsList />
+							)}
+							{window.content.type === "MODAL" && (
+								<Modal
+									content={window.modal?.content}
+									type={window.modal?.type}
+									winId={window.id}
+									action={window.modal?.action}
+								/>
+							)}
+							{window.content.type === "PENDINGREQUESTS" && (
+								<PendingRequests />
+							)}
+							{window.content.type === "BLOCKEDUSERS" && (
+								<BlockedUsers />
+							)}
+							{window.content.type === "ADDFRIENDS" && (
+								<AddFriends />
+							)}
+						</Window>
+					);
+				})}
+		</div>
+	);
 }
 
 const mapStateToProps = (state: AppState) => ({
-  windows: state.windows,
+	windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);
