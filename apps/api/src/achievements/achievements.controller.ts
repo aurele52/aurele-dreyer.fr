@@ -3,10 +3,11 @@ import { AchievementsService } from './achievements.service';
 
 @Controller('achievements')
 export class AchievementsController {
-    constructor (private readonly achievementsService: AchievementsService) {}
+  constructor(private readonly achievementsService: AchievementsService) {}
 
-    @Get('/list/:id')
-    async getUserAchievements(@Param('id') id: number) {
-        return await this.achievementsService.userAchievements(id);
-    }
+  @Get('/list/:id')
+  async getUserAchievements(@Param('id') id: number) {
+    console.log('User id : ', id);
+    return await this.achievementsService.userAchievements(id);
+  }
 }

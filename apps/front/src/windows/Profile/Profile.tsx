@@ -9,8 +9,8 @@ import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 
 interface ProfileProps extends ReduxProps {
-  targetId?: number;
-  winId: number;
+	targetId?: number;
+	winId: number;
 }
 
 export function Profile({ dispatch, winId, targetId }: ProfileProps) {
@@ -97,9 +97,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		queryKey: ["historic", userId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/profile/historic/${userId}`
-				);
+				const response = await api.get(`/profile/historic/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching historic:", error);
@@ -109,51 +107,51 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		enabled: !!userId,
 	});
 
-  const selfProfile = userId === currentUserId;
+	const selfProfile = userId === currentUserId;
 
-  if (
-    historicLoading ||
-    profileLoading ||
-    userIdLoading ||
-    currentUserIdLoading
-  ) {
-    return (
-      <div className="Ladder">
-        <FaSpinner className="loadingSpinner" />
-      </div>
-    );
-  }
+	if (
+		historicLoading ||
+		profileLoading ||
+		userIdLoading ||
+		currentUserIdLoading
+	) {
+		return (
+			<div className="Ladder">
+				<FaSpinner className="loadingSpinner" />
+			</div>
+		);
+	}
 
-  if (userIdError) {
-    return <div>Error loading users: {userIdError.message}</div>;
-  }
+	if (userIdError) {
+		return <div>Error loading users: {userIdError.message}</div>;
+	}
 
-  if (profileError) {
-    return <div>Error loading users: {profileError.message}</div>;
-  }
+	if (profileError) {
+		return <div>Error loading users: {profileError.message}</div>;
+	}
 
-  if (historicError) {
-    return <div>Error loading users: {historicError.message}</div>;
-  }
+	if (historicError) {
+		return <div>Error loading users: {historicError.message}</div>;
+	}
 
-  if (currentUserIdError) {
-    return <div>Error loading users: {currentUserIdError.message}</div>;
-  }
+	if (currentUserIdError) {
+		return <div>Error loading users: {currentUserIdError.message}</div>;
+	}
 
-  const handleOpenLadder = () => {
-    const newWindow = {
-      WindowName: "Ladder",
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "LADDER" },
-      toggle: false,
-      handleBarButton: 7,
-      color: WinColor.LILAC,
-      targetId: userId,
-    };
-    dispatch(addWindow(newWindow));
-  };
+	const handleOpenLadder = () => {
+		const newWindow = {
+			WindowName: "Ladder",
+			width: "400",
+			height: "600",
+			id: 0,
+			content: { type: "LADDER" },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.LILAC,
+			targetId: userId,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
 	const handleOpenAchievements = () => {
 		const newWindow = {
@@ -214,13 +212,11 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		receiverId: number | undefined
 	) => {
 		if (!senderId || !receiverId) return;
-		console.log("senderId : ", senderId, "  reveiverId : ", receiverId);
 		try {
 			const response = await api.post("/friendslist/add", {
 				senderId: senderId,
 				receiverId: receiverId,
 			});
-			console.log("Friend request sent successfully", response.data);
 		} catch (error) {
 			console.error("Error sending friend request", error);
 		}
@@ -255,124 +251,147 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		</div>
 	);
 
-  const footer = selfProfile ?? (
-    <div className="Footer">
-      <Button
-        content="delete account"
-        color="red"
-        style={{ display: "flex" }}
-      />
-    </div>
-  );
+	const footer = selfProfile ?? (
+		<div className="Footer">
+			<Button
+				content="delete account"
+				color="red"
+				style={{ display: "flex" }}
+			/>
+		</div>
+	);
 
-  return (
-    <div className="Profile">
-      <div className="Header">
-        <div className="Avatar">
-          <img
-            src={profile?.avatar_url}
-            className="Frame"
-            alt={profile?.username.toLowerCase()}
-          />
-        </div>
+	return (
+		<div className="Profile">
+			<div className="Header">
+				<div className="Avatar">
+					<img
+						src={profile?.avatar_url}
+						className="Frame"
+						alt={profile?.username.toLowerCase()}
+					/>
+				</div>
 
-        <div className="Text">
-          <div className="Name">{profile?.username ?? "No name"}</div>
-          <div className="Stats">
-            <div>
-              <div className="Rank">
-                <div className="Position">
-                  <div>Rank #{profile?.rank ?? 0}</div>
-                </div>
-                <div style={{ paddingRight: "4px" }} className="Ratio">
-                  <div>
-                    W {profile?.win_count ?? 0} / L {profile?.loose_count ?? 0}
-                  </div>
-                </div>
-                <Button
-                  icon="Plus"
-                  color="pink"
-                  style={{ display: "flex" }}
-                  onClick={handleOpenLadder}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="ProfileAchievements">
-            <div style={{ paddingRight: "4px" }}>
-              Achievements lvl. {profile?.achievement_lvl}
-            </div>
-            <Button
-              icon="Plus"
-              color="pink"
-              style={{ display: "flex" }}
-              onClick={handleOpenAchievements}
-            />
-          </div>
-          {buttons}
-        </div>
-      </div>
-      <div className="Body">
-        <div className="Historic">
-          <List>
-            {historic?.map((match) => {
-              return (
-                <div className="Match" key={match.id}>
-                  <div
-                    className={`Player ${
-                      match.score1 > match.score2 ? "WinPlayer" : "LoosePlayer"
-                    }`}
-                  >
-                    <div>
-                      <div className="Outline">
-                        <div className="Avatar">
-                          <img
-                            src={match?.player1_avatar}
-                            className="Picture"
-                            alt={match?.player1.toLowerCase()}
-                          />
-                        </div>
-                      </div>
-                      <div className="Username">{match?.player1}</div>
-                    </div>
-                  </div>
-                  <div className="Score">
-                    <div>{match?.score1 + " - " + match?.score2}</div>
-                  </div>
-                  <div
-                    className={`Player ${
-                      match.score1 < match.score2 ? "WinPlayer" : "LoosePlayer"
-                    }`}
-                    onClick={() =>
-                      handleOpenProfile(match.player2_id, match.player2)
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    <div>
-                      <div className="Outline">
-                        <div className="Avatar">
-                          <img
-                            src={match?.player2_avatar}
-                            className="Picture"
-                            alt={match?.player2.toLowerCase()}
-                          />
-                        </div>
-                        <div className="Crown">
-                          <div></div>
-                        </div>
-                      </div>
-                      <div className="Username">{match?.player2}</div>
-                    </div>
-                  </div>
-                </div>
-              );
-            })}
-          </List>
-        </div>
-      </div>
-      {footer}
-    </div>
-  );
+				<div className="Text">
+					<div className="Name">{profile?.username ?? "No name"}</div>
+					<div className="Stats">
+						<div>
+							<div className="Rank">
+								<div className="Position">
+									<div>Rank #{profile?.rank ?? 0}</div>
+								</div>
+								<div
+									style={{ paddingRight: "4px" }}
+									className="Ratio"
+								>
+									<div>
+										W {profile?.win_count ?? 0} / L{" "}
+										{profile?.loose_count ?? 0}
+									</div>
+								</div>
+								<Button
+									icon="Plus"
+									color="pink"
+									style={{ display: "flex" }}
+									onClick={handleOpenLadder}
+								/>
+							</div>
+						</div>
+					</div>
+					<div className="ProfileAchievements">
+						<div style={{ paddingRight: "4px" }}>
+							Achievements lvl. {profile?.achievement_lvl}
+						</div>
+						<Button
+							icon="Plus"
+							color="pink"
+							style={{ display: "flex" }}
+							onClick={() => handleOpenAchievements()}
+						/>
+					</div>
+					{buttons}
+				</div>
+			</div>
+			<div className="Body">
+				<div className="Historic">
+					<List>
+						{historic?.map((match) => {
+							return (
+								<div className="Match" key={match.id}>
+									<div
+										className={`Player ${
+											match.score1 > match.score2
+												? "WinPlayer"
+												: "LoosePlayer"
+										}`}
+									>
+										<div>
+											<div className="Outline">
+												<div className="Avatar">
+													<img
+														src={
+															match?.player1_avatar
+														}
+														className="Picture"
+														alt={match?.player1.toLowerCase()}
+													/>
+												</div>
+											</div>
+											<div className="Username">
+												{match?.player1}
+											</div>
+										</div>
+									</div>
+									<div className="Score">
+										<div>
+											{match?.score1 +
+												" - " +
+												match?.score2}
+										</div>
+									</div>
+									<div
+										className={`Player ${
+											match.score1 < match.score2
+												? "WinPlayer"
+												: "LoosePlayer"
+										}`}
+										onClick={() =>
+											handleOpenProfile(
+												match.player2_id,
+												match.player2
+											)
+										}
+										style={{ cursor: "pointer" }}
+									>
+										<div>
+											<div className="Outline">
+												<div className="Avatar">
+													<img
+														src={
+															match?.player2_avatar
+														}
+														className="Picture"
+														alt={match?.player2.toLowerCase()}
+													/>
+												</div>
+												<div className="Crown">
+													<div></div>
+												</div>
+											</div>
+											<div className="Username">
+												{match?.player2}
+											</div>
+										</div>
+									</div>
+								</div>
+							);
+						})}
+					</List>
+				</div>
+			</div>
+			{footer}
+		</div>
+	);
 }
 const mapDispatchToProps = null;
 
