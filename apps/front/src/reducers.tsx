@@ -5,14 +5,23 @@ import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 
 interface WindowData {
-  WindowName: string;
-  id: number;
-  content: { type: string; id?: number };
-  toggle: boolean;
-  modal?: { type: ModalType, content: ReactNode, action?: ActionKey, targetId?: number };
-  handleBarButton: number;
-  color: WinColor;
-  targetId?: number;
+	WindowName: string;
+	position?: {
+		x: string;
+		y: string;
+	};
+	id: number;
+	content: { type: string; id?: number };
+	toggle: boolean;
+	modal?: {
+		type: ModalType;
+		content: ReactNode;
+		action?: ActionKey;
+		targetId?: number;
+	};
+	handleBarButton: number;
+	color: WinColor;
+	targetId?: number;
 }
 
 export interface AppState<T = WindowData> {
@@ -71,7 +80,9 @@ const windowsSlice = createSlice({
 				}
 				return;
 			}
+
 			const res = action.payload;
+			if (!res.position) res.position = { x: "0px", y: "0px" };
 			res.id = state.id;
 			state.windows.push(res);
 			state.id++;

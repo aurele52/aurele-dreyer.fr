@@ -87,6 +87,22 @@ export function Profile({ targetId }: ProfileProps) {
 			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
+			});
+		},
+	});
+
+	const { mutateAsync: acceptFriendship } = useMutation({
+		mutationFn: async (userId: number) => {
+			return api.patch("/friendship/accept/" + userId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", targetId],
+			});
+			queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
+			queryClient.invalidateQueries({ queryKey: ["friendsList"] });
 		},
 	});
 
@@ -129,7 +145,7 @@ export function Profile({ targetId }: ProfileProps) {
 			id: 0,
 			content: { type: "ACHIEVEMENTS" },
 			toggle: false,
-			handleBarButton: HBButton.Close,
+			handleBarButton: 7,
 			color: WinColor.LILAC,
 			targetId: targetId,
 		};
@@ -142,7 +158,7 @@ export function Profile({ targetId }: ProfileProps) {
 			id: 0,
 			content: { type: "FRIENDSLIST" },
 			toggle: false,
-			handleBarButton: HBButton.Close,
+			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: targetId,
 		};
@@ -176,28 +192,33 @@ export function Profile({ targetId }: ProfileProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleFriendRequest = async (receiverId: number | undefined) => {
-		if (!receiverId) return;
-		createFriendship(receiverId);
+	const handleFriendRequest = async () => {
+		if (!targetId) return;
+		createFriendship(targetId);
 	};
 
-	const handleBlockUser = async (id: number | undefined) => {
-		if (!id) return;
+	const handleAcceptRequest = async () => {
+		if (!targetId) return;
+		acceptFriendship(targetId);
+	};
+
+	const handleBlockUser = async () => {
+		if (!targetId) return;
 		addModal(
 			ModalType.WARNING,
 			`Are you sure you want to block ${profile?.username}?`,
 			"addBlockedFriendship",
-			id
+			targetId
 		);
 	};
 
-	const handleRemovePending = async (id: number | undefined) => {
-		if (!id) return;
+	const handleRemovePending = async () => {
+		if (!targetId) return;
 		addModal(
 			ModalType.WARNING,
-			`Are you sure you want to remove your pending request ?`,
+			`Are you sure you want to remove your pending request?`,
 			"deleteFriendship",
-			id
+			targetId
 		);
 	};
 
@@ -205,8 +226,18 @@ export function Profile({ targetId }: ProfileProps) {
 		if (!targetId) return;
 		addModal(
 			ModalType.WARNING,
-			`Are you sure you want to unblock ${profile?.username} ?`,
+			`Are you sure you want to unblock ${profile?.username}?`,
 			"deleteBlockedFriendship",
+			targetId
+		);
+	};
+
+	const handleRemoveFriend = async () => {
+		if (!targetId) return;
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to remove ${profile?.username} from your friendlist?`,
+			"deleteFriendship",
 			targetId
 		);
 	};
@@ -218,18 +249,18 @@ export function Profile({ targetId }: ProfileProps) {
 					content="add friend"
 					color="purple"
 					style={{ display: "flex" }}
-					onClick={() => handleFriendRequest(targetId)}
+					onClick={() => handleFriendRequest()}
 				/>
 			);
 		} else {
-			if (profile?.friendship?.status == "PENDING") {
-				if (profile.friendship.user1_id == targetId)
+			if (profile?.friendship?.status === "PENDING") {
+				if (profile.friendship.user1_id === targetId)
 					return (
 						<Button
 							content="accept"
 							color="purple"
 							style={{ display: "flex" }}
-							onClick={() => handleFriendRequest(targetId)}
+							onClick={() => handleAcceptRequest()}
 						/>
 					);
 				else
@@ -238,9 +269,18 @@ export function Profile({ targetId }: ProfileProps) {
 							content="remove pending"
 							color="purple"
 							style={{ display: "flex" }}
-							onClick={() => handleRemovePending(targetId)}
+							onClick={() => handleRemovePending()}
 						/>
 					);
+			} else if (profile.friendship.status === "FRIENDS") {
+				return (
+					<Button
+						content="remove friend"
+						color="purple"
+						style={{ display: "flex" }}
+						onClick={() => handleRemoveFriend()}
+					/>
+				);
 			} else {
 				return <div></div>;
 			}
@@ -265,7 +305,7 @@ export function Profile({ targetId }: ProfileProps) {
 					content="block"
 					color="purple"
 					style={{ display: "flex" }}
-					onClick={() => handleBlockUser(targetId)}
+					onClick={() => handleBlockUser()}
 				/>
 			);
 	};
