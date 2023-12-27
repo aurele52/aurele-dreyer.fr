@@ -1,4 +1,4 @@
-import { Controller, Get, Query, Redirect, UseGuards } from '@nestjs/common';
+import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
@@ -16,7 +16,7 @@ export class AuthController {
   @Redirect()
   redirectTo42Auth() {
     const api42_id = process.env.API42_ID;
-    const api42_callback = "http://localhost:3000/api/auth/callback";
+    const api42_callback = 'http://localhost:3000/api/auth/callback';
     const state = generateRandomState();
     const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
     return { url: url_auth42 };
@@ -30,6 +30,14 @@ export class AuthController {
     @Query('state') state: string,
   ) {
     const token = await this.authService.signIn(code, state);
+    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+  }
+
+  @Public() // Ne pas laisser ça public car normalement réservé aux admins
+  @Redirect()
+  @Get('/impersonate/:id')
+  async impersonateUser(@Param('id') id: number) {
+    const token = await this.authService.impersonateSignIn(id);
     return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 }

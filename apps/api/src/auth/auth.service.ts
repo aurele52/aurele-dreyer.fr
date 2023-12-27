@@ -1,4 +1,4 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { JwtService } from '@nestjs/jwt';
 import { AccessToken42, UserInfo42 } from './auth.types';
@@ -10,6 +10,20 @@ export class AuthService {
     private readonly prisma: PrismaService,
     private readonly jwt: JwtService,
   ) {}
+
+  async signIn(code: string, state: string) {
+    try {
+      const access_token_42 = await this.fetchAccessToken(code, state);
+      const user_info = await this.fetchUserInfo(access_token_42.access_token);
+      const user = await this.getOrCreateUser(access_token_42, user_info);
+      const token = await this.generateJWTToken(user);
+
+      return token;
+    } catch (error) {
+      console.log(error);
+      return error;
+    }
+  }
 
   async fetchAccessToken(code: string, state: string) {
     return fetch('https://api.intra.42.fr/oauth/token', {
@@ -70,17 +84,12 @@ export class AuthService {
     };
   }
 
-  async signIn(code: string, state: string) {
-    try {
-      const access_token_42 = await this.fetchAccessToken(code, state);
-      const user_info = await this.fetchUserInfo(access_token_42.access_token);
-      const user = await this.getOrCreateUser(access_token_42, user_info);
-      const token = await this.generateJWTToken(user);
-
-      return token;
-    } catch (error) {
-      console.log(error);
-      return error;
-    }
+  async impersonateSignIn(id: number)
+  {
+    const user = await this.prisma.user.findUnique({
+      where: { id: id },
+    });
+    const access_token = await this.generateJWTToken(user);
+    return access_token;
   }
 }
