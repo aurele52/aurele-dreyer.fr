@@ -1,15 +1,17 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { LadderService } from 'src/ladder/ladder.service';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Injectable()
 export class ProfileService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly ladder: LadderService,
+    private readonly frienship: FriendshipService,
   ) {}
 
-  async profile(id: number) {
+  async profile(id: number, self_id: number) {
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
@@ -41,9 +43,37 @@ export class ProfileService {
     });
 
     const rank = await this.ladder.getRank(user.id);
-    console.log(rank);
 
-    const res = {
+    if (self_id == 0) {
+      return {
+        id: user.id,
+        username: user.username,
+        avatar_url: user.avatar_url,
+        win_count: winCount,
+        loose_count: looseCount,
+        achievement_lvl: achievementLvl,
+        rank: rank,
+      };
+    }
+    const friendship = await this.frienship.userFriendship(self_id, id);
+
+    if (friendship) {
+      return {
+        id: user.id,
+        username: user.username,
+        avatar_url: user.avatar_url,
+        win_count: winCount,
+        loose_count: looseCount,
+        achievement_lvl: achievementLvl,
+        rank: rank,
+        friendship: {
+          status: friendship.status,
+          user1_id: friendship.user1_id,
+          user2_id: friendship.user2_id,
+        },
+      };
+    }
+    return {
       id: user.id,
       username: user.username,
       avatar_url: user.avatar_url,
@@ -52,8 +82,6 @@ export class ProfileService {
       achievement_lvl: achievementLvl,
       rank: rank,
     };
-
-    return res;
   }
 
   async historic(id: number) {

@@ -828,16 +828,19 @@ export function HeartButton({
 		},
 	});
 
-  const { mutateAsync: createFriendship } = useMutation({
-    mutationFn: async (user2_id: number) => {
-      return api.post("/friendship", { user2_id });
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["friendship", userId],
-      });
-    },
-  });
+	const { mutateAsync: createFriendship } = useMutation({
+		mutationFn: async (user2_id: number) => {
+			return api.post("/friendship", { user2_id });
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["friendship", userId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["addFriendsList"],
+			});
+		},
+	});
 
   const [friendStatus, setFriendStatus] = useState<IconKey>("EmptyHeart");
 
