@@ -107,6 +107,8 @@ model Friendship {
   updated_at DateTime @updatedAt
   user1      User     @relation("user1_friendship", fields: [user1_id], references: [id])
   user2      User     @relation("user2_friendship", fields: [user2_id], references: [id])
+
+  @@unique([user1_id, user2_id])
 }
 
 
