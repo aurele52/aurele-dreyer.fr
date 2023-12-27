@@ -21,7 +21,8 @@ type IconKey =
 	| "PendingHeart"
 	| "Unblock"
 	| "Wrench"
-	| "Arrow";
+	| "Arrow"
+	| "LogOut";
 
 const Icons: { [key in IconKey]: ReactElement } = {
 	TripleDot: (
@@ -766,6 +767,41 @@ const Icons: { [key in IconKey]: ReactElement } = {
 				transform="matrix(1 0 0 -1 6 6)"
 				fill="white"
 			/>
+		</svg>
+	),
+	LogOut: (
+		<svg
+		  xmlns="http://www.w3.org/2000/svg"
+		  width="44"
+		  height="44"
+		  viewBox="0 0 44 44"
+		  fill="none"
+		>
+		  <rect x="8.79626" y="8" width="4" height="4" fill="white" />
+		  <rect x="8.79626" y="32" width="4" height="4" fill="white" />
+		  <rect x="12.7963" y="8" width="4" height="4" fill="white" />
+		  <rect x="12.7963" y="32" width="4" height="4" fill="white" />
+		  <rect x="16.7963" y="8" width="4" height="4" fill="white" />
+		  <rect x="20.7963" y="12" width="4" height="4" fill="white" />
+		  <rect x="16.7963" y="32" width="4" height="4" fill="white" />
+		  <rect x="20.7963" y="28" width="4" height="4" fill="white" />
+		  <rect x="37" y="20" width="4" height="4" fill="white" />
+		  <rect x="33" y="16" width="4" height="4" fill="white" />
+		  <rect x="29" y="12" width="4" height="4" fill="white" />
+		  <rect x="29" y="16" width="4" height="4" fill="white" />
+		  <rect x="29" y="20" width="4" height="4" fill="white" />
+		  <rect x="29" y="24" width="4" height="4" fill="white" />
+		  <rect x="29" y="28" width="4" height="4" fill="white" />
+		  <rect x="33" y="24" width="4" height="4" fill="white" />
+		  <rect x="33" y="20" width="4" height="4" fill="white" />
+		  <rect x="25" y="20" width="4" height="4" fill="white" />
+		  <rect x="21" y="20" width="4" height="4" fill="white" />
+		  <rect x="17" y="20" width="4" height="4" fill="white" />
+		  <rect x="4.79626" y="12" width="4" height="4" fill="white" />
+		  <rect x="4.79626" y="16" width="4" height="4" fill="white" />
+		  <rect x="4.79626" y="20" width="4" height="4" fill="white" />
+		  <rect x="4.79626" y="24" width="4" height="4" fill="white" />
+		  <rect x="4.79626" y="28" width="4" height="4" fill="white" />
 		</svg>
 	),
 };

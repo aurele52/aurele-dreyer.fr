@@ -8,6 +8,13 @@ const appRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/",
   component: App,
+  beforeLoad:async () => {
+    if (!localStorage.getItem("token")) {
+      throw redirect({
+        to: "/auth",
+      });
+    }
+  },
 });
 const authRoute = new Route({
   getParentRoute: () => rootRoute,
