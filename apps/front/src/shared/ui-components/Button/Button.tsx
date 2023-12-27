@@ -20,7 +20,8 @@ type IconKey =
 	| "Cross"
 	| "PendingHeart"
 	| "Unblock"
-	| "Wrench";
+	| "Wrench"
+	| "Arrow";
 
 const Icons: { [key in IconKey]: ReactElement } = {
 	TripleDot: (
@@ -711,6 +712,62 @@ const Icons: { [key in IconKey]: ReactElement } = {
 			<rect x="7" y="3" width="2" height="2" fill="white" />
 		</svg>
 	),
+	Arrow: (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect x="12" y="8" width="2" height="2" fill="white" />
+			<rect x="10" y="10" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 10 8)"
+				fill="white"
+			/>
+			<rect x="8" y="12" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 8 6)"
+				fill="white"
+			/>
+			<rect x="6" y="14" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 6 4)"
+				fill="white"
+			/>
+			<rect x="6" y="8" width="2" height="2" fill="white" />
+			<rect x="8" y="8" width="2" height="2" fill="white" />
+			<rect x="10" y="8" width="2" height="2" fill="white" />
+			<rect x="8" y="10" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 8 8)"
+				fill="white"
+			/>
+			<rect x="6" y="10" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 6 8)"
+				fill="white"
+			/>
+			<rect x="6" y="12" width="2" height="2" fill="white" />
+			<rect
+				width="2"
+				height="2"
+				transform="matrix(1 0 0 -1 6 6)"
+				fill="white"
+			/>
+		</svg>
+	),
 };
 
 type ButtonProps = {
@@ -765,7 +822,9 @@ export function HeartButton({
 	const { data: friendship } = useQuery<FriendShipData>({
 		queryKey: ["friendship", userId],
 		queryFn: async () => {
-			return api.get("/friendship/" + userId).then((response) => response.data);
+			return api
+				.get("/friendship/" + userId)
+				.then((response) => response.data);
 		},
 	});
 
@@ -800,41 +859,43 @@ export function HeartButton({
 	};
 
 	const isBlockedByMe = () => {
-		if (friendship?.user2_id === userId && friendship.status === "BLOCKED") return true;
+		if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
+			return true;
 		return false;
 	};
 
-  const handleFriendshipBtn = () => {
-    if (friendStatus === "Heart") {
-      addModal(
-        ModalType.WARNING,
-        `Are you sure you want to remove ${username} from your friends?`,
-        'deleteFriendship',
-        userId,
-      );
-    } else if (friendStatus === "PendingHeart") {
-      const newWindow = {
-        WindowName: "PENDING FRIEND REQUESTS",
-        width: "300",
-        height: "300",
-        id: 0,
-        content: { type: "PENDINGREQUESTS" },
-        toggle: false,
-        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-        color: WinColor.PURPLE,
-      };
-      store.dispatch(addWindow(newWindow));
-    } else if (friendStatus === "EmptyHeart") {
-      createFriendship(userId);
-    } else if (friendStatus === "Unblock") {
-      addModal(
-        ModalType.WARNING,
-        `Are you sure you want to unblock ${username}?`,
-        'deleteBlockedFriendship',
-        userId,
-      );
-    }
-  };
+	const handleFriendshipBtn = () => {
+		if (friendStatus === "Heart") {
+			addModal(
+				ModalType.WARNING,
+				`Are you sure you want to remove ${username} from your friends?`,
+				"deleteFriendship",
+				userId
+			);
+		} else if (friendStatus === "PendingHeart") {
+			const newWindow = {
+				WindowName: "PENDING FRIEND REQUESTS",
+				width: "300",
+				height: "300",
+				id: 0,
+				content: { type: "PENDINGREQUESTS" },
+				toggle: false,
+				handleBarButton:
+					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+				color: WinColor.PURPLE,
+			};
+			store.dispatch(addWindow(newWindow));
+		} else if (friendStatus === "EmptyHeart") {
+			createFriendship(userId);
+		} else if (friendStatus === "Unblock") {
+			addModal(
+				ModalType.WARNING,
+				`Are you sure you want to unblock ${username}?`,
+				"deleteBlockedFriendship",
+				userId
+			);
+		}
+	};
 
 	return !isBlocked() || isBlockedByMe() ? (
 		<button
