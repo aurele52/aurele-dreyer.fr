@@ -135,13 +135,19 @@ export class FriendslistService {
         },
         select: {
           id: true,
+          username: true,
         },
         orderBy: {
           username: 'asc',
         },
       });
 
-      const res = potentialFriends?.map((user) => user.id);
+      const res = potentialFriends?.map((user) => {
+        return {
+          id: user.id,
+          username: user.username,
+        };
+      });
 
       return res;
     } catch (error) {
