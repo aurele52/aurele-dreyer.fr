@@ -238,7 +238,7 @@ export function Profile({ targetId }: ProfileProps) {
 									</div>
 								</div>
 								<Button
-									icon="Plus"
+									icon="Arrow"
 									color="pink"
 									style={{ display: "flex" }}
 									onClick={handleOpenLadder}
@@ -251,7 +251,7 @@ export function Profile({ targetId }: ProfileProps) {
 							Achievements lvl. {profile?.achievement_lvl}
 						</div>
 						<Button
-							icon="Plus"
+							icon="Arrow"
 							color="pink"
 							style={{ display: "flex" }}
 							onClick={() => handleOpenAchievements()}

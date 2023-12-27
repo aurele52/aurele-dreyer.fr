@@ -1,5 +1,0 @@
-export enum Achievement {
-    WINS10 = 'WINS10',
-    POINTS100= 'POINTS100',
-    WINSINLESSTHAN1M = 'WINSINLESSTHAN1M'
-}
