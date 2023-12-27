@@ -42,7 +42,6 @@ export class AuthGuard implements CanActivate {
       if (!user) {
         throw new UnauthorizedException();
       }
-      console.log('Guard: My user.id: ', user.id);
       request['user'] = user;
     } catch {
       throw new UnauthorizedException();
