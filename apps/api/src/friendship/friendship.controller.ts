@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 
@@ -21,7 +29,7 @@ export class FriendshipController {
 
   @Delete('/relationship/friends/:id')
   async deleteFriends(@Param('id') user1_id: number, @CurrentUser() user2) {
-    return await this.friendshipService.deleteFriends(user1_id, user2.id);
+    return await this.friendshipService.deleteFriendship(user1_id, user2.id);
   }
 
   @Delete('/relationship/blocked/:id')
@@ -29,13 +37,28 @@ export class FriendshipController {
     return await this.friendshipService.deleteBlocked(user1_id, user2.id);
   }
 
+  @Delete('/relationship/pending/:id')
+  async deletePending(@Param('id') user1_id: number, @CurrentUser() user2) {
+    return await this.friendshipService.deletePending(user1_id, user2.id);
+  }
+
   @Post('/friendship')
   async createCurrUserFriendship(
     @CurrentUser() user1,
     @Body('user2_id') user2_id: number,
   ) {
-    console.log(user2_id);
     return await this.friendshipService.createFriendship(user1.id, user2_id);
+  }
+
+  @Post('/block/:id')
+  async createBlockedFriendship(
+    @Param('id') user2_id: number,
+    @CurrentUser() user1,
+  ) {
+    return await this.friendshipService.createBlockedFriendship(
+      user1.id,
+      user2_id,
+    );
   }
 
   @Get('/friendships/pendingList')
@@ -48,5 +71,10 @@ export class FriendshipController {
   async getBlockedList(@CurrentUser() currUser) {
     console.log('Pending request list');
     return await this.friendshipService.getBlockedList(currUser.id);
+  }
+
+  @Patch('/friendship/accept/:id')
+  async acceptFriendship(@CurrentUser() user, @Param('id') id: number) {
+    return await this.friendshipService.acceptFriendship(id, user.id);
   }
 }

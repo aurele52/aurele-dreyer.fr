@@ -42,6 +42,9 @@ export class FriendshipService {
         ],
       },
     });
+    if (!friendship) {
+      return null;
+    }
     return {
       id: friendship.id,
       user1_id: friendship.user1_id,
@@ -62,6 +65,18 @@ export class FriendshipService {
     });
   }
 
+  async deletePending(user1_id, user2_id) {
+    return await this.prisma.friendship.deleteMany({
+      where: {
+        OR: [
+          { user1_id: user1_id, user2_id: user2_id },
+          { user1_id: user2_id, user2_id: user1_id },
+        ],
+        status: FriendshipStatus.PENDING,
+      },
+    });
+  }
+
   async deleteBlocked(user1_id, user2_id) {
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -70,6 +85,27 @@ export class FriendshipService {
           { user1_id: user2_id, user2_id: user1_id },
         ],
         status: FriendshipStatus.BLOCKED,
+      },
+    });
+  }
+
+  async deleteFriendship(user1_id, user2_id) {
+    return await this.prisma.friendship.deleteMany({
+      where: {
+        AND: [
+          {
+            OR: [
+              { user1_id: user1_id, user2_id: user2_id },
+              { user1_id: user2_id, user2_id: user1_id },
+            ],
+          },
+          {
+            OR: [
+              { status: FriendshipStatus.FRIENDS },
+              { status: FriendshipStatus.PENDING },
+            ],
+          },
+        ],
       },
     });
   }
@@ -92,6 +128,29 @@ export class FriendshipService {
     });
   }
 
+  async createBlockedFriendship(user1_id: number, user2_id: number) {
+    const currentFriendship = await this.userFriendship(user1_id, user2_id);
+    if (currentFriendship) {
+      if (currentFriendship.status == FriendshipStatus.BLOCKED) return;
+      else this.deleteFriendship(user1_id, user2_id);
+    }
+    return await this.prisma.friendship.create({
+      data: {
+        user1: {
+          connect: {
+            id: user1_id,
+          },
+        },
+        user2: {
+          connect: {
+            id: user2_id,
+          },
+        },
+        status: FriendshipStatus.BLOCKED,
+      },
+    });
+  }
+
   async getPendingInvitations(id: number) {
     console.log('Get pending invit');
     const invitations = await this.prisma.friendship.findMany({
@@ -99,11 +158,11 @@ export class FriendshipService {
         OR: [
           {
             user1_id: id,
-            status: 'PENDING',
+            status: FriendshipStatus.PENDING,
           },
           {
             user2_id: id,
-            status: 'PENDING',
+            status: FriendshipStatus.PENDING,
           },
         ],
       },
@@ -128,7 +187,7 @@ export class FriendshipService {
     const blocked = await this.prisma.friendship.findMany({
       where: {
         user1_id: id,
-        status: 'BLOCKED',
+        status: FriendshipStatus.BLOCKED,
       },
       include: {
         user2: true,
@@ -143,5 +202,19 @@ export class FriendshipService {
     });
 
     return res;
+  }
+
+  async acceptFriendship(user1_id: number, user2_id: number) {
+    return await this.prisma.friendship.update({
+      where: {
+        user1_id_user2_id: {
+          user1_id,
+          user2_id,
+        },
+      },
+      data: {
+        status: FriendshipStatus.FRIENDS,
+      },
+    });
   }
 }

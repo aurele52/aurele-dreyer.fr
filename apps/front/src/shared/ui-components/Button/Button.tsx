@@ -872,6 +872,9 @@ export function HeartButton({
 			queryClient.invalidateQueries({
 				queryKey: ["friendship", userId],
 			});
+			queryClient.invalidateQueries({
+				queryKey: ["addFriendsList"],
+			});
 		},
 	});
 
@@ -880,19 +883,19 @@ export function HeartButton({
   useEffect(() => {
     let status: IconKey = "EmptyHeart";
 
-		if (friendship) {
-			if (friendship === undefined) status = "EmptyHeart";
-			else if (friendship.status === "FRIENDS") status = "Heart";
-			else if (friendship.status === "PENDING") status = "PendingHeart";
-			else if (friendship.status === "BLOCKED") status = "Unblock";
-		}
-		setFriendStatus(status);
-	}, [friendship, userId]);
+    if (friendship) {
+      if (friendship === undefined) status = "EmptyHeart";
+      else if (friendship.status === "FRIENDS") status = "Heart";
+      else if (friendship.status === "PENDING") status = "PendingHeart";
+      else if (friendship.status === "BLOCKED") status = "Unblock";
+    }
+    setFriendStatus(status);
+  }, [friendship, userId]);
 
-	const isBlocked = () => {
-		if (friendship && friendship.status === "BLOCKED") return true;
-		return false;
-	};
+  const isBlocked = () => {
+    if (friendship && friendship.status === "BLOCKED") return true;
+    return false;
+  };
 
 	const isBlockedByMe = () => {
 		if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
@@ -933,14 +936,86 @@ export function HeartButton({
 		}
 	};
 
-	return !isBlocked() || isBlockedByMe() ? (
-		<button
-			type="button"
-			{...props}
-			className={`pink ${className || ""} Button`}
-			onClick={handleFriendshipBtn}
-		>
-			<div className={`ButtonInner`}>{Icons[friendStatus]}</div>
-		</button>
-	) : null;
+  return !isBlocked() || isBlockedByMe() ? (
+    <button
+      type="button"
+      {...props}
+      className={`pink ${className || ""} Button`}
+      onClick={handleFriendshipBtn}
+    >
+      <div className={`ButtonInner`}>{Icons[friendStatus]}</div>
+    </button>
+  ) : null;
+}
+
+type PendingButtonProps = {
+  userId: number;
+} & HTMLAttributes<HTMLButtonElement>;
+
+export function PendingButton({
+  userId,
+  className,
+  ...props
+}: PendingButtonProps) {
+  const queryClient = useQueryClient();
+
+  const { data: friendship } = useQuery<FriendShipData>({
+    queryKey: ["friendship", userId],
+    queryFn: async () => {
+      return api.get("/friendship/" + userId).then((response) => response.data);
+    },
+  });
+
+  const [requestStatus, setRequestStatus] = useState<IconKey>("EmptyHeart");
+
+  useEffect(() => {
+    let status: IconKey = "EmptyHeart";
+
+    if (friendship && friendship.status === "PENDING") {
+      if (friendship.user1_id === userId) status = "EmptyHeart";
+      else status = "Cross";
+    }
+    setRequestStatus(status);
+  }, [friendship, userId]);
+
+  const { mutateAsync: acceptFriendship } = useMutation({
+    mutationFn: async () => {
+      return api.patch("/friendship/accept/" + userId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
+      queryClient.invalidateQueries({ queryKey: ["friendsList"] });
+    },
+  });
+
+  const { mutateAsync: deletePendingFriendship } = useMutation({
+		mutationFn: async () => {
+			return api.delete("/relationship/pending/" + userId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["friendship", userId],
+			});
+      queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
+		},
+	});
+
+  const handlePendingBtn = () => {
+    if (requestStatus === "EmptyHeart") {
+      acceptFriendship();
+    } else if (requestStatus === "Cross") {
+      deletePendingFriendship();
+    }
+  };
+
+  return (
+    <button
+      type="button"
+      {...props}
+      className={`pink ${className || ""} Button`}
+      onClick={handlePendingBtn}
+    >
+      <div className={`ButtonInner`}>{Icons[requestStatus]}</div>
+    </button>
+  );
 }

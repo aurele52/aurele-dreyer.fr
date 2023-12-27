@@ -7,23 +7,50 @@ import {
 } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 import { useEffect, useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 export function AddFriends() {
 	const [placeholderValue, setPlaceholderValue] = useState<string>("");
-	const [users, setUsers] = useState<
-		{ id: number; username: string }[] | null
-	>(null);
+
+	const {
+		data: users,
+		error: addFriendsListError,
+		refetch: refetchaddFriendsList,
+	} = useQuery<
+		{
+			id: number;
+			username: string;
+		}[]
+	>({
+		queryKey: ["addFriendsList"],
+		queryFn: async () => {
+			try {
+				console.log("Update users");
+				const response = await api.get(
+					"/friendslist/potentialFriends",
+					{
+						params: {
+							placeholderValue: placeholderValue,
+						},
+					}
+				);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching Users list:", error);
+				throw error;
+			}
+		},
+	});
+
+	if (addFriendsListError) {
+		return <div>Error loading users: {addFriendsListError.message}</div>;
+	}
 
 	useEffect(() => {
 		const storedPlaceholderValue = localStorage.getItem("placeholderValue");
-		const storedUsers = localStorage.getItem("users");
 
 		if (storedPlaceholderValue) {
 			setPlaceholderValue(storedPlaceholderValue);
-		}
-
-		if (storedUsers) {
-			setUsers(JSON.parse(storedUsers));
 		}
 	}, []);
 
@@ -33,19 +60,7 @@ export function AddFriends() {
 	}, [placeholderValue, users]);
 
 	const handleButtonClick = async () => {
-		try {
-			const response = await api.get<{ id: number; username: string }[]>(
-				"/friendslist/potentialFriends",
-				{
-					params: {
-						placeholderValue: placeholderValue,
-					},
-				}
-			);
-			setUsers(response.data);
-		} catch (error) {
-			console.error("Error making API request:", error);
-		}
+		refetchaddFriendsList();
 	};
 
 	return (

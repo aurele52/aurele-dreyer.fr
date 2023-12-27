@@ -7,16 +7,16 @@ export class ProfileController {
   constructor(private readonly profileService: ProfileService) {}
 
   @Get('/user/:id')
-  async getProfile(@Param('id') id: number) {
+  async getProfile(@Param('id') id: number, @CurrentUser() user) {
     if (!id) return null;
-    const userProfile = await this.profileService.profile(id);
+    const userProfile = await this.profileService.profile(id, user.id);
 
     return userProfile;
   }
 
   @Get('/user')
   async getSelfProfile(@CurrentUser() user) {
-    const userProfile = await this.profileService.profile(user.id);
+    const userProfile = await this.profileService.profile(user.id, 0);
 
     return userProfile;
   }
