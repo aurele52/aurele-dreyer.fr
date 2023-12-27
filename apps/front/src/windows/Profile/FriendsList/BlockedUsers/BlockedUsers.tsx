@@ -3,7 +3,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../../shared/ui-components/Button/Button";
+import { HeartButton } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
 interface BlockedUsersProps {}
@@ -33,14 +33,13 @@ export function BlockedUsers({}: BlockedUsersProps) {
 	} = useQuery<
 		{
 			id: number;
+			username: string;
 		}[]
 	>({
 		queryKey: ["blockedUsers", userId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/friendships/blockedList`
-				);
+				const response = await api.get(`/friendships/blockedList`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching BlockedUsers:", error);
@@ -62,14 +61,28 @@ export function BlockedUsers({}: BlockedUsersProps) {
 		return <div>Error loading user: {userIdError.message}</div>;
 	}
 
+	if (!Array.isArray(blockedUsers)) {
+		return (
+			<div className="BlockedUsersComponent">
+				<div className="Body">
+					<List>
+						<div></div>
+					</List>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="BlockedUsersComponent">
 			<div className="Body">
 				<List>
-					<div className="SectionName">Received</div>
 					{blockedUsers?.map((user, key) => (
 						<ReducedUser key={key} userId={user.id}>
-							<Button icon="Unblock" color="pink" />
+							<HeartButton
+								userId={user.id}
+								username={user.username}
+							/>
 						</ReducedUser>
 					))}
 				</List>

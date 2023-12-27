@@ -15,23 +15,3 @@
 	flex: 1 0 0;
 	align-self: stretch;
 }
-
-.BlockedUsersComponent > .Body > .List > .SectionName {
-	display: flex;
-	padding: 0px 2px;
-	justify-content: space-between;
-	align-items: flex-start;
-	align-content: flex-start;
-	row-gap: 5px;
-	align-self: stretch;
-	flex-wrap: wrap;
-}
-
-.BlockedUsersComponent > .Body > .List > .SectionName > div {
-	color: var(--text-text-primary, #000);
-	font-family: Chakra Petch;
-	font-size: 12px;
-	font-style: normal;
-	font-weight: 600;
-	line-height: normal;
-}

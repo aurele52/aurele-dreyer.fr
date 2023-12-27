@@ -3,12 +3,10 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
-import Button from "../../shared/ui-components/Button/Button";
+import { Button } from "../../shared/ui-components/Button/Button";
 import { addWindow } from "../../reducers";
-import { connect, ConnectedProps } from "react-redux";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-
-interface ChatProps extends ReduxProps {}
+import store from "../../store";
 
 type ChatType = {
   id: number;
@@ -17,7 +15,7 @@ type ChatType = {
   interlocutor: { avatar_url: string; username: string; id: number };
 };
 
-export function Chat({ dispatch }: ChatProps) {
+export function Chat() {
   const { data: chats } = useQuery<ChatType[]>({
     queryKey: ["chats"],
     queryFn: async () => {
@@ -28,29 +26,25 @@ export function Chat({ dispatch }: ChatProps) {
   const handleFindChannel = () => {
     const newWindow = {
       WindowName: "Find Channel",
-      width: "242",
-      height: "390",
       id: 0,
       content: { type: "FINDCHAN" },
       toggle: false,
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const handleCreateChannel = () => {
     const newWindow = {
       WindowName: "New Channel",
-      width: "485",
-      height: "362",
       id: 0,
       content: { type: "NEWCHAN" },
       toggle: false,
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
     };
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const detailsWindow = (isDm: boolean, id: number, name: string) => {
@@ -58,8 +52,6 @@ export function Chat({ dispatch }: ChatProps) {
     if (!isDm) {
       newWindow = {
         WindowName: "About " + name,
-        width: "453",
-        height: "527",
         id: 0,
         content: { type: "ABOUTCHAN", id: id },
         toggle: false,
@@ -69,8 +61,6 @@ export function Chat({ dispatch }: ChatProps) {
     } else {
       newWindow = {
         WindowName: name,
-        width: "500",
-        height: "500",
         id: 0,
         content: { type: "PROFILE", id: id },
         toggle: false,
@@ -78,7 +68,7 @@ export function Chat({ dispatch }: ChatProps) {
         color: WinColor.PURPLE,
       };
     }
-    dispatch(addWindow(newWindow));
+    store.dispatch(addWindow(newWindow));
   };
 
   const handleDetails = (chat: ChatType) => {
@@ -131,10 +121,4 @@ export function Chat({ dispatch }: ChatProps) {
   );
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedChat = connector(Chat);
-export default ConnectedChat;
+export default Chat;

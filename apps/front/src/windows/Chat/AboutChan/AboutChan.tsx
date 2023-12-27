@@ -3,14 +3,13 @@ import "./AboutChan.css";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
 import List from "../../../shared/ui-components/List/List";
-import Button from "../../../shared/ui-components/Button/Button";
-import Channel from "../../../shared/ui-components/Channel/Channel";
+import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
-import { connect, ConnectedProps } from "react-redux";
-import { ModalType, addModal } from "../../../shared/utils/AddModal";
+import store from "../../../store";
+import { User } from "../../../shared/ui-components/User/User";
 
-interface AboutChanProps extends ReduxProps {
+interface AboutChanProps {
   chanId: number | undefined;
 }
 
@@ -30,14 +29,7 @@ type ChannelData = {
   }[];
 };
 
-type FriendShipData = {
-  id: number;
-  user1_id: number;
-  user2_id: number;
-  status: "FRIENDS" | "BLOCKED" | "PENDING";
-};
-
-function AboutChan({ chanId, dispatch }: AboutChanProps) {
+function AboutChan({ chanId }: AboutChanProps) {
   const queryClient = useQueryClient();
 
   const chanApiUrl = "/channel/" + chanId;
@@ -60,13 +52,6 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
     queryKey: ["isMember", chanId],
     queryFn: async () => {
       return api.get(chanApiUrl + "/me").then((response) => response.data);
-    },
-  });
-
-  const { data: friendships } = useQuery<FriendShipData[]>({
-    queryKey: ["friendships", chanId],
-    queryFn: async () => {
-      return api.get("/friendships").then((response) => response.data);
     },
   });
 
@@ -120,48 +105,7 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
       handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
       color: WinColor.PURPLE,
     };
-    dispatch(addWindow(newWindow));
-  };
-
-  const isFriend = (id: number) => {
-    if (friendships) {
-      const friendship = friendships?.find(
-        (f) => f.user1_id === id || f.user2_id === id
-      );
-      if (friendship === undefined) return "EmptyHeart";
-      if (friendship.status === "FRIENDS") return "Heart";
-      if (friendship.status === "PENDING") return "PendingHeart";
-    }
-    return "EmptyHeart";
-  };
-
-  const isBlocked = (id: number) => {
-    if (friendships) {
-      const friendship = friendships?.find(
-        (f) => f.user1_id === id || f.user2_id === id
-      );
-      if (friendship && friendship.status === "BLOCKED") return true;
-    }
-    return false;
-  };
-
-  const isBlockedByMe = (id: number) => {
-    if (friendships) {
-      const friendship = friendships?.find((f) => f.user2_id === id);
-      if (friendship && friendship.status === "BLOCKED") return true;
-    }
-    return false;
-  };
-
-  const handleFriendshipBtn = (id: number, name: string) => {
-    const friendship = isFriend(id);
-
-    if (friendship === "Heart") {
-      addModal(
-        ModalType.WARNING,
-        `Are you sure you want to remove ${name} from your friends?`
-      );
-    }
+    store.dispatch(addWindow(newWindow));
   };
 
   return (
@@ -190,48 +134,9 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
         </div>
       </div>
       <List>
-        {channel?.userChannels.map((uc) => {
+        {channel?.userChannels.map((uc, index) => {
           const user = uc.User;
-          return (
-            <div className="chatRow" key={user.id}>
-              <Button
-                icon="TripleDot"
-                color="pink"
-                onClick={() => handleProfile(user.id, user.username)}
-              />
-              <img src={user.avatar_url} className="avatar outsideCard" />
-              <Channel
-                name={user.username}
-                className={`dm ${isBlocked(user.id) ? "blocked" : ""}`}
-                clickable={false}
-              >
-                {user.id !== userId && !isBlocked(user.id) ? (
-                  <div className="btnCardAboutChan">
-                    <Button content="Match!" color="blue" />
-                    <div className="btnIconAboutChan">
-                      <Button icon="Chat" color="pink" />
-                      <Button
-                        icon={isFriend(user.id)}
-                        color="pink"
-                        onClick={() =>
-                          handleFriendshipBtn(user.id, user.username)
-                        }
-                      />
-                    </div>
-                  </div>
-                ) : (
-                  ""
-                )}
-                {isBlockedByMe(user.id) ? (
-                  <div className="btnIconAboutChan">
-                    <Button icon="Unblock" color="pink" />
-                  </div>
-                ) : (
-                  ""
-                )}
-              </Channel>
-            </div>
-          );
+					return <User key={index} userId={user.id} />;
         })}
       </List>
       <div className="leaveChanBtn">
@@ -249,10 +154,4 @@ function AboutChan({ chanId, dispatch }: AboutChanProps) {
   );
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedAboutChat = connector(AboutChan);
-export default ConnectedAboutChat;
+export default AboutChan;

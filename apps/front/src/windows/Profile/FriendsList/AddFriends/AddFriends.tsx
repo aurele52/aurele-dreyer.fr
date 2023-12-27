@@ -1,15 +1,18 @@
 import "./AddFriends.css";
-import axios from "axios";
+import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
-import Button from "../../../../shared/ui-components/Button/Button";
+import {
+	Button,
+	HeartButton,
+} from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 import { useEffect, useState } from "react";
 
-interface AddFriendsProps {}
-
-export function AddFriends({}: AddFriendsProps) {
+export function AddFriends() {
 	const [placeholderValue, setPlaceholderValue] = useState<string>("");
-	const [users, setUsers] = useState<number[] | null>(null);
+	const [users, setUsers] = useState<
+		{ id: number; username: string }[] | null
+	>(null);
 
 	useEffect(() => {
 		const storedPlaceholderValue = localStorage.getItem("placeholderValue");
@@ -31,8 +34,8 @@ export function AddFriends({}: AddFriendsProps) {
 
 	const handleButtonClick = async () => {
 		try {
-			const response = await axios.get<number[]>(
-				"/api/friendslist/potentialFriends",
+			const response = await api.get<{ id: number; username: string }[]>(
+				"/friendslist/potentialFriends",
 				{
 					params: {
 						placeholderValue: placeholderValue,
@@ -67,10 +70,13 @@ export function AddFriends({}: AddFriendsProps) {
 			</div>
 			<div className="Body">
 				<List dark={false}>
-					{users?.map((id, key) => {
+					{users?.map((user, key) => {
 						return (
-							<ReducedUser userId={id} key={key}>
-								<Button icon="Heart" color="pink" />
+							<ReducedUser userId={user.id} key={key}>
+								<HeartButton
+									userId={user.id}
+									username={user.username}
+								/>
 							</ReducedUser>
 						);
 					})}

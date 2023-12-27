@@ -3,12 +3,13 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../../shared/ui-components/Button/Button";
+import {
+	Button,
+	HeartButton,
+} from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 
-interface PendingRequestsProps {}
-
-export function PendingRequests({}: PendingRequestsProps) {
+export function PendingRequests() {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -26,25 +27,37 @@ export function PendingRequests({}: PendingRequestsProps) {
 		},
 	});
 
-	const {
-		data: pendingRequests,
-		isLoading: pendingRequestsLoading,
-		error: pendingRequestsError,
-	} = useQuery<
-		{
-			id: number;
-			senderId: number;
-			type: "received" | "sent";
-		}[]
+	const { data: pendingRequests, error: pendingRequestsError } = useQuery<
+		| {
+				id: number;
+				username: string;
+				senderId: number;
+				type: "received" | "sent";
+		  }[]
+		| null
 	>({
 		queryKey: ["pendingRequests", userId],
-		queryFn: async () => {
+		queryFn: async (): Promise<
+			| {
+					id: number;
+					username: string;
+					senderId: number;
+					type: "received" | "sent";
+			  }[]
+			| null
+		> => {
 			try {
-				const response = await api.get(
-					`/friendships/pendinglistList`
-				);
+				console.log("Send request");
+				const response = await api.get(`/friendships/pendingList`);
+				if (response.status === 404 || response.data === undefined)
+					return [];
+				if (!Array.isArray(response.data)) return null;
 				return response.data.map(
-					(request: { id: number; senderId: number }) => ({
+					(request: {
+						id: number;
+						username: string;
+						senderId: number;
+					}) => ({
 						...request,
 						type: request.senderId === userId ? "sent" : "received",
 					})
@@ -57,34 +70,64 @@ export function PendingRequests({}: PendingRequestsProps) {
 		enabled: !!userId,
 	});
 
-	if (pendingRequestsLoading || userIdLoading) {
+	if (userIdLoading) {
 		return <FaSpinner className="loadingSpinner" />;
-	}
-
-	if (pendingRequestsError) {
-		return <div>Error loading users: {pendingRequestsError.message}</div>;
 	}
 
 	if (userIdError) {
 		return <div>Error loading user: {userIdError.message}</div>;
 	}
 
+	if (pendingRequestsError) {
+		return (
+			<div>Error loading Requests: {pendingRequestsError.message}</div> //How to handle this
+		);
+	}
+
+	if (!Array.isArray(pendingRequests)) {
+		return (
+			<div className="PendingRequestsComponent">
+				<div className="Body">
+					<List dark={false}>
+						<div></div>
+					</List>
+				</div>
+			</div>
+		);
+	}
+
 	return (
 		<div className="PendingRequestsComponent">
 			<div className="Body">
 				<List dark={false}>
-					<div className="SectionName">Received</div>
+					{pendingRequests?.filter(
+						(request) => request.type === "received"
+					).length ? (
+						<div className="SectionName">Received</div>
+					) : (
+						""
+					)}
+
 					{pendingRequests
 						?.filter((request) => request.type === "received")
-						.map((user, key) => (
+						?.map((user, key) => (
 							<ReducedUser key={key} userId={user.id}>
-								<Button icon="Heart" color="pink" />
+								<HeartButton
+									userId={user.id}
+									username={user.username}
+								/>
 							</ReducedUser>
 						))}
-					<div className="SectionName">Sent</div>
+					{pendingRequests?.filter(
+						(request) => request.type === "sent"
+					).length ? (
+						<div className="SectionName">Sent</div>
+					) : (
+						""
+					)}
 					{pendingRequests
 						?.filter((request) => request.type === "sent")
-						.map((user, key) => (
+						?.map((user, key) => (
 							<ReducedUser key={key} userId={user.id}>
 								<Button icon="Heart" color="pink" />
 							</ReducedUser>

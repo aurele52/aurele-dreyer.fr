@@ -7,11 +7,13 @@ import { AuthGuard } from './auth.guard';
 import { PrismaService } from 'src/prisma.service';
 
 @Module({
-  imports: [JwtModule.register({
-    global: true,
-    secret: process.env.APP_SECRET,
-    signOptions: { expiresIn: '3d' },
-  }),],
+  imports: [
+    JwtModule.register({
+      global: true,
+      secret: process.env.APP_SECRET,
+      signOptions: { expiresIn: '3d' },
+    }),
+  ],
   controllers: [AuthController],
   // providers: [AuthService, PrismaService]
   providers: [AuthService, PrismaService, {

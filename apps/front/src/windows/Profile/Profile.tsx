@@ -1,4 +1,4 @@
-import Button from "../../shared/ui-components/Button/Button";
+import { Button } from "../../shared/ui-components/Button/Button";
 import "./Profile.css";
 import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
@@ -97,9 +97,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		queryKey: ["historic", userId],
 		queryFn: async () => {
 			try {
-				const response = await api.get(
-					`/profile/historic/${userId}`
-				);
+				const response = await api.get(`/profile/historic/${userId}`);
 				return response.data;
 			} catch (error) {
 				console.error("Error fetching historic:", error);
@@ -214,13 +212,11 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 		receiverId: number | undefined
 	) => {
 		if (!senderId || !receiverId) return;
-		console.log("senderId : ", senderId, "  reveiverId : ", receiverId);
 		try {
 			const response = await api.post("/friendslist/add", {
 				senderId: senderId,
 				receiverId: receiverId,
 			});
-			console.log("Friend request sent successfully", response.data);
 		} catch (error) {
 			console.error("Error sending friend request", error);
 		}
@@ -310,7 +306,7 @@ export function Profile({ dispatch, winId, targetId }: ProfileProps) {
 							icon="Plus"
 							color="pink"
 							style={{ display: "flex" }}
-							onClick={handleOpenAchievements}
+							onClick={() => handleOpenAchievements()}
 						/>
 					</div>
 					{buttons}

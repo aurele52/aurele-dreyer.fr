@@ -3,7 +3,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import Channel from "../../../shared/ui-components/Channel/Channel";
-import Button from "../../../shared/ui-components/Button/Button";
+import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
@@ -59,7 +59,7 @@ function FindChan({ dispatch }: FindChanProps) {
       <List dark={false}>
         {channels?.map((channel) => {
           return (
-            <div key={channel.id}>
+            <div key={channel.id} className="wrapChannelFindChan">
               <Channel name={channel.name} clickable={false}>
                 <div className="ButtonFindChan">
                   <Button

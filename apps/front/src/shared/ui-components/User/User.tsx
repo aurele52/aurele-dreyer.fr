@@ -1,10 +1,12 @@
 import "./User.css";
 import "./ReducedUser.css";
-import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
-import Button from "../../../shared/ui-components/Button/Button";
+import {
+	Button,
+	HeartButton,
+} from "../../../shared/ui-components/Button/Button";
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
@@ -12,10 +14,13 @@ import { ReactNode } from "react";
 
 interface UserProps {
 	userId: number;
-	channelId?: number;
+	channel?: {
+		channelId: number;
+		userRole: "USER" | "ADMIN" | "OWNER";
+	};
 }
 
-export function User({ userId, channelId }: UserProps) {
+export function User({ userId, channel }: UserProps) {
 	if (!userId) {
 		return <div></div>;
 	}
@@ -87,18 +92,6 @@ export function User({ userId, channelId }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleAddFriend = (id: number, username: string) => {
-		//To Fill
-	};
-
-	const handleAcceptPending = (id: number, username: string) => {
-		//To Fill
-	};
-
-	const handleRemovePending = (id: number, username: string) => {
-		//To Fill
-	};
-
 	const handleMatch = (id: number, username: string) => {
 		//To Fill
 	};
@@ -144,20 +137,6 @@ export function User({ userId, channelId }: UserProps) {
 			onClick={() => handleOpenChat(userId, user.username)}
 		/>
 	);
-	const heartButton = (
-		<Button
-			icon="Heart"
-			color="pink"
-			onClick={() => handleAddFriend(userId, user.username)}
-		/>
-	); //To change
-	const blockButton = (
-		<Button
-			icon="Close"
-			color="pink"
-			onClick={() => handleUnblockUser(userId, user.username)}
-		/>
-	); //Need to check who is blocked and change icon
 	const matchButton = (
 		<Button
 			content="Match"
@@ -166,28 +145,114 @@ export function User({ userId, channelId }: UserProps) {
 		/>
 	);
 
-	const channelSettingsButton = channelId ? (
+	const channelSettingsButton = channel ? (
 		<Button icon="Unblock" color="darkYellow" />
 	) : (
 		<div></div>
 	);
 
-	const buttons =
-		user.friendshipStatus === "BLOCKED" ? (
-			<div className="Buttons">
-				<div className="Other">{blockButton}</div>
-			</div>
-		) : (
-			<div className="Buttons">
-				{matchButton}
-				<div className="Other">
-					{chatButton}
-					{heartButton}
+	const buttons = () => {
+		if (user.friendshipStatus === "BLOCKEDBYME") {
+			return (
+				<div className="Buttons">
+					<HeartButton userId={user.id} username={user.username} />
 				</div>
-			</div>
-		);
+			);
+		} else if (user.friendshipStatus !== "BLOCKEDBYUSER") {
+			return (
+				<div className="Buttons">
+					{matchButton}
+					<div className="Other">
+						{chatButton}
+						<HeartButton
+							userId={user.id}
+							username={user.username}
+						/>
+					</div>
+				</div>
+			);
+		}
+	};
+
+	const crownSvg = (
+		<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect y="3" width="2" height="2" fill="#D3C43D" />
+			<rect y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="3" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="3" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect y="7" width="2" height="2" fill="#D3C43D" />
+			<rect y="9" width="2" height="2" fill="#D3C43D" />
+			<rect y="11" width="2" height="2" fill="#D3C43D" />
+			<rect y="13" width="2" height="2" fill="#D3C43D" />
+		</svg>
+	);
+
+	const starSvg = (
+		<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect x="6" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="2" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="14" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="6" width="2" height="2" fill="#D3C43D" />
+		</svg>
+	);
+
 	const backgroundColor =
-		user?.friendshipStatus === "BLOCKED"
+		user?.friendshipStatus === "BLOCKEDBYME" ||
+		user?.friendshipStatus === "BLOCKEDBYUSER"
 			? "var(--Purple-Gradient-300, linear-gradient(180deg, #BBA0E9 67.71%, #9673D1 93.23%))"
 			: "var(--Purple-Gradient-200, linear-gradient(180deg, #ece5f8 66.15%, #d0b9f8 86.98%))";
 	return (
@@ -208,12 +273,28 @@ export function User({ userId, channelId }: UserProps) {
 			>
 				<div className="Frame">
 					<div className="Player">
+						{channel ? (
+							<div className="Icon">
+								{(() => {
+									switch (channel.userRole) {
+										case "ADMIN":
+											return crownSvg;
+										case "OWNER":
+											return starSvg;
+										default:
+											return null; // You can handle other cases if needed
+									}
+								})()}
+							</div>
+						) : (
+							<div></div>
+						)}
 						<div className="Name">
 							<div>{user.username}</div>
 						</div>
 						{status}
 					</div>
-					{buttons}
+					{selfId !== user.id ? buttons() : ""}
 				</div>
 			</div>
 			{channelSettingsButton}
