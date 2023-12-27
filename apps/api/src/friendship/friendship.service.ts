@@ -158,11 +158,11 @@ export class FriendshipService {
         OR: [
           {
             user1_id: id,
-            status: 'PENDING',
+            status: FriendshipStatus.PENDING,
           },
           {
             user2_id: id,
-            status: 'PENDING',
+            status: FriendshipStatus.PENDING,
           },
         ],
       },
@@ -187,7 +187,7 @@ export class FriendshipService {
     const blocked = await this.prisma.friendship.findMany({
       where: {
         user1_id: id,
-        status: 'BLOCKED',
+        status: FriendshipStatus.BLOCKED,
       },
       include: {
         user2: true,
@@ -202,5 +202,19 @@ export class FriendshipService {
     });
 
     return res;
+  }
+
+  async acceptFriendship(user1_id: number, user2_id: number) {
+    return await this.prisma.friendship.update({
+      where: {
+        user1_id_user2_id: {
+          user1_id,
+          user2_id,
+        },
+      },
+      data: {
+        status: FriendshipStatus.FRIENDS,
+      },
+    });
   }
 }

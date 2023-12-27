@@ -1,4 +1,12 @@
-import { Body, Controller, Delete, Get, Param, Post } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Delete,
+  Get,
+  Param,
+  Patch,
+  Post,
+} from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 
@@ -27,6 +35,11 @@ export class FriendshipController {
   @Delete('/relationship/blocked/:id')
   async deleteBlocked(@Param('id') user1_id: number, @CurrentUser() user2) {
     return await this.friendshipService.deleteBlocked(user1_id, user2.id);
+  }
+
+  @Delete('/relationship/pending/:id')
+  async deletePending(@Param('id') user1_id: number, @CurrentUser() user2) {
+    return await this.friendshipService.deletePending(user1_id, user2.id);
   }
 
   @Post('/friendship')
@@ -58,5 +71,10 @@ export class FriendshipController {
   async getBlockedList(@CurrentUser() currUser) {
     console.log('Pending request list');
     return await this.friendshipService.getBlockedList(currUser.id);
+  }
+
+  @Patch('/friendship/accept/:id')
+  async acceptFriendship(@CurrentUser() user, @Param('id') id: number) {
+    return await this.friendshipService.acceptFriendship(id, user.id);
   }
 }
