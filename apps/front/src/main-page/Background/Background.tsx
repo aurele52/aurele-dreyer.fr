@@ -17,6 +17,7 @@ import { PendingRequests } from "../../windows/Profile/FriendsList/PendingReques
 import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import { useEffect } from "react";
+import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -40,6 +41,7 @@ export function Background({ windows }: BackgroundProps) {
 		PENDINGREQUESTS: { width: "300px", height: "300px" },
 		BLOCKEDUSERS: { width: "300px", height: "400px" },
 		ADDFRIENDS: { width: "300px", height: "400px" },
+		AVATARUPLOAD: { width: "300px", height: "400px" },
 	};
 
 	return (
@@ -103,6 +105,9 @@ export function Background({ windows }: BackgroundProps) {
 							)}
 							{window.content.type === "ADDFRIENDS" && (
 								<AddFriends />
+							)}
+							{window.content.type === "AVATARUPLOAD" && (
+								<AvatarUpload winId={window.id} />
 							)}
 						</Window>
 					);
