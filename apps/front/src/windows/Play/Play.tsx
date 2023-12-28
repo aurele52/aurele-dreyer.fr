@@ -3,32 +3,30 @@ import React, { LegacyRef, useEffect, useRef, useState } from "react";
 import p5 from 'p5';
 
 
-const ysize = 490;
-const xsize = 800;
+/* Interface */
 const midSquareSize = 10;
 const borderSize = 10;
-const black = 0;
-const white = 255;
-const barSize = 70;
-const barDist = 20;
-const barLarge = 10;
-const ballDeb = 150;
-let ballDirx = 1;
-let ballDiry = 1;
-const ballSize = 10;
-const barSpeed = 70.0;
-const ballSpeed = 2.0;
-let oneScore = 0;
-let twoScore = 0;
 const menuSize = 7 * midSquareSize + 2 * borderSize;
-let     ballx = xsize / 2 - ballDeb;
-let bally = borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
 let oneBary = borderSize * 2 + menuSize + 10;
 let twoBary = borderSize * 2 + menuSize + 10;
+const ysize = 490;
+const xsize = 800;
 
-function drawMidline(p:p5)
+
+/* Bar */
+const barSize = 100;
+const barDist = 20;
+const barLarge = 10;
+const barSpeed = 70.0;
+
+/* Score */
+let oneScore = 0;
+let twoScore = 0;
+
+
+function drawBoardMidline(p:p5)
 {
-        p.fill(white);
+        p.fill('white');
         const area = ysize - borderSize * 3 - menuSize;
         let tmp = area / midSquareSize;
         tmp = Math.floor(tmp);
@@ -40,14 +38,19 @@ function drawMidline(p:p5)
                 p.rect(xsize / 2 - midSquareSize / 2, i, midSquareSize, midSquareSize);
                 i = i + midSquareSize * 2;
         }
-        p.rect(xsize / 2 - midSquareSize / 2, borderSize - 1, midSquareSize, menuSize + 2);
 }
 
+function drawMenuMidline(p:p5)
+{
+        p.rect(xsize / 2 - midSquareSize / 2, borderSize - 1, midSquareSize, menuSize + 2);
+}
 function drawBorder(p:p5)
 {
-        p.fill(black);
-        p.rect(borderSize, borderSize, xsize - borderSize * 2, menuSize);
-        p.rect(borderSize, borderSize * 2 + menuSize, xsize - borderSize * 2, ysize - borderSize * 3 - menuSize);
+        p.fill('white');
+        p.rect(0, 0, xsize, borderSize);
+        p.rect(0, ysize - borderSize, xsize, borderSize);
+        p.rect(0, borderSize, borderSize, ysize - 2 * borderSize);
+        p.rect(xsize - borderSize, borderSize, borderSize, ysize - 2 * borderSize);
 }
 
 function drawBar(p:p5)
@@ -170,38 +173,41 @@ function drawNumber(p:p5, nb:number, x:number, y:number)
 
 function scoreOne(p:p5, nb:number)
 {
-        p.fill(black);
+        p.fill('black');
         p.rect(midSquareSize * 2, borderSize + midSquareSize, 4 * midSquareSize, 7 * midSquareSize);
-        p.fill(white);
+        p.fill('white');
         drawNumber(p, nb, midSquareSize * 2, 0);
 }
 
 function scoreTwo(p:p5, nb:number)
 {
-        p.fill(black);
+        p.fill('black');
         p.rect(xsize - 6 * midSquareSize, borderSize + midSquareSize, 4 * midSquareSize, 7 * midSquareSize);
-        p.fill(white);
+        p.fill('white');
         drawNumber(p, nb, xsize - 6 * midSquareSize, 0);
 }
+/* Ball */
+const ballDeb = 150;
+let ballDirx = 1;
+let ballDiry = 1;
+const ballSize = 10;
+const ballSpeed = 4.0;
+let     ballx = xsize / 2 - ballDeb;
+let bally = borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
 
-function ballRedir()
+function ballWallRedir()
 {
         if (bally + ballSize + ballSpeed >= ysize - borderSize)
-                ballDiry = -1;
+                ballDiry *= -1;
         if (bally - ballSpeed <= borderSize * 2 + menuSize)
-                ballDiry = 1;
-        if (ballx <= borderSize + barLarge + barDist && ballx >= borderSize + barDist && bally <= oneBary + barSize && bally >= oneBary)
-                ballDirx = 1;
-        if (ballx + ballSize >= xsize - borderSize - barLarge - barDist && ballx + ballSize <= xsize - borderSize - barDist && bally + ballSize / 2 <= twoBary + barSize && bally + ballSize / 2 >= twoBary)
-                ballDirx = -1;
+                ballDiry *= -1;
 }
 
-function score(p:p5)
+function score()
 {
         if (ballx + ballSize >= xsize - borderSize - barDist)
         {
                 oneScore++;
-                scoreOne(p, oneScore);
                 ballx = xsize / 2 + ballDeb;
                 bally = borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
                 ballDirx = -1;
@@ -210,7 +216,6 @@ function score(p:p5)
         if (ballx < borderSize + barDist / 2)
         {
                 twoScore++;
-                scoreTwo(p, twoScore);
                 ballx = xsize / 2 - ballDeb;
                 bally = borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
                 ballDirx = 1;
@@ -218,21 +223,52 @@ function score(p:p5)
         }
 }
 
-// let shadonex = -1;
-// let shadoney = -1;
-// let shadtwox = -1;
-// let shadtwoy = -1;
-// let shadthreex = -1;
-// let shadthreey = -1;
-
-
-function redrawBall(p:p5)
+function ballBarRedir()
 {
-        p.fill('white');
-        ballRedir();
-        ballx = ballx + ballDirx * ballSpeed;
-        bally = bally + ballDiry * ballSpeed;
-        p.rect(ballx, bally, ballSize, ballSize);
+	if (ballx <= borderSize + barLarge + barDist && ballx >= borderSize + barDist)
+	{
+		if (bally <= oneBary + barSize && bally >= oneBary)
+		{
+			let ret = (bally - oneBary) / barSize;
+			ballDiry = 1 * (ret - 0.5);
+			ballDirx = 1;
+		}
+	}
+	if (ballx + ballSize >= xsize - borderSize - barLarge - barDist && ballx + ballSize <= xsize - borderSize - barDist)
+	{
+		if (bally + ballSize / 2 <= twoBary + barSize && bally + ballSize / 2 >= twoBary)
+		{
+			ballDirx = -1;
+		}
+	}
+}
+
+function drawBall(p:p5)
+{
+	p.rect(ballx, bally, ballSize, ballSize);
+}
+function move(p:p5)
+{
+	if (p.keyIsDown(p.DOWN_ARROW))
+	{
+		if (oneBary + barSize < ysize - borderSize)
+		oneBary = oneBary + p.deltaTime / 1000 * barSpeed;
+	}
+	if (p.keyIsDown(p.UP_ARROW))
+	{
+		if (oneBary > borderSize * 2 + menuSize)
+		oneBary = oneBary - p.deltaTime / 1000 * barSpeed;
+	}
+	if (p.keyIsDown(p.LEFT_ARROW))
+	{
+		if (twoBary + barSize < ysize - borderSize)
+		twoBary = twoBary + p.deltaTime /1000 * barSpeed;
+	}
+	if (p.keyIsDown(p.RIGHT_ARROW))
+	{
+		if (twoBary > borderSize * 2 + menuSize)
+		twoBary = twoBary - p.deltaTime / 1000 * barSpeed;
+	}
 }
 
 function compteur(p:p5, nb:number)
@@ -244,39 +280,56 @@ function compteur(p:p5, nb:number)
 	p.circle(xsize /2, ysize / 2, 150 - borderSize * 2);
 	p.fill('white');
 	if (nb != 1)
-		drawNumber(p, nb, xsize / 2 - borderSize * 2, ysize /2 - borderSize * 5.5);
+	drawNumber(p, nb, xsize / 2 - borderSize * 2, ysize /2 - borderSize * 5.5);
 	else
-		drawNumber(p, nb, xsize / 2 - borderSize * 3, ysize /2 - borderSize * 5.5);
+	drawNumber(p, nb, xsize / 2 - borderSize * 3, ysize /2 - borderSize * 5.5);
 }
+function drawMenuBar(p:p5)
+{
+	p.rect(borderSize, menuSize + borderSize, xsize - 2 * borderSize, borderSize);
+}
+
+function drawEmpty(p:p5)
+{
+	p.background('black');
+	drawBorder(p);
+	drawMenuBar(p);
+	drawBoardMidline(p);
+	drawMenuMidline(p);
+}
+
+function clearBoard(p:p5)
+{
+	p.rect(borderSize, menuSize + borderSize * 2, xsize - 2 * borderSize, ysize - borderSize * 3 - menuSize)
+	p.rect(borderSize, menuSize + borderSize * 2, xsize - 2 * borderSize, ysize - borderSize * 3 - menuSize)
+}
+
+function update()
+{
+	score();
+	let i = ballSpeed;
+	while (i > 0)
+	{
+		ballWallRedir();
+		ballBarRedir();
+		ballx = ballx + ballDirx;
+		bally = bally + ballDiry;
+		i--;
+	}
+}
+
 function loop(p:p5)
 {
-                        if (p.keyIsDown(p.DOWN_ARROW))
-                        {
-                                if (oneBary + barSize < ysize - borderSize)
-                                        oneBary = oneBary + p.deltaTime / 1000 * barSpeed;
-                        }
-                        if (p.keyIsDown(p.UP_ARROW))
-                        {
-                        if (oneBary > borderSize * 2 + menuSize)
-                                oneBary = oneBary - p.deltaTime / 1000 * barSpeed;
-                        }
-                        if (p.keyIsDown(p.LEFT_ARROW))
-                        {
-                                if (twoBary + barSize < ysize - borderSize)
-                                twoBary = twoBary + p.deltaTime /1000 * barSpeed;
-                        }
-                        if (p.keyIsDown(p.RIGHT_ARROW))
-                        {
-                        if (twoBary > borderSize * 2 + menuSize)
-                                twoBary = twoBary - p.deltaTime / 1000 * barSpeed;
-                        }
-                        p.fill('black');
-                        p.rect(borderSize, menuSize + borderSize * 2, xsize - 2 * borderSize, ysize - borderSize * 3 - menuSize)
-                        p.fill('white');
-                        score(p);
-                        drawBar(p);
-                        redrawBall(p);
-                        drawMidline(p);
+	move(p);
+	update();
+	p.fill('black');
+	clearBoard(p);
+	p.fill('white');
+	drawBar(p);
+	drawBall(p);
+	drawBoardMidline(p);
+	scoreOne(p, oneScore);
+	scoreTwo(p, twoScore);
 }
 
 export default function Play() {
@@ -293,15 +346,12 @@ export default function Play() {
 	const Sketch = (p:p5) => {
 		p.setup = () => {
 			p.createCanvas(xsize, ysize);
-			p.noStroke();
-			p.background(white);
-			drawBorder(p);
-			drawMidline(p);
-			drawBar(p);
 			p.frameRate(30);
+			p.noStroke();
+			drawEmpty(p);
+			drawBar(p);
 			scoreOne(p, 0);
 			scoreTwo(p, 0);
-			p.fill(white);
 		}
 		p.draw = () => {
 			const ms = p.millis()
