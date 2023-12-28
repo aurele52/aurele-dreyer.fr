@@ -124,6 +124,15 @@ function Modal({ content, type, winId, action, targetId }: ModalProps) {
 						/>
 					</>
 				)}
+				{type === ModalType.ERROR && (
+					<>
+						<Button
+							color="red"
+							content="ok"
+							onClick={() => handleClose(winId)}
+						/>
+					</>
+				)}
 			</div>
 		</div>
 	);

@@ -18,6 +18,7 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import { useEffect } from "react";
+import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
 
 interface BackgroundProps extends ReduxProps {}
@@ -43,6 +44,7 @@ export function Background({ windows }: BackgroundProps) {
     BLOCKEDUSERS: { width: "300px", height: "400px" },
     ADDFRIENDS: { width: "300px", height: "400px" },
     ADDMEMBERS: { width: "300px", height: "400px" },
+    AVATARUPLOAD: { width: "300px", height: "400px" },
   };
 
 	return (
@@ -106,6 +108,9 @@ export function Background({ windows }: BackgroundProps) {
 							)}
 							{window.content.type === "ADDFRIENDS" && (
 								<AddFriends />
+							)}
+							{window.content.type === "AVATARUPLOAD" && (
+								<AvatarUpload winId={window.id} />
 							)}
               {window.content.type === "ADDMEMBERS" && <AddMembers channelId={window.content.id}/>}
 						</Window>
