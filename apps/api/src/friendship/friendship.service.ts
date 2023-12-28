@@ -42,6 +42,9 @@ export class FriendshipService {
         ],
       },
     });
+    if (!friendship) {
+      return null;
+    }
     return {
       id: friendship.id,
       user1_id: friendship.user1_id,
@@ -62,6 +65,18 @@ export class FriendshipService {
     });
   }
 
+  async deletePending(user1_id, user2_id) {
+    return await this.prisma.friendship.deleteMany({
+      where: {
+        OR: [
+          { user1_id: user1_id, user2_id: user2_id },
+          { user1_id: user2_id, user2_id: user1_id },
+        ],
+        status: FriendshipStatus.PENDING,
+      },
+    });
+  }
+
   async deleteBlocked(user1_id, user2_id) {
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -74,14 +89,23 @@ export class FriendshipService {
     });
   }
 
-  async deletePending(user1_id, user2_id) {
+  async deleteFriendship(user1_id, user2_id) {
     return await this.prisma.friendship.deleteMany({
       where: {
-        OR: [
-          { user1_id: user1_id, user2_id: user2_id },
-          { user1_id: user2_id, user2_id: user1_id },
+        AND: [
+          {
+            OR: [
+              { user1_id: user1_id, user2_id: user2_id },
+              { user1_id: user2_id, user2_id: user1_id },
+            ],
+          },
+          {
+            OR: [
+              { status: FriendshipStatus.FRIENDS },
+              { status: FriendshipStatus.PENDING },
+            ],
+          },
         ],
-        status: FriendshipStatus.PENDING,
       },
     });
   }
@@ -100,6 +124,29 @@ export class FriendshipService {
           },
         },
         status: FriendshipStatus.PENDING,
+      },
+    });
+  }
+
+  async createBlockedFriendship(user1_id: number, user2_id: number) {
+    const currentFriendship = await this.userFriendship(user1_id, user2_id);
+    if (currentFriendship) {
+      if (currentFriendship.status == FriendshipStatus.BLOCKED) return;
+      else this.deleteFriendship(user1_id, user2_id);
+    }
+    return await this.prisma.friendship.create({
+      data: {
+        user1: {
+          connect: {
+            id: user1_id,
+          },
+        },
+        user2: {
+          connect: {
+            id: user2_id,
+          },
+        },
+        status: FriendshipStatus.BLOCKED,
       },
     });
   }

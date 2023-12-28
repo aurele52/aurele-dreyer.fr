@@ -1,20 +1,19 @@
 #Navbar {
-    display: flex;
-    padding: 20px 50px; 
-    align-items: center;
-    gap: 3%;
-    align-self: stretch;
+	display: flex;
+	padding: 20px 50px;
+	align-items: center;
+	gap: 3%;
+	align-self: stretch;
+  border-bottom: 3px solid var(--base-black, #000);
+  background: linear-gradient(180deg,  #6D559C 66.15%, #4C3778 86.98%);
 
-    
-    border-bottom: 3px solid var(--base-black, #000);
-    background: linear-gradient(180deg, #6A4CA7 58.33%, #49317B 82.29%);
 }
 
 #Navbar > div {
-    display: flex;
-    align-items: flex-start;
-    gap: 20px;
-    flex: 1 0 0;
+	display: flex;
+	align-items: flex-start;
+	gap: 20px;
+	flex: 1 0 0;
 }
 
 .NavButton {
@@ -26,11 +25,11 @@
     background: var(--pink-purple-mix-gradient-main, linear-gradient(180deg, #ECE5F8 66.15%, #EBB9F8 86.98%));
     cursor:pointer;
     /* Elevation / 1dp */
-    box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24);
+    /* box-shadow: 0px 1px 4px 0px rgba(12, 14, 25, 0.08), 0px 0px 1px 0px rgba(12, 14, 25, 0.24); */
 }
 
 .NavButton :hover {
-    display: flex;
+    display: inline-flex;
     justify-content: center;
     align-items: center;
     border-radius: 10px;
@@ -38,43 +37,35 @@
 }
 
 .NavButton > div {
-    display: flex;
-    padding: 0px 4px;
-    align-items: flex-start;
+	display: flex;
+	padding: 0px 4px;
+	align-items: flex-start;
 }
 
 .NavButton > div > div {
-    display: flex;
-    padding: 10px;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center;
-    border-radius: 10px;
-    border-top: 3px solid var(--base-white, #ffffff00);
-    border-right: 2px solid var(--base-white, #ffffff00);
-    border-left: 2px solid var(--base-white, #ffffff00);
-    color: var(--base-black, #000);
+	display: flex;
+	padding: 10px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	border-radius: 10px;
+	border-top: 3px solid var(--base-white, #ffffff00);
+	border-right: 2px solid var(--base-white, #ffffff00);
+	border-left: 2px solid var(--base-white, #ffffff00);
+	color: var(--base-black, #000);
 
-    /* Heading/600 */
-    font-size: 24px;
-    font-style: normal;
-    font-weight: 700;
-    line-height: 24px; /* 100% */
-    -webkit-user-select: none; /* Safari */
-    -ms-user-select: none; /* IE 10 and IE 11 */
-    user-select: none; /* Standard syntax */
+	/* Heading/600 */
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px; /* 100% */
+	-webkit-user-select: none; /* Safari */
+	-ms-user-select: none; /* IE 10 and IE 11 */
+	user-select: none; /* Standard syntax */
 }
 
 @media only screen and (max-width: 768px) {
-    .NavButton {
-        flex: 1 0 20%; /* Make each item take up 100% width on smaller screens */
-    }
-
-    .NavButton > div {
-        padding: 0.5em 1em;
-    }
-
-    .NavButton > div > div {
-        font-size: 80%;
-    }
+	.NavButton > div > div {
+		font-size: 80%;
+	}
 }

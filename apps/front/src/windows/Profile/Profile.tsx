@@ -1,19 +1,21 @@
 import { Button } from "../../shared/ui-components/Button/Button";
 import "./Profile.css";
-import { connect, ConnectedProps } from "react-redux";
-import { useQuery } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
+import { addModal, ModalType } from "../../shared/utils/AddModal";
 
 interface ProfileProps {
 	targetId?: number;
 }
 
 export function Profile({ targetId }: ProfileProps) {
+	const queryClient = useQueryClient();
+
 	const {
 		data: profile,
 		isLoading: profileLoading,
@@ -26,6 +28,11 @@ export function Profile({ targetId }: ProfileProps) {
 		loose_count: number;
 		achievement_lvl: number;
 		rank: number;
+		friendship?: {
+			status: "FRIENDS" | "PENDING" | "BLOCKED";
+			user1_id: number;
+			user2_id: number;
+		};
 	}>({
 		queryKey: ["user", targetId],
 		queryFn: async () => {
@@ -72,6 +79,33 @@ export function Profile({ targetId }: ProfileProps) {
 		},
 	});
 
+	const { mutateAsync: createFriendship } = useMutation({
+		mutationFn: async (user2_id: number) => {
+			return api.post("/friendship", { user2_id });
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", targetId],
+			});
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
+			});
+		},
+	});
+
+	const { mutateAsync: acceptFriendship } = useMutation({
+		mutationFn: async (userId: number) => {
+			return api.patch("/friendship/accept/" + userId);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", targetId],
+			});
+			queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
+			queryClient.invalidateQueries({ queryKey: ["friendsList"] });
+		},
+	});
+
 	const selfProfile = targetId ? false : true;
 
 	if (historicLoading || profileLoading) {
@@ -111,7 +145,7 @@ export function Profile({ targetId }: ProfileProps) {
 			id: 0,
 			content: { type: "ACHIEVEMENTS" },
 			toggle: false,
-			handleBarButton: HBButton.Close,
+			handleBarButton: 7,
 			color: WinColor.LILAC,
 			targetId: targetId,
 		};
@@ -124,7 +158,7 @@ export function Profile({ targetId }: ProfileProps) {
 			id: 0,
 			content: { type: "FRIENDSLIST" },
 			toggle: false,
-			handleBarButton: HBButton.Close,
+			handleBarButton: 7,
 			color: WinColor.PURPLE,
 			targetId: targetId,
 		};
@@ -158,44 +192,145 @@ export function Profile({ targetId }: ProfileProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	const handleFriendRequest = async (receiverId: number | undefined) => {
-		if (!receiverId) return;
-		try {
-			const response = await api.post("/friendslist/add", {
-				receiverId: receiverId,
-			});
-			return response.data;
-		} catch (error) {
-			console.error("Error sending friend request", error);
+	const handleFriendRequest = async () => {
+		if (!targetId) return;
+		createFriendship(targetId);
+	};
+
+	const handleAcceptRequest = async () => {
+		if (!targetId) return;
+		acceptFriendship(targetId);
+	};
+
+	const handleBlockUser = async () => {
+		if (!targetId) return;
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to block ${profile?.username}?`,
+			"addBlockedFriendship",
+			targetId
+		);
+	};
+
+	const handleRemovePending = async () => {
+		if (!targetId) return;
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to remove your pending request?`,
+			"deleteFriendship",
+			targetId
+		);
+	};
+
+	const handleUnblock = async () => {
+		if (!targetId) return;
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to unblock ${profile?.username}?`,
+			"deleteBlockedFriendship",
+			targetId
+		);
+	};
+
+	const handleRemoveFriend = async () => {
+		if (!targetId) return;
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to remove ${profile?.username} from your friendlist?`,
+			"deleteFriendship",
+			targetId
+		);
+	};
+
+	const addFriendButton = () => {
+		if (!profile?.friendship) {
+			return (
+				<Button
+					content="add friend"
+					color="purple"
+					style={{ display: "flex" }}
+					onClick={() => handleFriendRequest()}
+				/>
+			);
+		} else {
+			if (profile?.friendship?.status === "PENDING") {
+				if (profile.friendship.user1_id === targetId)
+					return (
+						<Button
+							content="accept"
+							color="purple"
+							style={{ display: "flex" }}
+							onClick={() => handleAcceptRequest()}
+						/>
+					);
+				else
+					return (
+						<Button
+							content="remove pending"
+							color="purple"
+							style={{ display: "flex" }}
+							onClick={() => handleRemovePending()}
+						/>
+					);
+			} else if (profile.friendship.status === "FRIENDS") {
+				return (
+					<Button
+						content="remove friend"
+						color="purple"
+						style={{ display: "flex" }}
+						onClick={() => handleRemoveFriend()}
+					/>
+				);
+			} else {
+				return <div></div>;
+			}
 		}
 	};
 
-	const handleBlockUser = async (id: number) => {
-		console.error("No function to block user : ", id);
+	const addBlockButton = () => {
+		if (profile?.friendship && profile.friendship.status == "BLOCKED") {
+			if (profile.friendship.user2_id == targetId)
+				return (
+					<Button
+						content="unblock"
+						color="purple"
+						style={{ display: "flex" }}
+						onClick={handleUnblock}
+					/>
+				);
+			else return <div></div>;
+		} else
+			return (
+				<Button
+					content="block"
+					color="purple"
+					style={{ display: "flex" }}
+					onClick={() => handleBlockUser()}
+				/>
+			);
 	};
 
-	const buttons = (
+	const buttons = selfProfile ? (
+		//SELF USER BUTTON
 		<div className="Buttons">
 			<Button
-				content={selfProfile ? "friends list" : "add friend"}
+				content="friends list"
 				color="purple"
 				style={{ display: "flex" }}
-				onClick={
-					selfProfile
-						? handleOpenFriendsList
-						: () => handleFriendRequest(targetId)
-				}
+				onClick={handleOpenFriendsList}
 			/>
 			<Button
-				content={selfProfile ? "blocked list" : "block"}
+				content="blocked list"
 				color="purple"
 				style={{ display: "flex" }}
-				onClick={
-					selfProfile
-						? handleOpenBlockedList
-						: () => handleBlockUser(targetId ?? 0)
-				}
+				onClick={handleOpenBlockedList}
 			/>
+		</div>
+	) : (
+		//OTHER USER BUTTON
+		<div className="Buttons">
+			{addFriendButton()}
+			{addBlockButton()}
 		</div>
 	);
 

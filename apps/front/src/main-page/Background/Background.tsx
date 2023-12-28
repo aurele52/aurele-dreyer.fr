@@ -17,6 +17,7 @@ import { PendingRequests } from "../../windows/Profile/FriendsList/PendingReques
 import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
+import { useEffect } from "react";
 
 interface BackgroundProps extends ReduxProps {}
 
