@@ -7,16 +7,16 @@ export class UserChannelService {
   constructor(private readonly prisma: PrismaService) {}
 
   async createUserChannel(params: {
-    currUserId: number;
+    userId: number;
     channelId: number;
     role: UserChannelRoles;
   }) {
-    const { currUserId, channelId, role } = params;
+    const { userId, channelId, role } = params;
     const createUserChannel = await this.prisma.userChannel.create({
       data: {
         User: {
           connect: {
-            id: currUserId,
+            id: userId,
           },
         },
         Channel: {
@@ -36,5 +36,20 @@ export class UserChannelService {
         id,
       },
     });
+  }
+
+  async currUser(user_id: number, channel_id: number) {
+    const userChan = await this.prisma.userChannel.findUnique({
+      where: {
+        user_id_channel_id: {
+          user_id,
+          channel_id,
+        },
+      },
+    });
+    return {
+      id: user_id,
+      role: userChan.role,
+    };
   }
 }

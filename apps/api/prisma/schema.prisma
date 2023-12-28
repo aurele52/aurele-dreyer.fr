@@ -4,13 +4,13 @@
 //IMPORTANT  => updated_at have to be changed
 
 generator client {
-  provider = "prisma-client-js"
+  provider      = "prisma-client-js"
   binaryTargets = ["native", "debian-openssl-1.1.x"]
 }
 
 datasource db {
-  provider      = "postgresql"
-  url           = env("DATABASE_URL")
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
 }
 
 model Channel {
@@ -36,7 +36,7 @@ model UserChannel {
   updated_at DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [id])
   Channel    Channel   @relation(fields: [channel_id], references: [id])
-  
+
   @@unique([user_id, channel_id])
 }
 
@@ -99,18 +99,17 @@ model UserAchievement {
 }
 
 model Friendship {
-  id         Int      @id @default(autoincrement())
+  id         Int              @id @default(autoincrement())
   user1_id   Int
   user2_id   Int
   status     FriendshipStatus
-  created_at DateTime @default(now())
-  updated_at DateTime @updatedAt
-  user1      User     @relation("user1_friendship", fields: [user1_id], references: [id])
-  user2      User     @relation("user2_friendship", fields: [user2_id], references: [id])
+  created_at DateTime         @default(now())
+  updated_at DateTime         @updatedAt
+  user1      User             @relation("user1_friendship", fields: [user1_id], references: [id])
+  user2      User             @relation("user2_friendship", fields: [user2_id], references: [id])
 
   @@unique([user1_id, user2_id])
 }
-
 
 enum ChanType {
   DM
@@ -126,15 +125,15 @@ enum Role {
 }
 
 enum Achievement {
-    WELCOME
-    TASTEOFV
-    WINS10PLUS
-    WIN10RAW
-    NEMESIS
-    FIRST
-    POINTS100PLUS
-    WINSINLESSTHAN1M
-    ENDLESSSTAMINA
+  WELCOME
+  TASTEOFV
+  WINS10PLUS
+  WIN10RAW
+  NEMESIS
+  FIRST
+  POINTS100PLUS
+  WINSINLESSTHAN1M
+  ENDLESSSTAMINA
 }
 
 enum FriendshipStatus {

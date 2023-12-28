@@ -91,4 +91,16 @@ export class ChannelService {
     });
     return channel !== null;
   }
+
+  async getNonMembers(channel_id: number) {
+    return await this.prisma.user.findMany({
+      where: {
+        userChannels: {
+          none: {
+            channel_id,
+          },
+        },
+      },
+    });
+  }
 }
