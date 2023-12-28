@@ -1,5 +1,5 @@
 import "./Play.css";
-import React, { LegacyRef, useEffect, useRef, useState } from "react";
+import { useEffect, useRef} from "react";
 import p5 from "p5";
 
 /* Interface */
@@ -408,7 +408,7 @@ function ballBarRedir() {
 		ballx >= borderSize + barDist
 	) {
 		if (bally <= oneBary + barSize && bally >= oneBary) {
-			let ret = (bally - oneBary) / barSize;
+			const ret = (bally - oneBary) / barSize;
 			[ballDirx, ballDiry] = redirection(ret, {
 				x: ballDirx,
 				y: ballDiry,
@@ -423,7 +423,7 @@ function ballBarRedir() {
 			bally + ballSize / 2 <= twoBary + barSize &&
 			bally + ballSize / 2 >= twoBary
 		) {
-			let ret = (bally - twoBary) / barSize;
+			const ret = (bally - twoBary) / barSize;
 			[ballDirx, ballDiry] = redirection(ret, {
 				x: ballDirx,
 				y: ballDiry,
@@ -555,7 +555,7 @@ export default function Play() {
 			scoreTwo(p, 0);
 		};
 		p.draw = () => {
-			/* 			const ms = p.millis()
+			const ms = p.millis()
 			if (ms < 1000) {
 				compteur(p, 3);
 			}
@@ -570,7 +570,7 @@ export default function Play() {
 			}
 			else {
 				loop(p);
-			}  */
+			}
 			loop(p);
 		};
 	};
