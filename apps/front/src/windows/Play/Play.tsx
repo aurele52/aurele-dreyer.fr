@@ -56,116 +56,116 @@ function drawBar(p:p5)
         p.rect(xsize - borderSize - barDist - barLarge, twoBary, barLarge, barSize);
 }
 
-function drawOne(p:p5, x:number)
+function drawOne(p:p5, x:number, y:number)
 {
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 7);
-        p.rect(x + midSquareSize * 2, borderSize + midSquareSize * 2, midSquareSize, midSquareSize);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 7);
+        p.rect(x + midSquareSize * 2, y + borderSize + midSquareSize * 2, midSquareSize, midSquareSize);
 }
 
-function drawTwo(p:p5, x:number)
+function drawTwo(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
 }
 
-function drawThree(p:p5, x:number)
+function drawThree(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
 }
 
-function drawFour(p:p5, x:number)
+function drawFour(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
 }
 
-function drawFive(p:p5, x:number)
+function drawFive(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
 }
 
-function drawSix(p:p5, x:number)
+function drawSix(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
 }
 
-function drawSeven(p:p5, x:number)
+function drawSeven(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize, midSquareSize, midSquareSize * 7);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize, midSquareSize, midSquareSize * 7);
 }
 
-function drawEight(p:p5, x:number)
+function drawEight(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
 }
 
-function drawNine(p:p5, x:number)
+function drawNine(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
 }
 
-function drawZero(p:p5, x:number)
+function drawZero(p:p5, x:number, y:number)
 {
-        p.rect(x, borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
-        p.rect(x, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
-        p.rect(x + midSquareSize * 3 , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x , borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
-        p.rect(x , borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
-        p.rect(x + midSquareSize * 3, borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize * 4, midSquareSize);
+        p.rect(x, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
+        p.rect(x + midSquareSize * 3 , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x , y + borderSize + midSquareSize * 7, midSquareSize * 4, midSquareSize);
+        p.rect(x , y + borderSize + midSquareSize * 4, midSquareSize, midSquareSize * 3);
+        p.rect(x + midSquareSize * 3, y + borderSize + midSquareSize, midSquareSize, midSquareSize * 4);
 }
 
-function drawNumber(p:p5, nb:number, x:number)
+function drawNumber(p:p5, nb:number, x:number, y:number)
 {
         if (nb === 0)
-                drawZero(p, x);
+                drawZero(p, x, y);
         if (nb === 1)
-                drawOne(p, x);
+                drawOne(p, x, y);
         if (nb === 2)
-                drawTwo(p, x);
+                drawTwo(p, x, y);
         if (nb === 3)
-                drawThree(p, x);
+                drawThree(p, x, y);
         if (nb === 4)
-                drawFour(p, x);
+                drawFour(p, x, y);
         if (nb === 5)
-                drawFive(p, x);
+                drawFive(p, x, y);
         if (nb === 6)
-                drawSix(p, x);
+                drawSix(p, x, y);
         if (nb === 7)
-                drawSeven(p, x);
+                drawSeven(p, x, y);
         if (nb === 8)
-                drawEight(p, x);
+                drawEight(p, x, y);
         if (nb === 9)
-                drawNine(p, x);
+                drawNine(p, x, y);
 }
 
 function scoreOne(p:p5, nb:number)
@@ -173,7 +173,7 @@ function scoreOne(p:p5, nb:number)
         p.fill(black);
         p.rect(midSquareSize * 2, borderSize + midSquareSize, 4 * midSquareSize, 7 * midSquareSize);
         p.fill(white);
-        drawNumber(p, nb, midSquareSize * 2);
+        drawNumber(p, nb, midSquareSize * 2, 0);
 }
 
 function scoreTwo(p:p5, nb:number)
@@ -181,7 +181,7 @@ function scoreTwo(p:p5, nb:number)
         p.fill(black);
         p.rect(xsize - 6 * midSquareSize, borderSize + midSquareSize, 4 * midSquareSize, 7 * midSquareSize);
         p.fill(white);
-        drawNumber(p, nb, xsize - 6 * midSquareSize);
+        drawNumber(p, nb, xsize - 6 * midSquareSize, 0);
 }
 
 function ballRedir()
@@ -228,75 +228,28 @@ function score(p:p5)
 
 function redrawBall(p:p5)
 {
-        // if (ballDiry == 1)
-        //      p.rect(ballx - ballSpeed, bally - ballSpeed, ballSize + 10, ballSpeed);
-        // if (ballDirx == 1)
-        //      p.rect(ballx - ballSpeed, bally - ballSpeed, ballSpeed, ballSize + 10);
-        // if (ballDirx == -1)
-        //      p.rect(ballx + ballSize, bally - ballSpeed, ballSpeed, ballSize + 10);
-        // if (ballDiry == -1)
-        //      p.rect(ballx - ballSpeed, bally + ballSize, ballSize + 10, ballSpeed);
-        //
-        // shadthreex = shadtwox;
-        // shadthreey = shadtwoy;
-        // shadtwox = shadonex;
-        // shadtwoy = shadoney;
-        // shadonex = ballx;
-        // shadoney = bally;
-        // if (shadthreey !== -1)
-        // {
-        //      p.fill('black');
-        //      p.rect(shadthreex, shadthreey, ballSize, ballSize);
-        // }
-        // if (shadtwoy !== -1)
-        // {
-        //      p.fill('#212121');
-        //      p.rect(shadtwox, shadtwoy, ballSize, ballSize);
-        // }
-        // if (shadoney !== -1)
-        // {
-        //      p.fill('#404040');
-        //      p.rect(shadonex, shadoney, ballSize, ballSize);
-        // }
-        //
-
         p.fill('white');
-
-
-
         ballRedir();
         ballx = ballx + ballDirx * ballSpeed;
         bally = bally + ballDiry * ballSpeed;
         p.rect(ballx, bally, ballSize, ballSize);
 }
 
+function compteur(p:p5, nb:number)
+{
 
-export default function Play() {
-        const myRef = useRef<HTMLDivElement>(null);
-        useEffect(() => {
-                if (myRef.current) {
-                        const myP5 = new p5(Sketch, myRef.current)
-                        return () => {
-                                myP5.remove();
-                        }
-                }
-                }, []);
-
-        const Sketch = (p:p5) => {
-                p.setup = () => {
-                        p.createCanvas(xsize, ysize);
-                        p.noStroke();
-                        p.background(white);
-                        drawBorder(p);
-                        drawMidline(p);
-                        drawBar(p);
-                        p.frameRate(30);
-                        scoreOne(p, 0);
-                        scoreTwo(p, 0);
-                        p.fill(white);
-                        p.rect(ballx, bally, ballSize, ballSize);
-                }
-                p.draw = () => {
+	p.fill('white');
+	p.circle(xsize /2, ysize / 2, 150);
+	p.fill('black');
+	p.circle(xsize /2, ysize / 2, 150 - borderSize * 2);
+	p.fill('white');
+	if (nb != 1)
+		drawNumber(p, nb, xsize / 2 - borderSize * 2, ysize /2 - borderSize * 5.5);
+	else
+		drawNumber(p, nb, xsize / 2 - borderSize * 3, ysize /2 - borderSize * 5.5);
+}
+function loop(p:p5)
+{
                         if (p.keyIsDown(p.DOWN_ARROW))
                         {
                                 if (oneBary + barSize < ysize - borderSize)
@@ -324,11 +277,54 @@ export default function Play() {
                         drawBar(p);
                         redrawBall(p);
                         drawMidline(p);
-                }
-        }
-        return (
+}
+
+export default function Play() {
+	const myRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (myRef.current) {
+			const myP5 = new p5(Sketch, myRef.current)
+			return () => {
+				myP5.remove();
+			}
+		}
+	}, []);
+
+	const Sketch = (p:p5) => {
+		p.setup = () => {
+			p.createCanvas(xsize, ysize);
+			p.noStroke();
+			p.background(white);
+			drawBorder(p);
+			drawMidline(p);
+			drawBar(p);
+			p.frameRate(30);
+			scoreOne(p, 0);
+			scoreTwo(p, 0);
+			p.fill(white);
+		}
+		p.draw = () => {
+			const ms = p.millis()
+			if (ms < 1000) {
+				compteur(p, 3);
+			}
+			else if (ms < 2000) {
+				compteur(p, 2);
+			}
+			else if (ms < 3000) {
+				compteur(p, 1);
+			}
+			else if (ms < 4000) {
+				compteur(p, 0);
+			}
+			else {
+				loop(p);
+			} 
+		}
+	}
+	return (
 		<div className="Play">
 			<div ref={myRef}></div>
 		</div>
-        )
+	)
 }
