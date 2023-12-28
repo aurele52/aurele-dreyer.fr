@@ -3,7 +3,6 @@ import { connect } from "react-redux";
 import { AppState } from "../../reducers";
 import { ConnectedProps } from "react-redux";
 import Window from "../../shared/ui-components/Window/Window";
-import Play from "../../windows/Play/Play";
 import Chat from "../../windows/Chat/Chat";
 import Ladder from "../../windows/Ladder/Ladder";
 import Profile from "../../windows/Profile/Profile";

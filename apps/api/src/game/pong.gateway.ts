@@ -29,7 +29,19 @@ export class PongGateway {
   }
 
   handleConnection(client: any, ...args: any[]) {
-    console.log(`Client : ${client.id} connected`);
+    console.log(`Client : ${client.id} ${args}connected`);
+  }
+
+  @SubscribeMessage('authentification')
+  handleAuthentification(
+    @MessageBody() token: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log(`${client.id}`, token); // Broadcast the message to all connected clients
+    if (!token) {
+      client.emit('401');
+      client.disconnect(); //mathilde todo
+    }
   }
 
   @SubscribeMessage('client.ping')
@@ -39,6 +51,7 @@ export class PongGateway {
   ) {
     client.emit('server.pong', data);
     console.log(`${client.id}`, data); // Broadcast the message to all connected clients
+    client.disconnect();
   }
 
   @SubscribeMessage('client.createLobby')
