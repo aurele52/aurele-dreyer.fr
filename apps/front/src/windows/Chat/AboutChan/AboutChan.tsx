@@ -4,7 +4,11 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { capitalize } from "../../../shared/utils/StringUtils";
 import List from "../../../shared/ui-components/List/List";
 import { Button } from "../../../shared/ui-components/Button/Button";
-import { User, UserRole } from "../../../shared/ui-components/User/User";
+import { User } from "../../../shared/ui-components/User/User";
+import { UserRole, userLvl } from "../../../shared/utils/User";
+import store from "../../../store";
+import { addWindow } from "../../../reducers";
+import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 
 interface AboutChanProps {
   chanId: number | undefined;
@@ -39,10 +43,18 @@ function AboutChan({ chanId }: AboutChanProps) {
     },
   });
 
-  const { data: userId } = useQuery<number>({
-    queryKey: ["userId", chanId],
+  const { data: self } = useQuery<{ id: number; role: UserRole }>({
+    queryKey: ["self", chanId],
     queryFn: async () => {
-      return api.get("/id").then((response) => response.data);
+      try {
+        const response = await api.get(
+          "/user-channel/" + chanId + "/current-user"
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching self:", error);
+        throw error;
+      }
     },
   });
 
@@ -83,12 +95,24 @@ function AboutChan({ chanId }: AboutChanProps) {
   const handleLeave = async (channel: ChannelData | undefined) => {
     if (channel) {
       const userChannel = channel.userChannels.find(
-        (uc) => uc.user_id === userId
+        (uc) => uc.user_id === self?.id
       );
       if (userChannel) {
         deleteUserChannel(userChannel?.id);
       }
     }
+  };
+
+  const handleAddMembers = () => {
+    const newWindow = {
+      WindowName: "Add To " + channel?.name,
+      id: 0,
+      content: { type: "ADDMEMBERS", id: channel?.id },
+      toggle: false,
+      handleBarButton: HBButton.Close,
+      color: WinColor.LILAC,
+    };
+    store.dispatch(addWindow(newWindow));
   };
 
   return (
@@ -114,12 +138,27 @@ function AboutChan({ chanId }: AboutChanProps) {
           ) : (
             ""
           )}
+          {isMember && userLvl[self?.role || UserRole.MEMBER] > 0 ? (
+            <Button
+              color="purple"
+              content="add members"
+              onClick={handleAddMembers}
+            />
+          ) : (
+            ""
+          )}
         </div>
       </div>
       <List>
         {channel?.userChannels.map((uc, index) => {
           const user = uc.User;
-					return <User key={index} userId={user.id} channel={{channelId: channel?.id, userRole: uc.role}} />;
+          return (
+            <User
+              key={index}
+              userId={user.id}
+              channel={{ channelId: channel?.id, userRole: uc.role }}
+            />
+          );
         })}
       </List>
       <div className="leaveChanBtn">

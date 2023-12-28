@@ -28,51 +28,45 @@
 	padding: 5px;
 }
 
-.pink.Button > .ButtonInner:hover {
+.pink.Button>.ButtonInner:hover {
 	border-top: 1px solid var(--pink-300, #f3acd4);
 	border-right: 1px solid var(--pink-300, #f3acd4);
 	border-left: 1px solid var(--pink-300, #f3acd4);
 }
 
 .pink.Button {
-	background: var(
-		--pink-gradient-300,
-		linear-gradient(180deg, #f3acd4 69.79%, #f37ec1 90.62%)
-	);
+	background: var(--pink-gradient-300,
+			linear-gradient(180deg, #f3acd4 69.79%, #f37ec1 90.62%));
 }
 
 .pink.Button:hover {
 	background: var(--pink-300, #f3acd4);
 }
 
-.purple.Button > .ButtonInner:hover {
+.purple.Button>.ButtonInner:hover {
 	border-top: 1px solid var(--purple-400, #6c559c);
 	border-right: 1px solid var(--purple-400, #6c559c);
 	border-left: 1px solid var(--purple-400, #6c559c);
 }
 
 .purple.Button {
-	background: var(
-		--purple-gradient-400,
-		linear-gradient(180deg, #6d559c 66.15%, #4c3778 86.98%)
-	);
+	background: var(--purple-gradient-400,
+			linear-gradient(180deg, #6d559c 66.15%, #4c3778 86.98%));
 }
 
 .purple.Button:hover {
 	background: var(--purple-400, #6c559c);
 }
 
-.red.Button > .ButtonInner:hover {
+.red.Button>.ButtonInner:hover {
 	border-top: 1px solid var(--Pink-400, #f06e8d);
 	border-right: 1px solid var(--Pink-400, #f06e8d);
 	border-left: 1px solid var(--Pink-400, #f06e8d);
 }
 
 .red.Button {
-	background: var(
-		--Pink-Gradient-400,
-		linear-gradient(180deg, #f06e8d 75%, #e9436b 92.19%)
-	);
+	background: var(--Pink-Gradient-400,
+			linear-gradient(180deg, #f06e8d 75%, #e9436b 92.19%));
 }
 
 .red.Button:hover {
@@ -80,54 +74,66 @@
 }
 
 .blue.Button {
-	background: var(
-		--Turquoise-Gradient-Match,
-		linear-gradient(120deg, #09e1c7 46.53%, #3071d2 79.49%)
-	);
+	background: var(--Turquoise-Gradient-Match,
+			linear-gradient(120deg, #09e1c7 46.53%, #3071d2 79.49%));
 }
 
 .blue.Button:hover {
 	background: linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
 }
 
-.blue.button > .ButtonInner:hover {
-	border-top: 1px solid
-		linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
-	border-right: 1px solid
-		linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
-	border-left: 1px solid
-		linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
+.blue.button>.ButtonInner:hover {
+	border-top: 1px solid linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
+	border-right: 1px solid linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
+	border-left: 1px solid linear-gradient(120deg, #3071d2 46.53%, #09e1c7 79.49%);
 }
 
 .lightYellow {
-	background: var(
-		--Yellow-Gradient-150,
-		linear-gradient(180deg, #faf7a4 65.1%, #e0dd79 82.81%)
-	);
+	background: var(--Yellow-Gradient-150,
+			linear-gradient(180deg, #faf7a4 65.1%, #e0dd79 82.81%));
+}
+
+.lightYellow.btn-disabled {
+	background: var(--Yellow-300, #D3C43D);
+}
+
+.lightYellow.btn-disabled>.ButtonInner {
+	border-top: 1px solid var(--Yellow-300, #D3C43D);
+	border-right: 1px solid var(--Yellow-300, #D3C43D);
+	border-left: 1px solid var(--Yellow-300, #D3C43D);
 }
 
 .lightYellow:hover {
 	background: var(--Yellow-100, #faf7a4);
 }
 
-.lightYellow > .ButtonInner:hover {
+.lightYellow>.ButtonInner:hover {
 	border-top: 1px solid var(--Yellow-100, #faf7a4);
 	border-right: 1px solid var(--Yellow-100, #faf7a4);
 	border-left: 1px solid var(--Yellow-100, #faf7a4);
 }
 
+.lightYellow.btn-disabled:hover {
+	background: var(--Yellow-300, #D3C43D);
+	cursor: default;
+}
+
+.lightYellow.btn-disabled>.ButtonInner:hover {
+	border-top: 1px solid var(--Yellow-300, #D3C43D);
+	border-right: 1px solid var(--Yellow-300, #D3C43D);
+	border-left: 1px solid var(--Yellow-300, #D3C43D);
+}
+
 .darkYellow {
-	background: var(
-		--Yellow-Gradient-350,
-		linear-gradient(180deg, #d3c43d 65.1%, #b2a73f 82.81%)
-	);
+	background: var(--Yellow-Gradient-350,
+			linear-gradient(180deg, #d3c43d 65.1%, #b2a73f 82.81%));
 }
 
 .darkYellow:hover {
 	background: var(--Yellow-300, #d3c43d);
 }
 
-.darkYellow > .ButtonInner:hover {
+.darkYellow>.ButtonInner:hover {
 	border-top: 1px solid var(--Yellow-300, #d3c43d);
 	border-right: 1px solid var(--Yellow-300, #d3c43d);
 	border-left: 1px solid var(--Yellow-300, #d3c43d);

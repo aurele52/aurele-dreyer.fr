@@ -920,14 +920,12 @@ export function HeartButton({
 }: HeartButtonProps) {
 	const queryClient = useQueryClient();
 
-	const { data: friendship } = useQuery<FriendShipData>({
-		queryKey: ["friendship", userId],
-		queryFn: async () => {
-			return api
-				.get("/friendship/" + userId)
-				.then((response) => response.data);
-		},
-	});
+  const { data: friendship } = useQuery<FriendShipData>({
+    queryKey: ["friendship", userId],
+    queryFn: async () => {
+      return api.get("/friendship/" + userId).then((response) => response.data);
+    },
+  });
 
 	const { mutateAsync: createFriendship } = useMutation({
 		mutationFn: async (user2_id: number) => {
@@ -962,44 +960,43 @@ export function HeartButton({
 		return false;
 	};
 
-	const isBlockedByMe = () => {
-		if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
-			return true;
-		return false;
-	};
+  const isBlockedByMe = () => {
+    if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
+      return true;
+    return false;
+  };
 
-	const handleFriendshipBtn = () => {
-		if (friendStatus === "Heart") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to remove ${username} from your friends?`,
-				"deleteFriendship",
-				userId
-			);
-		} else if (friendStatus === "PendingHeart") {
-			const newWindow = {
-				WindowName: "PENDING FRIEND REQUESTS",
-				width: "300",
-				height: "300",
-				id: 0,
-				content: { type: "PENDINGREQUESTS" },
-				toggle: false,
-				handleBarButton:
-					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-				color: WinColor.PURPLE,
-			};
-			store.dispatch(addWindow(newWindow));
-		} else if (friendStatus === "EmptyHeart") {
-			createFriendship(userId);
-		} else if (friendStatus === "Unblock") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to unblock ${username}?`,
-				"deleteBlockedFriendship",
-				userId
-			);
-		}
-	};
+  const handleFriendshipBtn = () => {
+    if (friendStatus === "Heart") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to remove ${username} from your friends?`,
+        "deleteFriendship",
+        userId
+      );
+    } else if (friendStatus === "PendingHeart") {
+      const newWindow = {
+        WindowName: "PENDING FRIEND REQUESTS",
+        width: "300",
+        height: "300",
+        id: 0,
+        content: { type: "PENDINGREQUESTS" },
+        toggle: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
+      store.dispatch(addWindow(newWindow));
+    } else if (friendStatus === "EmptyHeart") {
+      createFriendship(userId);
+    } else if (friendStatus === "Unblock") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to unblock ${username}?`,
+        "deleteBlockedFriendship",
+        userId
+      );
+    }
+  };
 
 	return !isBlocked() || isBlockedByMe() ? (
 		<button

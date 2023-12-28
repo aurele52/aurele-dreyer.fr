@@ -36,7 +36,7 @@ export class ChannelController {
       ...channelData,
     });
     await this.userChannelService.createUserChannel({
-      currUserId: user.id,
+      userId: user.id,
       channelId: channel.id,
       role: UserChannelRoles.OWNER,
     });
@@ -51,5 +51,10 @@ export class ChannelController {
   @Get('/channel/:id/me')
   async isCurrentUserMember(@Param('id') id: number, @CurrentUser() user) {
     return this.channelService.isUserMember(id, user.id);
+  }
+
+  @Get('/channel/:id/nonmembers')
+  async findNonMembers(@Param('id') channel_id: number) {
+    return this.channelService.getNonMembers(channel_id);
   }
 }
