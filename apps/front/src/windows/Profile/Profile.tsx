@@ -8,6 +8,7 @@ import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
+import { useState } from "react";
 
 interface ProfileProps {
 	targetId?: number;
@@ -15,6 +16,9 @@ interface ProfileProps {
 
 export function Profile({ targetId }: ProfileProps) {
 	const queryClient = useQueryClient();
+	const [changingName, setChangingName] = useState<boolean>(false);
+	const [placeholderValue, setPlaceholderValue] = useState<string>("");
+	const [avatarIsHovered, setAvatarIsHovered] = useState(false);
 
 	const {
 		data: profile,
@@ -76,6 +80,17 @@ export function Profile({ targetId }: ProfileProps) {
 				console.error("Error fetching historic:", error);
 				throw error;
 			}
+		},
+	});
+
+	const { mutateAsync: setUsername } = useMutation({
+		mutationFn: async () => {
+			return api.post("/user/username/" + placeholderValue);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", targetId],
+			});
 		},
 	});
 
@@ -242,6 +257,109 @@ export function Profile({ targetId }: ProfileProps) {
 		);
 	};
 
+	const handlePenButton = async () => {
+		setChangingName(true);
+		setPlaceholderValue(profile?.username || "Username");
+	};
+
+	const handleChangeName = async () => {
+		const new_username = placeholderValue;
+		const usernamePattern = /^[a-zA-Z0-9_-]{4,15}$/;
+		if (!usernamePattern.test(new_username)) {
+			setChangingName(false);
+			addModal(ModalType.ERROR, `Invalid username format`);
+		} else {
+			setUsername();
+			setChangingName(false);
+		}
+	};
+
+	const handleUploadAvatar = async () => {
+		const newWindow = {
+			WindowName: "Upload New Avatar",
+			id: 0,
+			content: { type: "AVATARUPLOAD" },
+			toggle: false,
+			handleBarButton: HBButton.Close,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
+	};
+
+	const nameDiv = () => {
+		if (!selfProfile)
+			return (
+				<div className="NameFrame">
+					<div className="Name">{profile?.username ?? "No name"}</div>
+				</div>
+			);
+		else {
+			if (!changingName) {
+				return (
+					<div className="NameFrame">
+						<div className="Name">
+							{profile?.username ?? "No name"}
+						</div>
+						<Button
+							icon="Pen"
+							color="purple"
+							onClick={handlePenButton}
+						/>
+					</div>
+				);
+			} else {
+				return (
+					<div className="TypeBarFrame">
+						<div className="TypeBar">
+							<div className="Placeholder">
+								<input
+									value={placeholderValue}
+									onChange={(e) =>
+										setPlaceholderValue(e.target.value)
+									}
+								/>
+							</div>
+							<Button
+								icon="Check"
+								color="purple"
+								onClick={handleChangeName}
+							/>
+						</div>
+					</div>
+				);
+			}
+		}
+	};
+
+	const avatarDiv = () => {
+		if (selfProfile)
+			return (
+				<div
+					className="Avatar"
+					onMouseEnter={() => setAvatarIsHovered(true)}
+					onMouseLeave={() => setAvatarIsHovered(false)}
+					onClick={() => handleUploadAvatar()}
+				>
+					<img
+						src={profile?.avatar_url}
+						className="Frame FrameHover"
+						alt={profile?.username.toLowerCase()}
+					/>
+					{avatarIsHovered && avatarHoverSvg}
+				</div>
+			);
+		else
+			return (
+				<div className="Avatar">
+					<img
+						src={profile?.avatar_url}
+						className="Frame"
+						alt={profile?.username.toLowerCase()}
+					/>
+				</div>
+			);
+	};
+
 	const addFriendButton = () => {
 		if (!profile?.friendship) {
 			return (
@@ -344,19 +462,57 @@ export function Profile({ targetId }: ProfileProps) {
 		</div>
 	);
 
+	const avatarHoverSvg = (
+		<svg
+			className="HoverSVG"
+			xmlns="http://www.w3.org/2000/svg"
+			viewBox="0 0 24 24"
+			width="48"
+			height="48"
+		>
+			<g clipPath="url(#clip0_389_7713)">
+				<rect x="10" width="2" height="2" fill="white" />
+				<rect x="8" y="2" width="2" height="2" fill="white" />
+				<rect x="6" y="4" width="2" height="2" fill="white" />
+				<rect x="4" y="6" width="2" height="2" fill="white" />
+				<rect x="2" y="8" width="2" height="2" fill="white" />
+				<rect y="10" width="2" height="2" fill="white" />
+				<rect y="14" width="2" height="2" fill="white" />
+				<rect y="16" width="2" height="2" fill="white" />
+				<rect x="2" y="16" width="2" height="2" fill="white" />
+				<rect x="4" y="16" width="2" height="2" fill="white" />
+				<rect x="6" y="16" width="2" height="2" fill="white" />
+				<rect x="4" y="14" width="2" height="2" fill="white" />
+				<rect x="2" y="14" width="2" height="2" fill="white" />
+				<rect x="2" y="12" width="2" height="2" fill="white" />
+				<rect x="4" y="12" width="2" height="2" fill="white" />
+				<rect x="6" y="10" width="2" height="2" fill="white" />
+				<rect x="8" y="8" width="2" height="2" fill="white" />
+				<rect x="10" y="6" width="2" height="2" fill="white" />
+				<rect x="12" y="4" width="2" height="2" fill="white" />
+				<rect y="12" width="2" height="2" fill="white" />
+				<rect x="12" y="2" width="2" height="2" fill="white" />
+				<rect x="14" y="4" width="2" height="2" fill="white" />
+				<rect x="16" y="6" width="2" height="2" fill="white" />
+				<rect x="14" y="8" width="2" height="2" fill="white" />
+				<rect x="12" y="10" width="2" height="2" fill="white" />
+				<rect x="10" y="12" width="2" height="2" fill="white" />
+				<rect x="8" y="14" width="2" height="2" fill="white" />
+			</g>
+			<defs>
+				<clipPath id="clip0_389_7713">
+					<rect width="18" height="18" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	);
+
 	return (
 		<div className="Profile">
 			<div className="Header">
-				<div className="Avatar">
-					<img
-						src={profile?.avatar_url}
-						className="Frame"
-						alt={profile?.username.toLowerCase()}
-					/>
-				</div>
-
+				{avatarDiv()}
 				<div className="Text">
-					<div className="Name">{profile?.username ?? "No name"}</div>
+					{nameDiv()}
 					<div className="Stats">
 						<div>
 							<div className="Rank">

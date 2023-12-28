@@ -22,7 +22,9 @@ type IconKey =
 	| "Unblock"
 	| "Wrench"
 	| "Arrow"
-	| "LogOut";
+	| "LogOut"
+	| "Pen"
+	| "Check";
 
 const Icons: { [key in IconKey]: ReactElement } = {
 	TripleDot: (
@@ -771,37 +773,100 @@ const Icons: { [key in IconKey]: ReactElement } = {
 	),
 	LogOut: (
 		<svg
-		  xmlns="http://www.w3.org/2000/svg"
-		  width="44"
-		  height="44"
-		  viewBox="0 0 44 44"
-		  fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+			width="44"
+			height="44"
+			viewBox="0 0 44 44"
+			fill="none"
 		>
-		  <rect x="8.79626" y="8" width="4" height="4" fill="white" />
-		  <rect x="8.79626" y="32" width="4" height="4" fill="white" />
-		  <rect x="12.7963" y="8" width="4" height="4" fill="white" />
-		  <rect x="12.7963" y="32" width="4" height="4" fill="white" />
-		  <rect x="16.7963" y="8" width="4" height="4" fill="white" />
-		  <rect x="20.7963" y="12" width="4" height="4" fill="white" />
-		  <rect x="16.7963" y="32" width="4" height="4" fill="white" />
-		  <rect x="20.7963" y="28" width="4" height="4" fill="white" />
-		  <rect x="37" y="20" width="4" height="4" fill="white" />
-		  <rect x="33" y="16" width="4" height="4" fill="white" />
-		  <rect x="29" y="12" width="4" height="4" fill="white" />
-		  <rect x="29" y="16" width="4" height="4" fill="white" />
-		  <rect x="29" y="20" width="4" height="4" fill="white" />
-		  <rect x="29" y="24" width="4" height="4" fill="white" />
-		  <rect x="29" y="28" width="4" height="4" fill="white" />
-		  <rect x="33" y="24" width="4" height="4" fill="white" />
-		  <rect x="33" y="20" width="4" height="4" fill="white" />
-		  <rect x="25" y="20" width="4" height="4" fill="white" />
-		  <rect x="21" y="20" width="4" height="4" fill="white" />
-		  <rect x="17" y="20" width="4" height="4" fill="white" />
-		  <rect x="4.79626" y="12" width="4" height="4" fill="white" />
-		  <rect x="4.79626" y="16" width="4" height="4" fill="white" />
-		  <rect x="4.79626" y="20" width="4" height="4" fill="white" />
-		  <rect x="4.79626" y="24" width="4" height="4" fill="white" />
-		  <rect x="4.79626" y="28" width="4" height="4" fill="white" />
+			<rect x="8.79626" y="8" width="4" height="4" fill="white" />
+			<rect x="8.79626" y="32" width="4" height="4" fill="white" />
+			<rect x="12.7963" y="8" width="4" height="4" fill="white" />
+			<rect x="12.7963" y="32" width="4" height="4" fill="white" />
+			<rect x="16.7963" y="8" width="4" height="4" fill="white" />
+			<rect x="20.7963" y="12" width="4" height="4" fill="white" />
+			<rect x="16.7963" y="32" width="4" height="4" fill="white" />
+			<rect x="20.7963" y="28" width="4" height="4" fill="white" />
+			<rect x="37" y="20" width="4" height="4" fill="white" />
+			<rect x="33" y="16" width="4" height="4" fill="white" />
+			<rect x="29" y="12" width="4" height="4" fill="white" />
+			<rect x="29" y="16" width="4" height="4" fill="white" />
+			<rect x="29" y="20" width="4" height="4" fill="white" />
+			<rect x="29" y="24" width="4" height="4" fill="white" />
+			<rect x="29" y="28" width="4" height="4" fill="white" />
+			<rect x="33" y="24" width="4" height="4" fill="white" />
+			<rect x="33" y="20" width="4" height="4" fill="white" />
+			<rect x="25" y="20" width="4" height="4" fill="white" />
+			<rect x="21" y="20" width="4" height="4" fill="white" />
+			<rect x="17" y="20" width="4" height="4" fill="white" />
+			<rect x="4.79626" y="12" width="4" height="4" fill="white" />
+			<rect x="4.79626" y="16" width="4" height="4" fill="white" />
+			<rect x="4.79626" y="20" width="4" height="4" fill="white" />
+			<rect x="4.79626" y="24" width="4" height="4" fill="white" />
+			<rect x="4.79626" y="28" width="4" height="4" fill="white" />
+		</svg>
+	),
+	Pen: (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<g clipPath="url(#clip0_389_7713)">
+				<rect x="10" width="2" height="2" fill="white" />
+				<rect x="8" y="2" width="2" height="2" fill="white" />
+				<rect x="6" y="4" width="2" height="2" fill="white" />
+				<rect x="4" y="6" width="2" height="2" fill="white" />
+				<rect x="2" y="8" width="2" height="2" fill="white" />
+				<rect y="10" width="2" height="2" fill="white" />
+				<rect y="14" width="2" height="2" fill="white" />
+				<rect y="16" width="2" height="2" fill="white" />
+				<rect x="2" y="16" width="2" height="2" fill="white" />
+				<rect x="4" y="16" width="2" height="2" fill="white" />
+				<rect x="6" y="16" width="2" height="2" fill="white" />
+				<rect x="4" y="14" width="2" height="2" fill="white" />
+				<rect x="2" y="14" width="2" height="2" fill="white" />
+				<rect x="2" y="12" width="2" height="2" fill="white" />
+				<rect x="4" y="12" width="2" height="2" fill="white" />
+				<rect x="6" y="10" width="2" height="2" fill="white" />
+				<rect x="8" y="8" width="2" height="2" fill="white" />
+				<rect x="10" y="6" width="2" height="2" fill="white" />
+				<rect x="12" y="4" width="2" height="2" fill="white" />
+				<rect y="12" width="2" height="2" fill="white" />
+				<rect x="12" y="2" width="2" height="2" fill="white" />
+				<rect x="14" y="4" width="2" height="2" fill="white" />
+				<rect x="16" y="6" width="2" height="2" fill="white" />
+				<rect x="14" y="8" width="2" height="2" fill="white" />
+				<rect x="12" y="10" width="2" height="2" fill="white" />
+				<rect x="10" y="12" width="2" height="2" fill="white" />
+				<rect x="8" y="14" width="2" height="2" fill="white" />
+			</g>
+			<defs>
+				<clipPath id="clip0_389_7713">
+					<rect width="18" height="18" fill="white" />
+				</clipPath>
+			</defs>
+		</svg>
+	),
+	Check: (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect y="8" width="2" height="2" fill="white" />
+			<rect x="2" y="10" width="2" height="2" fill="white" />
+			<rect x="4" y="12" width="2" height="2" fill="white" />
+			<rect x="6" y="14" width="2" height="2" fill="white" />
+			<rect x="8" y="12" width="2" height="2" fill="white" />
+			<rect x="10" y="10" width="2" height="2" fill="white" />
+			<rect x="12" y="8" width="2" height="2" fill="white" />
+			<rect x="14" y="6" width="2" height="2" fill="white" />
+			<rect x="16" y="4" width="2" height="2" fill="white" />
 		</svg>
 	),
 };
@@ -855,14 +920,12 @@ export function HeartButton({
 }: HeartButtonProps) {
 	const queryClient = useQueryClient();
 
-	const { data: friendship } = useQuery<FriendShipData>({
-		queryKey: ["friendship", userId],
-		queryFn: async () => {
-			return api
-				.get("/friendship/" + userId)
-				.then((response) => response.data);
-		},
-	});
+  const { data: friendship } = useQuery<FriendShipData>({
+    queryKey: ["friendship", userId],
+    queryFn: async () => {
+      return api.get("/friendship/" + userId).then((response) => response.data);
+    },
+  });
 
 	const { mutateAsync: createFriendship } = useMutation({
 		mutationFn: async (user2_id: number) => {
@@ -897,44 +960,43 @@ export function HeartButton({
 		return false;
 	};
 
-	const isBlockedByMe = () => {
-		if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
-			return true;
-		return false;
-	};
+  const isBlockedByMe = () => {
+    if (friendship?.user2_id === userId && friendship.status === "BLOCKED")
+      return true;
+    return false;
+  };
 
-	const handleFriendshipBtn = () => {
-		if (friendStatus === "Heart") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to remove ${username} from your friends?`,
-				"deleteFriendship",
-				userId
-			);
-		} else if (friendStatus === "PendingHeart") {
-			const newWindow = {
-				WindowName: "PENDING FRIEND REQUESTS",
-				width: "300",
-				height: "300",
-				id: 0,
-				content: { type: "PENDINGREQUESTS" },
-				toggle: false,
-				handleBarButton:
-					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-				color: WinColor.PURPLE,
-			};
-			store.dispatch(addWindow(newWindow));
-		} else if (friendStatus === "EmptyHeart") {
-			createFriendship(userId);
-		} else if (friendStatus === "Unblock") {
-			addModal(
-				ModalType.WARNING,
-				`Are you sure you want to unblock ${username}?`,
-				"deleteBlockedFriendship",
-				userId
-			);
-		}
-	};
+  const handleFriendshipBtn = () => {
+    if (friendStatus === "Heart") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to remove ${username} from your friends?`,
+        "deleteFriendship",
+        userId
+      );
+    } else if (friendStatus === "PendingHeart") {
+      const newWindow = {
+        WindowName: "PENDING FRIEND REQUESTS",
+        width: "300",
+        height: "300",
+        id: 0,
+        content: { type: "PENDINGREQUESTS" },
+        toggle: false,
+        handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+        color: WinColor.PURPLE,
+      };
+      store.dispatch(addWindow(newWindow));
+    } else if (friendStatus === "EmptyHeart") {
+      createFriendship(userId);
+    } else if (friendStatus === "Unblock") {
+      addModal(
+        ModalType.WARNING,
+        `Are you sure you want to unblock ${username}?`,
+        "deleteBlockedFriendship",
+        userId
+      );
+    }
+  };
 
 	return !isBlocked() || isBlockedByMe() ? (
 		<button

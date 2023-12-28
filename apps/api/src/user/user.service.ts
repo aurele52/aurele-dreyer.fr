@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { FriendshipStatus } from '@prisma/client';
+import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class UserService {
@@ -74,5 +75,34 @@ export class UserService {
     };
 
     return res;
+  }
+
+  async changeUsername(id: number, newUsername: string) {
+    try {
+      await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          username: newUsername,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Username updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Failed to update username: Prisma error',
+        };
+      }
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error',
+      };
+    }
   }
 }
