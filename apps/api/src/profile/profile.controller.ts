@@ -14,6 +14,7 @@ import { ProfileService } from './profile.service';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import * as path from 'path';
 import * as fs from 'fs';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('profile')
 export class ProfileController {
@@ -42,50 +43,5 @@ export class ProfileController {
   @Get('/historic')
   async getSelfHistoric(@CurrentUser() user) {
     return this.profileService.historic(user.id);
-  }
-
-  @Post('/avatar')
-  @UseInterceptors(FileInterceptor('avatar'))
-  async uploadFile(@UploadedFile() file, @CurrentUserID() id) {
-    try {
-      if (!file) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'No file uploaded',
-        };
-      }
-
-      const fileName =
-        'uploaded-avatar' + Date.now() + path.extname(file.originalname);
-      const filePath = path.join(
-        __dirname,
-        '../..',
-        'public',
-        'avatars',
-        fileName,
-      );
-
-      fs.writeFileSync(filePath, file.buffer);
-      return {
-        statusCode: HttpStatus.OK,
-        message: 'File uploaded successfully',
-        filePath: `/public/avatars/${fileName}`,
-      };
-    } catch (error) {
-      console.error('Error handling file upload:', error);
-      return {
-        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
-        message: 'Error handling file upload',
-      };
-    }
-  }
-
-  @Get('/avatar/:filename')
-  serveStaticFile(@Param('filename') filename: string) {
-    console.log('Serving file');
-    const file = fs.createReadStream(
-      path.join(__dirname, '../..', 'public', 'avatars', filename),
-    );
-    return new StreamableFile(file);
   }
 }

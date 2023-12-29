@@ -5,13 +5,27 @@ import store from "../../../store";
 import { delWindow } from "../../../reducers";
 import { Button } from "../../../shared/ui-components/Button/Button";
 import { ModalType, addModal } from "../../../shared/utils/AddModal";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 
 interface AvatarUploadProps {
 	winId: number;
+	targetId?: number;
 }
 
-const AvatarUpload: React.FC<AvatarUploadProps> = ({ winId }) => {
+const AvatarUpload: React.FC<AvatarUploadProps> = ({ winId, targetId }) => {
+	const queryClient = useQueryClient();
 	const [selectedFile, setSelectedFile] = useState<File | null>(null);
+
+	const { mutateAsync: uploadAvatar } = useMutation({
+		mutationFn: async (formData: FormData) => {
+			return api.post("/user/avatar", formData);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["user", targetId],
+			});
+		},
+	});
 
 	const handleFileChange = (e: ChangeEvent<HTMLInputElement>) => {
 		const file = e.target.files?.[0];
@@ -24,9 +38,9 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ winId }) => {
 				const formData = new FormData();
 				formData.append("avatar", selectedFile);
 
-				await api.post("/profile/avatar", formData);
+				await uploadAvatar(formData);
 
-				//onClose();
+				store.dispatch(delWindow(winId));
 			} else {
 				addModal(ModalType.ERROR, "No file selected");
 			}
