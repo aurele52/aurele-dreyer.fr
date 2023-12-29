@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
-
+import CreateGroup from './CreateGroup';
+import JoinGroup from './JoinGroup';
 interface coord{
 	x:number,
 	y:number
@@ -8,20 +9,18 @@ interface coord{
 
 export default function Connection() {
 	const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
-	const [fooEvents, setFooEvents] = useState<string[]>([]);
 	const [data, setData] = useState<undefined | coord>();
+	const [createDisplay, setCreateDisplay] = useState<boolean>(false);
+	const [joinDisplay, setJoinDisplay] = useState<boolean>(false);
 
 	useEffect(() => {
-		function onConnect() {
-			setIsConnected(true);
-		}
-
+		socket.connect();
 		function onDisconnect() {
 			setIsConnected(false);
 		}
+		function lol()
+		{
 
-		function onFooEvent(value: string) {
-			setFooEvents(previous => [...previous, value]);
 		}
 
 		function onData(value: coord) {
@@ -29,68 +28,60 @@ export default function Connection() {
 			setData(value);
 		}
 
-		socket.on('connect', onConnect);
+		socket.on('connect', () => {
+			setIsConnected(true);
+			socket.emit('authentification', window.localStorage.getItem("token"));
+		});
 		socket.on('disconnect', onDisconnect);
-		socket.on('server.pong', onFooEvent);
 		socket.on('server.data', onData);
+		socket.on('401', lol);
 
 		return () => {
-			socket.off('connect', onConnect);
+			socket.off('connect');
 			socket.off('disconnect', onDisconnect);
-			socket.off('server.pong', onFooEvent);
 			socket.off('data', onData);
 		};
 	}, []);
 
 	function connect() {
+		if (socket.connected)
+			return;
 		socket.connect();
+			setIsConnected(true);
+			socket.emit('authentification', window.localStorage.getItem("token"));
+
+	}
+
+	function createOnClick()
+	{
+		setCreateDisplay(true);
+	}
+
+	function joinGroup()
+	{
+		setJoinDisplay(true);
 	}
 
 	function disconnect() {
 		socket.disconnect();
 	}
-	const lolJSON=
-	{
-		x: 10,
-		y: 20,
-	}
 	function sendData() {
-		socket.emit('client.data', lolJSON);
-	}
-
-	const [value, setValue] = useState('');
-	const [isLoading, setIsLoading] = useState(false);
-
-	function onSubmit(event: React.FormEvent<HTMLFormElement>) {
-		event.preventDefault();
-		setIsLoading(true);
-
-		socket.timeout(5000).emit('client.ping', value, () => {
-			setIsLoading(false);
-		});
+		socket.emit('client.data', window.localStorage.getItem("token"));
 	}
 
 	return (
 		<div className="App">
 			<p>State: { '' + isConnected }</p>;
-			<ul>
-				{
-					fooEvents.map((event, index) =>
-						<li key={ index }>{ event }</li>
-					)
-				}
-			</ul>
 			<>
 				<button onClick={ connect }>Connect</button>
 				<button onClick={ disconnect }>Disconnect</button>
 			</>
-			<form onSubmit={ onSubmit }>
-				<input onChange={ e => setValue(e.target.value) } />
-
-				<button type="submit" disabled={ isLoading }>Submit</button>
-			</form>
+				<button onClick={ createOnClick }>Create Group</button>
+				<button onClick={ joinGroup }>Join Group</button>
 			<p>Data: { '' + data }</p>;
 			<button onClick={ sendData }>Send data</button>
+			{createDisplay === true && <CreateGroup />}
+			{joinDisplay === true && <JoinGroup />}
 		</div>
 	);
 
