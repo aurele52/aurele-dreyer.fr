@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
-import CreateGroup from './CreateGroup';
-import JoinGroup from './JoinGroup';
+import Loading from './Loading';
+import Play from './Play';
 interface coord{
 	x:number,
 	y:number
@@ -10,8 +10,9 @@ interface coord{
 export default function Connection() {
 	const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
 	const [data, setData] = useState<undefined | coord>();
-	const [createDisplay, setCreateDisplay] = useState<boolean>(false);
-	const [joinDisplay, setJoinDisplay] = useState<boolean>(false);
+	const [pongDisplay, setPongDisplay] = useState<boolean>(false);
+	const [connectionDisplay, setConnectionDisplay] = useState<boolean>(true);
+	const [loadingDisplay, setLoadingDisplay] = useState<boolean>(false);
 
 	useEffect(() => {
 		socket.connect();
@@ -23,6 +24,11 @@ export default function Connection() {
 
 		}
 
+		function onMatchStart()
+		{
+			setPongDisplay(true);
+			setLoadingDisplay(false);
+		}
 		function onData(value: coord) {
 			console.log('Data : ',value);
 			setData(value);
@@ -35,11 +41,13 @@ export default function Connection() {
 		socket.on('disconnect', onDisconnect);
 		socket.on('server.data', onData);
 		socket.on('401', lol);
+		socket.on('server.matchStart', onMatchStart);
 
 		return () => {
 			socket.off('connect');
 			socket.off('disconnect', onDisconnect);
 			socket.off('data', onData);
+			socket.off('401', lol);
 		};
 	}, []);
 
@@ -52,14 +60,18 @@ export default function Connection() {
 
 	}
 
-	function createOnClick()
+	function customOnClick()
 	{
-		setCreateDisplay(true);
+		setConnectionDisplay(false);
+		setLoadingDisplay(true);
+		socket.emit('client.matchmaking', {mode: 'custom'});
 	}
 
-	function joinGroup()
+	function normalOnClick()
 	{
-		setJoinDisplay(true);
+		setConnectionDisplay(false);
+		setLoadingDisplay(true);
+		socket.emit('client.matchmaking', {mode: 'normal'});
 	}
 
 	function disconnect() {
@@ -71,17 +83,18 @@ export default function Connection() {
 
 	return (
 		<div className="App">
-			<p>State: { '' + isConnected }</p>;
+			{connectionDisplay === true &&
 			<>
+			<p>State: { '' + isConnected }</p>
 				<button onClick={ connect }>Connect</button>
 				<button onClick={ disconnect }>Disconnect</button>
-			</>
-				<button onClick={ createOnClick }>Create Group</button>
-				<button onClick={ joinGroup }>Join Group</button>
-			<p>Data: { '' + data }</p>;
+				<button onClick={ normalOnClick }>Normal Game</button>
+				<button onClick={ customOnClick }>Custom Game</button>
+			<p>Data: { '' + data }</p>
 			<button onClick={ sendData }>Send data</button>
-			{createDisplay === true && <CreateGroup />}
-			{joinDisplay === true && <JoinGroup />}
+			</>}
+			{pongDisplay === true && <Play />}
+			{loadingDisplay === true && <Loading />}
 		</div>
 	);
 

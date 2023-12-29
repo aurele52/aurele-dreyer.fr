@@ -1,26 +1,15 @@
-import { Server } from 'http';
 import { lobby } from './lobby';
 import { Cron } from '@nestjs/schedule';
-import { AuthenticatedSocket, LobbyOnline, LobbyPublic } from '../types';
-import { isSourceFile } from 'typescript';
+import { AuthenticatedSocket, LobbyCustom } from '../types';
 
 export class lobbyManager {
-  public server: Server;
-
   private readonly lobbies: Map<lobby['id'], lobby> = new Map<
     lobby['id'],
     lobby
   >();
 
-  public initializeSocket(client: AuthenticatedSocket): void {}
-
-  public terminateSocket(client: AuthenticatedSocket): void {}
-
-  public createLobby(
-    isOnline: LobbyOnline,
-    isPublic: LobbyPublic,
-  ): lobby | void {
-    const newLobby = new lobby(this.server, isPublic, isOnline);
+  public createLobby(isCustom: LobbyCustom): lobby | void {
+    const newLobby = new lobby(isCustom);
 
     this.lobbies.set(newLobby.id, newLobby);
 

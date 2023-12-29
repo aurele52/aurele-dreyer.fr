@@ -9,5 +9,4 @@ export type AuthenticatedSocket = Socket & {
   emit: <T>(ev: string, data: T) => boolean;
 };
 
-export type LobbyOnline = 'isOnline' | 'isLocal';
-export type LobbyPublic = 'isPrivate' | 'isPublic' | 'isFriendOnly';
+export type LobbyCustom = 'isNormal' | 'isCustom';
