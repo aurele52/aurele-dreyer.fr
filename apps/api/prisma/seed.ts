@@ -13,7 +13,9 @@ async function createUsers() {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
       auth42_id: faker.number.int().toString(),
-      token: faker.number.int().toString(),
+      token: faker.string.alphanumeric(),
+      secret: faker.string.alphanumeric(),
+      email_42: faker.internet.email(),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };

@@ -13,6 +13,7 @@ import { FriendslistModule } from './friendslist/friendslist.module';
 import { FriendshipModule } from './friendship/friendship.module';
 import { PongGateway } from './game/pong.gateway';
 import { UserModule } from './user/user.module';
+import { TwoFactorAuthenticationModule} from './2FA/twoFactorAuthentication.module';
 
 @Module({
   imports: [
@@ -26,6 +27,7 @@ import { UserModule } from './user/user.module';
     FriendslistModule,
     FriendshipModule,
     UserModule,
+    TwoFactorAuthenticationModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

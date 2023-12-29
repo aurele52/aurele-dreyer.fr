@@ -15,7 +15,8 @@ export class AuthService {
     try {
       const access_token_42 = await this.fetchAccessToken(code, state);
       const user_info = await this.fetchUserInfo(access_token_42.access_token);
-      const user = await this.getOrCreateUser(access_token_42, user_info);
+      const secret_2fa = "blablablou";
+      const user = await this.getOrCreateUser(access_token_42, user_info, secret_2fa);
       const token = await this.generateJWTToken(user);
 
       return token;
@@ -61,7 +62,7 @@ export class AuthService {
     });
   }
 
-  async getOrCreateUser(access_token_42: AccessToken42, user_info: UserInfo42) {
+  async getOrCreateUser(access_token_42: AccessToken42, user_info: UserInfo42, secret_2fa: string) {
     return this.prisma.user.upsert({
       where: { auth42_id: String(user_info.id) },
       update: {
@@ -73,6 +74,8 @@ export class AuthService {
         username: user_info.login,
         avatar_url: user_info.image.versions.small,
         token: access_token_42.access_token,
+        secret_2fa,
+        email_42: user_info.email,
       },
     });
   }

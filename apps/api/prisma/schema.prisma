@@ -46,6 +46,8 @@ model User {
   avatar_url       String
   auth42_id        String            @unique
   token            String            @unique
+  secret_2fa       String
+  email_42         String            @unique
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   userChannels     UserChannel[]
