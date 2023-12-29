@@ -3,6 +3,7 @@
   flex-direction: column;
   overflow-x: auto;
   gap: 10px;
+  width: 100%;
 }
 
 .chanDescription {

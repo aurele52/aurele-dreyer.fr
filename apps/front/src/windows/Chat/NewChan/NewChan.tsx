@@ -4,12 +4,18 @@ import { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import { AxiosResponse, AxiosError } from "axios";
+import store from "../../../store";
+import { delWindow } from "../../../reducers";
 
 interface ValidationErrorResponse {
   [key: string]: string[];
 }
 
-function NewChan() {
+interface NewChanProps {
+  winId: number;
+}
+
+function NewChan({winId}: NewChanProps) {
   const queryClient = useQueryClient();
 
   const [selectedOption, setSelectedOption] = useState("PUBLIC");
@@ -37,6 +43,7 @@ function NewChan() {
     const target = e.target as HTMLFormElement;
     const formData = Object.fromEntries(new FormData(target));
     await createChannel(formData);
+    store.dispatch(delWindow(winId));
   };
 
   const dataError = error?.response?.data;
