@@ -89,6 +89,9 @@ export function Profile({ targetId }: ProfileProps) {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
+				queryKey: ["historic", targetId],
+			});
+			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
 		},
@@ -103,6 +106,9 @@ export function Profile({ targetId }: ProfileProps) {
 				queryKey: ["user", targetId],
 			});
 			queryClient.invalidateQueries({
+				queryKey: ["historic", targetId],
+			});
+			queryClient.invalidateQueries({
 				queryKey: ["pendingRequests"],
 			});
 		},
@@ -113,6 +119,9 @@ export function Profile({ targetId }: ProfileProps) {
 			return api.patch("/friendship/accept/" + userId);
 		},
 		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["historic", targetId],
+			});
 			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});

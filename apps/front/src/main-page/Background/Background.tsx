@@ -22,28 +22,28 @@ import Connection from "../../windows/Play/Connection";
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-  interface WindowDimensions {
-    width: string;
-    height: string;
-  }
+	interface WindowDimensions {
+		width: string;
+		height: string;
+	}
 
-  const windowDimensions: Record<string, WindowDimensions> = {
-    PLAY: { width: "820px", height: "540px" },
-    LADDER: { width: "450px", height: "600px" },
-    CHAT: { width: "400px", height: "400px" },
-    PROFILE: { width: "500px", height: "500px" },
-    FINDCHAN: { width: "400px", height: "400px" },
-    NEWCHAN: { width: "400px", height: "400px" },
-    ABOUTCHAN: { width: "500px", height: "500px" },
-    ACHIEVEMENTS: { width: "300px", height: "300px" },
-    FRIENDSLIST: { width: "450px", height: "600px" },
-    MODAL: { width: "390px", height: "200px" },
-    PENDINGREQUESTS: { width: "300px", height: "300px" },
-    BLOCKEDUSERS: { width: "300px", height: "400px" },
-    ADDFRIENDS: { width: "300px", height: "400px" },
-    ADDMEMBERS: { width: "300px", height: "400px" },
-    AVATARUPLOAD: { width: "300px", height: "400px" },
-  };
+	const windowDimensions: Record<string, WindowDimensions> = {
+		PLAY: { width: "820px", height: "540px" },
+		LADDER: { width: "450px", height: "600px" },
+		CHAT: { width: "400px", height: "400px" },
+		PROFILE: { width: "500px", height: "500px" },
+		FINDCHAN: { width: "400px", height: "400px" },
+		NEWCHAN: { width: "400px", height: "400px" },
+		ABOUTCHAN: { width: "500px", height: "500px" },
+		ACHIEVEMENTS: { width: "300px", height: "300px" },
+		FRIENDSLIST: { width: "450px", height: "600px" },
+		MODAL: { width: "390px", height: "200px" },
+		PENDINGREQUESTS: { width: "300px", height: "300px" },
+		BLOCKEDUSERS: { width: "300px", height: "400px" },
+		ADDFRIENDS: { width: "300px", height: "400px" },
+		ADDMEMBERS: { width: "300px", height: "400px" },
+		AVATARUPLOAD: { width: "300px", height: "250px" },
+	};
 
 	return (
 		<div id="Background">
@@ -110,7 +110,9 @@ export function Background({ windows }: BackgroundProps) {
 							{window.content.type === "AVATARUPLOAD" && (
 								<AvatarUpload winId={window.id} />
 							)}
-              {window.content.type === "ADDMEMBERS" && <AddMembers channelId={window.content.id}/>}
+							{window.content.type === "ADDMEMBERS" && (
+								<AddMembers channelId={window.content.id} />
+							)}
 						</Window>
 					);
 				})}
@@ -119,7 +121,7 @@ export function Background({ windows }: BackgroundProps) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  windows: state.windows,
+	windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);
