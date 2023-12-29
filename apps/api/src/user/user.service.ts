@@ -105,4 +105,33 @@ export class UserService {
       };
     }
   }
+
+  async postAvatar(id: number, avatarUrl: string) {
+    try {
+      await this.prisma.user.update({
+        where: {
+          id,
+        },
+        data: {
+          avatar_url: avatarUrl,
+        },
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Avatar updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Failed to update avatar: Prisma error',
+        };
+      }
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error',
+      };
+    }
+  }
 }
