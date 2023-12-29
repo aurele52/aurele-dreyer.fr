@@ -22,6 +22,9 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ winId, targetId }) => {
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
+				queryKey: ["historic", targetId],
+			});
+			queryClient.invalidateQueries({
 				queryKey: ["user", targetId],
 			});
 		},
@@ -55,17 +58,35 @@ const AvatarUpload: React.FC<AvatarUploadProps> = ({ winId, targetId }) => {
 
 	return (
 		<div className="AvatarUploadComponent">
+			<label className="Label" htmlFor="fileInput">
+				Upload your new Avatar:
+			</label>
 			<input type="file" accept="image/*" onChange={handleFileChange} />
-			<Button
-				content="Upload"
-				color="purple"
-				onClick={() => handleUpload()}
-			/>
-			<Button
-				content="Cancel"
-				color="red"
-				onClick={() => handleClose(winId)}
-			/>
+			{selectedFile ? (
+				<img
+					className="Avatar"
+					src={URL.createObjectURL(selectedFile)}
+				/>
+			) : (
+				<div></div>
+			)}
+
+			<div className="Buttons">
+				{selectedFile ? (
+					<Button
+						content="Upload"
+						color="purple"
+						onClick={() => handleUpload()}
+					/>
+				) : (
+					<div></div>
+				)}
+				<Button
+					content="Cancel"
+					color="red"
+					onClick={() => handleClose(winId)}
+				/>
+			</div>
 		</div>
 	);
 };

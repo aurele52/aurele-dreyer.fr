@@ -1,0 +1,39 @@
+.AvatarUploadComponent {
+	display: flex;
+	min-height: 100px;
+	padding: 5px;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
+	flex: 1 0 0;
+	align-self: stretch;
+	border-radius: 0px 0px 13px 13px;
+	background: var(--Purple-100, #f5f1fc);
+	-webkit-user-select: none; /* Safari */
+	-ms-user-select: none; /* IE 10 and IE 11 */
+	user-select: none; /* Standard syntax */
+}
+
+.AvatarUploadComponent > .Label {
+	color: var(--Base-Black, #000);
+	/* Heading/600 */
+	font-family: Chakra Petch;
+	font-size: 18px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 18px; /* 100% */
+}
+
+.AvatarUploadComponent > .Avatar {
+	width: 64px;
+	height: 64px;
+	border-radius: var(--radius-radius-rounded, 8px);
+	border: 7px solid var(--colors-grey-white, #fff);
+	background: var(--colors-grey-grey-400, #888);
+}
+
+.AvatarUploadComponent > .Buttons {
+	display: flex;
+	flex-direction: row;
+	gap: 10px;
+}
