@@ -1,6 +1,6 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
-import Auth from "./Auth";
+import Auth from "./auth-page/Auth";
 
 const rootRoute = new RootRoute();
 
@@ -8,7 +8,7 @@ const appRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/",
   component: App,
-  beforeLoad:async () => {
+  beforeLoad: async () => {
     if (!localStorage.getItem("token")) {
       throw redirect({
         to: "/auth",
