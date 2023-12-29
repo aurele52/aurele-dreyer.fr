@@ -9,6 +9,7 @@ import { UserRole, userLvl } from "../../../shared/utils/User";
 import store from "../../../store";
 import { addWindow } from "../../../reducers";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
+import { ModalType, addModal } from "../../../shared/utils/AddModal";
 
 interface AboutChanProps {
   chanId: number | undefined;
@@ -94,6 +95,10 @@ function AboutChan({ chanId }: AboutChanProps) {
 
   const handleLeave = async (channel: ChannelData | undefined) => {
     if (channel) {
+      if (self?.role === UserRole.OWNER) {
+        addModal(ModalType.ERROR, "You must transfer your ownership rights before you can leave the channel")
+        return ;
+      }
       const userChannel = channel.userChannels.find(
         (uc) => uc.user_id === self?.id
       );

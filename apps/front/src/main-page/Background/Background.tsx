@@ -17,7 +17,6 @@ import { PendingRequests } from "../../windows/Profile/FriendsList/PendingReques
 import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
-import { useEffect } from "react";
 import Connection from "../../windows/Play/Connection";
 
 interface BackgroundProps extends ReduxProps {}
@@ -45,74 +44,62 @@ export function Background({ windows }: BackgroundProps) {
     ADDMEMBERS: { width: "300px", height: "400px" },
   };
 
-	return (
-		<div id="Background">
-			{Array.isArray(windows) &&
-				windows.map((window) => {
-					const dimensions = windowDimensions[
-						window.content.type
-					] || {
-						width: "500px",
-						height: "600px",
-					};
-					const { width, height } = dimensions;
-					return (
-						<Window
-							key={window.id}
-							WindowName={window.WindowName}
-							width={width}
-							height={height}
-							id={window.id}
-							handleBarButton={window.handleBarButton}
-							color={window.color}
-						>
-							{window.content.type === "PLAY" && <Connection />}
-							{window.content.type === "LADDER" && (
-								<Ladder targetId={window.targetId} />
-							)}
-							{window.content.type === "CHAT" && <Chat />}
-							{window.content.type === "PROFILE" && (
-								<Profile
-									targetId={window.content.id || undefined}
-								/>
-							)}
-							{window.content.type === "FINDCHAN" && <FindChan />}
-							{window.content.type === "NEWCHAN" && <NewChan />}
-							{window.content.type === "ABOUTCHAN" && (
-								<AboutChan
-									chanId={window.content.id || undefined}
-								/>
-							)}
-							{window.content.type === "ACHIEVEMENTS" && (
-								<Achievements targetId={window.targetId} />
-							)}
-							{window.content.type === "FRIENDSLIST" && (
-								<FriendsList />
-							)}
-							{window.content.type === "MODAL" && (
-								<Modal
-									content={window.modal?.content}
-									type={window.modal?.type}
-									winId={window.id}
-									action={window.modal?.action}
-									targetId={window.modal?.targetId}
-								/>
-							)}
-							{window.content.type === "PENDINGREQUESTS" && (
-								<PendingRequests />
-							)}
-							{window.content.type === "BLOCKEDUSERS" && (
-								<BlockedUsers />
-							)}
-							{window.content.type === "ADDFRIENDS" && (
-								<AddFriends />
-							)}
-              {window.content.type === "ADDMEMBERS" && <AddMembers channelId={window.content.id}/>}
-						</Window>
-					);
-				})}
-		</div>
-	);
+  return (
+    <div id="Background">
+      {Array.isArray(windows) &&
+        windows.map((window) => {
+          const dimensions = windowDimensions[window.content.type] || {
+            width: "500px",
+            height: "600px",
+          };
+          const { width, height } = dimensions;
+          return (
+            <Window
+              key={window.id}
+              WindowName={window.WindowName}
+              width={width}
+              height={height}
+              id={window.id}
+              handleBarButton={window.handleBarButton}
+              color={window.color}
+            >
+              {window.content.type === "PLAY" && <Connection />}
+              {window.content.type === "LADDER" && (
+                <Ladder targetId={window.targetId} />
+              )}
+              {window.content.type === "CHAT" && <Chat />}
+              {window.content.type === "PROFILE" && (
+                <Profile targetId={window.content.id || undefined} />
+              )}
+              {window.content.type === "FINDCHAN" && <FindChan />}
+              {window.content.type === "NEWCHAN" && <NewChan />}
+              {window.content.type === "ABOUTCHAN" && (
+                <AboutChan chanId={window.content.id || undefined} />
+              )}
+              {window.content.type === "ACHIEVEMENTS" && (
+                <Achievements targetId={window.targetId} />
+              )}
+              {window.content.type === "FRIENDSLIST" && <FriendsList />}
+              {window.content.type === "MODAL" && (
+                <Modal
+                  content={window.modal?.content}
+                  type={window.modal?.type}
+                  winId={window.id}
+                  action={window.modal?.action}
+                  targetId={window.modal?.targetId}
+                />
+              )}
+              {window.content.type === "PENDINGREQUESTS" && <PendingRequests />}
+              {window.content.type === "BLOCKEDUSERS" && <BlockedUsers />}
+              {window.content.type === "ADDFRIENDS" && <AddFriends />}
+              {window.content.type === "ADDMEMBERS" && (
+                <AddMembers channelId={window.content.id} />
+              )}
+            </Window>
+          );
+        })}
+    </div>
+  );
 }
 
 const mapStateToProps = (state: AppState) => ({
