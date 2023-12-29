@@ -75,7 +75,7 @@ export function Background({ windows }: BackgroundProps) {
                 <Profile targetId={window.content.id || undefined} />
               )}
               {window.content.type === "FINDCHAN" && <FindChan />}
-              {window.content.type === "NEWCHAN" && <NewChan />}
+              {window.content.type === "NEWCHAN" && <NewChan winId={window.id} />}
               {window.content.type === "ABOUTCHAN" && (
                 <AboutChan chanId={window.content.id || undefined} />
               )}
