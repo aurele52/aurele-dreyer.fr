@@ -60,6 +60,7 @@ const windowsSlice = createSlice({
 				"PENDINGREQUESTS",
 				"BLOCKEDUSERS",
 				"ADDFRIENDS",
+				"AVATARUPLOAD",
 			];
 
 			if (
