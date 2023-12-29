@@ -282,6 +282,7 @@ export function Profile({ targetId }: ProfileProps) {
 			toggle: false,
 			handleBarButton: HBButton.Close,
 			color: WinColor.PURPLE,
+			targetId: profile?.id,
 		};
 		store.dispatch(addWindow(newWindow));
 	};

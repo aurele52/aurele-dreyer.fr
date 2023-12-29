@@ -16,7 +16,6 @@ import { PendingRequests } from "../../windows/Profile/FriendsList/PendingReques
 import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/BlockedUsers";
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
-import { useEffect } from "react";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
 
