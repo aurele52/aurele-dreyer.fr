@@ -17,7 +17,9 @@ export type IconSVGKey =
 	| "Arrow"
 	| "LogOut"
 	| "Pen"
-	| "Check";
+	| "Check"
+	| "Crown"
+	| "Star";
 
 export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 	TripleDot: (
@@ -860,6 +862,80 @@ export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 			<rect x="12" y="8" width="2" height="2" fill="white" />
 			<rect x="14" y="6" width="2" height="2" fill="white" />
 			<rect x="16" y="4" width="2" height="2" fill="white" />
+		</svg>
+	),
+	Crown: (
+		<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect y="3" width="2" height="2" fill="#D3C43D" />
+			<rect y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="3" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="9" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="11" width="2" height="2" fill="#D3C43D" />
+			<rect x="16" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="13" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="7" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="3" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="5" width="2" height="2" fill="#D3C43D" />
+			<rect y="7" width="2" height="2" fill="#D3C43D" />
+			<rect y="9" width="2" height="2" fill="#D3C43D" />
+			<rect y="11" width="2" height="2" fill="#D3C43D" />
+			<rect y="13" width="2" height="2" fill="#D3C43D" />
+		</svg>
+	),
+	Star: (
+		<svg viewBox="0 0 18 18" fill="none" xmlns="http://www.w3.org/2000/svg">
+			<rect x="6" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="4" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="12" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="12" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="2" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="2" width="2" height="2" fill="#D3C43D" />
+			<rect x="14" y="8" width="2" height="2" fill="#D3C43D" />
+			<rect x="8" y="14" width="2" height="2" fill="#D3C43D" />
+			<rect x="4" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="6" width="2" height="2" fill="#D3C43D" />
+			<rect x="6" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="10" width="2" height="2" fill="#D3C43D" />
+			<rect x="10" y="6" width="2" height="2" fill="#D3C43D" />
 		</svg>
 	),
 };
