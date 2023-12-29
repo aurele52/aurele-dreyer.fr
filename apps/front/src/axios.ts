@@ -20,7 +20,7 @@ api.interceptors.response.use(
     if (error.response.status === 401) {
       router.navigate({ to: "/auth" });
     }
-    return error;
+    throw error;
   }
 );
 
