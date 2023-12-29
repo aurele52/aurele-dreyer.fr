@@ -23,10 +23,10 @@ import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/Channe
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-  interface WindowDimensions {
-    width: string;
-    height: string;
-  }
+	interface WindowDimensions {
+		width: string;
+		height: string;
+	}
 
   const windowDimensions: Record<string, WindowDimensions> = {
     PLAY: { width: "820px", height: "540px" },
@@ -43,7 +43,7 @@ export function Background({ windows }: BackgroundProps) {
     BLOCKEDUSERS: { width: "300px", height: "400px" },
     ADDFRIENDS: { width: "300px", height: "400px" },
     ADDMEMBERS: { width: "300px", height: "400px" },
-    AVATARUPLOAD: { width: "300px", height: "400px" },
+    AVATARUPLOAD: { width: "300px", height: "250px" },
     CHANSETTINGS: { width: "500px", height: "350px" },
   };
 
@@ -112,7 +112,7 @@ export function Background({ windows }: BackgroundProps) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  windows: state.windows,
+	windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);
