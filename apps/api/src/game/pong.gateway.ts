@@ -3,16 +3,11 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  WsResponse,
   // WebSocketServer,
 } from '@nestjs/websockets';
-// import { Server } from 'http';
 import { Socket } from 'socket.io';
-import { AuthenticatedSocket } from './types';
-import { CreateLobbyDto } from './dto/createLobby.dto';
 import { lobbyManager } from './lobby/lobbyManager';
-import { lobby } from './lobby/lobby';
-import { ServerPayloads } from './ServerPayloads';
+import { gameStartInfoDto } from './dto/gameStartInfo.dto';
 
 export interface info {
   y: number;
@@ -22,8 +17,6 @@ export interface info {
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   constructor(private readonly lobbyManager: lobbyManager) {}
-  // @WebSocketServer()
-  // server: Server;
   afterInit() {
     console.log('gateway initialised');
   }
@@ -44,6 +37,13 @@ export class PongGateway {
     }
   }
 
+  @SubscribeMessage('client.matchmaking')
+  handleNormalStart(client: Socket, data: gameStartInfoDto) {
+    console.log(`${client.id}`, ' ', data.mode); // Broadcast the message to all connected clients
+    for (let i = 0; i < 2000000000; i++);
+    client.emit('server.matchStart');
+  }
+
   @SubscribeMessage('client.ping')
   handleMessage(
     @MessageBody() data: string,
@@ -52,30 +52,6 @@ export class PongGateway {
     client.emit('server.pong', data);
     console.log(`${client.id}`, data); // Broadcast the message to all connected clients
     client.disconnect();
-  }
-
-  @SubscribeMessage('client.createLobby')
-  onLobbyCreate(
-    client: AuthenticatedSocket,
-    data: CreateLobbyDto,
-  ): WsResponse<ServerPayloads['server.gameMessage']> {
-    console.log('yes');
-    const lobby = this.lobbyManager.createLobby(data.isOnline, data.isPublic);
-    if (lobby) lobby.addClient(client);
-
-    return {
-      event: 'server.gameMessage',
-      data: {
-        color: 'green',
-        message: 'Lobby created',
-      },
-    };
-  }
-
-  @SubscribeMessage('client.data')
-  handleData(@MessageBody() data: info, @ConnectedSocket() client: Socket) {
-    client.emit('server.data', data);
-    console.log(`${client.id}`, data.x);
   }
 
   handleDisconnect(client: any) {
