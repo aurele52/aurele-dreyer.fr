@@ -143,6 +143,6 @@ export class ProfileService {
         score2: score2,
       };
     });
-    return matchHistory;
+    return { matchHistory, length: matchHistory.length };
   }
 }

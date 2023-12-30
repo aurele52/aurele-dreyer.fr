@@ -45,7 +45,8 @@ export class ProfileController {
     return await this.profileService
       .historic(id)
       .then((list) => {
-        return list.slice(0, historicMaxDisplay);
+        list.matchHistory = list.matchHistory.slice(0, historicMaxDisplay);
+        return list;
       })
       .catch((error) => {
         return error;
@@ -60,8 +61,7 @@ export class ProfileController {
     return await this.profileService
       .historic(user.id)
       .then((list) => {
-        list = list.slice(0, historicMaxDisplay);
-        console.log(list.length);
+        list.matchHistory = list.matchHistory.slice(0, historicMaxDisplay);
         return list;
       })
       .catch((error) => {
