@@ -13,6 +13,7 @@ type ButtonProps = {
 	icon?: keyof typeof IconSVG;
 	content?: string;
 	type?: "button" | "submit" | "reset";
+	blackContent?: boolean;
 } & HTMLAttributes<HTMLButtonElement>;
 
 export function Button({
@@ -21,13 +22,16 @@ export function Button({
 	color,
 	className,
 	type,
+	blackContent,
 	...props
 }: ButtonProps) {
 	return (
 		<button
 			type={type}
 			{...props}
-			className={`${color} ${className || ""} Button`}
+			className={`${color} ${className || ""} ${
+				blackContent ? "Blackcontent" : "Whitecontent"
+			} Button`}
 		>
 			<div className={`ButtonInner ${content && "ButtonText"}`}>
 				{icon && IconSVG[icon]}

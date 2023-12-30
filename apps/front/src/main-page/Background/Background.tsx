@@ -18,6 +18,7 @@ import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFrie
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
+import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -43,6 +44,7 @@ export function Background({ windows }: BackgroundProps) {
 		ADDFRIENDS: { width: "300px", height: "400px" },
 		ADDMEMBERS: { width: "300px", height: "400px" },
 		AVATARUPLOAD: { width: "300px", height: "250px" },
+		MEMBERSETTINGS: { width: "430px", height: "330px" },
 	};
 
 	return (
@@ -96,6 +98,7 @@ export function Background({ windows }: BackgroundProps) {
 									winId={window.id}
 									action={window.modal?.action}
 									targetId={window.modal?.targetId}
+									channelId={window.modal?.channelId}
 								/>
 							)}
 							{window.content.type === "PENDINGREQUESTS" && (
@@ -112,6 +115,17 @@ export function Background({ windows }: BackgroundProps) {
 							)}
 							{window.content.type === "ADDMEMBERS" && (
 								<AddMembers channelId={window.content.id} />
+							)}
+							{window.content.type === "MEMBERSETTINGS" && (
+								<MemberSettings
+									targetId={
+										window.targetId ? window.targetId : 0
+									}
+									channelId={
+										window.channelId ? window.channelId : 0
+									}
+									winId={window.id}
+								/>
 							)}
 						</Window>
 					);
