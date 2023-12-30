@@ -9,6 +9,7 @@ import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
 import { useEffect, useState } from "react";
+import { router } from "../../router";
 
 interface ProfileProps {
 	targetId?: number;
@@ -319,6 +320,14 @@ export function Profile({ targetId }: ProfileProps) {
 		setHistoricMaxDisplay((prevValue) => prevValue + 10);
 	};
 
+	const handleDeleteAccount = async () => {
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to delete your account?`,
+			"deleteUser"
+		);
+	};
+
 	const nameDiv = () => {
 		if (!selfProfile)
 			return (
@@ -485,14 +494,17 @@ export function Profile({ targetId }: ProfileProps) {
 		</div>
 	);
 
-	const footer = selfProfile ?? (
+	const footer = selfProfile ? (
 		<div className="Footer">
 			<Button
 				content="delete account"
 				color="red"
 				style={{ display: "flex" }}
+				onClick={handleDeleteAccount}
 			/>
 		</div>
+	) : (
+		<div></div>
 	);
 
 	const avatarHoverSvg = (

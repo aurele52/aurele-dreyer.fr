@@ -6,6 +6,7 @@ import store from "../../../store";
 import { delWindow } from "../../../reducers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
+import { router } from "../../../router";
 
 interface ModalProps {
 	content: ReactNode;
@@ -22,7 +23,8 @@ export type ActionKey =
 	| "addBlockedFriendship"
 	| "makeAdmin"
 	| "demoteAdmin"
-	| "makeOwner";
+	| "makeOwner"
+	| "deleteUser";
 
 function Modal({
 	content,
@@ -143,6 +145,16 @@ function Modal({
 		},
 	});
 
+	const { mutateAsync: deleteUser } = useMutation({
+		mutationFn: async () => {
+			return api.delete("/user");
+		},
+		onSuccess: () => {
+			localStorage.removeItem("token");
+			router.load();
+		},
+	});
+
 	const actions = {
 		deleteFriendship,
 		deleteBlockedFriendship,
@@ -150,6 +162,7 @@ function Modal({
 		makeAdmin,
 		demoteAdmin,
 		makeOwner,
+		deleteUser,
 	};
 
 	const icon = iconsModal[type || "INFO"];

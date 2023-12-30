@@ -1,0 +1,3 @@
+-- AlterTable
+ALTER TABLE "User" ALTER COLUMN "auth42_id" DROP NOT NULL,
+ALTER COLUMN "token" DROP NOT NULL;
