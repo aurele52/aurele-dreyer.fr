@@ -4,6 +4,13 @@ import {
   UseInterceptors,
   Res,
   Get,
+  Post,
+  Body,
+  HttpCode,
+  Req,
+  UnauthorizedException,
+  UseGuards,
+  Query,
 } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
@@ -27,5 +34,20 @@ export class TwoFactorAuthenticationController {
       response,
       otpauthUrl,
     );
+  }
+  @Post('turn-on')
+  @HttpCode(200)
+  async turnOnTwoFactorAuthentication(
+    @CurrentUser() user,
+    //@Query('code') code: string,
+    @Body() code : string
+  ) {
+    const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+      code, user
+    );
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+    console.log("Utilisateur logged");
   }
 }

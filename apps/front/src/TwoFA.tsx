@@ -25,4 +25,6 @@ function TwoFA() {
   );
 }
 
+//api.post("2fa/turn-on", {body { code: lecode}})
+
 export default TwoFA;
