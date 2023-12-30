@@ -10,6 +10,7 @@ import {
   StreamableFile,
   Query,
   Body,
+  Delete,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from './profile.service';
