@@ -8,7 +8,7 @@ import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 
 interface ProfileProps {
 	targetId?: number;
@@ -19,6 +19,7 @@ export function Profile({ targetId }: ProfileProps) {
 	const [changingName, setChangingName] = useState<boolean>(false);
 	const [placeholderValue, setPlaceholderValue] = useState<string>("");
 	const [avatarIsHovered, setAvatarIsHovered] = useState(false);
+	const [historicMaxDisplay, setHistoricMaxDisplay] = useState<number>(10);
 
 	const {
 		data: profile,
@@ -69,15 +70,32 @@ export function Profile({ targetId }: ProfileProps) {
 			score2: number;
 		}[]
 	>({
-		queryKey: ["historic", targetId],
+		queryKey: ["historic", targetId, historicMaxDisplay],
 		queryFn: async () => {
 			try {
 				const response = targetId
-					? await api.get(`/profile/historic/${targetId}`)
-					: await api.get(`/profile/historic`);
+					? await api.get(`/profile/historic/${targetId}`, {
+							params: { historicMaxDisplay },
+					  })
+					: await api.get(`/profile/historic`, {
+							params: { historicMaxDisplay },
+					  });
 				return response.data;
-			} catch (error) {
-				console.error("Error fetching historic:", error);
+			} catch (error: any) {
+				//console.error("Error fetching historic:", error);
+				if (error.response) {
+					// Handle error response from the server
+					console.error(
+						"Server responded with:",
+						error.response.data
+					);
+				} else {
+					// Handle network or other errors
+					console.error(
+						"Network error or other issue:",
+						error.message
+					);
+				}
 				throw error;
 			}
 		},
@@ -296,6 +314,10 @@ export function Profile({ targetId }: ProfileProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
+	const handleLoadMore = async () => {
+		setHistoricMaxDisplay((prevValue) => prevValue + 10);
+	};
+
 	const nameDiv = () => {
 		if (!selfProfile)
 			return (
@@ -394,8 +416,8 @@ export function Profile({ targetId }: ProfileProps) {
 				else
 					return (
 						<Button
-							content="remove pending"
-							color="purple"
+							content="cancel request"
+							color="pink"
 							style={{ display: "flex" }}
 							onClick={() => handleRemovePending()}
 						/>
@@ -404,7 +426,7 @@ export function Profile({ targetId }: ProfileProps) {
 				return (
 					<Button
 						content="remove friend"
-						color="purple"
+						color="red"
 						style={{ display: "flex" }}
 						onClick={() => handleRemoveFriend()}
 					/>
@@ -421,7 +443,7 @@ export function Profile({ targetId }: ProfileProps) {
 				return (
 					<Button
 						content="unblock"
-						color="purple"
+						color="pink"
 						style={{ display: "flex" }}
 						onClick={handleUnblock}
 					/>
@@ -431,7 +453,7 @@ export function Profile({ targetId }: ProfileProps) {
 			return (
 				<Button
 					content="block"
-					color="purple"
+					color="red"
 					style={{ display: "flex" }}
 					onClick={() => handleBlockUser()}
 				/>
@@ -564,6 +586,11 @@ export function Profile({ targetId }: ProfileProps) {
 			<div className="Body">
 				<div className="Historic">
 					<List>
+						<div className="Count">
+							{"MATCH HISTORY (LATEST " +
+								historicMaxDisplay +
+								")"}
+						</div>
 						{historic?.map((match) => {
 							return (
 								<div className="Match" key={match.id}>
@@ -635,6 +662,17 @@ export function Profile({ targetId }: ProfileProps) {
 								</div>
 							);
 						})}
+						{historic && historic.length === historicMaxDisplay ? (
+							<div className="Loadmore">
+								<Button
+									content="Load More"
+									color="purple"
+									onClick={handleLoadMore}
+								/>
+							</div>
+						) : (
+							<div></div>
+						)}
 					</List>
 				</div>
 			</div>
