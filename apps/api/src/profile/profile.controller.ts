@@ -8,6 +8,8 @@ import {
   Res,
   HttpStatus,
   StreamableFile,
+  Query,
+  Body,
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { ProfileService } from './profile.service';
@@ -36,12 +38,35 @@ export class ProfileController {
   }
 
   @Get('/historic/:id')
-  async getHistoric(@Param('id') id: number) {
-    return this.profileService.historic(id);
+  async getHistoric(
+    @Param('id') id: number,
+    @Query('historicMaxDisplay') historicMaxDisplay?: number,
+  ) {
+    return await this.profileService
+      .historic(id)
+      .then((list) => {
+        return list.slice(0, historicMaxDisplay);
+      })
+      .catch((error) => {
+        return error;
+      });
   }
 
   @Get('/historic')
-  async getSelfHistoric(@CurrentUser() user) {
-    return this.profileService.historic(user.id);
+  async getSelfHistoric(
+    @CurrentUser() user,
+    @Query('historicMaxDisplay') historicMaxDisplay: number = 9,
+  ) {
+    return await this.profileService
+      .historic(user.id)
+      .then((list) => {
+        list = list.slice(0, historicMaxDisplay);
+        console.log(list.length);
+        return list;
+      })
+      .catch((error) => {
+        console.log(error);
+        return error;
+      });
   }
 }
