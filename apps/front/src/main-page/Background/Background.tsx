@@ -18,6 +18,8 @@ import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFrie
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
+import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
+import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -43,6 +45,8 @@ export function Background({ windows }: BackgroundProps) {
 		ADDFRIENDS: { width: "300px", height: "400px" },
 		ADDMEMBERS: { width: "300px", height: "400px" },
 		AVATARUPLOAD: { width: "300px", height: "250px" },
+		MEMBERSETTINGS: { width: "430px", height: "330px" },
+		CHANSETTINGS: { width: "500px", height: "350px" },
 	};
 
 	return (
@@ -77,7 +81,9 @@ export function Background({ windows }: BackgroundProps) {
 								/>
 							)}
 							{window.content.type === "FINDCHAN" && <FindChan />}
-							{window.content.type === "NEWCHAN" && <NewChan />}
+							{window.content.type === "NEWCHAN" && (
+								<NewChan winId={window.id} />
+							)}
 							{window.content.type === "ABOUTCHAN" && (
 								<AboutChan
 									chanId={window.content.id || undefined}
@@ -96,6 +102,7 @@ export function Background({ windows }: BackgroundProps) {
 									winId={window.id}
 									action={window.modal?.action}
 									targetId={window.modal?.targetId}
+									channelId={window.modal?.channelId}
 								/>
 							)}
 							{window.content.type === "PENDINGREQUESTS" && (
@@ -112,6 +119,22 @@ export function Background({ windows }: BackgroundProps) {
 							)}
 							{window.content.type === "ADDMEMBERS" && (
 								<AddMembers channelId={window.content.id} />
+							)}
+							{window.content.type === "MEMBERSETTINGS" && (
+								<MemberSettings
+									targetId={
+										window.targetId ? window.targetId : 0
+									}
+									channelId={
+										window.channelId ? window.channelId : 0
+									}
+									winId={window.id}
+								/>
+							)}
+							{window.content.type === "CHANSETTINGS" && (
+								<ChannelSettings
+									channelId={window.content.id}
+								/>
 							)}
 						</Window>
 					);

@@ -1,6 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpCode,
+  HttpException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { UserChannelRoles } from './roles/user-channel.roles';
+import { DateTime } from 'luxon';
 
 @Injectable()
 export class UserChannelService {
@@ -46,10 +52,31 @@ export class UserChannelService {
           channel_id,
         },
       },
+      include: {
+        User: true,
+      },
     });
+
+    if (!userChan) {
+      return {};
+    }
+
+    const { id, role, User, mute, ban } = userChan;
+    const { username, avatar_url } = User;
+
+    const isMuted = mute ? DateTime.fromJSDate(mute) > DateTime.now() : false;
+    const isBanned = ban ? DateTime.fromJSDate(ban) > DateTime.now() : false;
+
     return {
-      id: user_id,
-      role: userChan.role,
+      id,
+      userId: user_id,
+      role,
+      username,
+      avatar_url,
+      isMuted,
+      isBanned,
+      mutedUntil: DateTime.fromJSDate(mute).toJSDate(),
+      bannedUntil: DateTime.fromJSDate(ban).toJSDate(),
     };
   }
 }

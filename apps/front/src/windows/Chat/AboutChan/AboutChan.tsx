@@ -96,8 +96,11 @@ function AboutChan({ chanId }: AboutChanProps) {
   const handleLeave = async (channel: ChannelData | undefined) => {
     if (channel) {
       if (self?.role === UserRole.OWNER) {
-        addModal(ModalType.ERROR, "You must transfer your ownership rights before you can leave the channel")
-        return ;
+        addModal(
+          ModalType.ERROR,
+          "You must transfer your ownership rights before you can leave the channel"
+        );
+        return;
       }
       const userChannel = channel.userChannels.find(
         (uc) => uc.user_id === self?.id
@@ -113,6 +116,18 @@ function AboutChan({ chanId }: AboutChanProps) {
       WindowName: "Add To " + channel?.name,
       id: 0,
       content: { type: "ADDMEMBERS", id: channel?.id },
+      toggle: false,
+      handleBarButton: HBButton.Close,
+      color: WinColor.LILAC,
+    };
+    store.dispatch(addWindow(newWindow));
+  };
+
+  const handleChanSettings = () => {
+    const newWindow = {
+      WindowName: channel?.name + "'s Settings",
+      id: 0,
+      content: { type: "CHANSETTINGS", id: channel?.id },
       toggle: false,
       handleBarButton: HBButton.Close,
       color: WinColor.LILAC,
@@ -166,13 +181,23 @@ function AboutChan({ chanId }: AboutChanProps) {
           );
         })}
       </List>
-      <div className="leaveChanBtn">
+      <div className="footerAboutChanBtn">
         {isMember ? (
-          <Button
-            color="red"
-            content="leave channel"
-            onClick={() => handleLeave(channel)}
-          />
+          <>
+            <Button
+              color="red"
+              content="leave channel"
+              onClick={() => handleLeave(channel)}
+            />
+            {userLvl[self?.role || UserRole.MEMBER] >=
+              userLvl[UserRole.ADMIN] && (
+              <Button
+                icon="Wrench"
+                color="lightYellow"
+                onClick={handleChanSettings}
+              />
+            )}
+          </>
         ) : (
           ""
         )}

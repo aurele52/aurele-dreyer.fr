@@ -2053,25 +2053,32 @@ export enum ModalType {
 }
 
 export function addModal(
-  type: ModalType,
-  content: ReactNode,
-  action?: ActionKey,
-  userId?: number,
+	type: ModalType,
+	content: ReactNode,
+	action?: ActionKey,
+	userId?: number,
+	channelId?: number
 ) {
 	let color;
 	if (type === ModalType.WARNING || ModalType.ERROR) color = WinColor.RED;
 	else color = WinColor.PURPLE;
 
-  const newWindow = {
-    WindowName: type,
-    width: "390",
-    height: "199",
-    id: 0,
-    content: { type: "MODAL" },
-    toggle: false,
-    modal: { type, content, action, targetId: userId},
-    handleBarButton: 0,
-    color,
-  };
-  store.dispatch(addWindow(newWindow));
+	const newWindow = {
+		WindowName: type,
+		width: "390",
+		height: "199",
+		id: 0,
+		content: { type: "MODAL" },
+		toggle: false,
+		modal: {
+			type,
+			content,
+			action,
+			targetId: userId,
+			channelId: channelId,
+		},
+		handleBarButton: 0,
+		color,
+	};
+	store.dispatch(addWindow(newWindow));
 }

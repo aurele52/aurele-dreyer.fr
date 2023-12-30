@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   HttpStatus,
   Param,
@@ -87,5 +88,10 @@ export class UserController {
       path.join(__dirname, '../..', 'public', 'avatars', filename),
     );
     return new StreamableFile(file);
+  }
+
+  @Delete()
+  async deleteUser(@CurrentUserID() id: number) {
+    return this.userService.deleteUser(id);
   }
 }

@@ -1,55 +1,81 @@
-import "./NewChan.css";
-import { Button } from "../../../shared/ui-components/Button/Button";
-import { useState, ChangeEvent, FormEvent } from "react";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../../../axios";
+import "./ChannelSettings.css";
+import { useState, FormEvent, useEffect } from "react";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse, AxiosError } from "axios";
-import store from "../../../store";
-import { delWindow } from "../../../reducers";
+import api from "../../../../axios";
+import { Button } from "../../../../shared/ui-components/Button/Button";
 
 interface ValidationErrorResponse {
   [key: string]: string[];
 }
 
-interface NewChanProps {
-  winId: number;
+interface ChannelSettingsProps {
+  channelId?: number;
 }
 
-function NewChan({winId}: NewChanProps) {
+type ChannelData = {
+  id: number;
+  name: string;
+  type: string;
+  topic: string;
+  password: string;
+};
+
+function ChannelSettings({ channelId }: ChannelSettingsProps) {
   const queryClient = useQueryClient();
 
-  const [selectedOption, setSelectedOption] = useState("PUBLIC");
+  const { data: channel } = useQuery<ChannelData>({
+    queryKey: ["channelSettings", channelId],
+    queryFn: async () => {
+      return api.get("/channel/" + channelId).then((response) => response.data);
+    },
+  });
 
-  const handleOptionChange = (event: ChangeEvent<HTMLInputElement>) => {
-    setSelectedOption(event.target.value);
-  };
+  const [formData, setFormData] = useState({
+    name: "",
+    topic: "",
+    type: "",
+    password: "",
+    passwordConfirmation: "",
+  });
 
-	const { mutateAsync: createChannel, error } = useMutation<
-		AxiosResponse,
-		AxiosError<ValidationErrorResponse>,
-		Record<string, FormDataEntryValue>
-	>({
-		mutationFn: async (param: Record<string, FormDataEntryValue>) => {
-			return api.post("/channel", param);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["channels"] });
-			queryClient.invalidateQueries({ queryKey: ["chats"] });
-		},
-	});
+  useEffect(() => {
+    if (channel) {
+      setFormData({
+        name: channel.name,
+        topic: channel.topic,
+        type: channel.type,
+        password: channel.password || "",
+        passwordConfirmation: "",
+      });
+    }
+  }, [channel]);
+
+  const { mutateAsync: updateChannel, error } = useMutation<
+    AxiosResponse,
+    AxiosError<ValidationErrorResponse>,
+    Record<string, FormDataEntryValue>
+  >({
+    mutationFn: async (param) => {
+      return api.put("/channel/" + channelId, param);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["channels"] });
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+      queryClient.invalidateQueries({ queryKey: ["chanAbout", channelId] });
+    },
+  });
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    const target = e.target as HTMLFormElement;
-    const formData = Object.fromEntries(new FormData(target));
-    await createChannel(formData);
-    store.dispatch(delWindow(winId));
+    await updateChannel({...formData});
+
   };
 
   const dataError = error?.response?.data;
 
   return (
-    <form onSubmit={handleSubmit} className="NewChan">
+    <form onSubmit={handleSubmit} className="ChanSettings">
       <div className="formNewChan custom-scrollbar lilac-list">
         <div className="elFormNewChan">
           <label className="labelFormNewChan">Channel Name:</label>
@@ -60,6 +86,10 @@ function NewChan({winId}: NewChanProps) {
               }`}
               placeholder="Type here"
               name="name"
+              value={formData.name}
+              onChange={(e) =>
+                setFormData({ ...formData, name: e.target.value })
+              }
             ></input>
             {dataError?.name ? (
               <p className="errorFormNewChan">{dataError["name"]}</p>
@@ -77,6 +107,10 @@ function NewChan({winId}: NewChanProps) {
               }`}
               placeholder="Type here"
               name="topic"
+              value={formData.topic}
+              onChange={(e) =>
+                setFormData({ ...formData, topic: e.target.value })
+              }
             ></input>
             {dataError?.topic ? (
               <p className="errorFormNewChan">{dataError["topic"]}</p>
@@ -94,8 +128,10 @@ function NewChan({winId}: NewChanProps) {
                   type="radio"
                   value="PUBLIC"
                   name="type"
-                  checked={selectedOption === "PUBLIC"}
-                  onChange={handleOptionChange}
+                  checked={formData.type === "PUBLIC"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
                 />
                 <span className="checkmarkFormNewChan"></span>
               </label>
@@ -107,8 +143,10 @@ function NewChan({winId}: NewChanProps) {
                   type="radio"
                   value="PRIVATE"
                   name="type"
-                  checked={selectedOption === "PRIVATE"}
-                  onChange={handleOptionChange}
+                  checked={formData.type === "PRIVATE"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
                 />
                 <span className="checkmarkFormNewChan"></span>
               </label>
@@ -120,8 +158,10 @@ function NewChan({winId}: NewChanProps) {
                   type="radio"
                   value="PROTECTED"
                   name="type"
-                  checked={selectedOption === "PROTECTED"}
-                  onChange={handleOptionChange}
+                  checked={formData.type === "PROTECTED"}
+                  onChange={(e) =>
+                    setFormData({ ...formData, type: e.target.value })
+                  }
                 />
                 <span className="checkmarkFormNewChan"></span>
               </label>
@@ -129,7 +169,7 @@ function NewChan({winId}: NewChanProps) {
                 <p className="descCheckboxNewChan">PASSWORD PROTECTED</p>
                 <div
                   className={`passwordNewChan ${
-                    selectedOption !== "PROTECTED" ? "passwordHidden" : ""
+                    formData.type !== "PROTECTED" ? "passwordHidden" : ""
                   }`}
                 >
                   <div className="passwordInputNewChan">
@@ -186,9 +226,9 @@ function NewChan({winId}: NewChanProps) {
           </div>
         </div>
       </div>
-      <Button content="create" color="purple" type="submit" />
+      <Button content="save" color="purple" type="submit" />
     </form>
   );
 }
 
-export default NewChan;
+export default ChannelSettings;

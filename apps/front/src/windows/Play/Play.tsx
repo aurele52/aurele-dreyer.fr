@@ -565,13 +565,12 @@ export default function Play() {
 			else if (ms < 3000) {
 				compteur(p, 1);
 			}
-			else if (ms < 4000) {
+			else if (ms < 3200) {
 				compteur(p, 0);
 			}
 			else {
 				loop(p);
 			}
-			loop(p);
 		};
 	};
 	return (
