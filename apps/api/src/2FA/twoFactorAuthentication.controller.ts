@@ -9,6 +9,7 @@ import {
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('/2fa')
 @UseInterceptors(ClassSerializerInterceptor)
@@ -17,10 +18,11 @@ export class TwoFactorAuthenticationController {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
   ) {}
  
+  @Public()
   @Post('/generate')
-  async register(@Res() response: Response, @CurrentUser() user) {
+  async register(@Res() response: Response, @CurrentUser() user){
     const { otpauthUrl } = await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(user);
-    return ("bonjour");
-    // return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
+    // return ("bonjour");
+    return this.twoFactorAuthenticationService.pipeQrCodeStream(response, otpauthUrl);
   }
 }
