@@ -1,4 +1,4 @@
-import { Controller, Get, Post, Body, Param } from '@nestjs/common';
+import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
@@ -56,5 +56,14 @@ export class ChannelController {
   @Get('/channel/:id/nonmembers')
   async findNonMembers(@Param('id') channel_id: number) {
     return this.channelService.getNonMembers(channel_id);
+  }
+
+  @Put('/channel/:id')
+  async updateChannel(
+    @Param('id') channel_id: number,
+    @Body() updateChannelDto: CreateChannelDto,
+  ) {
+    const { passwordConfirmation: _, ...channelData } = updateChannelDto;
+    return this.channelService.updateChannel(channel_id, { ...channelData });
   }
 }
