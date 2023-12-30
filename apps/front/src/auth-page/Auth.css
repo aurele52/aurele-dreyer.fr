@@ -1,78 +1,51 @@
-body {
+#bg-container {
+  height: 100%;
+  overflow: hidden;
+  box-sizing: border-box;
   background-image: url("../../images/pond-sky.jpeg");
   background-size: cover;
-  background-position: center;
   background-repeat: no-repeat;
+  background-position: center center;
+  /* Setting up children component */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#centered-container {
-  position: absolute;
-  left: 50%;
-  top: 50%;
-  transform: translate(-50%, -50%);
+#purple-container {
+  padding: 4rem 6rem;
   /* Style */
-  border-radius: 2.6vw;
-  border: 0.5vw solid var(--Base-Black, #000);
-}
-
-#centered-container > div {
-  padding-top: 10%;
-  padding-bottom: 10%;
-  padding-left: 18%;
-  padding-right: 18%;
-  /* Style */
-  border-radius: 2vw;
-  border-top: 0.5vw solid var(--Base-White, #fff);
-  border-right: 0.3vw solid var(--Base-White, #fff);
-  border-bottom: 0.1vw solid var(--Base-White, #fff);
-  border-left: 0.3vw solid var(--Base-White, #fff);
   background: var(
     --Purple-Gradient-500,
     linear-gradient(180deg, #49317b 66.15%, #2e185c 86.98%)
   );
+  border-radius: 1rem;
+  border: solid var(--base-white, #fff);
+  border-width: 0.3rem 0.2rem 0.05rem;
+  outline: 0.3rem solid var(--base-black, #000);
+  /* Setting up children component */
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 
-#signin-button {
-  cursor:pointer;
+#signin-btn {
+  cursor: pointer;
   /* Style */
-  border-radius: 1.3vw;
-  border: 0.3vw solid var(--Base-Black, #000);
-}
-
-#signin-button > div {
-  padding: 7%;
-  /* Style */
-  border-radius: 1vw;
-  border-top: 0.3vw solid var(--Base-White, #fff);
-  border-right: 0.1vw solid var(--Base-White, #fff);
-  border-left: 0.1vw solid var(--Base-White, #fff);
   background: var(
     --PinkPurpleMix-Gradient-Main,
     linear-gradient(180deg, #ece5f8 66.15%, #ebb9f8 86.98%)
   );
-}
-
-#signin-button > div:hover{
-  /* Style */
-  border-top: 0.3vw solid var(--pink-purple-mix-main, #EDE6F9);
-  border-right: 0.1vw solid var(--pink-purple-mix-main, #EDE6F9);
-  border-left: 0.1vw solid var(--pink-purple-mix-main, #EDE6F9);
-  background: var(--pink-purple-mix-main, #EDE6F9);
-}
-
-#signin-button > div > div {
-  display: flex;
-  align-items: center;
-}
-
-#signin-button > div > div > div {
-  width: 40vw;
-  text-align: center;
-  color: var(--Base-Black, #000);
-  /* Heading/800 */
+  border-radius: 0.7rem;
+  border: solid var(--base-white, #fff);
+  border-width: 0.3rem 0.2rem 0;
+  outline: 0.3rem solid var(--base-black, #000);
+  /* Font */
   font-family: Chakra Petch;
-  font-size: 1.8vw;
-  font-style: normal;
+  font-size: 30px;
   font-weight: 700;
-  line-height: 100%;
+}
+#signin-btn:hover {
+  background: var(--PinkPurpleMix-Main, #ede6f9);
+  border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }
