@@ -96,23 +96,19 @@ export function User({ userId, channel }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
-	/*
-  const handleMatch = (id: number, username: string) => {
-    //To Fill
-  };
-
-	const handleOpenSettings = (id: number, username: string) => {
-		//To Fill
+	const handleChannelSettings = () => {
+		const newWindow = {
+			WindowName: "Member Setting",
+			id: 0,
+			content: { type: "MEMBERSETTINGS" },
+			toggle: false,
+			handleBarButton: 7,
+			color: WinColor.PURPLE,
+			targetId: userId,
+			channelId: channel?.channelId,
+		};
+		store.dispatch(addWindow(newWindow));
 	};
-
-	const handleOpenChat = (id: number, username: string) => {
-		//To Fill
-	};
-
-  const handleUnblockUser = (id: number, username: string) => {
-    //To Fill
-  };
-*/
 
 	if (!user) {
 		return (
@@ -162,6 +158,7 @@ export function User({ userId, channel }: UserProps) {
 					? "btn-disabled"
 					: ""
 			}
+			onClick={handleChannelSettings}
 		/>
 	) : (
 		<div></div>
@@ -224,7 +221,7 @@ export function User({ userId, channel }: UserProps) {
 											case UserRole.ADMIN:
 												return IconSVG["Star"];
 											default:
-												return null; // You can handle other cases if needed
+												return null;
 										}
 									})()}
 								</div>
