@@ -57,8 +57,8 @@ export function Profile({ targetId }: ProfileProps) {
 		data: historic,
 		isLoading: historicLoading,
 		error: historicError,
-	} = useQuery<
-		{
+	} = useQuery<{
+		matchHistory: {
 			id: number;
 			player1: string;
 			player2: string;
@@ -68,8 +68,9 @@ export function Profile({ targetId }: ProfileProps) {
 			player2_avatar: string;
 			score1: number;
 			score2: number;
-		}[]
-	>({
+		}[];
+		length: number;
+	}>({
 		queryKey: ["historic", targetId, historicMaxDisplay],
 		queryFn: async () => {
 			try {
@@ -588,10 +589,14 @@ export function Profile({ targetId }: ProfileProps) {
 					<List>
 						<div className="Count">
 							{"MATCH HISTORY (LATEST " +
-								historicMaxDisplay +
+								historic?.matchHistory.length +
+								") (" +
+								historic?.matchHistory.length +
+								"/" +
+								historic?.length +
 								")"}
 						</div>
-						{historic?.map((match) => {
+						{historic?.matchHistory.map((match) => {
 							return (
 								<div className="Match" key={match.id}>
 									<div
@@ -662,7 +667,8 @@ export function Profile({ targetId }: ProfileProps) {
 								</div>
 							);
 						})}
-						{historic && historic.length === historicMaxDisplay ? (
+						{historic &&
+						historic.matchHistory.length !== historic.length ? (
 							<div className="Loadmore">
 								<Button
 									content="Load More"
