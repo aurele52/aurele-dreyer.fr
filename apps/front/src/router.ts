@@ -1,7 +1,7 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./auth-page/Auth";
-import QRCode_2fa from "./QRCode_2fa";
+import TwoFA from "./TwoFA";
 
 const rootRoute = new RootRoute();
 
@@ -38,7 +38,7 @@ const authRedirectRoute = new Route({
 const authtwofaRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "auth/2fa",
-  component: QRCode_2fa,
+  component: TwoFA,
 });
 
 const routeTree = rootRoute.addChildren([
