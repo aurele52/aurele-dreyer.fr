@@ -20,6 +20,7 @@ import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
+import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -47,6 +48,7 @@ export function Background({ windows }: BackgroundProps) {
 		AVATARUPLOAD: { width: "300px", height: "250px" },
 		MEMBERSETTINGS: { width: "430px", height: "330px" },
 		CHANSETTINGS: { width: "500px", height: "350px" },
+		BANLIST: { width: "300px", height: "400px" },
 	};
 
 	return (
@@ -134,6 +136,13 @@ export function Background({ windows }: BackgroundProps) {
 							{window.content.type === "CHANSETTINGS" && (
 								<ChannelSettings
 									channelId={window.content.id}
+								/>
+							)}
+							{window.content.type === "BANLIST" && (
+								<BanList
+									channelId={
+										window.channelId ? window.channelId : 0
+									}
 								/>
 							)}
 						</Window>

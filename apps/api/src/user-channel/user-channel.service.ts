@@ -3,6 +3,7 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { UserChannelRoles } from './roles/user-channel.roles';
@@ -18,6 +19,24 @@ export class UserChannelService {
     role: UserChannelRoles;
   }) {
     const { userId, channelId, role } = params;
+
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelId,
+      },
+      include: {
+        banList: true,
+      },
+    });
+
+    if (!channel) {
+      throw new NotFoundException(`Channel with ID ${channelId} not found`);
+    }
+
+    if (channel && channel.banList.some((user) => user.id === userId)) {
+      throw new Error('User is banned in this channel.');
+    }
+
     const createUserChannel = await this.prisma.userChannel.create({
       data: {
         User: {
@@ -33,6 +52,7 @@ export class UserChannelService {
         role,
       },
     });
+
     return createUserChannel;
   }
 
@@ -61,11 +81,10 @@ export class UserChannelService {
       return {};
     }
 
-    const { id, role, User, mute, ban } = userChan;
+    const { id, role, User, mute } = userChan;
     const { username, avatar_url } = User;
 
     const isMuted = mute ? DateTime.fromJSDate(mute) > DateTime.now() : false;
-    const isBanned = ban ? DateTime.fromJSDate(ban) > DateTime.now() : false;
 
     return {
       id,
@@ -74,9 +93,7 @@ export class UserChannelService {
       username,
       avatar_url,
       isMuted,
-      isBanned,
       mutedUntil: DateTime.fromJSDate(mute).toJSDate(),
-      bannedUntil: DateTime.fromJSDate(ban).toJSDate(),
     };
   }
 }

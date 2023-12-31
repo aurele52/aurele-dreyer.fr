@@ -1,7 +1,7 @@
 import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
-import { CurrentUser } from 'src/decorators/user.decorator';
+import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 
@@ -65,5 +65,13 @@ export class ChannelController {
   ) {
     const { passwordConfirmation: _, ...channelData } = updateChannelDto;
     return this.channelService.updateChannel(channel_id, { ...channelData });
+  }
+
+  @Get('/banList/:chanId')
+  async getBanList(
+    @Param('chanId') channel_id: number,
+    @CurrentUserID() user_id: number,
+  ) {
+    return this.channelService.getBanList(user_id, channel_id);
   }
 }
