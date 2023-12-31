@@ -600,14 +600,11 @@ export function Profile({ targetId }: ProfileProps) {
 				<div className="Historic">
 					<List>
 						<div className="Count">
-							{"MATCH HISTORY (LATEST " +
-								historic?.matchHistory.length +
-								") (" +
-								historic?.matchHistory.length +
-								"/" +
-								historic?.length +
-								")"}
+							{historic?.matchHistory.length === historic?.length
+								? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
+								: `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
 						</div>
+
 						{historic?.matchHistory.map((match) => {
 							return (
 								<div className="Match" key={match.id}>
