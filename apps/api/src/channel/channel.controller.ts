@@ -20,6 +20,11 @@ export class ChannelController {
     return channels;
   }
 
+  @Get('/chat/:chatid')
+  async findChat(@CurrentUser() user, @Param('chatid') channel_id: number) {
+    return await this.channelService.chat(user.id, channel_id);
+  }
+
   @Get('/channels')
   async findOtherChannels(@CurrentUser() user) {
     return this.channelService.otherChannels({ currUserId: user.id });
