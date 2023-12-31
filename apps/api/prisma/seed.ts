@@ -12,10 +12,10 @@ async function createUsers() {
     const user = {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
-      auth42_id: faker.number.int().toString(),
-      token: faker.string.alphanumeric(),
-      secret: faker.string.alphanumeric(),
+      id_42: faker.number.int({min: 0, max: 10000}),
+      token_42: faker.string.alphanumeric(20),
       email_42: faker.internet.email(),
+      secret_2fa: faker.string.alphanumeric(),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };

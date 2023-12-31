@@ -44,11 +44,11 @@ model User {
   id               Int               @id @default(autoincrement())
   username         String            @unique
   avatar_url       String
-  auth42_id        String?           @unique
-  token            String?           @unique
   socked_id        String?           @unique
-  secret_2fa       String
+  id_42            Int?              @unique
+  token_42         String?           @unique
   email_42         String            @unique
+  secret_2fa       String
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   userChannels     UserChannel[]

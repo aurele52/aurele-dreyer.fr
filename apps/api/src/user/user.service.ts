@@ -173,8 +173,8 @@ export class UserService {
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
-        auth42_id: null,
-        token: null,
+        id_42: null,
+        token_42: null,
         avatar_url: 'http://localhost:5173/api/user/avatar/deletedUser.png',
       }, //delete avatar_url from public
     });

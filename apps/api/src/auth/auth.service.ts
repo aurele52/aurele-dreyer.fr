@@ -15,8 +15,12 @@ export class AuthService {
     try {
       const access_token_42 = await this.fetchAccessToken(code, state);
       const user_info = await this.fetchUserInfo(access_token_42.access_token);
-      const secret_2fa = "blablablou";
-      const user = await this.getOrCreateUser(access_token_42, user_info, secret_2fa);
+      const secret_2fa = 'blablablou';
+      const user = await this.getOrCreateUser(
+        access_token_42,
+        user_info,
+        secret_2fa,
+      );
       const token = await this.generateJWTToken(user);
 
       return token;
@@ -35,7 +39,7 @@ export class AuthService {
         client_id: process.env.API42_ID,
         client_secret: process.env.API42_SECRET,
         code: code,
-        redirect_uri: "http://localhost:3000/api/auth/callback",
+        redirect_uri: 'http://localhost:3000/api/auth/callback',
         state: state,
       }),
     }).then((response) => {
@@ -62,18 +66,22 @@ export class AuthService {
     });
   }
 
-  async getOrCreateUser(access_token_42: AccessToken42, user_info: UserInfo42, secret_2fa: string) {
+  async getOrCreateUser(
+    access_token_42: AccessToken42,
+    user_info: UserInfo42,
+    secret_2fa: string,
+  ) {
     return this.prisma.user.upsert({
-      where: { auth42_id: String(user_info.id) },
+      where: { id_42: user_info.id },
       update: {
         username: user_info.login,
-        token: access_token_42.access_token,
+        token_42: access_token_42.access_token,
       },
       create: {
-        auth42_id: String(user_info.id),
+        id_42: user_info.id,
         username: user_info.login,
         avatar_url: user_info.image.versions.small,
-        token: access_token_42.access_token,
+        token_42: access_token_42.access_token,
         secret_2fa,
         email_42: user_info.email,
       },
@@ -81,14 +89,17 @@ export class AuthService {
   }
 
   async generateJWTToken(user: User) {
-    const payload = { id: user.id, username: user.username, connected_at: new Date() };
+    const payload = {
+      id: user.id,
+      username: user.username,
+      connected_at: new Date(),
+    };
     return {
       access_token: await this.jwt.signAsync(payload),
     };
   }
 
-  async impersonateSignIn(id: number)
-  {
+  async impersonateSignIn(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
     });
