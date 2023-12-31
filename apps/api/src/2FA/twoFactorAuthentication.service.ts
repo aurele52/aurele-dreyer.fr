@@ -7,6 +7,7 @@ import { authenticator } from 'otplib';
 import { PrismaService } from 'src/prisma.service';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { error } from 'console';
 
 @Injectable()
 export class TwoFactorAuthenticationService {
@@ -32,8 +33,8 @@ export class TwoFactorAuthenticationService {
     const user = await this.checkUserFirstAuthentication(id);
     const secret = authenticator.generateSecret();
     const otpauthUrl = authenticator.keyuri(
-      user.email_42,
-      process.env.TWO_FACTOR_AUTHENTICATION_APP_NAME,
+      user.username,
+      process.env.APP_SECRET,
       secret,
     );
     await this.setTwoFactorAuthenticationSecret(secret, user.id);
@@ -65,7 +66,7 @@ export class TwoFactorAuthenticationService {
   ) {
     return authenticator.verify({
       token: twoFactorAuthenticationCode,
-      secret: user.secret_2fa,
+      secret: user.secret_2fa as string,
     });
   }
 }

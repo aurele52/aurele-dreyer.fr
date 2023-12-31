@@ -38,7 +38,7 @@ function TwoFA() {
         <div className="form-twofa">
           <label htmlFor="validation-code">Double-Authentication Code:</label>
           <input
-            type="text"
+            type="digit"
             placeholder="6 to 8 digits code"
             id="validation-code"
             name="validation-code"

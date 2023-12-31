@@ -38,12 +38,12 @@ export class TwoFactorAuthenticationController {
 
   @Public()
   @Post('submit/:id')
-  // @HttpCode(200)
-  async submitTwoFactorAuthenticationCode(@Param('id') id: number,
-    @Body("validation-code") code: string,
+  async submitTwoFactorAuthenticationCode(
+    @Param('id') id: number,
+    @Body('validation-code') code: string,
   ) {
-    console.log("code", code);
-    const user = this.twoFactorAuthenticationService.checkUserFirstAuthentication(id)
+    const user = await
+      this.twoFactorAuthenticationService.checkUserFirstAuthentication(id);
     const isCodeValid =
       this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
         code,
@@ -52,7 +52,6 @@ export class TwoFactorAuthenticationController {
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    console.log("user is logged");
-//    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+    //    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 }
