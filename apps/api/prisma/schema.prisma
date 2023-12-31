@@ -55,6 +55,7 @@ model User {
   friendship_user1 Friendship[]      @relation("user1_friendship")
   friendship_user2 Friendship[]      @relation("user2_friendship")
   bannedChannels   Channel[]         @relation("BannedChannels")
+  messages         Message[]         @relation()
 }
 
 model Message {
@@ -65,6 +66,7 @@ model Message {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   channel    Channel  @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Match {

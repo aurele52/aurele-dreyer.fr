@@ -85,10 +85,28 @@ export function Chat() {
 		}
 	};
 
+	const handleChatOpening = (chatId: number, chatName: string) => {
+		const newWindow = {
+			WindowName: chatName,
+			id: 0,
+			content: { type: "CHATSESSION", id: chatId },
+			toggle: false,
+			handleBarButton:
+				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+			color: WinColor.PURPLE,
+		};
+
+		store.dispatch(addWindow(newWindow));
+	};
+
 	return (
 		<div className="Chat">
 			<List>
 				{chats?.map((chat) => {
+					const name =
+						chat.type === "DM"
+							? chat.interlocutor.username
+							: chat.name;
 					return (
 						<div className="chatRow" key={chat.id}>
 							<Button
@@ -98,11 +116,7 @@ export function Chat() {
 								onClick={() => handleDetails(chat)}
 							/>
 							<Channel
-								name={
-									chat.type === "DM"
-										? chat.interlocutor?.username
-										: chat.name
-								}
+								name={name}
 								className={
 									chat.type === "DM"
 										? chat.type.toLowerCase()
@@ -110,10 +124,11 @@ export function Chat() {
 								}
 								image={
 									chat.type === "DM"
-										? chat.interlocutor?.avatar_url
+										? chat.interlocutor.avatar_url
 										: undefined
 								}
 								clickable={true}
+								onClick={() => handleChatOpening(chat.id, name)}
 							/>
 						</div>
 					);

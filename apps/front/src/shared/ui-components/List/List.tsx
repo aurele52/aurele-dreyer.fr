@@ -1,4 +1,4 @@
-import { ReactNode } from "react";
+import { ReactNode, forwardRef } from "react";
 import "./List.css";
 
 interface ListProps {
@@ -6,7 +6,12 @@ interface ListProps {
   children: ReactNode;
 }
 
-function List({ dark=true, children }: ListProps) {
-  return <div className={`List custom-scrollbar ${dark ? "dark-list" : ""}`}>{children}</div>;
-}
+const List = forwardRef<HTMLDivElement, ListProps>(({ dark = true, children }, ref) => {
+  return (
+    <div ref={ref} className={`List custom-scrollbar ${dark ? "dark-list" : ""}`}>
+      {children}
+    </div>
+  );
+});
+
 export default List;

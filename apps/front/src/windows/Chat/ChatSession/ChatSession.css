@@ -1,0 +1,45 @@
+.headerChatSession {
+  display: flex;
+  padding: 5px 10px;
+  align-items: center;
+  align-content: center;
+  gap: 10px;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+
+.ChatSession {
+  display: flex;
+  min-height: 100px;
+  padding: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 3px;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.footerChatSession {
+  display: flex;
+  padding: 8px 0;
+  align-items: center;
+  gap: 7px;
+  align-self: stretch;
+}
+
+.typeBarChatSession {
+  display: flex;
+  min-width: 50px;
+  padding: 10px;
+  align-items: center;
+  gap: 5px;
+  flex: 1 0 0;
+  border-radius: 6px;
+  background: var(--Base-White, #FFF);
+  border: none;
+  word-wrap: break-word;
+  resize: none;
+  min-height: 30px;
+  max-height: 150px;
+  overflow-y: auto;
+}

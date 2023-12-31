@@ -1,19 +1,26 @@
-import { Controller, Post, Get, Body } from '@nestjs/common';
+import { Body, Controller, Get, Param, Post } from '@nestjs/common';
 import { MessageService } from './message.service';
-import { CreateMessageDto } from './dto/create-message.dto';
-import { Message } from './interfaces/message.interface';
+import { CurrentUserID } from 'src/decorators/user.decorator';
 
-@Controller('Database/message')
+@Controller()
 export class MessageController {
-    constructor(private messageService: MessageService){}
+  constructor(private readonly messageService: MessageService) {}
 
-    @Post()
-    async create(@Body() createMessageDto: CreateMessageDto) {
-        this.messageService.create(createMessageDto);
-    }
+  @Get('/messages/:channelid')
+  async findChannelMessages(@Param('channelid') channel_id: number) {
+    return await this.messageService.channelMessages(channel_id);
+  }
 
-    @Get()
-    async findAll(): Promise<Message[]> {
-        return this.messageService.findAll();
-    }
+  @Post('/message')
+  async createMessage(
+    @Body('channel_id') channel_id: number,
+    @Body('message') content: string,
+    @CurrentUserID() user_id: number,
+  ) {
+    return await this.messageService.createMessage(
+      channel_id,
+      user_id,
+      content,
+    );
+  }
 }

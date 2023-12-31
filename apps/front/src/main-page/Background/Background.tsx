@@ -21,6 +21,7 @@ import Connection from "../../windows/Play/Connection";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
+import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -49,6 +50,7 @@ export function Background({ windows }: BackgroundProps) {
 		MEMBERSETTINGS: { width: "430px", height: "330px" },
 		CHANSETTINGS: { width: "500px", height: "350px" },
 		BANLIST: { width: "300px", height: "400px" },
+		CHATSESSION: { width: "350px", height: "500px" },
 	};
 
 	return (
@@ -144,6 +146,9 @@ export function Background({ windows }: BackgroundProps) {
 										window.channelId ? window.channelId : 0
 									}
 								/>
+							)}
+							{window.content.type === "CHATSESSION" && (
+								<ChatSession channelId={window.content.id} />
 							)}
 						</Window>
 					);
