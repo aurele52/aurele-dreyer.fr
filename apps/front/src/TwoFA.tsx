@@ -23,6 +23,17 @@ function TwoFA() {
   return (
     <div>
       <img src={data} />
+      <div>
+        <label>Double-Authentication Code:</label>
+        <input
+          type="number"
+          id="validation-code"
+          name="validation-code"
+          required
+          minlength="6"
+          maxlength="8"
+        />
+      </div>
     </div>
   );
 }
