@@ -14,6 +14,7 @@ type ButtonProps = {
 	content?: string;
 	type?: "button" | "submit" | "reset";
 	blackContent?: boolean;
+	notif?: number;
 } & HTMLAttributes<HTMLButtonElement>;
 
 export function Button({
@@ -23,6 +24,7 @@ export function Button({
 	className,
 	type,
 	blackContent,
+	notif,
 	...props
 }: ButtonProps) {
 	return (
@@ -36,6 +38,7 @@ export function Button({
 			<div className={`ButtonInner ${content && "ButtonText"}`}>
 				{icon && IconSVG[icon]}
 				{content}
+				{notif ? <div className="ButtonNotif"> {notif + " "}</div> : ""}
 			</div>
 		</button>
 	);

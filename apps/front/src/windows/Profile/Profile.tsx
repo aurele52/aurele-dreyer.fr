@@ -55,6 +55,30 @@ export function Profile({ targetId }: ProfileProps) {
 	});
 
 	const {
+		data: pendingRequests,
+		isLoading: pendingRequestsLoading,
+		error: pendingRequestsError,
+	} = useQuery<number>({
+		queryKey: ["pendingRequests", "Count"],
+		queryFn: async () => {
+			try {
+				if (targetId) return 0;
+				const response = await api.get(`/friendships/pendingList`);
+				return response.data?.filter(
+					(content: { type: "sent" | "received" }) =>
+						content.type === "received"
+				).length;
+			} catch {
+				console.error(
+					"Error pending invitations user:",
+					pendingRequestsError
+				);
+				throw pendingRequestsError;
+			}
+		},
+	});
+
+	const {
 		data: historic,
 		isLoading: historicLoading,
 		error: historicError,
@@ -152,7 +176,7 @@ export function Profile({ targetId }: ProfileProps) {
 
 	const selfProfile = targetId ? false : true;
 
-	if (historicLoading || profileLoading) {
+	if (historicLoading || profileLoading || pendingRequestsLoading) {
 		return (
 			<div className="Ladder">
 				<FaSpinner className="loadingSpinner" />
@@ -478,6 +502,7 @@ export function Profile({ targetId }: ProfileProps) {
 				color="purple"
 				style={{ display: "flex" }}
 				onClick={handleOpenFriendsList}
+				notif={pendingRequests ? pendingRequests : 0}
 			/>
 			<Button
 				content="blocked list"
@@ -600,14 +625,11 @@ export function Profile({ targetId }: ProfileProps) {
 				<div className="Historic">
 					<List>
 						<div className="Count">
-							{"MATCH HISTORY (LATEST " +
-								historic?.matchHistory.length +
-								") (" +
-								historic?.matchHistory.length +
-								"/" +
-								historic?.length +
-								")"}
+							{historic?.matchHistory.length === historic?.length
+								? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
+								: `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
 						</div>
+
 						{historic?.matchHistory.map((match) => {
 							return (
 								<div className="Match" key={match.id}>
