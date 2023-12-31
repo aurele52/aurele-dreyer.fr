@@ -36,20 +36,21 @@ export class TwoFactorAuthenticationController {
     );
   }
 
-  @Post('turn-on')
-  @HttpCode(200)
-  async turnOnTwoFactorAuthentication(
-    @CurrentUser() user,
+  @Public()
+  @Post('submit')
+  // @HttpCode(200)
+  async submitTwoFactorAuthenticationCode(
     @Body() code: string,
   ) {
-    const isCodeValid =
-      this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-        code,
-        user,
-      );
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
-    }
-    console.log('User logged');
+    console.log("code", code);
+    // const isCodeValid =
+    //   this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+    //     code,
+    //     user,
+    //   );
+    // if (!isCodeValid) {
+    //   throw new UnauthorizedException('Wrong authentication code');
+    // }
+    // console.log('User logged');
   }
 }
