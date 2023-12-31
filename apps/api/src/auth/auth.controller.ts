@@ -2,6 +2,7 @@ import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
+import { CurrentUserID } from 'src/decorators/user.decorator';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
@@ -39,5 +40,10 @@ export class AuthController {
   async impersonateUser(@Param('id') id: number) {
     const token = await this.authService.impersonateSignIn(id);
     return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+  }
+
+  @Get('/disconnect')
+  async disconnectUser(@CurrentUserID() id: number) {
+    await this.authService.disconnectUser(id);
   }
 }

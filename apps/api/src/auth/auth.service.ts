@@ -76,14 +76,15 @@ export class AuthService {
       update: {
         username: user_info.login,
         token_42: access_token_42.access_token,
+        email_42: user_info.email,
       },
       create: {
-        id_42: user_info.id,
         username: user_info.login,
         avatar_url: user_info.image.versions.small,
+        id_42: user_info.id,
         token_42: access_token_42.access_token,
-        secret_2fa,
         email_42: user_info.email,
+        secret_2fa,
       },
     });
   }
@@ -105,5 +106,14 @@ export class AuthService {
     });
     const access_token = await this.generateJWTToken(user);
     return access_token;
+  }
+
+  async disconnectUser(id: number) {
+    await this.prisma.user.update({
+      where: { id },
+      data: {
+        token_42: null,
+      },
+    });
   }
 }
