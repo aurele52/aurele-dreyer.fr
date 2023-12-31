@@ -1,16 +1,32 @@
-import { Controller, Get, Param, Query, Redirect } from '@nestjs/common';
+import {
+  Body,
+  Controller,
+  Get,
+  Param,
+  Post,
+  Query,
+  Redirect,
+  Res,
+  UnauthorizedException,
+} from '@nestjs/common';
+import { Response } from 'express';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { CurrentUserID } from 'src/decorators/user.decorator';
-
+import { JWT } from './jwt.services';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
 
 @Controller('/auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly jwtService: JWT,
+  ) {}
 
   @Public()
   @Get('/')
@@ -33,10 +49,11 @@ export class AuthController {
     const user = await this.authService.signIn(code, state);
     if (user.is_enable_2fa) {
       return { url: `http://localhost:5173/auth/2fa/${user.id}` };
-    } 
-    else {
-    const token = await this.authService.generateJWTToken(user);
-    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+    } else {
+      const token = await this.jwtService.generateJWTToken(user);
+      return {
+        url: `http://localhost:5173/auth/redirect/${token.access_token}`,
+      };
     }
   }
 
@@ -44,12 +61,46 @@ export class AuthController {
   @Redirect()
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
-    const token = await this.authService.impersonateSignIn(id);
+    const token = await this.jwtService.generateFakeJWTToken(id);
     return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 
   @Get('/disconnect')
   async disconnectUser(@CurrentUserID() id: number) {
     await this.authService.disconnectUser(id);
+  }
+
+  @Public()
+  @Get('/2fa/generate/:id')
+  async register(@Res() response: Response, @Param('id') id: number) {
+    const { otpauthUrl } =
+      await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(
+        id,
+      );
+    return this.twoFactorAuthenticationService.pipeQrCodeStream(
+      response,
+      otpauthUrl,
+    );
+  }
+
+  @Public()
+  @Post('/2fa/submit/:id')
+  async submitTwoFactorAuthenticationCode(
+    @Param('id') id: number,
+    @Body('validation-code') code: string,
+  ) {
+    const user =
+      await this.twoFactorAuthenticationService.checkUserFirstAuthentication(
+        id,
+      );
+    const isCodeValid =
+      this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+        code,
+        user,
+      );
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+    //    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 }

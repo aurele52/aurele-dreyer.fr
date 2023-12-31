@@ -7,7 +7,6 @@ import { authenticator } from 'otplib';
 import { PrismaService } from 'src/prisma.service';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
-import { error } from 'console';
 
 @Injectable()
 export class TwoFactorAuthenticationService {

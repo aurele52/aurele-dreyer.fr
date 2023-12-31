@@ -1,6 +1,5 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { JwtService } from '@nestjs/jwt';
 import { AccessToken42, UserInfo42 } from './auth.types';
 import { User } from '@prisma/client';
 
@@ -8,7 +7,6 @@ import { User } from '@prisma/client';
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwt: JwtService,
   ) {}
 
   async signIn(code: string, state: string) {
@@ -86,25 +84,6 @@ export class AuthService {
         is_enable_2fa : true,
       },
     });
-  }
-
-  async generateJWTToken(user: User) {
-    const payload = {
-      id: user.id,
-      username: user.username,
-      connected_at: new Date(),
-    };
-    return {
-      access_token: await this.jwt.signAsync(payload),
-    };
-  }
-
-  async impersonateSignIn(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: { id: id },
-    });
-    const access_token = await this.generateJWTToken(user);
-    return access_token;
   }
 
   async disconnectUser(id: number) {

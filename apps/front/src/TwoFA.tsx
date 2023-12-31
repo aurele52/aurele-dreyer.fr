@@ -20,7 +20,7 @@ function TwoFA() {
     refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
-        .get(`/2fa/generate/${id}`, { responseType: "blob" })
+        .get(`/auth/2fa/generate/${id}`, { responseType: "blob" })
         .then((response) => {
           const imageUrl = URL.createObjectURL(response.data);
           return imageUrl;
@@ -34,7 +34,7 @@ function TwoFA() {
   return (
     <div>
       <img src={data} />
-      <form className="form-twofa" action={`http://localhost:3000/api/2fa/submit/${id}`} method="post">
+      <form className="form-twofa" action={`http://localhost:3000/api/auth/2fa/submit/${id}`} method="post">
         <div className="form-twofa">
           <label htmlFor="validation-code">Double-Authentication Code:</label>
           <input
