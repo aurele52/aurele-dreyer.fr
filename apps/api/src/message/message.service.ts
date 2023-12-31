@@ -1,15 +1,31 @@
 import { Injectable } from '@nestjs/common';
-import { Message } from './interfaces/message.interface';
+import { PrismaService } from 'src/prisma.service';
 
 @Injectable()
 export class MessageService {
-    private readonly messages: Message[] = [];
+  constructor(private readonly prisma: PrismaService) {}
 
-    create(message: Message) {
-        this.messages.push(message);
-    }
+  async channelMessages(channel_id: number) {
+    return await this.prisma.message.findMany({
+      where: {
+        channel_id,
+      },
+      include: {
+        user: true,
+      },
+      orderBy: {
+        created_at: 'asc',
+      },
+    });
+  }
 
-    findAll(): Message[] {
-        return this.messages;
-    }
+  async createMessage(channel_id: number, user_id: number, content: string) {
+    return await this.prisma.message.create({
+      data: {
+        channel_id,
+        user_id,
+        content,
+      },
+    });
+  }
 }

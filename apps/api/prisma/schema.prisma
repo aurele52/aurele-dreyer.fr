@@ -53,6 +53,7 @@ model User {
   achievement      UserAchievement[]
   friendship_user1 Friendship[]      @relation("user1_friendship")
   friendship_user2 Friendship[]      @relation("user2_friendship")
+  messages         Message[]
 }
 
 model Message {
@@ -63,6 +64,7 @@ model Message {
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
   channel    Channel  @relation(fields: [channel_id], references: [id])
+  user       User     @relation(fields: [user_id], references: [id])
 }
 
 model Match {

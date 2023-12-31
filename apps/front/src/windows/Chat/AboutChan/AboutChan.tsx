@@ -15,7 +15,7 @@ interface AboutChanProps {
   chanId: number | undefined;
 }
 
-type ChannelData = {
+export type ChannelData = {
   id: number;
   name: string;
   type: string;
@@ -207,3 +207,4 @@ function AboutChan({ chanId }: AboutChanProps) {
 }
 
 export default AboutChan;
+

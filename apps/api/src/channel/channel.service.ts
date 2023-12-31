@@ -42,6 +42,31 @@ export class ChannelService {
     }));
   }
 
+  async chat(user_id: number, channel_id: number) {
+    const chat = await this.prisma.channel.findFirst({
+      where: {
+        userChannels: {
+          some: {
+            user_id,
+            channel_id,
+          },
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
+    return {
+      ...chat,
+      interlocutor: chat.userChannels.find((uc) => uc.User?.id !== user_id)
+        ?.User,
+    };
+  }
+
   async otherChannels(params: { currUserId: number }) {
     const { currUserId } = params;
     return await this.prisma.channel.findMany({

@@ -19,6 +19,7 @@ import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
+import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -45,6 +46,7 @@ export function Background({ windows }: BackgroundProps) {
     ADDMEMBERS: { width: "300px", height: "400px" },
     AVATARUPLOAD: { width: "300px", height: "250px" },
     CHANSETTINGS: { width: "500px", height: "350px" },
+    CHATSESSION: { width: "350px", height: "500px" },
   };
 
   return (
@@ -104,6 +106,7 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "CHANSETTINGS" && (
                 <ChannelSettings channelId={window.content.id} />
               )}
+              {window.content.type === "CHATSESSION" && <ChatSession channelId={window.content.id} />}
             </Window>
           );
         })}
