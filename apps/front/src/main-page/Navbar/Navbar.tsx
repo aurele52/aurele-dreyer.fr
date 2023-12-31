@@ -73,6 +73,25 @@ export function Navbar({ dispatch }: NavbarProps) {
   return (
     <div id="Navbar">
       <div>
+        <button type="button" className="NavButton" onClick={handlePlay}>
+          PLAY
+        </button>
+        <button type="button" className="NavButton" onClick={handleLadder}>
+          LADDER
+        </button>
+        <button type="button" className="NavButton" onClick={handleChat}>
+          CHAT
+        </button>
+        <button type="button" className="NavButton" onClick={handleProfile}>
+          MY PROFILE
+        </button>
+      </div>
+      {/* <Button icon="LogOut" color="red" onClick={handleLogOut} /> */}
+    </div>
+  );
+  return (
+    <div id="Navbar">
+      <div>
         <div className="NavButton" onClick={handlePlay}>
           <div>
             <div>PLAY</div>
