@@ -7,7 +7,6 @@ import {
   Query,
   Redirect,
   Res,
-  UnauthorizedException,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { randomBytes } from 'crypto';
@@ -52,7 +51,7 @@ export class AuthController {
     } else {
       const token = await this.jwtService.generateJWTToken(user);
       return {
-        url: `http://localhost:5173/auth/redirect/${token.access_token}`,
+        url: `http://localhost:5173/auth/redirect/${token}`,
       };
     }
   }
@@ -62,7 +61,7 @@ export class AuthController {
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
     const token = await this.jwtService.generateFakeJWTToken(id);
-    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+    return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 
   @Get('/disconnect')
@@ -84,6 +83,7 @@ export class AuthController {
   }
 
   @Public()
+  @Redirect()
   @Post('/2fa/submit/:id')
   async submitTwoFactorAuthenticationCode(
     @Param('id') id: number,
@@ -93,14 +93,11 @@ export class AuthController {
       await this.twoFactorAuthenticationService.checkUserFirstAuthentication(
         id,
       );
-    const isCodeValid =
-      this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-        code,
-        user,
-      );
-    if (!isCodeValid) {
-      throw new UnauthorizedException('Wrong authentication code');
-    }
-    //    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+    this.twoFactorAuthenticationService.checkTwoFactorAuthenticationCodeValidity(
+      code,
+      user,
+    );
+    const token = await this.jwtService.generateJWTToken(user);
+    return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 }

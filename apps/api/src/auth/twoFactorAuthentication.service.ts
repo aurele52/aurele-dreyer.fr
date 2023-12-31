@@ -59,13 +59,17 @@ export class TwoFactorAuthenticationService {
     return toFileStream(stream, otpauthUrl);
   }
 
-  public isTwoFactorAuthenticationCodeValid(
+  public checkTwoFactorAuthenticationCodeValidity(
     twoFactorAuthenticationCode: string,
     user,
   ) {
-    return authenticator.verify({
-      token: twoFactorAuthenticationCode,
-      secret: user.secret_2fa as string,
-    });
+    if (
+      !authenticator.verify({
+        token: twoFactorAuthenticationCode,
+        secret: user.secret_2fa as string,
+      })
+    ) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
   }
 }

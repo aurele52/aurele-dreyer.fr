@@ -16,16 +16,13 @@ export class JWT {
       username: user.username,
       connected_at: new Date(),
     };
-    return {
-      access_token: await this.jwt.signAsync(payload),
-    };
+    return await this.jwt.signAsync(payload);
   }
 
   async generateFakeJWTToken(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
     });
-    const access_token = await this.generateJWTToken(user);
-    return access_token;
+    return await this.generateJWTToken(user);
   }
 }
