@@ -128,8 +128,6 @@ export function Window({
 				width: state.width,
 				height: state.height,
 			}}
-			minWidth={width}
-			minHeight={height}
 			bounds="#Background"
 			dragHandleClassName="handleBar"
 			enableResizing={!state.windowResizeLock}
