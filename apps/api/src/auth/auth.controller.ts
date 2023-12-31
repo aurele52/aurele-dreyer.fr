@@ -32,6 +32,11 @@ export class AuthController {
   ) {
     const token = await this.authService.signIn(code, state);
     return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
+    //if (user.is_enable_2fa) {
+    // return { url: `http://localhost:5173/auth/2fa` };
+    // } else {
+    // generate token and send it to front
+    // }
   }
 
   @Public() // Ne pas laisser ça public car normalement réservé aux admins

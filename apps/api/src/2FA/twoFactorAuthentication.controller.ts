@@ -7,10 +7,9 @@ import {
   Post,
   Body,
   HttpCode,
-  Req,
   UnauthorizedException,
-  UseGuards,
   Query,
+  Param,
 } from '@nestjs/common';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { Response } from 'express';
@@ -24,30 +23,33 @@ export class TwoFactorAuthenticationController {
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
   ) {}
 
-  @Get('/generate')
-  async register(@Res() response: Response, @CurrentUser() user) {
+  @Public()
+  @Get('/generate/:id')
+  async register(@Res() response: Response, @Param('id') id: number) {
     const { otpauthUrl } =
       await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(
-        user,
+        id,
       );
     return this.twoFactorAuthenticationService.pipeQrCodeStream(
       response,
       otpauthUrl,
     );
   }
+
   @Post('turn-on')
   @HttpCode(200)
   async turnOnTwoFactorAuthentication(
     @CurrentUser() user,
-    //@Query('code') code: string,
-    @Body() code : string
+    @Body() code: string,
   ) {
-    const isCodeValid = this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-      code, user
-    );
+    const isCodeValid =
+      this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+        code,
+        user,
+      );
     if (!isCodeValid) {
       throw new UnauthorizedException('Wrong authentication code');
     }
-    console.log("Utilisateur logged");
+    console.log('User logged');
   }
 }

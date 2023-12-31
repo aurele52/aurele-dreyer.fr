@@ -1,13 +1,15 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./axios";
+import axios from "axios";
 
 function TwoFA() {
+  const user_id = 3;
   const { data, error, isLoading } = useQuery<string>({
     queryKey: ["QRcode"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
-        .get("/2fa/generate", { responseType: "blob" })
+        .get(`/2fa/generate/${user_id}`, { responseType: "blob" })
         .then((response) => {
           const imageUrl = URL.createObjectURL(response.data);
           return imageUrl;
