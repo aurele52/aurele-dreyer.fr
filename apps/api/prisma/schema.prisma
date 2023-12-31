@@ -49,6 +49,7 @@ model User {
   token_42         String?           @unique
   email_42         String            @unique
   secret_2fa       String
+  is_enable_2fa    Boolean
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt
   userChannels     UserChannel[]

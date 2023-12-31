@@ -37,20 +37,22 @@ export class TwoFactorAuthenticationController {
   }
 
   @Public()
-  @Post('submit')
+  @Post('submit/:id')
   // @HttpCode(200)
-  async submitTwoFactorAuthenticationCode(
-    @Body() code: string,
+  async submitTwoFactorAuthenticationCode(@Param('id') id: number,
+    @Body("validation-code") code: string,
   ) {
     console.log("code", code);
-    // const isCodeValid =
-    //   this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
-    //     code,
-    //     user,
-    //   );
-    // if (!isCodeValid) {
-    //   throw new UnauthorizedException('Wrong authentication code');
-    // }
-    // console.log('User logged');
+    const user = this.twoFactorAuthenticationService.checkUserFirstAuthentication(id)
+    const isCodeValid =
+      this.twoFactorAuthenticationService.isTwoFactorAuthenticationCodeValid(
+        code,
+        user,
+      );
+    if (!isCodeValid) {
+      throw new UnauthorizedException('Wrong authentication code');
+    }
+    console.log("user is logged");
+//    return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
   }
 }

@@ -21,9 +21,7 @@ export class AuthService {
         user_info,
         secret_2fa,
       );
-      const token = await this.generateJWTToken(user);
-
-      return token;
+        return (user);
     } catch (error) {
       console.log(error);
       return error;
@@ -85,6 +83,7 @@ export class AuthService {
         token_42: access_token_42.access_token,
         email_42: user_info.email,
         secret_2fa,
+        is_enable_2fa : true,
       },
     });
   }

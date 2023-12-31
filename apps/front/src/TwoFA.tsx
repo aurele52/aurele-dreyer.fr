@@ -1,7 +1,9 @@
 import { useQuery } from "@tanstack/react-query";
 import api from "./axios";
+import { router } from "./router.ts";
 import axios from "axios";
 import { FormEvent } from "react";
+import { useParams } from "@tanstack/react-router";
 
 // const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
 //   e.preventDefault();
@@ -12,13 +14,13 @@ import { FormEvent } from "react";
 // }
 
 function TwoFA() {
-  const user_id = 3;
+  const { id } = useParams({ strict: false });
   const { data, error, isLoading } = useQuery<string>({
     queryKey: ["QRcode"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
-        .get(`/2fa/generate/${user_id}`, { responseType: "blob" })
+        .get(`/2fa/generate/${id}`, { responseType: "blob" })
         .then((response) => {
           const imageUrl = URL.createObjectURL(response.data);
           return imageUrl;
@@ -32,7 +34,7 @@ function TwoFA() {
   return (
     <div>
       <img src={data} />
-      <form className="form-twofa" action="http://localhost:3000/api/2fa/submit" method="post">
+      <form className="form-twofa" action={`http://localhost:3000/api/2fa/submit/${id}`} method="post">
         <div className="form-twofa">
           <label htmlFor="validation-code">Double-Authentication Code:</label>
           <input

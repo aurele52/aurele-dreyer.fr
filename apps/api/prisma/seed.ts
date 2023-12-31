@@ -16,6 +16,7 @@ async function createUsers() {
       token_42: faker.string.alphanumeric(20),
       email_42: faker.internet.email(),
       secret_2fa: faker.string.alphanumeric(),
+      is_enable_2fa: false,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };

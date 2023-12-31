@@ -29,7 +29,7 @@ const authRedirectRoute = new Route({
     if (!!params.token) {
       window.localStorage.setItem("token", params.token);
       throw redirect({
-        to: "/auth/2fa",
+        to: "/",
       });
     }
   },
@@ -37,9 +37,10 @@ const authRedirectRoute = new Route({
 
 const authtwofaRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "/auth/2fa",
+  path: "/auth/2fa/$id",
   component: TwoFA,
 });
+
 
 const routeTree = rootRoute.addChildren([
   appRoute,

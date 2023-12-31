@@ -30,13 +30,14 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    const token = await this.authService.signIn(code, state);
+    const user = await this.authService.signIn(code, state);
+    if (user.is_enable_2fa) {
+      return { url: `http://localhost:5173/auth/2fa/${user.id}` };
+    } 
+    else {
+    const token = await this.authService.generateJWTToken(user);
     return { url: `http://localhost:5173/auth/redirect/${token.access_token}` };
-    //if (user.is_enable_2fa) {
-    // return { url: `http://localhost:5173/auth/2fa` };
-    // } else {
-    // generate token and send it to front
-    // }
+    }
   }
 
   @Public() // Ne pas laisser ça public car normalement réservé aux admins
