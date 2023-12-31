@@ -134,4 +134,56 @@ export class UserService {
       };
     }
   }
+
+  async deleteUser(id: number) {
+    const user = await this.prisma.user.findUnique({
+      where: {
+        id: id,
+      },
+    });
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
+    const friendships = await this.prisma.friendship.findMany({
+      where: {
+        OR: [{ user1_id: id }, { user2_id: id }],
+      },
+    });
+
+    for (const friendship of friendships) {
+      await this.prisma.friendship.delete({
+        where: { id: friendship.id },
+      });
+    }
+
+    await this.prisma.userChannel.deleteMany({
+      where: {
+        user_id: id,
+      },
+    });
+
+    await this.prisma.userAchievement.deleteMany({
+      where: {
+        user_id: id,
+      },
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: {
+        auth42_id: null,
+        token: null,
+        avatar_url: 'http://localhost:5173/api/user/avatar/deletedUser.png',
+      }, //delete avatar_url from public
+    });
+
+    await this.prisma.user.update({
+      where: { id: user.id },
+      data: { username: 'deletedUser' + id },
+    });
+
+    return HttpStatus.OK;
+  }
 }

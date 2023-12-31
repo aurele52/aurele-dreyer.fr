@@ -6,17 +6,11 @@ const handleSignin = () => {
 
 function Auth() {
   return (
-    <div>
-      <div id="centered-container">
-        <div>
-          <div id="signin-button" onClick={handleSignin}>
-            <div>
-              <div>
-                <div>SIGN IN WITH 42AUTH</div>
-              </div>
-            </div>
-          </div>
-        </div>
+    <div id="bg-container">
+      <div id="purple-container">
+        <button type="button" id="signin-btn" onClick={handleSignin}>
+          SIGN IN WITH 42AUTH
+        </button>
       </div>
     </div>
   );

@@ -18,16 +18,17 @@ import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFrie
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
 import Connection from "../../windows/Play/Connection";
+import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-	interface WindowDimensions {
-		width: string;
-		height: string;
-	}
+  interface WindowDimensions {
+    width: string;
+    height: string;
+  }
 
   const windowDimensions: Record<string, WindowDimensions> = {
     PLAY: { width: "820px", height: "540px" },
@@ -47,6 +48,7 @@ export function Background({ windows }: BackgroundProps) {
     AVATARUPLOAD: { width: "300px", height: "250px" },
     CHANSETTINGS: { width: "500px", height: "350px" },
     CHATSESSION: { width: "350px", height: "500px" },
+    MEMBERSETTINGS: { width: "430px", height: "330px" },
   };
 
   return (
@@ -77,7 +79,9 @@ export function Background({ windows }: BackgroundProps) {
                 <Profile targetId={window.content.id || undefined} />
               )}
               {window.content.type === "FINDCHAN" && <FindChan />}
-              {window.content.type === "NEWCHAN" && <NewChan winId={window.id} />}
+              {window.content.type === "NEWCHAN" && (
+                <NewChan winId={window.id} />
+              )}
               {window.content.type === "ABOUTCHAN" && (
                 <AboutChan chanId={window.content.id || undefined} />
               )}
@@ -106,7 +110,16 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "CHANSETTINGS" && (
                 <ChannelSettings channelId={window.content.id} />
               )}
-              {window.content.type === "CHATSESSION" && <ChatSession channelId={window.content.id} />}
+              {window.content.type === "CHATSESSION" && (
+                <ChatSession channelId={window.content.id} />
+              )}
+              {window.content.type === "MEMBERSETTINGS" && (
+                <MemberSettings
+                  targetId={window.targetId ? window.targetId : 0}
+                  channelId={window.channelId ? window.channelId : 0}
+                  winId={window.id}
+                />
+              )}
             </Window>
           );
         })}
@@ -115,7 +128,7 @@ export function Background({ windows }: BackgroundProps) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-	windows: state.windows,
+  windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);

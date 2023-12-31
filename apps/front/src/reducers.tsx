@@ -18,10 +18,12 @@ interface WindowData {
 		content: ReactNode;
 		action?: ActionKey;
 		targetId?: number;
+		channelId?: number;
 	};
 	handleBarButton: number;
 	color: WinColor;
 	targetId?: number;
+	channelId?: number;
 }
 
 export interface AppState<T = WindowData> {
@@ -61,6 +63,7 @@ const windowsSlice = createSlice({
 				"BLOCKEDUSERS",
 				"ADDFRIENDS",
 				"AVATARUPLOAD",
+				"MEMBERSETTINGS",
 			];
 
 			if (

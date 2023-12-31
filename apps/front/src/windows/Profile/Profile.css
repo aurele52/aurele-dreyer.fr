@@ -236,10 +236,6 @@
 	flex: 1 0 0;
 	align-self: stretch;
 	border-radius: 10px;
-	border-top: 3px solid var(--border-border-outside, #000);
-	border-right: 2px solid var(--border-border-outside, #000);
-	border-bottom: 1px solid var(--border-border-outside, #000);
-	border-left: 2px solid var(--border-border-outside, #000);
 	background: var(--Purple-300, #bba0e9);
 }
 
@@ -258,6 +254,32 @@
 	align-items: flex-start;
 	gap: 5px;
 	flex: 1 0 0;
+	align-self: stretch;
+}
+
+.Profile > .Body > .Historic > .List > .Count {
+	display: flex;
+	padding: 0px 2px;
+	justify-content: space-between;
+	align-items: flex-start;
+	align-content: flex-start;
+	row-gap: 5px;
+	align-self: stretch;
+	flex-wrap: wrap;
+	color: var(--text-text-primary, #000);
+	font-family: Chakra Petch;
+	font-size: 12px;
+	font-style: normal;
+	font-weight: 600;
+	line-height: normal;
+}
+
+.Profile > .Body > .Historic > .List > .Loadmore {
+	display: flex;
+	padding: 5px 0px;
+	flex-direction: column;
+	align-items: center;
+	gap: 10px;
 	align-self: stretch;
 }
 
