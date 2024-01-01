@@ -352,6 +352,9 @@ export function Profile({ targetId }: ProfileProps) {
 		);
 	};
 
+	const handleSet2fa = async () => {};
+	const handleUnset2fa = async () => {};
+
 	const nameDiv = () => {
 		if (!selfProfile)
 			return (
@@ -519,6 +522,7 @@ export function Profile({ targetId }: ProfileProps) {
 		</div>
 	);
 
+	const is2FaEnabled = false;
 	const footer = selfProfile ? (
 		<div className="Footer">
 			<Button
@@ -526,6 +530,12 @@ export function Profile({ targetId }: ProfileProps) {
 				color="red"
 				style={{ display: "flex" }}
 				onClick={handleDeleteAccount}
+			/>
+			<Button
+				content={is2FaEnabled ? "disable 2fa" : "enable 2fa"}
+				color={is2FaEnabled ? "red" : "purple"}
+				style={{ display: "flex" }}
+				onClick={is2FaEnabled ? handleUnset2fa : handleSet2fa}
 			/>
 		</div>
 	) : (
