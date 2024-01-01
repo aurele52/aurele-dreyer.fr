@@ -76,7 +76,7 @@ export class AuthService {
         avatar_url: user_info.image.versions.small,
         id_42: user_info.id,
         token_42: access_token_42.access_token,
-        is_enable_2fa: true,
+        is_enable_2fa: false,
       },
     });
   }
