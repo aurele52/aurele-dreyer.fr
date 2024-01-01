@@ -2,16 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import api from "./axios";
 import { router } from "./router.ts";
 import axios from "axios";
-import { FormEvent } from "react";
 import { useParams } from "@tanstack/react-router";
-
-// const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
-//   e.preventDefault();
-//   const target = e.target as HTMLFormElement;
-//   const formData = Object.fromEntries(new FormData(target));
-//   console.log("formData: ", formData);
-//   //send code to back
-// }
 
 function TwoFA() {
   const { id } = useParams({ strict: false });
@@ -40,19 +31,22 @@ function TwoFA() {
         method="post"
       >
         <div className="form-twofa">
-          <label htmlFor="validation-code">Double-Authentication Code:</label>
-          <input
-            type="digit"
-            placeholder="6 to 8 digits code"
-            id="validation-code"
-            name="validation-code"
-            required
-            minLength={6}
-            maxLength={8}
-          />
+          <label htmlFor="validation-code">
+            Double-Authentication Code:
+            <input
+              type="digit"
+              placeholder="6 to 8 digits code"
+              id="validation-code"
+              name="google-authenticator-code"
+              required
+              minLength={6}
+              maxLength={8}
+            />
+          </label>
         </div>
+        <button type="submit">SUBMIT</button>
       </form>
-      <button className="return-button" onClick={ () => handleBackToSignIn(id)}>
+      <button className="return-button" onClick={() => handleBackToSignIn(id)}>
         BACK TO SIGN-IN
       </button>
     </div>

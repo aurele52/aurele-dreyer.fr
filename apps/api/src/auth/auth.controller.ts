@@ -101,7 +101,7 @@ export class AuthController {
   @Post('/2fa/submit/:id')
   async submitTwoFactorAuthenticationCode(
     @Param('id') id: number,
-    @Body('validation-code') code: string,
+    @Body('google-authenticator-code') code: string,
   ) {
     const user =
       await this.twoFactorAuthenticationService.checkUserFirstAuthentication(
