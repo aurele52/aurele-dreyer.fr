@@ -59,7 +59,7 @@ export function Profile({ targetId }: ProfileProps) {
 		isLoading: pendingRequestsLoading,
 		error: pendingRequestsError,
 	} = useQuery<number>({
-		queryKey: ["pendingRequests", "Count"],
+		queryKey: ["pendingRequests", "Profile"],
 		queryFn: async () => {
 			try {
 				if (targetId) return 0;
