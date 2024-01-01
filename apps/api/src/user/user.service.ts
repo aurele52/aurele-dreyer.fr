@@ -9,6 +9,9 @@ export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getOtherUser(selfId: number, userId: number) {
+    if (!userId) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     const user = await this.prisma.user.findUnique({
       where: {
         id: userId,
@@ -152,17 +155,40 @@ export class UserService {
       },
     });
 
-    for (const friendship of friendships) {
-      await this.prisma.friendship.delete({
-        where: { id: friendship.id },
-      });
-    }
+    await Promise.all(
+      friendships.map(async (friendship) => {
+        await this.prisma.friendship.delete({
+          where: { id: friendship.id },
+        });
+      }),
+    );
 
-    await this.prisma.userChannel.deleteMany({
+    const userChannels = await this.prisma.userChannel.findMany({
       where: {
         user_id: id,
       },
+      include: {
+        Channel: true,
+      },
     });
+
+    await Promise.all(
+      userChannels.map(async (userChannel) => {
+        await this.prisma.userChannel.delete({
+          where: { id: userChannel.id },
+        });
+
+        if (userChannel.Channel.type === 'DM') {
+          const channel_id = userChannel.Channel.id;
+
+          await this.prisma.channel.delete({
+            where: {
+              id: channel_id,
+            },
+          });
+        }
+      }),
+    );
 
     await this.prisma.userAchievement.deleteMany({
       where: {
@@ -177,12 +203,8 @@ export class UserService {
         token_42: null,
         secret_2fa: null,
         avatar_url: 'http://localhost:5173/api/user/avatar/deletedUser.png',
-      }, //delete avatar_url from public
-    });
-
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: { username: 'deletedUser' + id },
+        username: 'deletedUser' + id,
+      },
     });
 
     return HttpStatus.OK;

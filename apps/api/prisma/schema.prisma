@@ -22,7 +22,8 @@ model Channel {
   created_at   DateTime      @default(now())
   updated_at   DateTime      @default(now()) @updatedAt
   userChannels UserChannel[]
-  messages     Message[]
+  messages     Message[]     @relation()
+  banList      User[]        @relation("BannedChannels")
 }
 
 model UserChannel {
@@ -30,12 +31,11 @@ model UserChannel {
   user_id    Int
   channel_id Int
   role       Role
-  ban        DateTime?
   mute       DateTime?
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [id])
-  Channel    Channel   @relation(fields: [channel_id], references: [id])
+  Channel    Channel   @relation(fields: [channel_id], references: [id], onDelete: Cascade)
 
   @@unique([user_id, channel_id])
 }
@@ -56,6 +56,8 @@ model User {
   achievement      UserAchievement[]
   friendship_user1 Friendship[]      @relation("user1_friendship")
   friendship_user2 Friendship[]      @relation("user2_friendship")
+  bannedChannels   Channel[]         @relation("BannedChannels")
+  messages         Message[]         @relation()
 }
 
 model Message {
@@ -65,7 +67,8 @@ model Message {
   content    String
   created_at DateTime @default(now())
   updated_at DateTime @updatedAt
-  channel    Channel  @relation(fields: [channel_id], references: [id])
+  channel    Channel  @relation(fields: [channel_id], references: [id], onDelete: Cascade)
+  user       User     @relation(fields: [user_id], references: [id], onDelete: Cascade)
 }
 
 model Match {

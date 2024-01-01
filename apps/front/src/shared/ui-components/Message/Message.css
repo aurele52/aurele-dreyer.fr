@@ -1,0 +1,105 @@
+.rowMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: 5px;
+  align-self: stretch;
+}
+
+.avatarWrapperMessage {
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  align-items: flex-start;
+}
+
+.avatarMessage {
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 5px solid var(--colors-grey-white, #FFF);
+  background: var(--colors-grey-grey-400, #888);
+}
+
+.contentMessage {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-start;
+  gap: 5px;
+  flex: 1 0 0;
+  align-self: stretch;
+}
+
+.contentMessage.selfMessage {
+  align-items: flex-end;
+}
+
+.detailsBarMessage {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+  align-content: flex-start;
+  row-gap: 5px;
+  align-self: stretch;
+  flex-wrap: wrap;
+}
+
+.nameMessage {
+  color: var(--Base-White, #FFF);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  max-width: 50%;
+}
+
+.timestampMessage {
+  display: flex;
+  align-items: flex-start;
+  gap: 10px;
+}
+
+.dateMessage {
+  color: var(--Base-White, #FFF);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}
+
+.bubbleMessage {
+  display: flex;
+  align-items: center;
+  align-content: center;
+  gap: 0px 10px;
+  flex-wrap: wrap;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 1px solid var(--Base-Black, #000);
+  background: var(--PinkPurpleMix-Gradient-Chat, linear-gradient(180deg, #F8E5F8 65.1%, #EDC6F7 87.5%));
+  align-self: stretch;
+  width: 100%;
+}
+
+.bubbleMessage.selfMessage {
+  background: var(--PinkPurpleMix-Gradient-Chat2, linear-gradient(180deg, #EFE4FF 64.58%, #DBC8FF 85.42%));
+}
+
+.contentBubbleMessage {
+  display: flex;
+  padding: 5px;
+  align-items: center;
+  gap: 10px;
+  flex: 1 0 0;
+  border-radius: 10px;
+  border-top: 3px solid var(--Base-White, #FFF);
+  border-right: 2px solid var(--Base-White, #FFF);
+  border-left: 2px solid var(--Base-White, #FFF);
+}
+
+.textBubbleMessage {
+  flex: 1 0 0;
+  color: var(--Base-Black, #000);
+  font-size: 12px;
+  font-style: normal;
+  font-weight: 400;
+  line-height: normal;
+}

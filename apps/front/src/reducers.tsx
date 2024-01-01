@@ -24,10 +24,11 @@ interface WindowData {
 	color: WinColor;
 	targetId?: number;
 	channelId?: number;
+	zindex?: number;
 }
 
-export interface AppState<T = WindowData> {
-	windows: T[];
+export interface AppState {
+	windows: WindowData[];
 	id: number;
 }
 
@@ -64,6 +65,7 @@ const windowsSlice = createSlice({
 				"ADDFRIENDS",
 				"AVATARUPLOAD",
 				"MEMBERSETTINGS",
+				"BANLIST",
 			];
 
 			if (
@@ -86,22 +88,57 @@ const windowsSlice = createSlice({
 			}
 
 			const res = action.payload;
+			res.zindex = state.windows.length;
 			if (!res.position) res.position = { x: "0px", y: "0px" };
 			res.id = state.id;
 			state.windows.push(res);
 			state.id++;
 		},
-		delWindow: (state, action: PayloadAction<number>) => ({
-			...state,
-			windows: [
-				...state.windows.filter(
-					(element) => element.id !== action.payload
-				),
-			],
-		}),
+		delWindow: (state, action: PayloadAction<number>) => {
+			const deletedWindowIndex = state.windows.findIndex(
+				(window) => window.id === action.payload
+			);
+
+			if (deletedWindowIndex !== -1) {
+				const deletedWindowZIndex =
+					state.windows[deletedWindowIndex].zindex || 1000;
+
+				state.windows.splice(deletedWindowIndex, 1);
+
+				state.windows.forEach((window) => {
+					if (window.zindex && window.zindex > deletedWindowZIndex) {
+						window.zindex -= 1;
+					}
+				});
+			}
+		},
+		bringToFront: (state, action: PayloadAction<number>) => {
+			const windowToBringToFrontIndex = state.windows.findIndex(
+				(window) => window.id === action.payload
+			);
+
+			if (windowToBringToFrontIndex >= 0) {
+				const windowToBringToFrontZindex =
+					state.windows[windowToBringToFrontIndex].zindex;
+
+				if (typeof windowToBringToFrontZindex !== "undefined") {
+					state.windows.forEach((window) => {
+						if (
+							window.zindex &&
+							window.zindex > windowToBringToFrontZindex
+						) {
+							window.zindex -= 1;
+						}
+					});
+
+					state.windows[windowToBringToFrontIndex].zindex =
+						state.windows.length - 1;
+				}
+			}
+		},
 	},
 });
 
-export const { addWindow, delWindow } = windowsSlice.actions;
+export const { addWindow, delWindow, bringToFront } = windowsSlice.actions;
 
 export default windowsSlice.reducer;
