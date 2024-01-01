@@ -17,7 +17,7 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 		isLoading: userIdLoading,
 		error: userIdError,
 	} = useQuery<number>({
-		queryKey: ["userId"],
+		queryKey: ["userId", targetId],
 		queryFn: async () => {
 			if (targetId !== undefined) {
 				return targetId;
@@ -48,9 +48,7 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 	>({
 		queryKey: ["users"],
 		queryFn: async () => {
-			return api
-				.get("/ladder/list")
-				.then((response) => response.data);
+			return api.get("/ladder/list").then((response) => response.data);
 		},
 	});
 
@@ -78,7 +76,7 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 		avatar_url: string;
 		win_count: number;
 	}>({
-		queryKey: ["user"],
+		queryKey: ["user", targetId],
 		queryFn: async () => {
 			return api
 				.get(`/profile/user/${userId}`)
