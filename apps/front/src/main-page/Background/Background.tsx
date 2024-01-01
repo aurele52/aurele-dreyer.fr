@@ -73,6 +73,7 @@ export function Background({ windows }: BackgroundProps) {
 							id={window.id}
 							handleBarButton={window.handleBarButton}
 							color={window.color}
+							zindex={window.zindex || 0}
 						>
 							{window.content.type === "PLAY" && <Connection />}
 							{window.content.type === "LADDER" && (
