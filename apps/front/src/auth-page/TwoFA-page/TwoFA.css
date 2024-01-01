@@ -18,6 +18,16 @@
   outline: 0.3rem solid var(--base-black, #000);
 }
 
+#code2fa-error {
+  margin:0px;
+  padding:0px;
+  color: #F06E8D;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
 #twofa-form {
   display: flex;
   justify-content: center;
@@ -38,7 +48,6 @@
   min-width: 8em;
   padding: 0.3em 0.7em;
   align-items: center;
-  gap: 5px;
   border-radius: var(--radius-radius-full, 360px);
   background: var(--Base-White, #fff);
 }

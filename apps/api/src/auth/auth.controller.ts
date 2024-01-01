@@ -2,6 +2,7 @@ import {
   Body,
   Controller,
   Get,
+  HttpStatus,
   Param,
   Post,
   Query,
@@ -97,11 +98,10 @@ export class AuthController {
   }
 
   @Public()
-  @Redirect()
   @Post('/2fa/submit/:id')
   async submitTwoFactorAuthenticationCode(
     @Param('id') id: number,
-    @Body('google-authenticator-code') code: string,
+    @Body('code') code: string,
   ) {
     const user =
       await this.twoFactorAuthenticationService.checkUserFirstAuthentication(
@@ -112,6 +112,10 @@ export class AuthController {
       user,
     );
     const token = await this.jwtService.generateJWTToken(user);
-    return { url: `http://localhost:5173/auth/redirect/${token}` };
+    return {
+      statusCode: HttpStatus.OK,
+      message: 'User is authenticated',
+      token,
+    };
   }
 }

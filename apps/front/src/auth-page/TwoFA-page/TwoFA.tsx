@@ -6,6 +6,7 @@ import { useParams } from "@tanstack/react-router";
 import "../bg.css";
 import "./TwoFA.css";
 import { Button } from "../../shared/ui-components/Button/Button.tsx";
+import { FormEvent } from "react";
 
 function TwoFA() {
   const { id } = useParams({ strict: false });
@@ -25,25 +26,23 @@ function TwoFA() {
         });
     },
   });
+
   return (
     <div className="bg-container">
       <div className="purple-container">
-        <p className="twofa-title">
+        <div className="twofa-title">
           Two factor authentication
-          <p>Scan this with the Google Authenticator app!</p>
-        </p>
+          <div>Scan this with the Google Authenticator app!</div>
+        </div>
         <img src={data} id="qrcode" />
-        <form
-          id="twofa-form"
-          action={`http://localhost:3000/api/auth/2fa/submit/${id}`}
-          method="post"
-        >
+        <div id="code2fa-error"></div>
+        <form id="twofa-form" onSubmit={(e) => handleSubmit(e, id)}>
           <label htmlFor="validation-code">Your code here:</label>
           <input
-            type="digit"
+            type="number"
             placeholder="6 to 8 digits code"
             id="validation-code"
-            name="google-authenticator-code"
+            name="code"
             required
             minLength={6}
             maxLength={8}
@@ -59,6 +58,23 @@ function TwoFA() {
     </div>
   );
 }
+
+const handleSubmit = async (e: FormEvent<HTMLFormElement>, id: string) => {
+  e.preventDefault();
+  const target = e.target as HTMLFormElement;
+  const code = Object.fromEntries(new FormData(target));
+  try {
+    const token = await axios
+      .post(`/api/auth/2fa/submit/${id}`, code)
+      .then((response) => response.data.token);
+    router.navigate({ to: `/auth/redirect/${token}` });
+  } catch (error) {
+    const element = document.getElementById("code2fa-error");
+    if (element) {
+      element.innerHTML = "Code is incorrect";
+    }
+  }
+};
 
 const handleBackToSignIn = (id: string) => {
   axios.get(`/api/auth/abort/${id}`);
