@@ -1,7 +1,7 @@
 import { HttpStatus, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { NotFoundException } from '@nestjs/common';
-import { FriendshipStatus } from '@prisma/client';
+import { FriendshipStatus, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
@@ -175,6 +175,7 @@ export class UserService {
       data: {
         id_42: null,
         token_42: null,
+        secret_2fa: null,
         avatar_url: 'http://localhost:5173/api/user/avatar/deletedUser.png',
       }, //delete avatar_url from public
     });
@@ -185,5 +186,30 @@ export class UserService {
     });
 
     return HttpStatus.OK;
+  }
+
+  async updateUser(id: number, data) {
+    try {
+      await this.prisma.user.update({
+        where: { id },
+        data,
+      });
+
+      return {
+        statusCode: HttpStatus.OK,
+        message: 'Username updated successfully',
+      };
+    } catch (error) {
+      if (error instanceof PrismaClientKnownRequestError) {
+        return {
+          statusCode: HttpStatus.BAD_REQUEST,
+          message: 'Failed to update username: Prisma error',
+        };
+      }
+      return {
+        statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
+        message: 'Internal server error',
+      };
+    }
   }
 }

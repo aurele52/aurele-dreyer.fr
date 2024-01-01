@@ -15,6 +15,7 @@ import { Public } from './decorators/public.decorator';
 import { CurrentUserID } from 'src/decorators/user.decorator';
 import { JWT } from './jwt.services';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { UserService } from '../user/user.service';
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
@@ -25,6 +26,7 @@ export class AuthController {
     private readonly authService: AuthService,
     private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
     private readonly jwtService: JWT,
+    private readonly userService: UserService,
   ) {}
 
   @Public()
@@ -64,9 +66,21 @@ export class AuthController {
     return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 
+  @Public()
+  @Get('/abort/:id')
+  async abortAuthentication(@Param('id') id: number) {
+    await this.userService.updateUser(id, {
+      token_42: null,
+      secret_2fa: null,
+    });
+  }
+
   @Get('/disconnect')
   async disconnectUser(@CurrentUserID() id: number) {
-    await this.authService.disconnectUser(id);
+    await this.userService.updateUser(id, {
+      token_42: null,
+      secret_2fa: null,
+    });
   }
 
   @Public()

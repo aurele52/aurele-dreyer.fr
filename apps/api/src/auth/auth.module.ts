@@ -7,6 +7,7 @@ import { AuthGuard } from './auth.guard';
 import { PrismaService } from 'src/prisma.service';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { JWT } from './jwt.services';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -21,6 +22,7 @@ import { JWT } from './jwt.services';
     AuthService,
     TwoFactorAuthenticationService,
     JWT,
+    UserService,
     PrismaService,
     {
       provide: APP_GUARD,

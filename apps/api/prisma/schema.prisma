@@ -47,8 +47,7 @@ model User {
   socked_id        String?           @unique
   id_42            Int?              @unique
   token_42         String?           @unique
-  email_42         String            @unique
-  secret_2fa       String
+  secret_2fa       String?           @unique
   is_enable_2fa    Boolean
   created_at       DateTime          @default(now())
   updated_at       DateTime          @updatedAt

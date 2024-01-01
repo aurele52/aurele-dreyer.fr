@@ -22,6 +22,11 @@ const authRoute = new Route({
   path: "auth",
   component: Auth,
 });
+const authtwofaRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/auth/2fa/$id",
+  component: TwoFA,
+});
 const authRedirectRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "auth/redirect/$token",
@@ -35,18 +40,13 @@ const authRedirectRoute = new Route({
   },
 });
 
-const authtwofaRoute = new Route({
-  getParentRoute: () => rootRoute,
-  path: "/auth/2fa/$id",
-  component: TwoFA,
-});
 
 
 const routeTree = rootRoute.addChildren([
   appRoute,
   authRoute,
-  authRedirectRoute,
   authtwofaRoute,
+  authRedirectRoute,
 ]);
 
 export const router = new Router({ routeTree });

@@ -1,7 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { AccessToken42, UserInfo42 } from './auth.types';
-import { User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -13,13 +14,11 @@ export class AuthService {
     try {
       const access_token_42 = await this.fetchAccessToken(code, state);
       const user_info = await this.fetchUserInfo(access_token_42.access_token);
-      const secret_2fa = 'blablablou';
       const user = await this.getOrCreateUser(
         access_token_42,
         user_info,
-        secret_2fa,
       );
-        return (user);
+      return user;
     } catch (error) {
       console.log(error);
       return error;
@@ -65,32 +64,19 @@ export class AuthService {
   async getOrCreateUser(
     access_token_42: AccessToken42,
     user_info: UserInfo42,
-    secret_2fa: string,
   ) {
     return this.prisma.user.upsert({
       where: { id_42: user_info.id },
       update: {
         username: user_info.login,
         token_42: access_token_42.access_token,
-        email_42: user_info.email,
       },
       create: {
         username: user_info.login,
         avatar_url: user_info.image.versions.small,
         id_42: user_info.id,
         token_42: access_token_42.access_token,
-        email_42: user_info.email,
-        secret_2fa,
-        is_enable_2fa : true,
-      },
-    });
-  }
-
-  async disconnectUser(id: number) {
-    await this.prisma.user.update({
-      where: { id },
-      data: {
-        token_42: null,
+        is_enable_2fa: true,
       },
     });
   }

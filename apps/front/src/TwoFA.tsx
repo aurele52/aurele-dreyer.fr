@@ -34,7 +34,11 @@ function TwoFA() {
   return (
     <div>
       <img src={data} />
-      <form className="form-twofa" action={`http://localhost:3000/api/auth/2fa/submit/${id}`} method="post">
+      <form
+        className="form-twofa"
+        action={`http://localhost:3000/api/auth/2fa/submit/${id}`}
+        method="post"
+      >
         <div className="form-twofa">
           <label htmlFor="validation-code">Double-Authentication Code:</label>
           <input
@@ -48,8 +52,16 @@ function TwoFA() {
           />
         </div>
       </form>
+      <button className="return-button" onClick={ () => handleBackToSignIn(id)}>
+        BACK TO SIGN-IN
+      </button>
     </div>
   );
 }
+
+const handleBackToSignIn = (id: string) => {
+  axios.get(`/api/auth/abort/${id}`);
+  router.navigate({ to: "/auth" });
+};
 
 export default TwoFA;
