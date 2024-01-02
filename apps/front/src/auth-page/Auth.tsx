@@ -1,4 +1,5 @@
 import "./Auth.css";
+import "./bg.css";
 
 const handleSignin = () => {
   window.location.href = "/api/auth";
@@ -6,10 +7,10 @@ const handleSignin = () => {
 
 function Auth() {
   return (
-    <div id="bg-container">
-      <div id="purple-container">
-        <button type="button" id="signin-btn" onClick={handleSignin}>
-          SIGN IN WITH 42AUTH
+    <div className="bg-container">
+      <div className="purple-container">
+        <button type="button" className="signin-btn" onClick={handleSignin}>
+          Sign in with 42
         </button>
       </div>
     </div>

@@ -5,6 +5,9 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { PrismaService } from 'src/prisma.service';
+import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { JWT } from './jwt.services';
+import { UserService } from 'src/user/user.service';
 
 @Module({
   imports: [
@@ -15,10 +18,16 @@ import { PrismaService } from 'src/prisma.service';
     }),
   ],
   controllers: [AuthController],
-  // providers: [AuthService, PrismaService]
-  providers: [AuthService, PrismaService, {
-    provide: APP_GUARD,
-    useClass: AuthGuard,
-  },],  // 💡 Replace with these providers to activate authentification
+  providers: [
+    AuthService,
+    TwoFactorAuthenticationService,
+    JWT,
+    UserService,
+    PrismaService,
+    {
+      provide: APP_GUARD,
+      useClass: AuthGuard,
+    },
+  ],
 })
 export class AuthModule {}

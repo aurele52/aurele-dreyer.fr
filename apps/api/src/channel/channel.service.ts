@@ -1,6 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class ChannelService {
@@ -42,6 +48,31 @@ export class ChannelService {
     }));
   }
 
+  async chat(user_id: number, channel_id: number) {
+    const chat = await this.prisma.channel.findFirst({
+      where: {
+        userChannels: {
+          some: {
+            user_id,
+            channel_id,
+          },
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
+          },
+        },
+      },
+    });
+    return {
+      ...chat,
+      interlocutor: chat.userChannels.find((uc) => uc.User?.id !== user_id)
+        ?.User,
+    };
+  }
+
   async otherChannels(params: { currUserId: number }) {
     const { currUserId } = params;
     return await this.prisma.channel.findMany({
@@ -50,6 +81,11 @@ export class ChannelService {
         userChannels: {
           none: {
             user_id: currUserId,
+          },
+        },
+        banList: {
+          none: {
+            id: currUserId,
           },
         },
       },
@@ -64,7 +100,7 @@ export class ChannelService {
   }
 
   async channel(id: number) {
-    return this.prisma.channel.findUnique({
+    const channel = await this.prisma.channel.findUnique({
       where: {
         id,
       },
@@ -76,6 +112,10 @@ export class ChannelService {
         },
       },
     });
+    if (!channel) {
+      throw new NotFoundException(`Channel with ID ${id} not found`);
+    }
+    return channel;
   }
 
   async isUserMember(channelId: number, userId: number) {
@@ -100,6 +140,11 @@ export class ChannelService {
             channel_id,
           },
         },
+        bannedChannels: {
+          none: {
+            id: channel_id,
+          },
+        },
       },
     });
   }
@@ -116,5 +161,55 @@ export class ChannelService {
         ...channelData,
       },
     });
+  }
+
+  async getBanList(
+    user_id: number,
+    channel_id: number,
+  ): Promise<{ id: number; username: string }[]> {
+    try {
+      const userChannel = await this.prisma.userChannel.findFirst({
+        where: {
+          user_id,
+          channel_id,
+          role: {
+            in: ['OWNER', 'ADMIN'],
+          },
+        },
+      });
+
+      if (!userChannel) {
+        throw new HttpException(
+          'User does not have sufficient privileges in the channel.',
+          HttpStatus.FORBIDDEN,
+        );
+      }
+
+      const channel = await this.prisma.channel.findUnique({
+        where: {
+          id: channel_id,
+        },
+        include: {
+          banList: {
+            select: {
+              id: true,
+              username: true,
+            },
+          },
+        },
+      });
+
+      if (!channel) {
+        throw new HttpException('Channel not found.', HttpStatus.NOT_FOUND);
+      }
+
+      return channel.banList.map((user) => ({
+        id: user.id,
+        username: user.username,
+      }));
+    } catch (error) {
+      console.error('Error in getBanList:', error.message);
+      throw error;
+    }
   }
 }

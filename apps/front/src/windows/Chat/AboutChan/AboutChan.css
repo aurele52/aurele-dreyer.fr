@@ -1,40 +1,46 @@
 .AboutChan {
-  display: flex;
-  flex-direction: column;
-  overflow-x: auto;
-  gap: 10px;
-  width: 100%;
+	display: flex;
+	flex-direction: column;
+	overflow-x: auto;
+	gap: 10px;
+	width: 100%;
 }
 
 .chanDescription {
-  display: flex;
-  flex-direction: column;
-  gap: 10px;
-  width: 60%;
+	display: flex;
+	flex-direction: column;
+	gap: 10px;
+	width: 60%;
 }
 
 .headerAboutChan {
-  display: flex;
+	display: flex;
 }
 
-.joinBtn {
-  display: flex;
-  justify-content: center;
-  flex-grow: 1;
+.headerButtonsAboutChan {
+	display: flex;
+	min-width: 115px;
+	padding: 0px 5px;
+	justify-content: center;
+	align-items: center;
+	align-content: center;
+	gap: 20px;
+	flex: 1 0 0;
+	flex-wrap: wrap;
 }
 
 .footerAboutChanBtn {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 10px;
+	display: flex;
+	justify-content: space-between;
+	padding: 0 10px;
 }
 
 .btnCardAboutChan {
-  display: flex;
-  gap: 10px;
+	display: flex;
+	gap: 10px;
 }
 
 .btnIconAboutChan {
-  display: flex;
-  gap: 4px;
+	display: flex;
+	gap: 4px;
 }

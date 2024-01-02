@@ -31,7 +31,30 @@ export function FriendsList() {
 		},
 	});
 
-	if (friendsListLoading) {
+	const {
+		data: pendingRequests,
+		isLoading: pendingRequestsLoading,
+		error: pendingRequestsError,
+	} = useQuery<number>({
+		queryKey: ["pendingRequests", "Profile"],
+		queryFn: async () => {
+			try {
+				const response = await api.get(`/friendships/pendingList`);
+				return response.data?.filter(
+					(content: { type: "sent" | "received" }) =>
+						content.type === "received"
+				).length;
+			} catch {
+				console.error(
+					"Error pending invitations user:",
+					pendingRequestsError
+				);
+				throw pendingRequestsError;
+			}
+		},
+	});
+
+	if (friendsListLoading || pendingRequestsLoading) {
 		return (
 			<div className="FriendsList">
 				<FaSpinner className="loadingSpinner" />
@@ -87,6 +110,7 @@ export function FriendsList() {
 					content="Pending Requests"
 					color="purple"
 					onClick={handlePendingRequests}
+					notif={pendingRequests ? pendingRequests : 0}
 				/>
 				<div className="Frame"></div>
 				<Button

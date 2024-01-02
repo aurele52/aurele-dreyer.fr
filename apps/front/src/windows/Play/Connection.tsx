@@ -2,12 +2,33 @@ import { useEffect, useState } from 'react';
 import { socket } from '../../socket';
 import Loading from './Loading';
 import Play from './Play';
+import api from '../../axios';
+import { useQuery } from '@tanstack/react-query';
 interface coord{
 	x:number,
 	y:number
 }
 
 export default function Connection() {
+	const {
+		data: user,
+		isLoading: userLoading,
+		error: userError,
+	} = useQuery<{
+		username: string; 
+		avatar_url: string ;
+	}>({
+		queryKey: ["connectionUser"],
+		queryFn: async () => {
+			try {
+				const response = await api.get(`/user/`);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching user:", error);
+				throw error;
+			}
+		},
+	});
 	const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
 	const [data, setData] = useState<undefined | coord>();
 	const [pongDisplay, setPongDisplay] = useState<boolean>(false);
@@ -64,14 +85,14 @@ export default function Connection() {
 	{
 		setConnectionDisplay(false);
 		setLoadingDisplay(true);
-		socket.emit('client.matchmaking', {mode: 'custom'});
+		socket.emit('client.matchmaking', {user:user?.username, mode: 'custom'});
 	}
 
 	function normalOnClick()
 	{
 		setConnectionDisplay(false);
 		setLoadingDisplay(true);
-		socket.emit('client.matchmaking', {mode: 'normal'});
+		socket.emit('client.matchmaking', {user:user?.username, mode: 'normal'});
 	}
 
 	function disconnect() {
@@ -93,8 +114,8 @@ export default function Connection() {
 			<p>Data: { '' + data }</p>
 			<button onClick={ sendData }>Send data</button>
 			</>}
-			{pongDisplay === true && <Play />}
 			{loadingDisplay === true && <Loading />}
+			{pongDisplay === true && <Play socket={socket}/>}
 		</div>
 	);
 
