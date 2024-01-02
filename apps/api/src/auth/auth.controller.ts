@@ -51,10 +51,18 @@ export class AuthController {
   ) {
     const user = await this.authService.signIn(code, state);
     if (user.is_enable_2fa) {
-      const jwt_id = await this.jwtService.generateJWTToken(user, process.env.APP_TMP_SECRET, '60s');
+      const jwt_id = await this.jwtService.generateJWTToken(
+        user,
+        process.env.APP_TMP_SECRET,
+        '60s',
+      );
       return { url: `http://localhost:5173/auth/2fa/${jwt_id}` };
     } else {
-      const token = await this.jwtService.generateJWTToken(user, process.env.APP_SECRET, '3d');
+      const token = await this.jwtService.generateJWTToken(
+        user,
+        process.env.APP_SECRET,
+        '3d',
+      );
       return { url: `http://localhost:5173/auth/redirect/${token}` };
     }
   }
@@ -84,8 +92,7 @@ export class AuthController {
 
   @Post('/2fa/enable')
   async enableTwoFA(@CurrentUser() user: User) {
-    const secret =
-      await this.TwoFAService.generateSecret(user);
+    const secret = await this.TwoFAService.generateSecret(user);
     await this.userService.updateUser(user.id, {
       secret_2fa: secret,
       is_enable_2fa: true,
@@ -94,12 +101,8 @@ export class AuthController {
 
   @Get('2fa/qr-code')
   async getQRCode(@Res() response: Response, @CurrentUser() user: User) {
-    const { otpauthUrl } =
-      await this.TwoFAService.generateQRCode(user);
-    return this.TwoFAService.pipeQrCodeStream(
-      response,
-      otpauthUrl,
-    );
+    const { otpauthUrl } = await this.TwoFAService.generateQRCode(user);
+    return this.TwoFAService.pipeQrCodeStream(response, otpauthUrl);
   }
 
   @Post('/2fa/disable')
@@ -112,14 +115,15 @@ export class AuthController {
 
   @Public()
   @Get('/2fa/submit/')
-  async submit2FACode(
-    @Query('jwt_id') jwt_id: string,
-    @Query('code') code
-  ) {
+  async submit2FACode(@Query('jwt_id') jwt_id: string, @Query('code') code) {
     const user_id = await this.TwoFAService.checkAuthorization(jwt_id);
     const user = await this.TwoFAService.getUser(user_id);
     this.TwoFAService.check2FACodeValidity(code, user);
-    const token = await this.jwtService.generateJWTToken(user, process.env.APP_SECRET, '3d');
+    const token = await this.jwtService.generateJWTToken(
+      user,
+      process.env.APP_SECRET,
+      '3d',
+    );
     return {
       statusCode: HttpStatus.OK,
       message: 'User is authenticated',

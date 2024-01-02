@@ -50,7 +50,7 @@ export class TwoFAService {
   public async generateQRCode(user: User) {
     const otpauthUrl = authenticator.keyuri(
       user.username,
-      process.env.APP_SECRET,
+      process.env.APP_NAME,
       user.secret_2fa,
     );
     const secret = user.secret_2fa;
