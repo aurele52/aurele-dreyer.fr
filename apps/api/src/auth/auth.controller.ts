@@ -49,17 +49,26 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    const user = await this.authService.signIn(code, state);
-    if (user.is_enable_2fa) {
+    const user_infos = await this.authService.logIn(code, state);
+    if (user_infos.is_new) {
+      const token = await this.jwtService.generateJWTToken(
+        user_infos.user,
+        process.env.APP_SECRET,
+        '3d',
+      );
+      return { url: `http://localhost:5173/initialise/${token}` };
+    }
+    // !Handle errors
+    if (user_infos.user.is_enable_2fa) {
       const jwt_id = await this.jwtService.generateJWTToken(
-        user,
+        user_infos.user,
         process.env.APP_TMP_SECRET,
         '60s',
       );
       return { url: `http://localhost:5173/auth/2fa/${jwt_id}` };
     } else {
       const token = await this.jwtService.generateJWTToken(
-        user,
+        user_infos.user,
         process.env.APP_SECRET,
         '3d',
       );
