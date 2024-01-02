@@ -7,10 +7,15 @@ import { authenticator } from 'otplib';
 import { PrismaService } from 'src/prisma.service';
 import { toFileStream } from 'qrcode';
 import { Response } from 'express';
+import { User } from '@prisma/client';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class TwoFactorAuthenticationService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly userService: UserService,
+  ) {}
 
   async checkUserFirstAuthentication(id: number) {
     const user = await this.prisma.user.findUnique({
@@ -28,31 +33,22 @@ export class TwoFactorAuthenticationService {
     return user;
   }
 
-  public async generateTwoFactorAuthenticationSecret(id) {
-    const user = await this.checkUserFirstAuthentication(id);
+  async generateSecret(user: User) {
     const secret = authenticator.generateSecret();
+    return (secret);
+  }
+  
+  public async generateQRCode(user: User) {
     const otpauthUrl = authenticator.keyuri(
       user.username,
       process.env.APP_SECRET,
-      secret,
+      user.secret_2fa,
     );
-    await this.setTwoFactorAuthenticationSecret(secret, user.id);
-
+    const secret = user.secret_2fa;
     return {
       secret,
       otpauthUrl,
     };
-  }
-
-  async setTwoFactorAuthenticationSecret(secret: string, userId: number) {
-    return await this.prisma.user.update({
-      where: {
-        id: userId,
-      },
-      data: {
-        secret_2fa: secret,
-      },
-    });
   }
 
   public async pipeQrCodeStream(stream: Response, otpauthUrl: string) {
@@ -61,7 +57,7 @@ export class TwoFactorAuthenticationService {
 
   public checkTwoFactorAuthenticationCodeValidity(
     twoFactorAuthenticationCode: string,
-    user,
+    user: User,
   ) {
     if (
       !authenticator.verify({

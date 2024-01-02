@@ -6,7 +6,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
-import { channel } from 'diagnostics_channel';
 
 @Injectable()
 export class ChannelService {
@@ -39,13 +38,32 @@ export class ChannelService {
               User: true,
             },
           },
+          messages: {
+            take: 1,
+            orderBy: {
+              created_at: 'desc',
+            },
+          },
         },
       })
-    ).map((el) => ({
-      ...el,
-      interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
-        ?.User,
-    }));
+    )
+      .map((el) => ({
+        ...el,
+        interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
+          ?.User,
+        myUserChannel: el.userChannels.find((uc) => uc.User?.id === currUserId),
+      }))
+      .sort((a, b) => {
+        const dateA = Math.max(
+          a.myUserChannel.created_at.getTime() ?? 0,
+          a.messages[0]?.created_at.getTime() ?? 0,
+        );
+        const dateB = Math.max(
+          b.myUserChannel.created_at.getTime() ?? 0,
+          b.messages[0]?.created_at.getTime() ?? 0,
+        );
+        return dateB - dateA;
+      });
   }
 
   async chat(user_id: number, channel_id: number) {

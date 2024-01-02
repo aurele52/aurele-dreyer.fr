@@ -9,6 +9,7 @@ import { addWindow } from "../../../reducers";
 import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
+import { EventSourcePolyfill } from "event-source-polyfill";
 
 interface ChatSessionProps {
   channelId?: number;
@@ -27,6 +28,19 @@ export type MessageData = {
 
 function ChatSession({ channelId }: ChatSessionProps) {
   const queryClient = useQueryClient();
+
+  const { data: selfId } = useQuery<number>({
+    queryKey: ["selfId"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/id");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
 
   const { data: chat } = useQuery<ChatType>({
     queryKey: ["chat", channelId],
@@ -58,6 +72,29 @@ function ChatSession({ channelId }: ChatSessionProps) {
       setValueMessage("");
     },
   });
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      const eventSource = new EventSourcePolyfill("api/stream/messages", {
+        headers: {
+          Authorization: `Bearer ${localStorage.getItem("token")}`,
+        },
+      });
+
+      eventSource.onmessage = ({data}) => {
+        if (data.user_id !== selfId)
+          queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+      };
+
+      return () => {
+        eventSource.close();
+      };
+    }
+  }, [channelId, queryClient, selfId]);
 
   const detailsWindow = (isDm: boolean, id: number, name: string) => {
     let newWindow;
@@ -115,7 +152,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
   }, [messages]);
 
   const handleKeyPress = (event: React.KeyboardEvent<HTMLTextAreaElement>) => {
-    if (event.key === 'Enter' && !event.shiftKey) {
+    if (event.key === "Enter" && !event.shiftKey) {
       event.preventDefault();
       handleSend();
     }
@@ -133,9 +170,9 @@ function ChatSession({ channelId }: ChatSessionProps) {
         <Button content="Match" color="blue" />
       </div>
       <List ref={listRef}>
-          {messages?.map((message) => {
-            return <Message message={message} key={message.id} />;
-          })}
+        {messages?.map((message) => {
+          return <Message message={message} key={message.id} />;
+        })}
       </List>
       <div className="footerChatSession">
         <textarea

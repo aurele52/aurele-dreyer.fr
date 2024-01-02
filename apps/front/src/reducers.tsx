@@ -66,6 +66,7 @@ const windowsSlice = createSlice({
 				"AVATARUPLOAD",
 				"MEMBERSETTINGS",
 				"BANLIST",
+				"TWOFAQRCODE",
 			];
 
 			if (

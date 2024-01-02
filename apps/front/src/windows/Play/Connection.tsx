@@ -1,12 +1,12 @@
-import { useEffect, useState } from 'react';
-import { socket } from '../../socket';
-import Loading from './Loading';
-import Play from './Play';
-import api from '../../axios';
-import { useQuery } from '@tanstack/react-query';
-interface coord{
-	x:number,
-	y:number
+import { useEffect, useState } from "react";
+import { socket } from "../../socket";
+import Loading from "./Loading";
+import Play from "./Play";
+import api from "../../axios";
+import { useQuery } from "@tanstack/react-query";
+interface coord {
+	x: number;
+	y: number;
 }
 
 export default function Connection() {
@@ -15,8 +15,8 @@ export default function Connection() {
 		isLoading: userLoading,
 		error: userError,
 	} = useQuery<{
-		username: string; 
-		avatar_url: string ;
+		username: string;
+		avatar_url: string;
 	}>({
 		queryKey: ["connectionUser"],
 		queryFn: async () => {
@@ -36,87 +36,89 @@ export default function Connection() {
 	const [loadingDisplay, setLoadingDisplay] = useState<boolean>(false);
 
 	useEffect(() => {
-		socket.connect();
+		socket.emit("client.openGame");
+		/* socket.connect(); */
 		function onDisconnect() {
 			setIsConnected(false);
 		}
-		function lol()
-		{
+		function lol() {}
 
-		}
-
-		function onMatchStart()
-		{
+		function onMatchStart() {
 			setPongDisplay(true);
 			setLoadingDisplay(false);
 		}
 		function onData(value: coord) {
-			console.log('Data : ',value);
+			console.log("Data : ", value);
 			setData(value);
 		}
 
-		socket.on('connect', () => {
+		socket.on("connect", () => {
 			setIsConnected(true);
-			socket.emit('authentification', window.localStorage.getItem("token"));
+			socket.emit(
+				"authentification",
+				window.localStorage.getItem("token")
+			);
 		});
-		socket.on('disconnect', onDisconnect);
-		socket.on('server.data', onData);
-		socket.on('401', lol);
-		socket.on('server.matchStart', onMatchStart);
+		socket.on("server.closeGame", onDisconnect);
+		socket.on("server.data", onData);
+		socket.on("401", lol);
+		socket.on("server.matchStart", onMatchStart);
 
 		return () => {
-			socket.off('connect');
-			socket.off('disconnect', onDisconnect);
-			socket.off('data', onData);
-			socket.off('401', lol);
+			socket.off("connect");
+			socket.off("disconnect", onDisconnect);
+			socket.off("data", onData);
+			socket.off("401", lol);
 		};
 	}, []);
 
 	function connect() {
-		if (socket.connected)
-			return;
+		if (socket.connected) return;
 		socket.connect();
-			setIsConnected(true);
-			socket.emit('authentification', window.localStorage.getItem("token"));
-
+		setIsConnected(true);
+		socket.emit("authentification", window.localStorage.getItem("token"));
 	}
 
-	function customOnClick()
-	{
+	function customOnClick() {
 		setConnectionDisplay(false);
 		setLoadingDisplay(true);
-		socket.emit('client.matchmaking', {user:user?.username, mode: 'custom'});
+		socket.emit("client.matchmaking", {
+			user: user?.username,
+			mode: "custom",
+		});
 	}
 
-	function normalOnClick()
-	{
+	function normalOnClick() {
 		setConnectionDisplay(false);
 		setLoadingDisplay(true);
-		socket.emit('client.matchmaking', {user:user?.username, mode: 'normal'});
+		socket.emit("client.matchmaking", {
+			user: user?.username,
+			mode: "normal",
+		});
 	}
 
 	function disconnect() {
 		socket.disconnect();
 	}
 	function sendData() {
-		socket.emit('client.data', window.localStorage.getItem("token"));
+		socket.emit("client.data", window.localStorage.getItem("token"));
 	}
 
 	return (
 		<div className="App">
-			{connectionDisplay === true &&
-			<>
-			<p>State: { '' + isConnected }</p>
-				<button onClick={ connect }>Connect</button>
-				<button onClick={ disconnect }>Disconnect</button>
-				<button onClick={ normalOnClick }>Normal Game</button>
-				<button onClick={ customOnClick }>Custom Game</button>
-			<p>Data: { '' + data }</p>
-			<button onClick={ sendData }>Send data</button>
-			</>}
+			{connectionDisplay === true && (
+				<>
+					<p>State: {"" + isConnected}</p>
+					<button onClick={connect}>Connect</button>
+					<button onClick={disconnect}>Disconnect</button>
+					<button onClick={normalOnClick}>Normal Game</button>
+					<button onClick={customOnClick}>Custom Game</button>
+					<p>Data: {"" + data}</p>
+					<button onClick={sendData}>Send data</button>
+				</>
+			)}
 			{loadingDisplay === true && <Loading />}
-			{pongDisplay === true && <Play socket={socket}/>}
+			{pongDisplay === true && <Play socket={socket} />}
 		</div>
 	);
-
 }

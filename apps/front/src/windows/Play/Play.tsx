@@ -1,5 +1,5 @@
 import "./Play.css";
-import { useEffect, useRef} from "react";
+import { useEffect, useRef } from "react";
 import p5 from "p5";
 import { Socket } from "socket.io-client";
 
@@ -35,7 +35,6 @@ const gameysize = ysize - menuSize - 3 * borderSize;
 
 let oneBary = 10;
 let twoBary = 10;
-
 
 /* Bar */
 const barSize = 100;
@@ -83,7 +82,12 @@ function drawBorder(p: p5) {
 
 function drawBar(p: p5) {
 	p.rect(gamex + barDist, gamey + oneBary, barLarge, barSize);
-	p.rect(gamex + gamexsize - barDist - barLarge, gamey + twoBary, barLarge, barSize);
+	p.rect(
+		gamex + gamexsize - barDist - barLarge,
+		gamey + twoBary,
+		barLarge,
+		barSize
+	);
 }
 
 function drawOne(p: p5, x: number, y: number) {
@@ -371,7 +375,6 @@ function scoreTwo(p: p5, nb: number) {
 	drawNumber(p, nb, xsize - 6 * midSquareSize, 0);
 }
 
-
 function drawBall(p: p5) {
 	p.rect(ballx + gamex, bally + gamey, ballSize, ballSize);
 }
@@ -380,19 +383,17 @@ let input = 0;
 
 function move(p: p5, socket: Socket) {
 	if (input != 1 && p.keyIsDown(p.DOWN_ARROW)) {
-		socket.emit('client.input', { direction: 'down', isPressed: true});
+		socket.emit("client.input", { direction: "down", isPressed: true });
 		input = 1;
 		// if (oneBary + barSize < gameysize)
 		// oneBary = oneBary + (p.deltaTime / 1000) * barSpeed;
-	}
-	else if (input != 2 && p.keyIsDown(p.UP_ARROW)) {
-		socket.emit('client.input', { direction: 'up', isPressed: true});
+	} else if (input != 2 && p.keyIsDown(p.UP_ARROW)) {
+		socket.emit("client.input", { direction: "up", isPressed: true });
 		input = 2;
 		// if (oneBary > 0)
 		// oneBary = oneBary - (p.deltaTime / 1000) * barSpeed;
-	}
-	else if (input == 0) {
-		socket.emit('client.input', { direction: null, isPressed: false});
+	} else if (input == 0) {
+		socket.emit("client.input", { direction: null, isPressed: false });
 		input = -1;
 	}
 }
@@ -463,28 +464,27 @@ function loop(p: p5, socket: Socket) {
 }
 
 type playProps = {
-  socket: Socket;
+	socket: Socket;
 };
 
 interface sendInfo {
-    ballx: number,
-    bally: number,
-    oneBary: number,
-    twoBary: number,
-    oneScore: number,
-    twoScore: number,
-  }
-
+	ballx: number;
+	bally: number;
+	oneBary: number;
+	twoBary: number;
+	oneScore: number;
+	twoScore: number;
+}
 
 export default function Play(props: playProps) {
 	const myRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (myRef.current) {
-		props.socket.on('server.update', onUpdate);
+			props.socket.on("server.update", onUpdate);
 			const myP5 = new p5(Sketch, myRef.current);
 			return () => {
 				myP5.remove();
-				props.socket.off('server.update', onUpdate);
+				props.socket.off("server.update", onUpdate);
 			};
 		}
 		function onUpdate(gameUpdate: sendInfo) {
@@ -494,7 +494,7 @@ export default function Play(props: playProps) {
 			twoBary = gameUpdate.twoBary;
 			oneScore = gameUpdate.oneScore;
 			twoScore = gameUpdate.twoScore;
-			console.log('yesss');
+			console.log("yesss");
 		}
 	}, [props.socket]);
 
@@ -509,7 +509,7 @@ export default function Play(props: playProps) {
 			scoreTwo(p, 0);
 		};
 		p.draw = () => {
-			const ms = p.millis()
+			const ms = p.millis();
 			if (ms < 1000) {
 				compteur(p, 3);
 			}

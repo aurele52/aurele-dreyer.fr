@@ -10,6 +10,7 @@ import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
 import { useEffect, useState } from "react";
 import { router } from "../../router";
+import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
 
 interface ProfileProps {
 	targetId?: number;
@@ -22,37 +23,38 @@ export function Profile({ targetId }: ProfileProps) {
 	const [avatarIsHovered, setAvatarIsHovered] = useState(false);
 	const [historicMaxDisplay, setHistoricMaxDisplay] = useState<number>(10);
 
-	const {
-		data: profile,
-		isLoading: profileLoading,
-		error: profileError,
-	} = useQuery<{
-		id: number;
-		username: string;
-		avatar_url: string;
-		win_count: number;
-		loose_count: number;
-		achievement_lvl: number;
-		rank: number;
-		friendship?: {
-			status: "FRIENDS" | "PENDING" | "BLOCKED";
-			user1_id: number;
-			user2_id: number;
-		};
-	}>({
-		queryKey: ["user", targetId],
-		queryFn: async () => {
-			try {
-				const response = targetId
-					? await api.get(`/profile/user/${targetId}`)
-					: await api.get(`/profile/user`);
-				return response.data;
-			} catch (error) {
-				console.error("Error fetching user:", error);
-				throw error;
-			}
-		},
-	});
+  const {
+    data: profile,
+    isLoading: profileLoading,
+    error: profileError,
+  } = useQuery<{
+    id: number;
+    username: string;
+    avatar_url: string;
+    win_count: number;
+    loose_count: number;
+    achievement_lvl: number;
+    rank: number;
+    is2FaEnabled?: boolean;
+    friendship?: {
+      status: "FRIENDS" | "PENDING" | "BLOCKED";
+      user1_id: number;
+      user2_id: number;
+    };
+  }>({
+    queryKey: ["user", targetId],
+    queryFn: async () => {
+      try {
+        const response = targetId
+          ? await api.get(`/profile/user/${targetId}`)
+          : await api.get(`/profile/user`);
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching user:", error);
+        throw error;
+      }
+    },
+  });
 
 	const {
 		data: pendingRequests,
@@ -173,6 +175,33 @@ export function Profile({ targetId }: ProfileProps) {
 			queryClient.invalidateQueries({ queryKey: ["friendsList"] });
 		},
 	});
+
+  const { mutateAsync: enableTwoFA } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/auth/2fa/enable");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", targetId] });
+      const newWindow = {
+        WindowName: "2-FA QRCode",
+        id: 0,
+        content: { type: "TWOFAQRCODE" },
+        toggle: false,
+        handleBarButton: 7,
+        color: WinColor.LILAC,
+      };
+      store.dispatch(addWindow(newWindow));
+    },
+  });
+
+  const { mutateAsync: disableTwoFA } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/auth/2fa/disable");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", targetId] });
+    },
+  });
 
 	const selfProfile = targetId ? false : true;
 
@@ -352,13 +381,19 @@ export function Profile({ targetId }: ProfileProps) {
 		);
 	};
 
-	const handleSet2fa = async () => {};
-	const handleUnset2fa = async () => {};
+  const handleEnableAndOpenTwoFA = async () => {
+    enableTwoFA();
+  };
+
+  const handleDisableTwoFA = async () => {
+    disableTwoFA();
+  };
 
 	const nameDiv = () => {
 		if (!selfProfile)
 			return (
 				<div className="NameFrame">
+					<UserStatus targetId={targetId} displayText={false} />
 					<div className="Name">{profile?.username ?? "No name"}</div>
 				</div>
 			);
@@ -522,25 +557,26 @@ export function Profile({ targetId }: ProfileProps) {
 		</div>
 	);
 
-	const is2FaEnabled = false;
-	const footer = selfProfile ? (
-		<div className="Footer">
-			<Button
-				content="delete account"
-				color="red"
-				style={{ display: "flex" }}
-				onClick={handleDeleteAccount}
-			/>
-			<Button
-				content={is2FaEnabled ? "disable 2fa" : "enable 2fa"}
-				color={is2FaEnabled ? "red" : "purple"}
-				style={{ display: "flex" }}
-				onClick={is2FaEnabled ? handleUnset2fa : handleSet2fa}
-			/>
-		</div>
-	) : (
-		<div></div>
-	);
+  const footer = selfProfile ? (
+    <div className="Footer">
+      <Button
+        content="delete account"
+        color="red"
+        style={{ display: "flex" }}
+        onClick={handleDeleteAccount}
+      />
+      <Button
+        content={profile?.is2FaEnabled ? "disable 2fa" : "enable 2fa"}
+        color={profile?.is2FaEnabled ? "red" : "purple"}
+        style={{ display: "flex" }}
+        onClick={
+          profile?.is2FaEnabled ? handleDisableTwoFA : handleEnableAndOpenTwoFA
+        }
+      />
+    </div>
+  ) : (
+    <div></div>
+  );
 
 	const avatarHoverSvg = (
 		<svg

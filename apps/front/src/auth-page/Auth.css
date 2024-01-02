@@ -1,35 +1,4 @@
-#bg-container {
-  height: 100%;
-  overflow: hidden;
-  box-sizing: border-box;
-  background-image: url("../../images/pond-sky.jpeg");
-  background-size: cover;
-  background-repeat: no-repeat;
-  background-position: center center;
-  /* Setting up children component */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#purple-container {
-  padding: 4rem 6rem;
-  /* Style */
-  background: var(
-    --Purple-Gradient-500,
-    linear-gradient(180deg, #49317b 66.15%, #2e185c 86.98%)
-  );
-  border-radius: 1rem;
-  border: solid var(--base-white, #fff);
-  border-width: 0.3rem 0.2rem 0.05rem;
-  outline: 0.3rem solid var(--base-black, #000);
-  /* Setting up children component */
-  display: flex;
-  justify-content: center;
-  align-items: center;
-}
-
-#signin-btn {
+.signin-btn {
   cursor: pointer;
   /* Style */
   background: var(
@@ -44,8 +13,9 @@
   font-family: Chakra Petch;
   font-size: 30px;
   font-weight: 700;
+  text-transform: uppercase;
 }
-#signin-btn:hover {
+.signin-btn:hover {
   background: var(--PinkPurpleMix-Main, #ede6f9);
   border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }

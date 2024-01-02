@@ -8,6 +8,7 @@ import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
 import { input } from './dto-interface/input.interface';
+import { da } from '@faker-js/faker';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
@@ -21,15 +22,23 @@ export class PongGateway {
   }
 
   handleConnection(client: any, ...args: any[]) {
-    console.log(`Client : ${client.id} ${args}connected`);
+    console.error(`Client : ${client.id} ${args}connected`);
     const newClient: clientInfoDto = new clientInfoDto();
     newClient.status = 'connected';
     newClient.socket = client;
-    newClient.input = {direction: null, isPressed: false};
+    newClient.input = { direction: null, isPressed: false };
     this.connectedClient.push(newClient);
     this.connectedClient.forEach((element) => {
       console.log('lol', element.socket.id);
     });
+  }
+
+  @SubscribeMessage('client.openGame')
+  handleOpenGame(
+    @MessageBody() token: string,
+    @ConnectedSocket() client: Socket,
+  ) {
+    console.log('OpenGame');
   }
 
   @SubscribeMessage('authentification')
@@ -71,6 +80,16 @@ export class PongGateway {
       this.connectedClient[index].input = input;
     }
     console.log(input.direction, input.isPressed);
+  }
+
+  @SubscribeMessage('client.getStatusUser')
+  handleGetStatusUser(client: Socket, data: { user: string }) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.user === data.user;
+    });
+    if (index !== -1) {
+      client.emit('server.getStatusUser', true);
+    } else client.emit('server.getStatusUser', false);
   }
 
   handleDisconnect(client: any) {

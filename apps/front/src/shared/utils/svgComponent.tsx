@@ -19,7 +19,10 @@ export type IconSVGKey =
 	| "Pen"
 	| "Check"
 	| "Crown"
-	| "Star";
+	| "Star"
+	| "StatusOnline"
+	| "StatusIngame"
+	| "StatusOffline";
 
 export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 	TripleDot: (
@@ -936,6 +939,151 @@ export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 			<rect x="6" y="10" width="2" height="2" fill="#D3C43D" />
 			<rect x="10" y="10" width="2" height="2" fill="#D3C43D" />
 			<rect x="10" y="6" width="2" height="2" fill="#D3C43D" />
+		</svg>
+	),
+	StatusOnline: (
+		<svg
+			width="7"
+			height="8"
+			viewBox="0 0 7 8"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<g clipPath="url(#clip0_1149_16562)">
+				<rect x="2" y="0.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="5" y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="5" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="5" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="5.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="5.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="5.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="0.5" width="1" height="1" fill="#2BDEC9" />
+				<rect y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="1" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="6" y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="6" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="6" y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="5" y="5.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="6.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="6.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="6.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="1" y="5.5" width="1" height="1" fill="#2BDEC9" />
+				<rect y="4.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="4" y="1.5" width="1" height="1" fill="#2BDEC9" />
+				<path d="M5 1.5H6V2.5H5V1.5Z" fill="#2BDEC9" />
+				<rect x="3" y="0.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="1" y="1.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="1.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="1.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="3" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="1" y="3.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="1" y="2.5" width="1" height="1" fill="#2BDEC9" />
+				<rect x="2" y="2.5" width="1" height="1" fill="#2BDEC9" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1149_16562">
+					<rect
+						width="7"
+						height="7"
+						fill="white"
+						transform="translate(0 0.5)"
+					/>
+				</clipPath>
+			</defs>
+		</svg>
+	),
+	StatusIngame: (
+		<svg
+			width="7"
+			height="8"
+			viewBox="0 0 7 8"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect x="6" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="6" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="1" y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="1" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="6" y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="2" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="4" y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="5" y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="3" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="5" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="5" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="4" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="4" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="1" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="3" y="4.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="3" y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect y="2.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="2" y="3.5" width="1" height="1" fill="#B2A73F" />
+			<rect x="2" y="2.5" width="1" height="1" fill="#B2A73F" />
+		</svg>
+	),
+	StatusOffline: (
+		<svg
+			width="7"
+			height="8"
+			viewBox="0 0 7 8"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<g clipPath="url(#clip0_1149_17669)">
+				<rect y="0.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="2" y="2.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="4" y="2.5" width="1" height="1" fill="#D72952" />
+				<rect x="2" y="4.5" width="1" height="1" fill="#D72952" />
+				<rect x="6" y="0.5" width="1" height="1" fill="#D72952" />
+				<rect x="3" y="3.5" width="1" height="1" fill="#D72952" />
+				<rect x="4" y="4.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="5.5" width="1" height="1" fill="#D72952" />
+				<rect x="6" y="6.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="6.5" width="1" height="1" fill="#D72952" />
+				<rect x="4" y="5.5" width="1" height="1" fill="#D72952" />
+				<rect x="3" y="4.5" width="1" height="1" fill="#D72952" />
+				<rect x="2" y="5.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="6.5" width="1" height="1" fill="#D72952" />
+				<rect y="5.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="4.5" width="1" height="1" fill="#D72952" />
+				<rect x="2" y="3.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="2.5" width="1" height="1" fill="#D72952" />
+				<rect y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="0.5" width="1" height="1" fill="#D72952" />
+				<rect x="2" y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="3" y="2.5" width="1" height="1" fill="#D72952" />
+				<rect x="4" y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="0.5" width="1" height="1" fill="#D72952" />
+				<rect x="6" y="1.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="2.5" width="1" height="1" fill="#D72952" />
+				<rect x="4" y="3.5" width="1" height="1" fill="#D72952" />
+				<rect x="5" y="4.5" width="1" height="1" fill="#D72952" />
+				<rect x="6" y="5.5" width="1" height="1" fill="#D72952" />
+				<rect x="1" y="5.5" width="1" height="1" fill="#D72952" />
+				<rect y="6.5" width="1" height="1" fill="#D72952" />
+			</g>
+			<defs>
+				<clipPath id="clip0_1149_17669">
+					<rect
+						width="7"
+						height="7"
+						fill="white"
+						transform="translate(0 0.5)"
+					/>
+				</clipPath>
+			</defs>
 		</svg>
 	),
 };
