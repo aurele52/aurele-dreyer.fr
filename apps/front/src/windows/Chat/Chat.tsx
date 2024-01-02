@@ -10,6 +10,7 @@ import store from "../../store";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { AppState } from "../../reducers";
+import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 
 export type ChatType = {
@@ -46,16 +47,20 @@ export function Chat() {
     },
   });
 
-  const openChatWindows = useSelector((state: AppState) => {
-    const openChats: string[] = [];
-    state.windows.map((window) => {
-      if (window.content.type === "CHATSESSION")
-        openChats.push(window.WindowName);
-    });
-    return openChats;
-  });
+  const getWindowState = (state: AppState) => state.windows;
 
-	const [notifCounts, setNotifCounts] = useState<NotifCounts>({});
+  const openChatWindowsSelector = createSelector(
+    [getWindowState],
+    (windows): string[] => {
+      return windows
+        .filter((window) => window.content.type === "CHATSESSION")
+        .map((window) => window.WindowName);
+    }
+  );
+
+  const [notifCounts, setNotifCounts] = useState<NotifCounts>({});
+
+  const openChatWindows = useSelector(openChatWindowsSelector);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -75,6 +80,7 @@ export function Chat() {
             chat.type === "DM" ? chat.interlocutor.username : chat.name;
 
           const isWindowOpen = openChatWindows.includes(chatName);
+
           if (!isWindowOpen) {
             setNotifCounts((prevCounts) => ({
               ...prevCounts,
