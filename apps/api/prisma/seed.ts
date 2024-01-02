@@ -18,6 +18,7 @@ async function createUsers() {
       is_enable_2fa: false,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
+      socked_id: faker.string.alphanumeric(20),
     };
 
     users.push(user);
