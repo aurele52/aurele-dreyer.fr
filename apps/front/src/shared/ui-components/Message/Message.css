@@ -93,6 +93,7 @@
   border-top: 3px solid var(--Base-White, #FFF);
   border-right: 2px solid var(--Base-White, #FFF);
   border-left: 2px solid var(--Base-White, #FFF);
+  word-break: break-word;
 }
 
 .textBubbleMessage {

@@ -29,6 +29,19 @@ export type MessageData = {
 function ChatSession({ channelId }: ChatSessionProps) {
   const queryClient = useQueryClient();
 
+  const { data: selfId } = useQuery<number>({
+    queryKey: ["selfId"],
+    queryFn: async () => {
+      try {
+        const response = await api.get("/id");
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
+
   const { data: chat } = useQuery<ChatType>({
     queryKey: ["chat", channelId],
     queryFn: async () => {
@@ -68,8 +81,9 @@ function ChatSession({ channelId }: ChatSessionProps) {
         },
       });
 
-      eventSource.onmessage = () => {
-        queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
+      eventSource.onmessage = ({data}) => {
+        if (data.user_id !== selfId)
+          queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
       };
 
       eventSource.onerror = (error) => {
@@ -80,7 +94,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
         eventSource.close();
       };
     }
-  }, [channelId, queryClient]);
+  }, [channelId, queryClient, selfId]);
 
   const detailsWindow = (isDm: boolean, id: number, name: string) => {
     let newWindow;
