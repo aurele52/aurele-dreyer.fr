@@ -3,8 +3,33 @@ import Navbar from "./main-page/Navbar/Navbar";
 import Background from "./main-page/Background/Background";
 import { AppState } from "./reducers";
 import { useSelector } from "react-redux";
+import { socket } from "./socket";
+import { useEffect, useState } from "react";
 
 function App() {
+	const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
+
+	useEffect(() => {
+		socket.connect();
+		function onDisconnect() {
+			setIsConnected(false);
+		}
+
+		socket.on("connect", () => {
+			setIsConnected(true);
+			socket.emit(
+				"authentification",
+				window.localStorage.getItem("token")
+			);
+		});
+		socket.on("disconnect", onDisconnect);
+
+		return () => {
+			socket.off("connect");
+			socket.off("disconnect", onDisconnect);
+		};
+	}, []);
+
 	const { displayFilter, zIndexFilter } = useSelector((state: AppState) => {
 		const modalWindow = state.windows.find(
 			(window) => window.content.type === "MODAL"
