@@ -8,14 +8,9 @@
   text-align: center;
 }
 
-.twofa-title > p {
+.twofa-title > div {
   margin: 0px;
-  font-size: 18px;
-}
-
-#qrcode {
-  border-radius: 0.7rem;
-  outline: 0.3rem solid var(--base-black, #000);
+  font-size: 14px;
 }
 
 #code2fa-error {

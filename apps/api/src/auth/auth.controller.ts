@@ -13,10 +13,12 @@ import { Response } from 'express';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
-import { CurrentUserID } from 'src/decorators/user.decorator';
+import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { JWT } from './jwt.services';
 import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
 import { UserService } from '../user/user.service';
+import { User } from '@prisma/client';
+
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
@@ -72,7 +74,6 @@ export class AuthController {
   async abortAuthentication(@Param('id') id: number) {
     await this.userService.updateUser(id, {
       token_42: null,
-      secret_2fa: null,
     });
   }
 
@@ -80,21 +81,27 @@ export class AuthController {
   async disconnectUser(@CurrentUserID() id: number) {
     await this.userService.updateUser(id, {
       token_42: null,
-      secret_2fa: null,
     });
   }
 
-  @Public()
-  @Get('/2fa/generate/:id')
-  async register(@Res() response: Response, @Param('id') id: number) {
+  @Get('/2fa/enable')
+  async enableTwoFA(@Res() response: Response, @CurrentUser() user: User) {
     const { otpauthUrl } =
       await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(
-        id,
+        user,
       );
     return this.twoFactorAuthenticationService.pipeQrCodeStream(
       response,
       otpauthUrl,
     );
+  }
+
+  @Get('/2fa/disable')
+  async disableTwoFA(@CurrentUserID() id: number) {
+    await this.userService.updateUser(id, {
+      secret_2fa: null,
+      is_enable_2fa: false,
+    });
   }
 
   @Public()

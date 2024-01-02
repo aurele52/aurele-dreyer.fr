@@ -4,37 +4,19 @@ import { router } from "../../router.ts";
 import axios from "axios";
 import { useParams } from "@tanstack/react-router";
 import "../bg.css";
-import "./TwoFA.css";
+import "./TwoFAAuth.css";
 import { Button } from "../../shared/ui-components/Button/Button.tsx";
 import { FormEvent } from "react";
 
-function TwoFA() {
+export default function TwoFAAuth() {
   const { id } = useParams({ strict: false });
-  const { data, error, isLoading } = useQuery<string>({
-    queryKey: ["QRcode"],
-    refetchOnWindowFocus: false,
-    queryFn: async () => {
-      return api
-        .get(`/auth/2fa/generate/${id}`, { responseType: "blob" })
-        .then((response) => {
-          const imageUrl = URL.createObjectURL(response.data);
-          return imageUrl;
-        })
-        .catch((error) => {
-          console.log("error", error);
-          return error;
-        });
-    },
-  });
-
   return (
     <div className="bg-container">
       <div className="purple-container">
         <div className="twofa-title">
           Two factor authentication
-          <div>Scan this with the Google Authenticator app!</div>
+          <div>Check your Google Authenticator app!</div>
         </div>
-        <img src={data} id="qrcode" />
         <div id="code2fa-error"></div>
         <form id="twofa-form" onSubmit={(e) => handleSubmit(e, id)}>
           <label htmlFor="validation-code">Your code here:</label>
@@ -80,5 +62,3 @@ const handleBackToSignIn = (id: string) => {
   axios.get(`/api/auth/abort/${id}`);
   router.navigate({ to: "/auth" });
 };
-
-export default TwoFA;

@@ -1,0 +1,23 @@
+#twofa-container {
+  width: 100%;
+  align-content: center;
+  display: flex;
+  align-items: center;
+  flex-direction: column;
+  gap: 1em;
+  text-align: center;
+}
+
+#twofa-container > h2 {
+  margin: 0px;
+}
+#twofa-container > div {
+  color: #f06e8d;
+  font-weight: bold;
+}
+
+#qrcode {
+  height: 100%;
+  border-radius: 1em;
+  border: 0.3em solid var(--base-black, #000);
+}
