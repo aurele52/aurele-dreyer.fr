@@ -82,6 +82,7 @@ export function Chat() {
             }));
           }
         }
+        queryClient.invalidateQueries({ queryKey: ["chats"] });
       };
 
       eventSource.onerror = (error) => {

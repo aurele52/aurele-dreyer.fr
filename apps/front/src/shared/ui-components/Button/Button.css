@@ -15,7 +15,7 @@
 	border-top: 1px solid var(--base-white, #fff);
 	border-right: 1px solid var(--base-white, #fff);
 	border-left: 1px solid var(--base-white, #fff);
-	padding: 2px 2px 0 2px;
+	padding: 2px;
 	text-transform: uppercase;
 	font-family: "Chakra Petch", sans-serif;
 	font-size: 14px;
