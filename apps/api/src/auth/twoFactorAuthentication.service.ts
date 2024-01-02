@@ -33,18 +33,18 @@ export class TwoFactorAuthenticationService {
     return user;
   }
 
-  public async generateTwoFactorAuthenticationSecret(user: User) {
+  async generateSecret(user: User) {
     const secret = authenticator.generateSecret();
+    return (secret);
+  }
+  
+  public async generateQRCode(user: User) {
     const otpauthUrl = authenticator.keyuri(
       user.username,
       process.env.APP_SECRET,
-      secret,
+      user.secret_2fa,
     );
-    await this.userService.updateUser(user.id, {
-      secret_2fa: secret,
-      is_enable_2fa: true,
-    });
-    console.log('created secret: ', user.secret_2fa);
+    const secret = user.secret_2fa;
     return {
       secret,
       otpauthUrl,

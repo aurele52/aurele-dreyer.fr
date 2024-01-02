@@ -44,7 +44,6 @@ export class ProfileService {
     });
 
     const rank = await this.ladder.getRank(user.id);
-
     if (self_id == 0) {
       return {
         id: user.id,
@@ -54,6 +53,7 @@ export class ProfileService {
         loose_count: looseCount,
         achievement_lvl: achievementLvl,
         rank: rank,
+        is2FaEnabled: user.is_enable_2fa,
       };
     }
     const friendship = await this.frienship.userFriendship(self_id, id);

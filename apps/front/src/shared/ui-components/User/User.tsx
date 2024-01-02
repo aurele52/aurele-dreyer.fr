@@ -13,6 +13,7 @@ import store from "../../../store";
 import { ReactNode } from "react";
 import { UserRole, userLvl } from "../../utils/User";
 import { IconSVG } from "../../utils/svgComponent";
+import { UserStatus } from "../UserStatus/UserStatus";
 
 interface UserProps {
 	userId: number;
@@ -124,13 +125,7 @@ export function User({ userId, channel }: UserProps) {
 		);
 	}
 
-	const status = //To change
-		(
-			<div className="Status">
-				<div className="Icon"></div>
-				<div className="Text">Maybe Online</div>
-			</div>
-		);
+	const status = <UserStatus targetId={userId} displayText={true} />;
 
 	const chatButton = (
 		<Button

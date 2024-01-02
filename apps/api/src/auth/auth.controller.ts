@@ -84,19 +84,27 @@ export class AuthController {
     });
   }
 
-  @Get('/2fa/enable')
-  async enableTwoFA(@Res() response: Response, @CurrentUser() user: User) {
+  @Post('/2fa/enable')
+  async enableTwoFA(@CurrentUser() user: User) {
+    const secret =
+      await this.twoFactorAuthenticationService.generateSecret(user);
+    await this.userService.updateUser(user.id, {
+      secret_2fa: secret,
+      is_enable_2fa: true,
+    });
+  }
+
+  @Get('2fa/qr-code')
+  async getQRCode(@Res() response: Response, @CurrentUser() user: User) {
     const { otpauthUrl } =
-      await this.twoFactorAuthenticationService.generateTwoFactorAuthenticationSecret(
-        user,
-      );
+      await this.twoFactorAuthenticationService.generateQRCode(user);
     return this.twoFactorAuthenticationService.pipeQrCodeStream(
       response,
       otpauthUrl,
     );
   }
 
-  @Get('/2fa/disable')
+  @Post('/2fa/disable')
   async disableTwoFA(@CurrentUserID() id: number) {
     await this.userService.updateUser(id, {
       secret_2fa: null,
