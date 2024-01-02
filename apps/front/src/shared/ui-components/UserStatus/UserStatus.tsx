@@ -1,6 +1,8 @@
 import "./UserStatus.css";
 import { useState } from "react";
 import { IconSVG } from "../../utils/svgComponent";
+import { socket } from "../../../socket";
+import { useEffect } from "react";
 
 type ButtonProps = {
 	targetId?: number;
@@ -9,8 +11,20 @@ type ButtonProps = {
 
 export function UserStatus({ targetId, displayText }: ButtonProps) {
 	const [status, setStatus] = useState<"ONLINE" | "INGAME" | "OFFLINE">(
-		"ONLINE"
+		"OFFLINE"
 	);
+
+	useEffect(() => {
+		socket.emit("client.getStatusUser", { user: "Kyla32" });
+
+		socket.on("server.getStatusUser", (res) => {
+			setStatus(res ? "ONLINE" : "OFFLINE");
+		});
+
+		return () => {
+			socket.off("server.getStatusUser");
+		};
+	}, []);
 
 	const statusSVG = () => {
 		switch (status) {
