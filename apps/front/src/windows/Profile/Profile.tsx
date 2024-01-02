@@ -187,8 +187,8 @@ export function Profile({ targetId }: ProfileProps) {
         id: 0,
         content: { type: "TWOFAQRCODE" },
         toggle: false,
-        handleBarButton: 7,
-        color: WinColor.LILAC,
+        handleBarButton: 4,
+        color: WinColor.RED,
       };
       store.dispatch(addWindow(newWindow));
     },
