@@ -8,6 +8,41 @@ import { FormEvent } from "react";
 
 export default function Auth2FA() {
   const { id } = useParams({ strict: false });
+
+  const handleSubmit = async (e: FormEvent<HTMLFormElement>, id: string) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const code = Object.fromEntries(new FormData(target));
+    try {
+      const token = await axios.get(`/api/auth/2fa/submit`, {
+          params: {
+            jwt_id: id,
+            code: code.code,
+          }
+        })
+        .then((response) => response.data.token);
+      router.navigate({ to: `/auth/redirect/${token}` });
+    } catch (error) {
+      console.log(error.response.status);
+      if (error.response.status === 401) {
+        router.navigate({ to: "/auth" });
+      }
+      else if (error.response.status === 403) {
+        const element = document.getElementById("code2fa-error");
+        if (element) {
+          element.innerHTML = "Code is incorrect";
+        }
+      }
+  
+  
+    }
+  };
+  
+  const handleBackToSignIn = (id: string) => {
+    axios.get(`/api/auth/abort/${id}`);
+    router.navigate({ to: "/auth" });
+  };
+  
   return (
     <div className="bg-container">
       <div className="purple-container">
@@ -38,25 +73,3 @@ export default function Auth2FA() {
     </div>
   );
 }
-
-const handleSubmit = async (e: FormEvent<HTMLFormElement>, id: string) => {
-  e.preventDefault();
-  const target = e.target as HTMLFormElement;
-  const code = Object.fromEntries(new FormData(target));
-  try {
-    const token = await axios
-      .post(`/api/auth/2fa/submit/${id}`, code)
-      .then((response) => response.data.token);
-    router.navigate({ to: `/auth/redirect/${token}` });
-  } catch (error) {
-    const element = document.getElementById("code2fa-error");
-    if (element) {
-      element.innerHTML = "Code is incorrect";
-    }
-  }
-};
-
-const handleBackToSignIn = (id: string) => {
-  axios.get(`/api/auth/abort/${id}`);
-  router.navigate({ to: "/auth" });
-};

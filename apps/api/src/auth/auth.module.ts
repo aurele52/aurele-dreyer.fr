@@ -10,13 +10,7 @@ import { JWT } from './jwt.service';
 import { UserService } from 'src/user/user.service';
 
 @Module({
-  imports: [
-    JwtModule.register({
-      global: true,
-      secret: process.env.APP_SECRET,
-      signOptions: { expiresIn: '3d' },
-    }),
-  ],
+  imports:[JwtModule.register({})],
   controllers: [AuthController],
   providers: [
     AuthService,

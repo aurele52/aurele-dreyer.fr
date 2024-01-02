@@ -10,19 +10,22 @@ export class JWT {
     private readonly jwt: JwtService,
   ) {}
 
-  async generateJWTToken(user: User) {
+  async generateJWTToken(user: User, secret: string, expiresIn: string) {
     const payload = {
       id: user.id,
       username: user.username,
       connected_at: new Date(),
     };
-    return await this.jwt.signAsync(payload);
+    return await this.jwt.signAsync(payload, {
+      secret,
+      expiresIn,
+    },);
   }
 
   async generateFakeJWTToken(id: number) {
     const user = await this.prisma.user.findUnique({
       where: { id: id },
     });
-    return await this.generateJWTToken(user);
+    return await this.generateJWTToken(user, process.env.APP_SECRET, '3d');
   }
 }

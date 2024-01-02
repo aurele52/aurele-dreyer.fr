@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Get,
   HttpStatus,
@@ -52,12 +51,11 @@ export class AuthController {
   ) {
     const user = await this.authService.signIn(code, state);
     if (user.is_enable_2fa) {
-      return { url: `http://localhost:5173/auth/2fa/${user.id}` };
+      const jwt_id = await this.jwtService.generateJWTToken(user, process.env.APP_TMP_SECRET, '60s');
+      return { url: `http://localhost:5173/auth/2fa/${jwt_id}` };
     } else {
-      const token = await this.jwtService.generateJWTToken(user);
-      return {
-        url: `http://localhost:5173/auth/redirect/${token}`,
-      };
+      const token = await this.jwtService.generateJWTToken(user, process.env.APP_SECRET, '3d');
+      return { url: `http://localhost:5173/auth/redirect/${token}` };
     }
   }
 
@@ -113,20 +111,15 @@ export class AuthController {
   }
 
   @Public()
-  @Post('/2fa/submit/:id')
+  @Get('/2fa/submit/')
   async submit2FACode(
-    @Param('id') id: number,
-    @Body('code') code: string,
+    @Query('jwt_id') jwt_id: string,
+    @Query('code') code
   ) {
-    const user =
-      await this.TwoFAService.checkUserFirstAuthentication(
-        id,
-      );
-    this.TwoFAService.check2FACodeValidity(
-      code,
-      user,
-    );
-    const token = await this.jwtService.generateJWTToken(user);
+    const user_id = await this.TwoFAService.checkAuthorization(jwt_id);
+    const user = await this.TwoFAService.getUser(user_id);
+    this.TwoFAService.check2FACodeValidity(code, user);
+    const token = await this.jwtService.generateJWTToken(user, process.env.APP_SECRET, '3d');
     return {
       statusCode: HttpStatus.OK,
       message: 'User is authenticated',
