@@ -5,6 +5,7 @@ type ChannelProps = {
   name: string;
   clickable: boolean;
   image?: string;
+  notif: number;
 } & React.HTMLAttributes<HTMLDivElement>;
 
 function Channel({
@@ -13,6 +14,7 @@ function Channel({
   className,
   children,
   clickable,
+  notif,
   ...props
 }: ChannelProps) {
   return (
@@ -27,6 +29,7 @@ function Channel({
         <p className="truncate">{name}</p>
       </div>
       {children}
+      {notif ? <div className="ButtonNotif">{notif}</div> : ""}
     </div>
   );
 }
