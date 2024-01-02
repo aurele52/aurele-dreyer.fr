@@ -22,7 +22,7 @@ import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/Memb
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
-import TwoFA from "../../windows/Profile/TwoFA/TwoFA";
+import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
 
 interface BackgroundProps extends ReduxProps {}
 

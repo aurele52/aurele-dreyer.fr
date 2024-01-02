@@ -5,8 +5,8 @@ import { AuthController } from './auth.controller';
 import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { PrismaService } from 'src/prisma.service';
-import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
-import { JWT } from './jwt.services';
+import { TwoFAService } from './twoFA.service';
+import { JWT } from './jwt.service';
 import { UserService } from 'src/user/user.service';
 
 @Module({
@@ -20,7 +20,7 @@ import { UserService } from 'src/user/user.service';
   controllers: [AuthController],
   providers: [
     AuthService,
-    TwoFactorAuthenticationService,
+    TwoFAService,
     JWT,
     UserService,
     PrismaService,

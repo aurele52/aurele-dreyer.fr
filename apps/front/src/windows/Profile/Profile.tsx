@@ -183,7 +183,7 @@ export function Profile({ targetId }: ProfileProps) {
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["user", targetId] });
       const newWindow = {
-        WindowName: "2-FA QRCode",
+        WindowName: "Your 2FA QRCode",
         id: 0,
         content: { type: "TWOFAQRCODE" },
         toggle: false,

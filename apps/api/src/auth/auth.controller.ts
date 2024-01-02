@@ -14,8 +14,8 @@ import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
-import { JWT } from './jwt.services';
-import { TwoFactorAuthenticationService } from './twoFactorAuthentication.service';
+import { JWT } from './jwt.service';
+import { TwoFAService } from './twoFA.service';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 
@@ -27,7 +27,7 @@ function generateRandomState(): string {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly twoFactorAuthenticationService: TwoFactorAuthenticationService,
+    private readonly TwoFAService: TwoFAService,
     private readonly jwtService: JWT,
     private readonly userService: UserService,
   ) {}
@@ -87,7 +87,7 @@ export class AuthController {
   @Post('/2fa/enable')
   async enableTwoFA(@CurrentUser() user: User) {
     const secret =
-      await this.twoFactorAuthenticationService.generateSecret(user);
+      await this.TwoFAService.generateSecret(user);
     await this.userService.updateUser(user.id, {
       secret_2fa: secret,
       is_enable_2fa: true,
@@ -97,8 +97,8 @@ export class AuthController {
   @Get('2fa/qr-code')
   async getQRCode(@Res() response: Response, @CurrentUser() user: User) {
     const { otpauthUrl } =
-      await this.twoFactorAuthenticationService.generateQRCode(user);
-    return this.twoFactorAuthenticationService.pipeQrCodeStream(
+      await this.TwoFAService.generateQRCode(user);
+    return this.TwoFAService.pipeQrCodeStream(
       response,
       otpauthUrl,
     );
@@ -114,15 +114,15 @@ export class AuthController {
 
   @Public()
   @Post('/2fa/submit/:id')
-  async submitTwoFactorAuthenticationCode(
+  async submit2FACode(
     @Param('id') id: number,
     @Body('code') code: string,
   ) {
     const user =
-      await this.twoFactorAuthenticationService.checkUserFirstAuthentication(
+      await this.TwoFAService.checkUserFirstAuthentication(
         id,
       );
-    this.twoFactorAuthenticationService.checkTwoFactorAuthenticationCodeValidity(
+    this.TwoFAService.check2FACodeValidity(
       code,
       user,
     );

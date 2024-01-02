@@ -11,7 +11,7 @@ import { User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
 
 @Injectable()
-export class TwoFactorAuthenticationService {
+export class TwoFAService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
@@ -55,13 +55,13 @@ export class TwoFactorAuthenticationService {
     return toFileStream(stream, otpauthUrl);
   }
 
-  public checkTwoFactorAuthenticationCodeValidity(
-    twoFactorAuthenticationCode: string,
+  public check2FACodeValidity(
+    code2FA: string,
     user: User,
   ) {
     if (
       !authenticator.verify({
-        token: twoFactorAuthenticationCode,
+        token: code2FA,
         secret: user.secret_2fa as string,
       })
     ) {

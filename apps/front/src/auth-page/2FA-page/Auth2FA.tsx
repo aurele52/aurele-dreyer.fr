@@ -1,14 +1,12 @@
-import { useQuery } from "@tanstack/react-query";
-import api from "../../axios.ts";
 import { router } from "../../router.ts";
 import axios from "axios";
 import { useParams } from "@tanstack/react-router";
 import "../bg.css";
-import "./TwoFAAuth.css";
+import "./Auth2FA.css";
 import { Button } from "../../shared/ui-components/Button/Button.tsx";
 import { FormEvent } from "react";
 
-export default function TwoFAAuth() {
+export default function Auth2FA() {
   const { id } = useParams({ strict: false });
   return (
     <div className="bg-container">
