@@ -316,12 +316,7 @@ export class UserChannelModerateService {
     }
   }
 
-  async banUser(
-    selfId: number,
-    targetId: number,
-    channelId: number,
-    endDate: Date,
-  ) {
+  async banUser(selfId: number, targetId: number, channelId: number) {
     try {
       if (selfId === targetId) {
         throw new HttpException(
@@ -368,22 +363,44 @@ export class UserChannelModerateService {
         );
       }
 
-      if (
-        targetUser.ban &&
-        DateTime.fromJSDate(targetUser.ban) > DateTime.now()
-      ) {
+      const channel = await this.prisma.channel.findUnique({
+        where: {
+          id: channelId,
+        },
+        include: {
+          banList: true,
+        },
+      });
+
+      if (!channel) {
+        throw new HttpException('Channel not found.', HttpStatus.NOT_FOUND);
+      }
+
+      const isUserAlreadyBanned = channel.banList.some(
+        (bannedUser) => bannedUser.id === targetId,
+      );
+
+      if (isUserAlreadyBanned) {
         throw new HttpException(
           'User is already banned.',
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      await this.prisma.userChannel.update({
+      const updatedChannel = await this.prisma.channel.update({
         where: {
-          id: targetUser.id,
+          id: channelId,
         },
         data: {
-          ban: endDate,
+          banList: {
+            connect: [{ id: targetId }],
+          },
+        },
+      });
+
+      await this.prisma.userChannel.delete({
+        where: {
+          id: targetUser.id,
         },
       });
     } catch (error) {
@@ -412,13 +429,6 @@ export class UserChannelModerateService {
         },
       });
 
-      const targetUser = await this.prisma.userChannel.findFirst({
-        where: {
-          user_id: targetId,
-          channel_id: channelId,
-        },
-      });
-
       if (!selfUser) {
         throw new HttpException(
           'Current user is not a member of the channel.',
@@ -426,39 +436,44 @@ export class UserChannelModerateService {
         );
       }
 
-      if (!targetUser) {
-        throw new HttpException(
-          'Target user is not a member of the channel.',
-          HttpStatus.NOT_FOUND,
-        );
-      }
-
-      if (
-        selfUser.role === 'MEMBER' ||
-        (selfUser.role === 'ADMIN' && targetUser.role !== 'MEMBER')
-      ) {
+      if (selfUser.role === 'MEMBER') {
         throw new HttpException(
           'Insufficient privileges to unban the user.',
           HttpStatus.FORBIDDEN,
         );
       }
 
-      if (
-        !targetUser.ban ||
-        DateTime.fromJSDate(targetUser.ban) <= DateTime.now()
-      ) {
+      const channel = await this.prisma.channel.findFirst({
+        where: {
+          id: channelId,
+          banList: {
+            some: {
+              id: targetId,
+            },
+          },
+        },
+        include: {
+          banList: true,
+        },
+      });
+
+      if (!channel) {
         throw new HttpException(
           'User is not currently banned.',
           HttpStatus.BAD_REQUEST,
         );
       }
 
-      await this.prisma.userChannel.update({
+      const updatedChannel = await this.prisma.channel.update({
         where: {
-          id: targetUser.id,
+          id: channelId,
         },
         data: {
-          ban: null,
+          banList: {
+            disconnect: {
+              id: targetId,
+            },
+          },
         },
       });
     } catch (error) {

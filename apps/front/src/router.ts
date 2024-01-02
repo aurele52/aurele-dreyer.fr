@@ -1,6 +1,7 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./auth-page/Auth";
+import TwoFAAuth from "./auth-page/TwoFA-page/TwoFAAuth";
 
 const rootRoute = new RootRoute();
 
@@ -21,6 +22,11 @@ const authRoute = new Route({
   path: "auth",
   component: Auth,
 });
+const authtwofaRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/auth/2fa/$id",
+  component: TwoFAAuth,
+});
 const authRedirectRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "auth/redirect/$token",
@@ -37,6 +43,7 @@ const authRedirectRoute = new Route({
 const routeTree = rootRoute.addChildren([
   appRoute,
   authRoute,
+  authtwofaRoute,
   authRedirectRoute,
 ]);
 

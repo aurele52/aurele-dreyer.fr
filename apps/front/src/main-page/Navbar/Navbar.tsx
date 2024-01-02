@@ -4,6 +4,7 @@ import { addWindow } from "../../reducers";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
+import axios from "axios";
 
 interface NavbarProps extends ReduxProps {}
 
@@ -65,11 +66,40 @@ export function Navbar({ dispatch }: NavbarProps) {
   };
 
   const handleLogOut = () => {
+    const token = localStorage.getItem("token")
     console.log("Logging out");
+    const config = {
+      headers: { Authorization: `Bearer ${token}` },
+    };
+
+    axios.get(
+      "/api/auth/disconnect",
+      config
+    );
+
     localStorage.removeItem("token");
     router.load();
   };
 
+  return (
+    <div id="Navbar">
+      <div>
+        <button type="button" className="NavButton" onClick={handlePlay}>
+          PLAY
+        </button>
+        <button type="button" className="NavButton" onClick={handleLadder}>
+          LADDER
+        </button>
+        <button type="button" className="NavButton" onClick={handleChat}>
+          CHAT
+        </button>
+        <button type="button" className="NavButton" onClick={handleProfile}>
+          MY PROFILE
+        </button>
+      </div>
+      {/* <Button icon="LogOut" color="red" onClick={handleLogOut} /> */}
+    </div>
+  );
   return (
     <div id="Navbar">
       <div>

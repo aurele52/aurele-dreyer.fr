@@ -2,7 +2,7 @@ import { ReactNode, useState, useRef, useEffect } from "react";
 import "./Window.css";
 import { Rnd } from "react-rnd";
 import { ConnectedProps, connect } from "react-redux";
-import { delWindow } from "../../../reducers";
+import { delWindow, bringToFront } from "../../../reducers";
 import { Button } from "../Button/Button";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
 import { ModalType } from "../../utils/AddModal";
@@ -22,6 +22,7 @@ interface WindowProps extends ReduxProps {
 		action?: ActionKey;
 		targetId?: number;
 	};
+	zindex: number;
 }
 
 export function Window({
@@ -33,6 +34,7 @@ export function Window({
 	children,
 	handleBarButton,
 	color,
+	zindex,
 }: WindowProps) {
 	const [state, setState] = useState({
 		width,
@@ -48,10 +50,15 @@ export function Window({
 	const rndRef = useRef<Rnd>(null);
 
 	const handleMouseDown = () => {
+		dispatch(bringToFront(id));
 		setState({
 			...state,
 			clickStartTime: Date.now(),
 		});
+	};
+
+	const handleUpdateZindex = () => {
+		dispatch(bringToFront(id));
 	};
 
 	const handleMouseUp = () => {
@@ -128,17 +135,18 @@ export function Window({
 				width: state.width,
 				height: state.height,
 			}}
-			minWidth={width}
-			minHeight={height}
 			bounds="#Background"
 			dragHandleClassName="handleBar"
 			enableResizing={!state.windowResizeLock}
 			disableDragging={state.windowMoveLock}
 			ref={rndRef}
+			style={{ zIndex: zindex }}
 		>
 			<div
 				className={state.isReduced ? "reducedWindow" : "Window"}
-				onMouseDown={state.isReduced ? handleMouseDown : undefined}
+				onMouseDown={
+					state.isReduced ? handleMouseDown : handleUpdateZindex
+				}
 				onMouseUp={state.isReduced ? handleMouseUp : undefined}
 			>
 				<div className={`handleBar ${color}`}>

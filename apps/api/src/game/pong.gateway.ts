@@ -3,26 +3,33 @@ import {
   MessageBody,
   SubscribeMessage,
   WebSocketGateway,
-  // WebSocketServer,
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
-import { gameStartInfoDto } from './dto/gameStartInfo.dto';
-
-export interface info {
-  y: number;
-  x: number;
-}
+import { clientInfoDto } from './dto-interface/clientInfo.dto';
+import { input } from './dto-interface/input.interface';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
-  constructor(private readonly lobbyManager: lobbyManager) {}
+  private connectedClient: clientInfoDto[] = [];
+  private readonly lobbyManager: lobbyManager = new lobbyManager(
+    this.connectedClient,
+  );
+  constructor() {}
   afterInit() {
     console.log('gateway initialised');
   }
 
   handleConnection(client: any, ...args: any[]) {
     console.log(`Client : ${client.id} ${args}connected`);
+    const newClient: clientInfoDto = new clientInfoDto();
+    newClient.status = 'connected';
+    newClient.socket = client;
+    newClient.input = {direction: null, isPressed: false};
+    this.connectedClient.push(newClient);
+    this.connectedClient.forEach((element) => {
+      console.log('lol', element.socket.id);
+    });
   }
 
   @SubscribeMessage('authentification')
@@ -38,23 +45,35 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.matchmaking')
-  handleNormalStart(client: Socket, data: gameStartInfoDto) {
-    console.log(`${client.id}`, ' ', data.mode); // Broadcast the message to all connected clients
-    for (let i = 0; i < 2000000000; i++);
-    client.emit('server.matchStart');
+  handleMatchmaking(client: Socket, data: clientInfoDto) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].user = data.user;
+      this.connectedClient[index].mode = data.mode;
+      this.lobbyManager.addToQueue(this.connectedClient[index]);
+    }
+    console.log(`${client.id}`, ' ', data.mode, ' ', data.user); // Broadcast the message to all connected clients
   }
-
-  @SubscribeMessage('client.ping')
-  handleMessage(
-    @MessageBody() data: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    client.emit('server.pong', data);
-    console.log(`${client.id}`, data); // Broadcast the message to all connected clients
-    client.disconnect();
+  @SubscribeMessage('client.input')
+  handleInput(client: Socket, input: input) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].input = input;
+    }
+    console.log(input.direction, input.isPressed);
   }
 
   handleDisconnect(client: any) {
     console.log(`Cliend ${client.id} disconnected`);
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient.splice(index, 1);
+    }
   }
 }

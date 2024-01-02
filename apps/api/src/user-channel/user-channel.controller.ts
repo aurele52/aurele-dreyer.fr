@@ -174,13 +174,13 @@ export class UserChannelController {
   @Post('/user-channel/moderate/ban')
   async banUser(
     @Body()
-    body: { data: { targetId: number; channelId: number; endDate: Date } },
+    body: { data: { targetId: number; channelId: number } },
     @CurrentUserID() selfId: number,
   ) {
     try {
       const { data } = body;
 
-      if (!data || !data.targetId || !data.channelId || !data.endDate) {
+      if (!data || !data.targetId || !data.channelId) {
         throw new HttpException('Invalid request body', HttpStatus.BAD_REQUEST);
       }
 
@@ -188,7 +188,6 @@ export class UserChannelController {
         selfId,
         data.targetId,
         data.channelId,
-        data.endDate,
       );
     } catch (error) {
       console.error('Error in banUser:', error.message);

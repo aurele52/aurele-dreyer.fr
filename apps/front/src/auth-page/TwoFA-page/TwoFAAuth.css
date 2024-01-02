@@ -1,0 +1,48 @@
+.twofa-title {
+  margin: 0px;
+  color: var(--Base-White, #fff);
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+  text-align: center;
+}
+
+.twofa-title > div {
+  margin: 0px;
+  font-size: 14px;
+}
+
+#code2fa-error {
+  margin:0px;
+  padding:0px;
+  color: #F06E8D;
+  font-size: 14px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+#twofa-form {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  flex-wrap: wrap;
+  gap: 0.5em;
+}
+
+#twofa-form > label {
+  color: var(--Base-White, #fff);
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  text-transform: uppercase;
+}
+
+#twofa-form > input {
+  min-width: 8em;
+  padding: 0.3em 0.7em;
+  align-items: center;
+  border-radius: var(--radius-radius-full, 360px);
+  background: var(--Base-White, #fff);
+}
