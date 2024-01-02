@@ -54,10 +54,6 @@ export class ChannelService {
         myUserChannel: el.userChannels.find((uc) => uc.User?.id === currUserId),
       }))
       .sort((a, b) => {
-        console.log('uc date a', a.myUserChannel.created_at.getTime() ?? 0);
-        console.log('message date a', a.messages[0]?.created_at.getTime() ?? 0);
-        console.log('uc date b', b.myUserChannel.created_at.getTime() ?? 0);
-        console.log('message date b', b.messages[0]?.created_at.getTime() ?? 0);
         const dateA = Math.max(
           a.myUserChannel.created_at.getTime() ?? 0,
           a.messages[0]?.created_at.getTime() ?? 0,
