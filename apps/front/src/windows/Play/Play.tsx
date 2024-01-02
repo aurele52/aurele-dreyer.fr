@@ -1,36 +1,65 @@
 import "./Play.css";
 import { useEffect, useRef} from "react";
 import p5 from "p5";
+import { Socket } from "socket.io-client";
+
+// export const Default_params = {
+// 	GAME_WIDTH: 800, // gamexsize
+// 	GAME_HEIGHT: 600, // gameysize
+// 	BALL_RADIUS: 10, // ballSize
+//
+//
+//
+//   PADDLE_MOVE_SPEED: 2,
+//   PADDLE_OFFSET: 20,
+//   PADDLE_BORDER: 1,
+//   PADDLE_HEIGHT: 600 / 6,
+//   PADDLE_WIDTH: 5,
+//   BALL_DEFAULT_SPEED: 2,
+//   BALL_SPEED_INCREASE: 0.3,
+//   BALL_MAX_SPEED: 3.5,
+//   BALL_PERTURBATOR: 0.2,
+//   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
+// };
 
 /* Interface */
-const midSquareSize = 10;
 const borderSize = 10;
-const menuSize = 7 * midSquareSize + 2 * borderSize;
-let oneBary = borderSize * 2 + menuSize + 10;
-let twoBary = borderSize * 2 + menuSize + 10;
-const ysize = 490;
+const midSquareSize = borderSize;
+const menuSize = 9 * borderSize;
+const ysize = 500;
 const xsize = 800;
+const gamey = menuSize + 2 * borderSize;
+const gamex = borderSize;
+const gamexsize = xsize - 2 * borderSize;
+const gameysize = ysize - menuSize - 3 * borderSize;
+
+let oneBary = 10;
+let twoBary = 10;
+
 
 /* Bar */
 const barSize = 100;
 const barDist = 20;
 const barLarge = 10;
-const barSpeed = 70.0;
 
 /* Score */
 let oneScore = 0;
 let twoScore = 0;
 
+/* Ball */
+const ballDeb = 150;
+const ballSize = 10;
+let ballx = gamexsize / 2 - ballDeb;
+let bally = gameysize / 2;
+
 function drawBoardMidline(p: p5) {
 	p.fill("white");
-	const area = ysize - borderSize * 3 - menuSize;
-	let tmp = area / midSquareSize;
+	let tmp = gameysize / midSquareSize;
 	tmp = Math.floor(tmp);
 	tmp = tmp / 2;
 	tmp = Math.floor(tmp);
-	let i =
-		borderSize * 2 + menuSize + (area - midSquareSize * (tmp * 2 - 1)) / 2;
-	while (i < ysize - borderSize - midSquareSize) {
+	let i = gamey + (gameysize - midSquareSize * (tmp * 2 - 1)) / 2;
+	while (i < gamey + gameysize - midSquareSize) {
 		p.rect(xsize / 2 - midSquareSize / 2, i, midSquareSize, midSquareSize);
 		i = i + midSquareSize * 2;
 	}
@@ -53,8 +82,8 @@ function drawBorder(p: p5) {
 }
 
 function drawBar(p: p5) {
-	p.rect(borderSize + barDist, oneBary, barLarge, barSize);
-	p.rect(xsize - borderSize - barDist - barLarge, twoBary, barLarge, barSize);
+	p.rect(gamex + barDist, gamey + oneBary, barLarge, barSize);
+	p.rect(gamex + gamexsize - barDist - barLarge, gamey + twoBary, barLarge, barSize);
 }
 
 function drawOne(p: p5, x: number, y: number) {
@@ -341,117 +370,30 @@ function scoreTwo(p: p5, nb: number) {
 	p.fill("white");
 	drawNumber(p, nb, xsize - 6 * midSquareSize, 0);
 }
-/* Ball */
-const ballDeb = 150;
-let ballDirx = -1;
-let ballDiry = -0.4;
-const ballSize = 10;
-const ballSpeed = 4.0;
-let ballx = xsize / 2 - ballDeb;
-let bally = borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
 
-function ballWallRedir() {
-	if (bally + ballSize + ballSpeed >= ysize - borderSize) ballDiry *= -1;
-	if (bally - ballSpeed <= borderSize * 2 + menuSize) ballDiry *= -1;
-}
-
-function score() {
-	if (ballx + ballSize >= xsize - borderSize - barDist) {
-		oneScore++;
-		ballx = xsize / 2 + ballDeb;
-		bally =
-			borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
-		ballDirx = -1;
-		ballDiry = 1;
-	}
-	if (ballx < borderSize + barDist / 2) {
-		twoScore++;
-		ballx = xsize / 2 - ballDeb;
-		bally =
-			borderSize * 2 + menuSize + (ysize - borderSize * 2 - menuSize) / 2;
-		ballDirx = 1;
-		ballDiry = 1;
-	}
-}
-
-function redirection(
-	ratio: number,
-	delta: { x: number; y: number }
-): [number, number] {
-	ratio = (ratio - 0.5) * 2;
-	const speed = Math.sqrt(delta.x * delta.x + delta.y * delta.y);
-	const inAlpha = Math.asin(delta.y / speed);
-	let outAlpha = inAlpha + (ratio * Math.PI) / 6;
-	const absinAlpha = inAlpha > 0 ? inAlpha : 2 * Math.PI + inAlpha;
-	let absoutAlpha = outAlpha > 0 ? outAlpha : 2 * Math.PI + outAlpha;
-	if (absinAlpha > Math.PI / 2 && absinAlpha < (3 * Math.PI) / 2) {
-		if (absoutAlpha < Math.PI / 2 + Math.PI / 9)
-			absoutAlpha = Math.PI / 2 + Math.PI / 9;
-		else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 9)
-			absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 9;
-	} else {
-		if (absoutAlpha > Math.PI / 2 - Math.PI / 9 && absoutAlpha < Math.PI)
-			absoutAlpha = Math.PI / 2 - Math.PI / 9;
-		else if (
-			absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 9 &&
-			absoutAlpha > Math.PI
-		)
-			absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 9;
-	}
-	outAlpha = absoutAlpha > 180 ? absoutAlpha - 2 * Math.PI : absoutAlpha;
-	return [1 * speed * Math.cos(outAlpha), speed * Math.sin(outAlpha)];
-}
-
-function ballBarRedir() {
-	if (
-		ballx <= borderSize + barLarge + barDist &&
-		ballx >= borderSize + barDist
-	) {
-		if (bally <= oneBary + barSize && bally >= oneBary) {
-			const ret = (bally - oneBary) / barSize;
-			[ballDirx, ballDiry] = redirection(ret, {
-				x: ballDirx,
-				y: ballDiry,
-			});
-		}
-	}
-	if (
-		ballx + ballSize >= xsize - borderSize - barLarge - barDist &&
-		ballx + ballSize <= xsize - borderSize - barDist
-	) {
-		if (
-			bally + ballSize / 2 <= twoBary + barSize &&
-			bally + ballSize / 2 >= twoBary
-		) {
-			const ret = (bally - twoBary) / barSize;
-			[ballDirx, ballDiry] = redirection(ret, {
-				x: ballDirx,
-				y: ballDiry,
-			});
-			ballDirx *= -1;
-		}
-	}
-}
 
 function drawBall(p: p5) {
-	p.rect(ballx, bally, ballSize, ballSize);
+	p.rect(ballx + gamex, bally + gamey, ballSize, ballSize);
 }
-function move(p: p5) {
-	if (p.keyIsDown(p.DOWN_ARROW)) {
-		if (oneBary + barSize < ysize - borderSize)
-			oneBary = oneBary + (p.deltaTime / 1000) * barSpeed;
+
+let input = 0;
+
+function move(p: p5, socket: Socket) {
+	if (input != 1 && p.keyIsDown(p.DOWN_ARROW)) {
+		socket.emit('client.input', { direction: 'down', isPressed: true});
+		input = 1;
+		// if (oneBary + barSize < gameysize)
+		// oneBary = oneBary + (p.deltaTime / 1000) * barSpeed;
 	}
-	if (p.keyIsDown(p.UP_ARROW)) {
-		if (oneBary > borderSize * 2 + menuSize)
-			oneBary = oneBary - (p.deltaTime / 1000) * barSpeed;
+	else if (input != 2 && p.keyIsDown(p.UP_ARROW)) {
+		socket.emit('client.input', { direction: 'up', isPressed: true});
+		input = 2;
+		// if (oneBary > 0)
+		// oneBary = oneBary - (p.deltaTime / 1000) * barSpeed;
 	}
-	if (p.keyIsDown(p.LEFT_ARROW)) {
-		if (twoBary + barSize < ysize - borderSize)
-			twoBary = twoBary + (p.deltaTime / 1000) * barSpeed;
-	}
-	if (p.keyIsDown(p.RIGHT_ARROW)) {
-		if (twoBary > borderSize * 2 + menuSize)
-			twoBary = twoBary - (p.deltaTime / 1000) * barSpeed;
+	else if (input == 0) {
+		socket.emit('client.input', { direction: null, isPressed: false});
+		input = -1;
 	}
 }
 
@@ -508,21 +450,8 @@ function clearBoard(p: p5) {
 	);
 }
 
-function update() {
-	score();
-	let i = ballSpeed;
-	while (i > 0) {
-		ballWallRedir();
-		ballBarRedir();
-		ballx = ballx + ballDirx;
-		bally = bally + ballDiry;
-		i--;
-	}
-}
-
-function loop(p: p5) {
-	move(p);
-	update();
+function loop(p: p5, socket: Socket) {
+	move(p, socket);
 	p.fill("black");
 	clearBoard(p);
 	p.fill("white");
@@ -533,16 +462,41 @@ function loop(p: p5) {
 	scoreTwo(p, twoScore);
 }
 
-export default function Play() {
+type playProps = {
+  socket: Socket;
+};
+
+interface sendInfo {
+    ballx: number,
+    bally: number,
+    oneBary: number,
+    twoBary: number,
+    oneScore: number,
+    twoScore: number,
+  }
+
+
+export default function Play(props: playProps) {
 	const myRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (myRef.current) {
+		props.socket.on('server.update', onUpdate);
 			const myP5 = new p5(Sketch, myRef.current);
 			return () => {
 				myP5.remove();
+				props.socket.off('server.update', onUpdate);
 			};
 		}
-	}, []);
+		function onUpdate(gameUpdate: sendInfo) {
+			ballx = gameUpdate.ballx;
+			bally = gameUpdate.bally;
+			oneBary = gameUpdate.oneBary;
+			twoBary = gameUpdate.twoBary;
+			oneScore = gameUpdate.oneScore;
+			twoScore = gameUpdate.twoScore;
+			console.log('yesss');
+		}
+	}, [props.socket]);
 
 	const Sketch = (p: p5) => {
 		p.setup = () => {
@@ -559,18 +513,21 @@ export default function Play() {
 			if (ms < 1000) {
 				compteur(p, 3);
 			}
-			else if (ms < 2000) {
-				compteur(p, 2);
-			}
-			else if (ms < 3000) {
-				compteur(p, 1);
-			}
-			else if (ms < 3200) {
-				compteur(p, 0);
-			}
+			// else if (ms < 2000) {
+			// 	compteur(p, 2);
+			// }
+			// else if (ms < 3000) {
+			// 	compteur(p, 1);
+			// }
+			// else if (ms < 3200) {
+			// 	compteur(p, 0);
+			// }
 			else {
-				loop(p);
+				loop(p, props.socket);
 			}
+		};
+		p.keyReleased = () => {
+			input = 0;
 		};
 	};
 	return (

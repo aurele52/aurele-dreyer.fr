@@ -16,6 +16,7 @@ async function createUsers() {
       token: faker.number.int().toString(),
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
+      socked_id: faker.string.alphanumeric(20),
     };
 
     users.push(user);

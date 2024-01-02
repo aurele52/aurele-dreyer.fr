@@ -9,4 +9,4 @@ export type AuthenticatedSocket = Socket & {
   emit: <T>(ev: string, data: T) => boolean;
 };
 
-export type LobbyCustom = 'isNormal' | 'isCustom';
+export type LobbyCustom = 'normal' | 'custom';
