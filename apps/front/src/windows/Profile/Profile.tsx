@@ -34,6 +34,7 @@ export function Profile({ targetId }: ProfileProps) {
     loose_count: number;
     achievement_lvl: number;
     rank: number;
+    is2FaEnabled?: boolean;
     friendship?: {
       status: "FRIENDS" | "PENDING" | "BLOCKED";
       user1_id: number;
@@ -123,12 +124,8 @@ export function Profile({ targetId }: ProfileProps) {
       return api.post("/user/username/" + placeholderValue);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({
-        queryKey: ["historic", targetId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user", targetId],
-      });
+      queryClient.invalidateQueries({ queryKey: ["historic", targetId] });
+      queryClient.invalidateQueries({ queryKey: ["user", targetId] });
     },
   });
 
@@ -162,6 +159,33 @@ export function Profile({ targetId }: ProfileProps) {
       });
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friendsList"] });
+    },
+  });
+
+  const { mutateAsync: enableTwoFA } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/auth/2fa/enable");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", targetId] });
+      const newWindow = {
+        WindowName: "2-FA QRCode",
+        id: 0,
+        content: { type: "TWOFAQRCODE" },
+        toggle: false,
+        handleBarButton: 7,
+        color: WinColor.LILAC,
+      };
+      store.dispatch(addWindow(newWindow));
+    },
+  });
+
+  const { mutateAsync: disableTwoFA } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/auth/2fa/disable");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["user", targetId] });
     },
   });
 
@@ -343,52 +367,12 @@ export function Profile({ targetId }: ProfileProps) {
     );
   };
 
-  //   const handleOpenBlockedList = () => {
-  //     const newWindow = {
-  //       WindowName: "Blocked Users",
-  //       id: 0,
-  //       content: { type: "BLOCKEDUSERS" },
-  //       toggle: false,
-  //       handleBarButton: 7,
-  //       color: WinColor.PURPLE,
-  //     };
-  //     store.dispatch(addWindow(newWindow));
-  //   };
-
-  const handleOpenTwoFA = async () => {
-    const newWindow = {
-      WindowName: "2-FA QRCode",
-      id: 0,
-      content: { type: "TWOFAQRCODE" },
-      toggle: false,
-      handleBarButton: 7,
-      color: WinColor.LILAC,
-    };
-    store.dispatch(addWindow(newWindow));
+  const handleEnableAndOpenTwoFA = async () => {
+    enableTwoFA();
   };
-  const handleUnset2fa = async () => {
-    const {
-      data,
-      error: disable2FAError,
-      isLoading: disable2FALoading,
-    } = useQuery<string>({
-      queryKey: ["disable2FA"],
-      refetchOnWindowFocus: false,
-      queryFn: async () => {
-        return await api.get("/auth/2fa/disable").catch((error) => {
-          console.log("error", error);
-          return error;
-        });
-      },
-    });
 
-    if (disable2FALoading) {
-      return <FaSpinner className="loadingSpinner" />;
-    }
-
-    if (disable2FAError) {
-      return <div>Error disabling 2FA: {disable2FAError.message}</div>;
-    }
+  const handleDisableTwoFA = async () => {
+    disableTwoFA();
   };
 
   const nameDiv = () => {
@@ -546,7 +530,6 @@ export function Profile({ targetId }: ProfileProps) {
     </div>
   );
 
-  const is2FaEnabled = false;
   const footer = selfProfile ? (
     <div className="Footer">
       <Button
@@ -556,10 +539,12 @@ export function Profile({ targetId }: ProfileProps) {
         onClick={handleDeleteAccount}
       />
       <Button
-        content={is2FaEnabled ? "disable 2fa" : "enable 2fa"}
-        color={is2FaEnabled ? "red" : "purple"}
+        content={profile?.is2FaEnabled ? "disable 2fa" : "enable 2fa"}
+        color={profile?.is2FaEnabled ? "red" : "purple"}
         style={{ display: "flex" }}
-        onClick={is2FaEnabled ? handleUnset2fa : handleOpenTwoFA}
+        onClick={
+          profile?.is2FaEnabled ? handleDisableTwoFA : handleEnableAndOpenTwoFA
+        }
       />
     </div>
   ) : (

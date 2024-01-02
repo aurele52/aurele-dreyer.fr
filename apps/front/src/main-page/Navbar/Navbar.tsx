@@ -97,7 +97,7 @@ export function Navbar({ dispatch }: NavbarProps) {
           MY PROFILE
         </button>
       </div>
-      {/* <Button icon="LogOut" color="red" onClick={handleLogOut} /> */}
+      <Button icon="LogOut" color="red" onClick={handleLogOut} />
     </div>
   );
   return (

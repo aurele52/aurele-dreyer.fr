@@ -2,7 +2,6 @@ import "./TwoFA.css";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
-import { Button } from "../../../shared/ui-components/Button/Button";
 
 export default function TwoFA() {
   const {
@@ -10,11 +9,11 @@ export default function TwoFA() {
     error: enable2FAError,
     isLoading: enable2FALoading,
   } = useQuery<string>({
-    queryKey: ["enable2FA"],
+    queryKey: ["QRCode"],
     refetchOnWindowFocus: false,
     queryFn: async () => {
       return api
-        .get("/auth/2fa/enable", { responseType: "blob" })
+        .get("/auth/2fa/qr-code", { responseType: "blob" })
         .then((response) => {
           const imageUrl = URL.createObjectURL(response.data);
           return imageUrl;
@@ -34,7 +33,7 @@ export default function TwoFA() {
     return <div>Error enabling 2FA: {enable2FAError.message}</div>;
   }
 
-  return (   
+  return (
     <div id="twofa-container">
       <h2>Scan with Google Authenticator app</h2>
       <div>Save it! You will need it to log in next time</div>
