@@ -46,7 +46,13 @@ export class PongGateway {
 
   @SubscribeMessage('client.matchmaking')
   handleMatchmaking(client: Socket, data: clientInfoDto) {
-    const index = this.connectedClient.findIndex((value) => {
+    let index = this.connectedClient.findIndex((value) => {
+      return value === data;
+    });
+    if (index !== -1) {
+      client.emit('server.matchStart');
+    }
+    index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
