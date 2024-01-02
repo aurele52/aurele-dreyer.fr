@@ -1,5 +1,7 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
+import { Subject, Observable } from 'rxjs';
+import { Message } from './interfaces/message.interface';
 
 @Injectable()
 export class MessageService {
@@ -27,5 +29,15 @@ export class MessageService {
         content,
       },
     });
+  }
+
+  private messageEvents = new Subject<any>();
+
+  emitMessage(message: Message) {
+    this.messageEvents.next(message);
+  }
+
+  getMessageEvents(): Observable<MessageEvent> {
+    return this.messageEvents.asObservable();
   }
 }
