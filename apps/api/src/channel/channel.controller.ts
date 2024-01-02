@@ -4,12 +4,14 @@ import { ChannelService } from './channel.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
+import { MessageService } from 'src/message/message.service';
 
 @Controller()
 export class ChannelController {
   constructor(
     private readonly channelService: ChannelService,
     private readonly userChannelService: UserChannelService,
+    private readonly messageService: MessageService,
   ) {}
 
   @Get('/chats')
