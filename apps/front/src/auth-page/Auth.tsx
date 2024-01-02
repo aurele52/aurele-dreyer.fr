@@ -7,7 +7,7 @@ const handleSignin = () => {
 
 function Auth() {
   return (
-    <div className="bg-container">
+    <div className="bg-container bg-image">
       <div className="purple-container">
         <button type="button" className="signin-btn" onClick={handleSignin}>
           Sign in with 42

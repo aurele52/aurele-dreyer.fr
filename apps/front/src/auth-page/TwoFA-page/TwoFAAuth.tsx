@@ -11,7 +11,7 @@ import { FormEvent } from "react";
 export default function TwoFAAuth() {
   const { id } = useParams({ strict: false });
   return (
-    <div className="bg-container">
+    <div className="bg-container bg-image">
       <div className="purple-container">
         <div className="twofa-title">
           Two factor authentication
