@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   Injectable,
   NotFoundException,
   UnauthorizedException,
@@ -9,15 +10,27 @@ import { toFileStream } from 'qrcode';
 import { Response } from 'express';
 import { User } from '@prisma/client';
 import { UserService } from 'src/user/user.service';
+import { JwtService } from '@nestjs/jwt';
 
 @Injectable()
-export class TwoFactorAuthenticationService {
+export class TwoFAService {
   constructor(
     private readonly prisma: PrismaService,
     private readonly userService: UserService,
+    private readonly jwt:JwtService,
   ) {}
 
-  async checkUserFirstAuthentication(id: number) {
+  async checkAuthorization(jwt_id: string) {
+    try {
+      const payload = await this.jwt.verifyAsync(jwt_id, {
+        secret:process.env.APP_TMP_SECRET});
+      return (payload.id);
+    } catch {
+      throw new UnauthorizedException();
+    }
+  }
+
+  async getUser(id: number){
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -26,10 +39,6 @@ export class TwoFactorAuthenticationService {
     if (!user) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    if (!user.token_42)
-      throw new UnauthorizedException(
-        'Must complete first step of authentication before accessing second step',
-      );
     return user;
   }
 
@@ -41,7 +50,7 @@ export class TwoFactorAuthenticationService {
   public async generateQRCode(user: User) {
     const otpauthUrl = authenticator.keyuri(
       user.username,
-      process.env.APP_SECRET,
+      process.env.APP_NAME,
       user.secret_2fa,
     );
     const secret = user.secret_2fa;
@@ -55,17 +64,17 @@ export class TwoFactorAuthenticationService {
     return toFileStream(stream, otpauthUrl);
   }
 
-  public checkTwoFactorAuthenticationCodeValidity(
-    twoFactorAuthenticationCode: string,
+  public check2FACodeValidity(
+    code2FA: string,
     user: User,
   ) {
     if (
       !authenticator.verify({
-        token: twoFactorAuthenticationCode,
+        token: code2FA,
         secret: user.secret_2fa as string,
       })
     ) {
-      throw new UnauthorizedException('Wrong authentication code');
+      throw new ForbiddenException('Wrong authentication code');
     }
   }
 }

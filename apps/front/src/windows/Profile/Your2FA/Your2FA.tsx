@@ -1,9 +1,9 @@
-import "./TwoFA.css";
+import "./Your2FA.css";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
 
-export default function TwoFA() {
+export default function Your2FA() {
   const {
     data,
     error: enable2FAError,

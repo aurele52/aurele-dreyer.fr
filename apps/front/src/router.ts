@@ -1,7 +1,7 @@
 import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./auth-page/Auth";
-import TwoFAAuth from "./auth-page/TwoFA-page/TwoFAAuth";
+import Auth2FA from "./auth-page/2FA-page/Auth2FA";
 
 const rootRoute = new RootRoute();
 
@@ -25,7 +25,7 @@ const authRoute = new Route({
 const authtwofaRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/auth/2fa/$id",
-  component: TwoFAAuth,
+  component: Auth2FA,
 });
 const authRedirectRoute = new Route({
   getParentRoute: () => rootRoute,
