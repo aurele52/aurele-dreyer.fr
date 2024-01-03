@@ -46,7 +46,7 @@ export class PongGateway {
     console.log('OpenGame');
   }
 
-  @SubscribeMessage('authentification')
+  @SubscribeMessage('client.authentification')
   async handleAuthentification(
     @MessageBody() token: string,
     @ConnectedSocket() client: Socket,
@@ -70,7 +70,13 @@ export class PongGateway {
 
   @SubscribeMessage('client.matchmaking')
   handleMatchmaking(client: Socket, data: clientInfoDto) {
-    const index = this.connectedClient.findIndex((value) => {
+    let index = this.connectedClient.findIndex((value) => {
+      return value === data;
+    });
+    if (index !== -1) {
+      client.emit('server.matchStart');
+    }
+    index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
@@ -101,12 +107,15 @@ export class PongGateway {
     } else client.emit('server.getStatusUser', false);
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
+      if (this.connectedClient[index].lobby != null) {
+        this.connectedClient[index].lobby.disconnect(this.connectedClient[index]);
+      }
       this.connectedClient.splice(index, 1);
     }
   }
