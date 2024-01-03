@@ -3,12 +3,11 @@ import "./Modal.css";
 import { ModalType, iconsModal } from "../../utils/AddModal";
 import { Button } from "../Button/Button";
 import store from "../../../store";
-import { AppState, addWindow, delWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import { router } from "../../../router";
 import { WinColor } from "../../utils/WindowTypes";
-import { useSelector } from "react-redux";
 
 interface ModalProps {
 	content: ReactNode;

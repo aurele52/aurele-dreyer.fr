@@ -56,14 +56,14 @@ export class AuthController {
         process.env.APP_TMP_SECRET,
         '60s',
       );
-      return { url: `http://localhost:5173/auth/2fa/${jwt_id}` };
+      return { url: `${process.env.DOMAIN_NAME}/auth/2fa/${jwt_id}` };
     } else {
       const token = await this.jwtService.generateJWTToken(
         user,
         process.env.APP_SECRET,
         '3d',
       );
-      return { url: `http://localhost:5173/auth/redirect/${token}` };
+      return { url: `${process.env.DOMAIN_NAME}/auth/redirect/${token}` };
     }
   }
 
@@ -72,7 +72,7 @@ export class AuthController {
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
     const token = await this.jwtService.generateFakeJWTToken(id);
-    return { url: `http://localhost:5173/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME}/auth/redirect/${token}` };
   }
 
   @Public()

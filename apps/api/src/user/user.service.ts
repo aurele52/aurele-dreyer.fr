@@ -202,7 +202,7 @@ export class UserService {
         id_42: null,
         token_42: null,
         secret_2fa: null,
-        avatar_url: 'http://localhost:5173/api/user/avatar/deletedUser.png',
+        avatar_url: `${process.env.DOMAIN_NAME}/api/user/avatar/deletedUser.png`,
         username: 'deletedUser' + id,
       },
     });
