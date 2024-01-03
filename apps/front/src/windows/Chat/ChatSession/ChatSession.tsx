@@ -23,6 +23,12 @@ export type MessageData = {
     id: number;
     username: string;
     avatar_url: string;
+    friendships: {
+      id: number;
+      user1_id: number;
+      user2_id: number;
+      status: "FRIENDS" | "PENDING" | "BLOCKED";
+    }[];
   };
 };
 
@@ -81,7 +87,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
         },
       });
 
-      eventSource.onmessage = ({data}) => {
+      eventSource.onmessage = ({ data }) => {
         if (data.user_id !== selfId)
           queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
       };
@@ -158,6 +164,18 @@ function ChatSession({ channelId }: ChatSessionProps) {
     }
   };
 
+  const isBlocked = (message: MessageData) => {
+    if (message.user.id !== selfId) {
+      return message.user.friendships.some((f) => {
+        return (
+          (f.user1_id === selfId || f.user2_id === selfId) &&
+          f.status === "BLOCKED"
+        );
+      });
+    }
+    return false;
+  };
+
   return (
     <div className="ChatSession">
       <div className="headerChatSession">
@@ -171,7 +189,11 @@ function ChatSession({ channelId }: ChatSessionProps) {
       </div>
       <List ref={listRef}>
         {messages?.map((message) => {
-          return <Message message={message} key={message.id} />;
+          return !isBlocked(message) ? (
+            <Message message={message} key={message.id} />
+          ) : (
+            ""
+          );
         })}
       </List>
       <div className="footerChatSession">

@@ -45,7 +45,7 @@ function AboutChan({ chanId }: AboutChanProps) {
 		},
 	});
 
-	const { data: self } = useQuery<{ id: number; role: UserRole }>({
+	const { data: self } = useQuery<{ userId: number; role: UserRole }>({
 		queryKey: ["self", chanId],
 		queryFn: async () => {
 			try {
@@ -106,7 +106,7 @@ function AboutChan({ chanId }: AboutChanProps) {
 				return;
 			}
 			const userChannel = channel.userChannels.find(
-				(uc) => uc.user_id === self?.id
+				(uc) => uc.user_id === self?.userId
 			);
 			if (userChannel) {
 				deleteUserChannel(userChannel?.id);
