@@ -1,6 +1,7 @@
 import { lobby } from './lobby';
 import { Cron } from '@nestjs/schedule';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
+import { Socket } from 'socket.io';
 
 export class lobbyManager {
   constructor(public connectedClientList: clientInfoDto[]) {
@@ -23,7 +24,7 @@ export class lobbyManager {
       const playerTwo = this.queue.shift();
       playerOne.socket.emit('server.matchStart');
       playerTwo.socket.emit('server.matchStart');
-      const newLobby = new lobby(this.connectedClient, 'normal');
+      const newLobby = new lobby(this.connectedClient, playerOne.mode);
       playerOne.lobby = newLobby;
       playerTwo.lobby = newLobby;
       newLobby.addClient(playerOne);
@@ -32,7 +33,6 @@ export class lobbyManager {
       this.lobbies.push(newLobby);
     }
   }
-
   // Periodically clean up lobbies
   @Cron('*/5 * * * *')
   private lobbiesCleaner(): void {}

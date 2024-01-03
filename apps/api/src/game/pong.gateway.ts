@@ -41,7 +41,7 @@ export class PongGateway {
     console.log('OpenGame');
   }
 
-  @SubscribeMessage('authentification')
+  @SubscribeMessage('client.authentification')
   handleAuthentification(
     @MessageBody() token: string,
     @ConnectedSocket() client: Socket,
@@ -92,12 +92,15 @@ export class PongGateway {
     } else client.emit('server.getStatusUser', false);
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
+      if (this.connectedClient[index].lobby != null) {
+        this.connectedClient[index].lobby.disconnect(this.connectedClient[index]);
+      }
       this.connectedClient.splice(index, 1);
     }
   }

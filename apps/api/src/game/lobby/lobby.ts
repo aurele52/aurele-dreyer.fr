@@ -22,6 +22,7 @@ interface gameInfo {
 }
 
 export class lobby {
+  private finish = 0;
   ballWallRedir() {
     if (
       this.gameInfo.bally + this.gameInfo.ballSize + this.gameInfo.ballSpeed >=
@@ -30,6 +31,28 @@ export class lobby {
       this.gameInfo.ballDiry *= -1;
     if (this.gameInfo.bally - this.gameInfo.ballSpeed <= 0)
       this.gameInfo.ballDiry *= -1;
+  }
+  disconnect(user: clientInfoDto) {
+    this.finish = 1;
+    if (this.clients[0] == user) {
+      this.win(this.clients[1]);
+    }
+    if (this.clients[1] == user) {
+      this.win(this.clients[0]);
+    }
+    this.clients.forEach((value) => {
+      value.lobby = null;
+    });
+    this.disconnectAll();
+  }
+  disconnectAll() {
+    this.clients.splice(0);
+  }
+  win(user: clientInfoDto) {
+    user.socket.emit('server.win');
+  }
+  lose(user: clientInfoDto) {
+    user.socket.emit('server.lose');
   }
 
   score() {
@@ -85,19 +108,23 @@ export class lobby {
       this.gameInfo.ballx <= this.gameInfo.barLarge + this.gameInfo.barDist &&
       this.gameInfo.ballx >= this.gameInfo.barDist
     ) {
-      if (
-        this.gameInfo.bally <= this.gameInfo.oneBary + this.gameInfo.barSize &&
-        this.gameInfo.bally >= this.gameInfo.oneBary
-      ) {
-        const ret =
-          (this.gameInfo.bally - this.gameInfo.oneBary) / this.gameInfo.barSize;
-        [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
-          ret,
-          {
-            x: this.gameInfo.ballDirx,
-            y: this.gameInfo.ballDiry,
-          },
-        );
+      let temp = 0;
+      while (temp < this.gameInfo.ballSize) {
+        if (
+          this.gameInfo.bally + temp <= this.gameInfo.oneBary + this.gameInfo.barSize &&
+          this.gameInfo.bally + temp >= this.gameInfo.oneBary
+        ) {
+          const ret =
+            (this.gameInfo.bally - this.gameInfo.oneBary) / this.gameInfo.barSize;
+          [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
+            ret,
+            {
+              x: this.gameInfo.ballDirx,
+              y: this.gameInfo.ballDiry,
+            },
+          );
+        }
+        temp++;
       }
     }
     if (
@@ -108,28 +135,40 @@ export class lobby {
       this.gameInfo.ballx + this.gameInfo.ballSize <=
         this.gameInfo.gamexsize - this.gameInfo.barDist
     ) {
-      if (
-        this.gameInfo.bally + this.gameInfo.ballSize / 2 <=
-          this.gameInfo.twoBary + this.gameInfo.barSize &&
-        this.gameInfo.bally + this.gameInfo.ballSize / 2 >=
-          this.gameInfo.twoBary
-      ) {
-        const ret =
-          (this.gameInfo.bally - this.gameInfo.twoBary) / this.gameInfo.barSize;
-        [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
-          ret,
-          {
-            x: this.gameInfo.ballDirx,
-            y: this.gameInfo.ballDiry,
-          },
-        );
-        this.gameInfo.ballDirx *= -1;
+      let temp = 0;
+      while (temp < this.gameInfo.ballSize) {
+        if (
+          this.gameInfo.bally + temp <=
+            this.gameInfo.twoBary + this.gameInfo.barSize &&
+          this.gameInfo.bally + temp >=
+            this.gameInfo.twoBary
+        ) {
+          const ret =
+            (this.gameInfo.bally - this.gameInfo.twoBary) / this.gameInfo.barSize;
+          [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
+            ret,
+            {
+              x: this.gameInfo.ballDirx,
+              y: this.gameInfo.ballDiry,
+            },
+          );
+          this.gameInfo.ballDirx *= -1;
+        }
+        temp++;
       }
     }
   }
   constructor(connectedClientList: clientInfoDto[], isCustom: LobbyCustom) {
     this.connectedClient = connectedClientList;
     this.isCustom = isCustom;
+    if (this.isCustom == 'normal') {
+      this.gameInfo.ballSize = 10;
+      this.gameInfo.barSize = 100;
+    }
+    if (this.isCustom == 'custom') {
+      this.gameInfo.ballSize = 50;
+      this.gameInfo.barSize = 10;
+    }
   }
   public readonly isCustom: LobbyCustom;
 
@@ -157,25 +196,25 @@ export class lobby {
     ballSpeed: 4.0,
     gamexsize: 780,
     gameysize: 380,
-    barSize: 100,
     barLarge: 10,
     oneScore: 0,
     twoScore: 0,
     ballDeb: 150,
     ballSize: 10,
+    barSize: 100,
   };
   move() {
     if (this.clients[0].input.direction == 'up')
-      if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize)
+      if (this.gameInfo.oneBary > 0)
         this.gameInfo.oneBary = this.gameInfo.oneBary - this.gameInfo.barSpeed;
     if (this.clients[0].input.direction == 'down')
-      if (this.gameInfo.oneBary > 0)
+      if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize)
         this.gameInfo.oneBary = this.gameInfo.oneBary + this.gameInfo.barSpeed;
     if (this.clients[1].input.direction == 'up')
-      if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize)
+      if (this.gameInfo.twoBary > 0)
         this.gameInfo.twoBary = this.gameInfo.twoBary - this.gameInfo.barSpeed;
     if (this.clients[1].input.direction == 'down')
-      if (this.gameInfo.twoBary > 0)
+      if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize)
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
   }
   update() {
@@ -192,7 +231,7 @@ export class lobby {
   }
 
   async start() {
-    for (let i = 0; i < 10000; i++) {
+    while (this.finish === 0 && this.gameInfo.oneScore < 9 && this.gameInfo.twoScore < 9) {
       this.update();
       this.clients[0].socket.emit('server.update', {
         ballx: this.gameInfo.ballx,
@@ -201,9 +240,20 @@ export class lobby {
         twoBary: this.gameInfo.twoBary,
         oneScore: this.gameInfo.oneScore,
         twoScore: this.gameInfo.twoScore,
+        ballSize: this.gameInfo.ballSize,
+        barSize: this.gameInfo.barSize,
       });
       this.clients[1].socket.emit('server.update', this.gameInfo);
       await this.delay(20);
     }
+    if (this.gameInfo.oneScore == 9) {
+      this.win(this.clients[0]);
+      this.lose(this.clients[1]);
+    }
+    if (this.gameInfo.twoScore == 9) {
+      this.win(this.clients[1]);
+      this.lose(this.clients[0]);
+    }
+    this.disconnectAll();
   }
 }
