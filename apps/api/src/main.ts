@@ -31,7 +31,7 @@ async function bootstrap() {
     express.static(path.join(__dirname, '..', 'public', 'avatars')),
   ); */
   /*   app.enableCors({
-    origin: '${process.env.DOMAIN_NAME}',
+    origin: '${process.env.DOMAIN_NAME_FRONT}',
     credentials: true,
   }); */
 
