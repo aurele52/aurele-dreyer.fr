@@ -1,10 +1,8 @@
-import { Injectable } from '@nestjs/common';
+import { ForbiddenException, ImATeapotException, Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { AccessToken42, UserInfo42 } from './auth.types';
-import { OperationCanceledException } from 'typescript';
 import { JWT } from './jwt.service';
-import { User } from '@prisma/client';
-import { faker } from '@faker-js/faker';
+import { Prisma, User } from '@prisma/client';
 
 @Injectable()
 export class AuthService {
@@ -24,19 +22,10 @@ export class AuthService {
     };
   }
 
-  async isNewUser(id_42: number) {
-    const user = await this.prisma.user
-      .findUnique({
-        where: { id_42 },
-      })
-      .then((user) => {
-        if (!user) {
-          return true;
-        } else {
-          return false;
-        }
-      });
-    return user;
+  async getUserbyId42(id_42: number) {
+    return await this.prisma.user.findUnique({
+      where: { id_42 },
+    });;
   }
 
   async signIn(user_info_42) {
@@ -65,13 +54,6 @@ export class AuthService {
   }
 
   async registerUser(user_infos_42, avatar_url, username) {
-    const getUsername = (): string => {
-      if (username) {
-        return username;
-      } else {
-        user_infos_42.user.login;
-      }
-    };
     const getAvatarUrl = (): string => {
       if (avatar_url) {
         return avatar_url;
@@ -79,39 +61,27 @@ export class AuthService {
         user_infos_42.user.image.versions.small;
       }
     };
-    const user = await this.prisma.user.create({
-      data: {
-        username: getUsername(),
-        avatar_url: getAvatarUrl(),
-        id_42: user_infos_42.user.id,
-        token_42: user_infos_42.access_token.access_token,
-        is_enable_2fa: false,
-      },
-    });
-    const token = await this.jwt.generateJWTToken(
-      user,
-      process.env.APP_SECRET,
-      '3d',
-    );
-    return token;
-  }
-
-  async registerFakeUser(avatar_url, username) {
-    const user = await this.prisma.user.create({
-      data: {
-        username: username,
-        avatar_url: avatar_url,
-        id_42: faker.number.int({ min: 0, max: 10000 }),
-        token_42: faker.string.alphanumeric(20),
-        is_enable_2fa: false,
-      },
-    });
-    const token = await this.jwt.generateJWTToken(
-      user,
-      process.env.APP_SECRET,
-      '3d',
-    );
-    return token;
+    try {
+      const user = await this.prisma.user.create({
+        data: {
+          username: username,
+          avatar_url: getAvatarUrl(),
+          id_42: user_infos_42.user.id,
+          token_42: user_infos_42.access_token.access_token,
+          is_enable_2fa: false,
+        },
+      });
+    } catch (e) {
+      if (e instanceof Prisma.PrismaClientKnownRequestError) {
+        if (e.code === 'P2002') {
+          console.log(
+            'There is a unique constraint violation, a new user cannot be created with this username'
+          )
+          throw new ForbiddenException();
+        }
+        throw new ImATeapotException();
+      }
+    }
   }
 
   async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {

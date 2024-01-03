@@ -54,9 +54,9 @@ export class AuthController {
   ) {
     // !!!! Handle errors !!!!
     const user_infos_42 = await this.authService.fetchInfo42(code, state);
-    if (await this.authService.isNewUser(user_infos_42.id)) {
+    if (!await this.authService.getUserbyId42(user_infos_42.id)) {
       const jwt = await this.jwtService.signAsync(user_infos_42, {
-        secret: process.env.APP_SECRET,
+        secret: process.env.APP_TMP_SECRET,
         expiresIn: '180s',
       });
       return { url: `http://localhost:5173/sign-up/${jwt}` };
@@ -71,19 +71,32 @@ export class AuthController {
   }
 
   @Public()
-  @Get('/sign-up')
+  @Post('/sign-up')
   async signUp(
     @Query('id') id: string,
     @Query('avatar_url') avatar_url: string,
     @Query('username') username: string,
   ) {
     const user_infos_42 = await this.jwtService.verifyAsync(id, {
-      secret: process.env.APP_SECRET,
+      secret: process.env.APP_TMP_SECRET,
     });
     const token = await this.authService.registerUser(
       user_infos_42,
       avatar_url,
       username,
+    );
+    return { url: `http://localhost:5173/auth/redirect/${token}` };
+  }
+
+  @Get('/redirect-to-home')
+  async redirectIdentifiedUser(@Query('id') id: string) {
+    const user_infos_42 = await this.jwtService.verifyAsync(id, {
+      secret: process.env.APP_TMP_SECRET,
+    });
+    const token = await this.jwt.generateJWTToken(
+      await this.authService.getUserbyId42(user_infos_42.id),
+      process.env.APP_SECRET,
+      '3d',
     );
     return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
