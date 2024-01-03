@@ -1,4 +1,8 @@
-import { ForbiddenException, ImATeapotException, Injectable } from '@nestjs/common';
+import {
+  ForbiddenException,
+  ImATeapotException,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { AccessToken42, UserInfo42 } from './auth.types';
 import { JWT } from './jwt.service';
@@ -25,7 +29,7 @@ export class AuthService {
   async getUserbyId42(id_42: number) {
     return await this.prisma.user.findUnique({
       where: { id_42 },
-    });;
+    });
   }
 
   async signIn(user_info_42) {
@@ -54,29 +58,34 @@ export class AuthService {
   }
 
   async registerUser(user_infos_42, avatar_url, username) {
+    console.log({ user_infos_42, avatar_url, username });
     const getAvatarUrl = (): string => {
       if (avatar_url) {
         return avatar_url;
       } else {
-        user_infos_42.user.image.versions.small;
+        return user_infos_42.avatar;
       }
+      // !!!!! handle user == null  !!!!!
     };
     try {
       const user = await this.prisma.user.create({
         data: {
           username: username,
           avatar_url: getAvatarUrl(),
-          id_42: user_infos_42.user.id,
-          token_42: user_infos_42.access_token.access_token,
+          id_42: user_infos_42.id,
+          token_42: user_infos_42.access_token,
           is_enable_2fa: false,
         },
       });
+      console.log({ user });
+      return user;
     } catch (e) {
+      console.log(e);
       if (e instanceof Prisma.PrismaClientKnownRequestError) {
         if (e.code === 'P2002') {
           console.log(
-            'There is a unique constraint violation, a new user cannot be created with this username'
-          )
+            'There is a unique constraint violation, a new user cannot be created with this username',
+          );
           throw new ForbiddenException();
         }
         throw new ImATeapotException();

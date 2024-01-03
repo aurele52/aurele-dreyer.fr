@@ -1,4 +1,5 @@
 import {
+  BadRequestException,
   Body,
   Controller,
   Get,
@@ -8,6 +9,8 @@ import {
   Query,
   Redirect,
   Res,
+  UploadedFile,
+  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { randomBytes } from 'crypto';
@@ -19,12 +22,16 @@ import { TwoFAService } from './twoFA.service';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
+import { FileInterceptor } from '@nestjs/platform-express';
+import * as path from 'path';
+import * as fs from 'fs';
+import { Express } from 'express';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
 
-@Controller('/auth')
+/* @Controller('/auth')
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
@@ -43,6 +50,27 @@ export class AuthController {
     const state = generateRandomState();
     const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
     return { url: url_auth42 };
+  } */
+
+@Controller('/auth')
+export class AuthController {
+  constructor(
+    private readonly authService: AuthService,
+    private readonly TwoFAService: TwoFAService,
+    private readonly jwtService: JwtService,
+    private readonly jwt: JWT,
+    private readonly userService: UserService,
+  ) {}
+
+  @Public()
+  @Get('/')
+  @Redirect()
+  redirectTo42Auth() {
+    const api42_id = process.env.API42_ID;
+    const api42_callback = 'http://localhost:3000/api/auth/callback';
+    const state = generateRandomState();
+    const url_auth42 = `http://localhost:3000/api/auth/callback`;
+    return { url: url_auth42 };
   }
 
   @Public()
@@ -54,7 +82,7 @@ export class AuthController {
   ) {
     // !!!! Handle errors !!!!
     const user_infos_42 = await this.authService.fetchInfo42(code, state);
-    if (!await this.authService.getUserbyId42(user_infos_42.id)) {
+    if (!(await this.authService.getUserbyId42(user_infos_42.id))) {
       const jwt = await this.jwtService.signAsync(user_infos_42, {
         secret: process.env.APP_TMP_SECRET,
         expiresIn: '180s',
@@ -72,27 +100,49 @@ export class AuthController {
 
   @Public()
   @Post('/sign-up')
+  @UseInterceptors(FileInterceptor('avatar'))
   async signUp(
     @Query('id') id: string,
-    @Query('avatar_url') avatar_url: string,
-    @Query('username') username: string,
+    @Body('username') username: string,
+    @UploadedFile() avatar,
   ) {
+    console.log({ username, avatar });
+    const avatar_url = (avatar) => {
+      if (!avatar) return null;
+      const fileName =
+        'uploaded-avatar' + Date.now() + path.extname(avatar.originalname);
+      const filePath = path.join(
+        __dirname,
+        '../..',
+        'public',
+        'avatars',
+        fileName,
+      );
+
+      fs.writeFileSync(filePath, avatar.buffer);
+
+      return 'http://localhost:5173/api/user/avatar/' + fileName;
+    };
     const user_infos_42 = await this.jwtService.verifyAsync(id, {
       secret: process.env.APP_TMP_SECRET,
     });
+
     const token = await this.authService.registerUser(
       user_infos_42,
-      avatar_url,
+      avatar_url(avatar),
       username,
     );
-    return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 
+  @Public()
+  @Redirect()
   @Get('/redirect-to-home')
   async redirectIdentifiedUser(@Query('id') id: string) {
+    console.log({ id });
     const user_infos_42 = await this.jwtService.verifyAsync(id, {
       secret: process.env.APP_TMP_SECRET,
     });
+    console.log(await this.authService.getUserbyId42(user_infos_42.id));
     const token = await this.jwt.generateJWTToken(
       await this.authService.getUserbyId42(user_infos_42.id),
       process.env.APP_SECRET,
