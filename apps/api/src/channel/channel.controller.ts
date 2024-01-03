@@ -5,6 +5,7 @@ import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 import { MessageService } from 'src/message/message.service';
+import { ChannelTypes } from './types/channel.types';
 
 @Controller()
 export class ChannelController {
@@ -80,5 +81,41 @@ export class ChannelController {
     @CurrentUserID() user_id: number,
   ) {
     return this.channelService.getBanList(user_id, channel_id);
+  }
+
+  @Get('/dm/:userid')
+  async getDm(
+    @Param('userid') user1_id: number,
+    @CurrentUserID() user2_id: number,
+  ) {
+    const dm = await this.channelService.getDm(user1_id, user2_id);
+    if (dm === undefined) return undefined;
+    return dm.id;
+  }
+
+  @Post('/dm')
+  async createDm(
+    @CurrentUserID() user1_id: number,
+    @Body('userId') user2_id: number,
+  ) {
+    const channel = await this.channelService.createChannel({
+      name: '',
+      topic: '',
+      type: ChannelTypes.DM,
+      password: undefined,
+    });
+
+    await this.userChannelService.createUserChannel({
+      userId: user1_id,
+      channelId: channel.id,
+      role: UserChannelRoles.MEMBER,
+    });
+
+    await this.userChannelService.createUserChannel({
+      userId: user2_id,
+      channelId: channel.id,
+      role: UserChannelRoles.MEMBER,
+    });
+    return channel.id;
   }
 }

@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
+import { ChanType, FriendshipStatus } from '@prisma/client';
 
 @Injectable()
 export class ChannelService {
@@ -30,6 +31,50 @@ export class ChannelService {
             some: {
               user_id: currUserId,
             },
+          },
+          NOT: {
+            AND: [
+              {
+                type: ChanType.DM,
+              },
+              {
+                userChannels: {
+                  some: {
+                    AND: [
+                      {
+                        user_id: {
+                          not: currUserId,
+                        },
+                      },
+                      {
+                        OR: [
+                          {
+                            User: {
+                              friendship_user1: {
+                                some: {
+                                  user2_id: currUserId,
+                                  status: FriendshipStatus.BLOCKED,
+                                },
+                              },
+                            },
+                          },
+                          {
+                            User: {
+                              friendship_user2: {
+                                some: {
+                                  user1_id: currUserId,
+                                  status: FriendshipStatus.BLOCKED,
+                                },
+                              },
+                            },
+                          },
+                        ],
+                      },
+                    ],
+                  },
+                },
+              },
+            ],
           },
         },
         include: {
@@ -86,7 +131,7 @@ export class ChannelService {
     });
     return {
       ...chat,
-      interlocutor: chat.userChannels.find((uc) => uc.User?.id !== user_id)
+      interlocutor: chat.userChannels?.find((uc) => uc.User?.id !== user_id)
         ?.User,
     };
   }
@@ -229,5 +274,33 @@ export class ChannelService {
       console.error('Error in getBanList:', error.message);
       throw error;
     }
+  }
+
+  async getDm(user1_id: number, user2_id: number) {
+    const user1Channels = await this.prisma.channel.findMany({
+      where: {
+        type: ChanType.DM,
+        userChannels: {
+          some: {
+            user_id: user1_id,
+          },
+        },
+      },
+    });
+
+    const user2Channels = await this.prisma.channel.findMany({
+      where: {
+        type: ChanType.DM,
+        userChannels: {
+          some: {
+            user_id: user2_id,
+          },
+        },
+      },
+    });
+
+    return user1Channels.find((channel1) =>
+      user2Channels.some((channel2) => channel2.id === channel1.id),
+    );
   }
 }
