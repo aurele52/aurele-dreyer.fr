@@ -403,7 +403,7 @@
 
 .Profile > .Footer {
 	display: flex;
-	flex: space-between;
+	justify-content: space-between;
 	padding: 5px 20px 5px 10px;
 	align-items: center;
 	align-content: center;

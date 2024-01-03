@@ -9,7 +9,7 @@ type ButtonProps = {
 	displayText?: boolean;
 };
 
-export function UserStatus({ targetId, displayText }: ButtonProps) {
+export function UserStatus({ displayText }: ButtonProps) {
 	const [status, setStatus] = useState<"ONLINE" | "INGAME" | "OFFLINE">(
 		"OFFLINE"
 	);

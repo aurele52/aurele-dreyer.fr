@@ -3,10 +3,11 @@ import "./Modal.css";
 import { ModalType, iconsModal } from "../../utils/AddModal";
 import { Button } from "../Button/Button";
 import store from "../../../store";
-import { delWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import { router } from "../../../router";
+import { WinColor } from "../../utils/WindowTypes";
 
 interface ModalProps {
 	content: ReactNode;
@@ -24,7 +25,9 @@ export type ActionKey =
 	| "makeAdmin"
 	| "demoteAdmin"
 	| "makeOwner"
-	| "deleteUser";
+	| "deleteUser"
+	| "enableTwoFA"
+	| "disableTwoFA";
 
 function Modal({
 	content,
@@ -155,6 +158,41 @@ function Modal({
 		},
 	});
 
+	const { mutateAsync: enableTwoFA } = useMutation({
+		mutationFn: async () => {
+			return await api.post("/auth/2fa/enable");
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["user", targetId] });
+			const newWindow = {
+				WindowName: "Your 2FA QRCode",
+				id: 0,
+				content: { type: "TWOFAQRCODE" },
+				toggle: false,
+				handleBarButton: 4,
+				color: WinColor.RED,
+			};
+			store.dispatch(addWindow(newWindow));
+		},
+	});
+
+	const { mutateAsync: disableTwoFA } = useMutation({
+		mutationFn: async () => {
+			return await api.post("/auth/2fa/disable");
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["user", targetId] });
+			const qrCodeWindow = store
+				.getState()
+				.windows.find(
+					(window) => window.content.type === "TWOFAQRCODE"
+				);
+			if (qrCodeWindow) {
+				store.dispatch(delWindow(qrCodeWindow.id));
+			}
+		},
+	});
+
 	const actions = {
 		deleteFriendship,
 		deleteBlockedFriendship,
@@ -163,6 +201,8 @@ function Modal({
 		demoteAdmin,
 		makeOwner,
 		deleteUser,
+		enableTwoFA,
+		disableTwoFA,
 	};
 
 	const icon = iconsModal[type || "INFO"];
