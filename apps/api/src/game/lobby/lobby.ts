@@ -19,6 +19,9 @@ interface gameInfo {
   twoBary: number;
   oneScore: number;
   twoScore: number;
+  itemx: number;
+  itemy: number;
+  itemSize: number;
 }
 
 export class lobby {
@@ -123,6 +126,7 @@ export class lobby {
               y: this.gameInfo.ballDiry,
             },
           );
+          return;
         }
         temp++;
       }
@@ -140,8 +144,7 @@ export class lobby {
         if (
           this.gameInfo.bally + temp <=
             this.gameInfo.twoBary + this.gameInfo.barSize &&
-          this.gameInfo.bally + temp >=
-            this.gameInfo.twoBary
+          this.gameInfo.bally + temp >= this.gameInfo.twoBary
         ) {
           const ret =
             (this.gameInfo.bally - this.gameInfo.twoBary) / this.gameInfo.barSize;
@@ -153,6 +156,7 @@ export class lobby {
             },
           );
           this.gameInfo.ballDirx *= -1;
+          return;
         }
         temp++;
       }
@@ -202,6 +206,9 @@ export class lobby {
     ballDeb: 150,
     ballSize: 10,
     barSize: 100,
+    itemx: 40,
+    itemy: 40,
+    itemSize: 10,
   };
   move() {
     if (this.clients[0].input.direction == 'up')
@@ -217,6 +224,30 @@ export class lobby {
       if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize)
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
   }
+  itemPick() {
+    let tempx = 0;
+    let tempy = 0;
+    while (tempy < this.gameInfo.ballSize) {
+      while (tempx < this.gameInfo.ballSize) {
+        if (
+          this.gameInfo.bally + tempy <= this.gameInfo.itemy + this.gameInfo.itemSize &&
+          this.gameInfo.bally + tempy >= this.gameInfo.itemSize
+        ) {
+          if (
+            this.gameInfo.ballx + tempx <= this.gameInfo.itemx + this.gameInfo.itemSize &&
+            this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
+          ) {
+            this.gameInfo.itemSize = -1;
+            this.gameInfo.ballSize = 10;
+            return;
+          }
+        }
+        tempx++;
+      }
+      tempx = 0;
+      tempy++;
+    }
+  }
   update() {
     this.move();
     this.score();
@@ -224,6 +255,8 @@ export class lobby {
     while (i > 0) {
       this.ballWallRedir();
       this.ballBarRedir();
+      if (this.gameInfo.itemSize > 0)
+      this.itemPick();
       this.gameInfo.ballx = this.gameInfo.ballx + this.gameInfo.ballDirx;
       this.gameInfo.bally = this.gameInfo.bally + this.gameInfo.ballDiry;
       i--;
@@ -242,6 +275,9 @@ export class lobby {
         twoScore: this.gameInfo.twoScore,
         ballSize: this.gameInfo.ballSize,
         barSize: this.gameInfo.barSize,
+        itemx: this.gameInfo.itemx,
+        itemy: this.gameInfo.itemy,
+        itemSize: this.gameInfo.itemSize,
       });
       this.clients[1].socket.emit('server.update', this.gameInfo);
       await this.delay(20);

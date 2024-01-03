@@ -3,25 +3,6 @@ import { useEffect, useRef } from "react";
 import p5 from "p5";
 import { Socket } from "socket.io-client";
 
-// export const Default_params = {
-// 	GAME_WIDTH: 800, // gamexsize
-// 	GAME_HEIGHT: 600, // gameysize
-// 	BALL_RADIUS: 10, // ballSize
-//
-//
-//
-//   PADDLE_MOVE_SPEED: 2,
-//   PADDLE_OFFSET: 20,
-//   PADDLE_BORDER: 1,
-//   PADDLE_HEIGHT: 600 / 6,
-//   PADDLE_WIDTH: 5,
-//   BALL_DEFAULT_SPEED: 2,
-//   BALL_SPEED_INCREASE: 0.3,
-//   BALL_MAX_SPEED: 3.5,
-//   BALL_PERTURBATOR: 0.2,
-//   DEFAULT_PADDLE_POSITION: 600 / 2 - 300 / 6 / 2,
-// };
-
 /* Interface */
 const base_yborderSize = 10;
 const base_xborderSize = 10;
@@ -53,6 +34,10 @@ const base_xballSize = 10;
 const base_yballSize = 10;
 const base_ballx = base_gamexsize / 2 - base_ballDeb;
 const base_bally = base_gameysize / 2;
+const base_itemx = 0;
+const base_itemy = 0;
+const base_yitemSize = 10;
+const base_xitemSize = 10;
 
 let yborderSize = base_yborderSize;
 let xborderSize = base_xborderSize;
@@ -83,6 +68,11 @@ let xballSize = base_xballSize;
 let yballSize = base_yballSize;
 let ballx = base_ballx;
 let bally = base_bally;
+
+let itemx = base_itemx;
+let itemy = base_itemy;
+let yitemSize = base_yitemSize;
+let xitemSize = base_xitemSize;
 
 function drawBoardMidline(p: p5) {
 	p.fill("white");
@@ -412,6 +402,12 @@ function drawBall(p: p5) {
 	p.rect(ballx + gamex, bally + gamey, xballSize, yballSize);
 }
 
+function drawItem(p: p5) {
+	p.fill('red');
+	p.rect(itemx + gamex, itemy + gamey, xitemSize, yitemSize);
+	p.fill('white');
+}
+
 let input = 0;
 
 function move(p: p5, socket: Socket) {
@@ -492,6 +488,8 @@ function loop(p: p5, socket: Socket) {
 	drawBar(p);
 	drawBall(p);
 	drawBoardMidline(p);
+	if (xitemSize > 0 && yitemSize > 0)
+		drawItem(p);
 	scoreOne(p, oneScore);
 	scoreTwo(p, twoScore);
 }
@@ -509,6 +507,9 @@ interface sendInfo {
 	twoScore: number;
 	ballSize: number;
 	barSize: number;
+	itemSize: number;
+	itemx: number;
+	itemy: number;
 }
 function onSizeChange(p:p5) {
 	width = document.getElementById('canva')?.getBoundingClientRect().width;
@@ -566,13 +567,16 @@ export default function Play(props: playProps) {
 			yballSize = gameUpdate.ballSize / yratio;
 			xballSize = gameUpdate.ballSize / xratio;
 			barSize = gameUpdate.barSize / yratio;
+			itemx = gameUpdate.itemx / xratio;
+			itemy = gameUpdate.itemy / yratio;
+			xitemSize = gameUpdate.itemSize / yratio;
+			yitemSize = gameUpdate.itemSize / yratio;
 			console.log("yesss");
 		}
 	}, [props.socket]);
 
 	const Sketch = (p: p5) => {
 		p.setup = () => {
-			for (let i = 0; i++; i < 10000000);
 			width = document.getElementById('canva')?.getBoundingClientRect().width;
 			height = document.getElementById('canva')?.getBoundingClientRect().height;
 			p.createCanvas(width, height);
