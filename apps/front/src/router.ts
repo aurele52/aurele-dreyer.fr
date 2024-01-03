@@ -2,7 +2,7 @@ import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./auth-page/Auth";
 import Auth2FA from "./auth-page/2FA-page/Auth2FA";
-import Initialise from "./auth-page/Initialise/Initialise";
+import SignUp from "./auth-page/SignUp/SignUp";
 
 const rootRoute = new RootRoute();
 
@@ -40,15 +40,10 @@ const authRedirectRoute = new Route({
     }
   },
 });
-const initialiseRoute = new Route({
+const signUpRoute = new Route({
   getParentRoute: () => rootRoute,
-  path: "/initialise/$token",
-  component: Initialise,
-  beforeLoad: async ({ params }) => {
-    if (!!params.token) {
-      window.localStorage.setItem("token", params.token);
-    }
-  },
+  path: "/sign-up/$token",
+  component: SignUp,
 });
 
 const routeTree = rootRoute.addChildren([
@@ -56,7 +51,7 @@ const routeTree = rootRoute.addChildren([
   authRoute,
   authtwofaRoute,
   authRedirectRoute,
-  initialiseRoute,
+  signUpRoute,
 ]);
 
 export const router = new Router({ routeTree });

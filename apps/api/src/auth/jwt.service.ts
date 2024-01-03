@@ -7,7 +7,7 @@ import { PrismaService } from 'src/prisma.service';
 export class JWT {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwt: JwtService,
+    private readonly jwtService: JwtService,
   ) {}
 
   async generateJWTToken(user: User, secret: string, expiresIn: string) {
@@ -16,7 +16,7 @@ export class JWT {
       username: user.username,
       connected_at: new Date(),
     };
-    return await this.jwt.signAsync(payload, {
+    return await this.jwtService.signAsync(payload, {
       secret,
       expiresIn,
     },);

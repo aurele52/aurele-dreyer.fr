@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   HttpStatus,
@@ -17,6 +18,7 @@ import { JWT } from './jwt.service';
 import { TwoFAService } from './twoFA.service';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
@@ -27,7 +29,8 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly TwoFAService: TwoFAService,
-    private readonly jwtService: JWT,
+    private readonly jwtService: JwtService,
+    private readonly jwt: JWT,
     private readonly userService: UserService,
   ) {}
 
@@ -49,38 +52,57 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    const user_infos = await this.authService.logIn(code, state);
-    if (user_infos.is_new) {
-      const token = await this.jwtService.generateJWTToken(
-        user_infos.user,
-        process.env.APP_SECRET,
-        '3d',
-      );
-      return { url: `http://localhost:5173/initialise/${token}` };
-    }
-    // !Handle errors
-    if (user_infos.user.is_enable_2fa) {
-      const jwt_id = await this.jwtService.generateJWTToken(
-        user_infos.user,
-        process.env.APP_TMP_SECRET,
-        '60s',
-      );
-      return { url: `http://localhost:5173/auth/2fa/${jwt_id}` };
+    // !!!! Handle errors !!!!
+    const user_infos_42 = await this.authService.fetchInfo42(code, state);
+    if (await this.authService.isNewUser(user_infos_42.id)) {
+      const jwt = await this.jwtService.signAsync(user_infos_42, {
+        secret: process.env.APP_SECRET,
+        expiresIn: '180s',
+      });
+      return { url: `http://localhost:5173/sign-up/${jwt}` };
     } else {
-      const token = await this.jwtService.generateJWTToken(
-        user_infos.user,
-        process.env.APP_SECRET,
-        '3d',
-      );
-      return { url: `http://localhost:5173/auth/redirect/${token}` };
+      const data = await this.authService.signIn(user_infos_42);
+      if (data.twoFA) {
+        return { url: `http://localhost:5173/auth/2fa/${data.jwt}` };
+      } else {
+        return { url: `http://localhost:5173/auth/redirect/${data.jwt}` };
+      }
     }
   }
+
+  @Public()
+  @Get('/sign-up')
+  async signUp(
+    @Query('id') id: string,
+    @Query('avatar_url') avatar_url: string,
+    @Query('username') username: string,
+  ) {
+    const user_infos_42 = await this.jwtService.verifyAsync(id, {
+      secret: process.env.APP_SECRET,
+    });
+    const token = await this.authService.registerUser(
+      user_infos_42,
+      avatar_url,
+      username,
+    );
+    return { url: `http://localhost:5173/auth/redirect/${token}` };
+  }
+
+  // @Public()
+  // @Get('/impersonate/new/')
+  // async impersonateNewUser(
+  //   @Body('avatar_url') avatar_url: string,
+  //   @Body('username') username: string,
+  // ) {
+  //   const token = await this.authService.registerFakeUser(avatar_url, username);
+  //   return { url: `http://localhost:5173/auth/redirect/${token}` };
+  // }
 
   @Public() // Ne pas laisser ça public car normalement réservé aux admins
   @Redirect()
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
-    const token = await this.jwtService.generateFakeJWTToken(id);
+    const token = await this.jwt.generateFakeJWTToken(id);
     return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 
@@ -128,7 +150,7 @@ export class AuthController {
     const user_id = await this.TwoFAService.checkAuthorization(jwt_id);
     const user = await this.TwoFAService.getUser(user_id);
     this.TwoFAService.check2FACodeValidity(code, user);
-    const token = await this.jwtService.generateJWTToken(
+    const token = await this.jwt.generateJWTToken(
       user,
       process.env.APP_SECRET,
       '3d',

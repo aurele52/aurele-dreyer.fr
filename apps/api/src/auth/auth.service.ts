@@ -1,35 +1,120 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { AccessToken42, UserInfo42 } from './auth.types';
+import { OperationCanceledException } from 'typescript';
+import { JWT } from './jwt.service';
+import { User } from '@prisma/client';
+import { faker } from '@faker-js/faker';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly jwt: JWT,
+  ) {}
 
-  async logIn(code: string, state: string) {
-    try {
-      const access_token_42 = await this.fetchAccessToken(code, state);
-      const user_info = await this.fetchUserInfo(access_token_42.access_token);
-      const is_new = await this.prisma.user
-        .findUnique({
-          where: { id_42: user_info.id },
-        })
-        .then((user) => {
-          if (user) {
-            return false;
-          } else {
-            return true;
-          }
-        });
-      const user = await this.getOrCreateUser(access_token_42, user_info);
-      return { user, is_new };
-    } catch (error) {
-      console.log(error);
-      return error;
+  async fetchInfo42(code: string, state: string) {
+    const access_token = await this.fetchAccessToken(code, state);
+    const user = await this.fetchUserInfo(access_token.access_token);
+    return {
+      id: user.id,
+      login: user.login,
+      avatar: user.image.versions.small,
+      access_token: access_token.access_token,
+    };
+  }
+
+  async isNewUser(id_42: number) {
+    const user = await this.prisma.user
+      .findUnique({
+        where: { id_42 },
+      })
+      .then((user) => {
+        if (!user) {
+          return true;
+        } else {
+          return false;
+        }
+      });
+    return user;
+  }
+
+  async signIn(user_info_42) {
+    const user = await this.prisma.user.update({
+      where: { id_42: user_info_42.id },
+      data: {
+        username: user_info_42.login,
+        token_42: user_info_42.access_token,
+      },
+    });
+    if (user.is_enable_2fa) {
+      const jwt_id = await this.jwt.generateJWTToken(
+        user,
+        process.env.APP_TMP_SECRET,
+        '60s',
+      );
+      return { jwt: jwt_id, twoFA: true };
+    } else {
+      const token = await this.jwt.generateJWTToken(
+        user,
+        process.env.APP_SECRET,
+        '3d',
+      );
+      return { jwt: token, twoFA: false };
     }
   }
 
-  async fetchAccessToken(code: string, state: string) {
+  async registerUser(user_infos_42, avatar_url, username) {
+    const getUsername = (): string => {
+      if (username) {
+        return username;
+      } else {
+        user_infos_42.user.login;
+      }
+    };
+    const getAvatarUrl = (): string => {
+      if (avatar_url) {
+        return avatar_url;
+      } else {
+        user_infos_42.user.image.versions.small;
+      }
+    };
+    const user = await this.prisma.user.create({
+      data: {
+        username: getUsername(),
+        avatar_url: getAvatarUrl(),
+        id_42: user_infos_42.user.id,
+        token_42: user_infos_42.access_token.access_token,
+        is_enable_2fa: false,
+      },
+    });
+    const token = await this.jwt.generateJWTToken(
+      user,
+      process.env.APP_SECRET,
+      '3d',
+    );
+    return token;
+  }
+
+  async registerFakeUser(avatar_url, username) {
+    const user = await this.prisma.user.create({
+      data: {
+        username: username,
+        avatar_url: avatar_url,
+        id_42: faker.number.int({ min: 0, max: 10000 }),
+        token_42: faker.string.alphanumeric(20),
+        is_enable_2fa: false,
+      },
+    });
+    const token = await this.jwt.generateJWTToken(
+      user,
+      process.env.APP_SECRET,
+      '3d',
+    );
+    return token;
+  }
+
+  async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {
     return fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
@@ -51,7 +136,7 @@ export class AuthService {
     });
   }
 
-  async fetchUserInfo(access_token: string) {
+  async fetchUserInfo(access_token: string): Promise<UserInfo42> {
     return fetch('https://api.intra.42.fr/v2/me', {
       method: 'GET',
       headers: { Authorization: `Bearer ${access_token}` },
@@ -62,23 +147,6 @@ export class AuthService {
         );
       }
       return response.json() as any as UserInfo42;
-    });
-  }
-
-  async getOrCreateUser(access_token_42: AccessToken42, user_info: UserInfo42) {
-    return this.prisma.user.upsert({
-      where: { id_42: user_info.id },
-      update: {
-        username: user_info.login,
-        token_42: access_token_42.access_token,
-      },
-      create: {
-        username: user_info.login,
-        avatar_url: user_info.image.versions.small,
-        id_42: user_info.id,
-        token_42: access_token_42.access_token,
-        is_enable_2fa: false,
-      },
     });
   }
 }
