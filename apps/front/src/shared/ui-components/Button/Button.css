@@ -79,6 +79,20 @@
 	);
 }
 
+.purple.Button.btn-disabled {
+	background: var(--Purple-400, #6C559C);
+}
+
+.purple.Button.btn-disabled>.ButtonInner {
+	border-top: 1px solid var(--Purple-400, #6C559C);
+	border-right: 1px solid var(--Purple-400, #6C559C);
+	border-left: 1px solid var(--Purple-400, #6C559C);
+}
+
+.purple.btn-disabled:hover {
+	cursor: default;
+}
+
 .purple.Button:hover {
 	background: var(--purple-400, #6c559c);
 }
