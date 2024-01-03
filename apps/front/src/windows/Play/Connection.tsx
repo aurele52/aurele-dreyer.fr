@@ -12,8 +12,8 @@ interface coord {
 export default function Connection() {
 	const {
 		data: user,
-		isLoading: userLoading,
-		error: userError,
+		//isLoading: userLoading,
+		//error: userError,
 	} = useQuery<{
 		username: string;
 		avatar_url: string;

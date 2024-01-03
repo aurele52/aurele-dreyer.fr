@@ -8,8 +8,7 @@ import { addWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
-import { useEffect, useState } from "react";
-import { router } from "../../router";
+import { useState } from "react";
 import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
 
 interface ProfileProps {

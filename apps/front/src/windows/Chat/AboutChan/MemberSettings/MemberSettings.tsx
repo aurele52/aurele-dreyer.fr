@@ -124,9 +124,7 @@ export function MemberSettings({
 					user={{
 						id: targetId,
 						isMuted: data.member.isMuted,
-						isBanned: data.member.isBanned,
 						mutedUntil: data.member.mutedUntil,
-						bannedUntil: data.member.bannedUntil,
 					}}
 					channelId={channelId}
 					winId={winId}
