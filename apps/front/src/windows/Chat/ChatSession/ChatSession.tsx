@@ -10,6 +10,7 @@ import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import { formatTime, formatDate } from "../../../shared/utils/DateUtils";
 
 interface ChatSessionProps {
   channelId?: number;
@@ -32,6 +33,12 @@ export type MessageData = {
   };
 };
 
+type MutedData = {
+  id: number;
+  isMuted: boolean;
+  mutedUntil: Date;
+};
+
 function ChatSession({ channelId }: ChatSessionProps) {
   const queryClient = useQueryClient();
 
@@ -43,6 +50,21 @@ function ChatSession({ channelId }: ChatSessionProps) {
         return response.data;
       } catch (error) {
         console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
+
+  const { data: userChannel } = useQuery<MutedData>({
+    queryKey: ["userChannel", channelId],
+    queryFn: async () => {
+      try {
+        const response = await api.get(
+          "/user-channel/" + channelId + "/current-user"
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching userChannel:", error);
         throw error;
       }
     },
@@ -197,13 +219,26 @@ function ChatSession({ channelId }: ChatSessionProps) {
         })}
       </List>
       <div className="footerChatSession">
-        <textarea
-          className="typeBarChatSession custom-scrollbar white-list"
-          value={valueMessage}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-        ></textarea>
-        <Button color="purple" content="send" onClick={handleSend} />
+        {userChannel?.isMuted ? (
+          <>
+            <textarea
+              className="typeBarChatSession custom-scrollbar white-list"
+              placeholder={`You are muted until ${formatDate(new Date (userChannel?.mutedUntil))} ${formatTime(new Date (userChannel?.mutedUntil))}`}
+              disabled
+            ></textarea>
+            <Button className="btn-disabled" color="purple" content="send" />
+          </>
+        ) : (
+          <>
+            <textarea
+              className="typeBarChatSession custom-scrollbar white-list"
+              value={valueMessage}
+              onChange={handleChange}
+              onKeyPress={handleKeyPress}
+            ></textarea>
+            <Button color="purple" content="send" onClick={handleSend} />
+          </>
+        )}
       </div>
     </div>
   );

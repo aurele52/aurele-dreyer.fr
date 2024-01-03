@@ -192,7 +192,10 @@ export function User({ userId, channel }: UserProps) {
           ? "btn-disabled"
           : ""
       }
-      onClick={handleChannelSettings}
+      onClick={userLvl[self?.role || UserRole.MEMBER] <= userLvl[channel.userRole] &&
+        self?.userId !== user.id
+          ? () => {}
+          : handleChannelSettings}
     />
   ) : (
     <div></div>
