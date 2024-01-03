@@ -9,6 +9,9 @@ import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
 import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
+import { JwtService } from '@nestjs/jwt';
+import { UnauthorizedException } from '@nestjs/common';
+
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
@@ -16,7 +19,9 @@ export class PongGateway {
   private readonly lobbyManager: lobbyManager = new lobbyManager(
     this.connectedClient,
   );
-  constructor() {}
+  constructor(  
+    private jwt: JwtService,
+  ) {}
   afterInit() {
     console.log('gateway initialised');
   }
@@ -42,15 +47,25 @@ export class PongGateway {
   }
 
   @SubscribeMessage('authentification')
-  handleAuthentification(
+  async handleAuthentification(
     @MessageBody() token: string,
     @ConnectedSocket() client: Socket,
   ) {
     console.log(`${client.id}`, token); // Broadcast the message to all connected clients
     if (!token) {
-      client.emit('401');
       client.disconnect(); //mathilde todo
+      throw new UnauthorizedException();
+
     }
+    try {
+      const payload = await this.jwt.verifyAsync(token, {
+        secret: process.env.APP_SECRET,
+      });
+    } catch {
+      client.disconnect();
+      throw new UnauthorizedException();
+    }
+
   }
 
   @SubscribeMessage('client.matchmaking')
