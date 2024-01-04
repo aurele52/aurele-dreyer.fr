@@ -21,10 +21,6 @@
 	position: fixed;
 }
 
-.reducedWindow > .handleBar > .ButtonWindow {
-	display: none;
-}
-
 .reducedWindow > .content {
 	display: none;
 }

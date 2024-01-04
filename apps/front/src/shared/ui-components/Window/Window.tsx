@@ -88,7 +88,7 @@ export function Window({
 			windowMoveLock: false,
 		});
 		rndRef.current?.updateSize({
-			height: "100",
+			height: "70px",
 			width: "",
 		});
 	};
@@ -135,6 +135,8 @@ export function Window({
 				width: state.width,
 				height: state.height,
 			}}
+			minHeight={"70px"}
+			minWidth={"285px"}
 			bounds="#Background"
 			dragHandleClassName="handleBar"
 			enableResizing={!state.windowResizeLock}
