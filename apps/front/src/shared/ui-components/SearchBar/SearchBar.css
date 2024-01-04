@@ -1,0 +1,24 @@
+.SearchBarComponent {
+	display: flex;
+	padding: var(--radius-radius-rounded, 8px) 10px;
+	align-items: center;
+	gap: 7px;
+	flex-shrink: 0;
+}
+
+.SearchBarInput {
+	display: flex;
+	min-width: 50px;
+	padding: 5px 8px;
+	align-items: center;
+	gap: 5px;
+	flex: 1 0 0;
+	border-radius: var(--radius-radius-full, 360px);
+	background: var(--Base-White, #fff);
+}
+
+.SearchBarButton {
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
