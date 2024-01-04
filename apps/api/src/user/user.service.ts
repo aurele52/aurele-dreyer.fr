@@ -199,11 +199,13 @@ export class UserService {
     await this.prisma.user.update({
       where: { id: user.id },
       data: {
+        isDeleted: true,
         id_42: null,
         token_42: null,
         secret_2fa: null,
         avatar_url: `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/deletedUser.png`,
         username: 'deletedUser' + id,
+        is_enable_2fa: false, // Assuming you want to disable 2FA when deleting the user
       },
     });
 

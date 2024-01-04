@@ -14,7 +14,11 @@ export class LadderService {
   constructor(private readonly prisma: PrismaService) {}
 
   private async generateLadder() {
-    const users = await this.prisma.user.findMany();
+    const users = await this.prisma.user.findMany({
+      where: {
+        isDeleted: false,
+      },
+    });
 
     const winCounts = await Promise.all(
       users.map(async (user) => {

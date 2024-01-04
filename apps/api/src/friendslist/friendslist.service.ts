@@ -99,6 +99,7 @@ export class FriendslistService {
 
       const potentialFriends = await this.prisma.user.findMany({
         where: {
+          isDeleted: false,
           username: {
             contains: normalizedPlaceholder,
             mode: 'insensitive',
