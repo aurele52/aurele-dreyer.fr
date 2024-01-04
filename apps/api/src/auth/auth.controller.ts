@@ -167,21 +167,6 @@ export class AuthController {
     return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
   }
 
-  // @Public()
-  // @Get('/abort/:id')
-  // async abortAuthentication(@Param('id') id: number) {
-  //   await this.userService.updateUser(id, {
-  //     token_42: null,
-  //   });
-  // }
-
-  @Get('/disconnect')
-  async disconnectUser(@CurrentUserID() id: number) {
-    await this.userService.updateUser(id, {
-      token_42: null,
-    });
-  }
-
   @Post('/2fa/enable')
   async enableTwoFA(@CurrentUser() user: User) {
     const secret = await this.TwoFAService.generateSecret(user);
