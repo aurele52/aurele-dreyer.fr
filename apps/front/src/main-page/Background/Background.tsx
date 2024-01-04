@@ -27,11 +27,11 @@ import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-  interface WindowDimensions {
-    width: string;
-    height: string;
-  }
-
+	interface WindowDimensions {
+		width: string;
+		height: string;
+	}
+  
   const windowDimensions: Record<string, WindowDimensions> = {
     PLAY: { width: "820px", height: "540px" },
     LADDER: { width: "450px", height: "600px" },
@@ -75,6 +75,7 @@ export function Background({ windows }: BackgroundProps) {
               handleBarButton={window.handleBarButton}
               color={window.color}
               zindex={window.zindex || 0}
+              isModal={window.content.type === "MODAL"}
             >
               {window.content.type === "PLAY" && <Play />}
               {window.content.type === "LADDER" && (
@@ -139,7 +140,7 @@ export function Background({ windows }: BackgroundProps) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-  windows: state.windows,
+	windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);
