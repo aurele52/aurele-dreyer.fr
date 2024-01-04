@@ -2,7 +2,6 @@ import "./AddFriends.css";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import {
-	Button,
 	HeartButton,
 } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
