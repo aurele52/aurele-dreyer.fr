@@ -304,4 +304,14 @@ export class ChannelService {
       user2Channels.some((channel2) => channel2.id === channel1.id),
     );
   }
+
+  async checkPwd(channelId: number, password: string) {
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelId,
+      },
+    });
+    if (!channel) return false;
+    return password === channel.password;
+  }
 }
