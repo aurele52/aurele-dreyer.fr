@@ -8,22 +8,16 @@ import {
   Query,
   Redirect,
   Res,
-  UploadedFile,
-  UseInterceptors,
 } from '@nestjs/common';
 import { Response } from 'express';
 import { randomBytes } from 'crypto';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
-import { JWT } from './jwt.service';
 import { TwoFAService } from './twoFA.service';
 import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
-import { FileInterceptor } from '@nestjs/platform-express';
-import * as path from 'path';
-import * as fs from 'fs';
 import { Validate2FADto } from './dto/validate2fa.dto';
 import { CreateUserDto } from './dto/createuser.dto';
 
@@ -35,9 +29,8 @@ function generateRandomState(): string {
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly TwoFAService: TwoFAService,
+    private readonly twoFAService: TwoFAService,
     private readonly jwtService: JwtService,
-    private readonly jwt: JWT,
     private readonly userService: UserService,
   ) {}
 
@@ -46,32 +39,13 @@ export class AuthController {
   @Redirect()
   redirectTo42Auth() {
     const api42_id = process.env.API42_ID;
-    const api42_callback = encodeURIComponent(`${process.env.DOMAIN_NAME_BACK}/api/auth/callback`);
+    const api42_callback = encodeURIComponent(
+      `${process.env.DOMAIN_NAME_BACK}/api/auth/callback`,
+    );
     const state = generateRandomState();
     const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
     return { url: url_auth42 };
   }
-
-  // @Controller('/auth')
-  // export class AuthController {
-  //   constructor(
-  //     private readonly authService: AuthService,
-  //     private readonly TwoFAService: TwoFAService,
-  //     private readonly jwtService: JwtService,
-  //     private readonly jwt: JWT,
-  //     private readonly userService: UserService,
-  //   ) {}
-
-  //   @Public()
-  //   @Get('/')
-  //   @Redirect()
-  //   redirectTo42Auth() {
-  //     const api42_id = process.env.API42_ID;
-  //     const api42_callback = 'http://localhost:3000/api/auth/callback';
-  //     const state = generateRandomState();
-  //     const url_auth42 = `http://localhost:3000/api/auth/callback`;
-  //     return { url: url_auth42 };
-  //   }
 
   @Public()
   @Redirect()
@@ -80,68 +54,45 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    // !!!! Handle errors !!!!
     const user_infos_42 = await this.authService.fetchInfo42(code, state);
-    if (!(await this.authService.getUserbyId42(user_infos_42.id))) {
-      const jwt = await this.jwtService.signAsync(user_infos_42, {
+    try {
+      const user = await this.authService.getUserbyId42(user_infos_42.id);
+      const redirect_url = await this.authService.signIn(
+        user,
+        user_infos_42.access_token,
+      );
+      return { url: redirect_url };
+    } catch {
+      const token_tmp = await this.jwtService.signAsync(user_infos_42, {
         secret: process.env.APP_TMP_SECRET,
         expiresIn: '180s',
       });
-      return { url: `${process.env.DOMAIN_NAME_FRONT}/sign-up?id=${jwt}` };
-    } else {
-      const data = await this.authService.signIn(user_infos_42);
-      if (data.twoFA) {
-        return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/2fa/${data.jwt}` };
-      } else {
-        return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${data.jwt}` };
-      }
+      return {
+        url: `${process.env.DOMAIN_NAME_FRONT}/sign-up?id=${token_tmp}`,
+      };
     }
   }
 
   @Public()
   @Post('/sign-up')
-  @UseInterceptors(FileInterceptor('avatar'))
-  async signUp(
-    @Query('id') id: string,
-    // @Body('username') username: string,
-    @Body() body: CreateUserDto
-  ) {
-    const {username} = body;
-    // const avatar_url = (avatar) => {
-    //   if (!avatar) return null;
-    //   const fileName =
-    //     'uploaded-avatar' + Date.now() + path.extname(avatar.originalname);
-    //   const filePath = path.join(
-    //     __dirname,
-    //     '../..',
-    //     'public',
-    //     'avatars',
-    //     fileName,
-    //   );
-
-    //   fs.writeFileSync(filePath, avatar.buffer);
-
-    //   return `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/` + fileName;
-    // };
-    const user_infos_42 = await this.jwtService.verifyAsync(id, {
-      secret: process.env.APP_TMP_SECRET,
-    });
-    const token = await this.authService.registerUser(
-      user_infos_42,
-      username,
+  async signUp(@Query('id') id: string, @Body() body: CreateUserDto) {
+    const { username } = body;
+    const user_infos_42 = await this.authService.checkTokenValidity(
+      id,
+      process.env.APP_TMP_SECRET,
     );
+    const token = await this.authService.registerUser(user_infos_42, username);
   }
 
   @Public()
   @Redirect()
   @Get('/redirect-to-home')
   async redirectIdentifiedUser(@Query('id') id: string) {
-    console.log({ id });
-    const user_infos_42 = await this.jwtService.verifyAsync(id, {
-      secret: process.env.APP_TMP_SECRET,
-    });
-    console.log(await this.authService.getUserbyId42(user_infos_42.id));
-    const token = await this.jwt.generateJWTToken(
+    const user_infos_42 = await this.authService.checkTokenValidity(
+      id,
+      process.env.APP_TMP_SECRET,
+    );
+    const token = await this.authService.generateJWTToken(
       await this.authService.getUserbyId42(user_infos_42.id),
       process.env.APP_SECRET,
       '3d',
@@ -149,42 +100,22 @@ export class AuthController {
     return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
   }
 
-  // @Public()
-  // @Get('/impersonate/new/')
-  // async impersonateNewUser(
-  //   @Body('avatar_url') avatar_url: string,
-  //   @Body('username') username: string,
-  // ) {
-  //   const token = await this.authService.registerFakeUser(avatar_url, username);
-  //   return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
-  // }
-
   @Public() // Ne pas laisser ça public car normalement réservé aux admins
   @Redirect()
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
-    const token = await this.jwt.generateFakeJWTToken(id);
+    const user = await this.userService.getUser(id);
+    const token = await this.authService.generateJWTToken(
+      user,
+      process.env.APP_SECRET,
+      '3d',
+    );
     return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
-  }
-
-  // @Public()
-  // @Get('/abort/:id')
-  // async abortAuthentication(@Param('id') id: number) {
-  //   await this.userService.updateUser(id, {
-  //     token_42: null,
-  //   });
-  // }
-
-  @Get('/disconnect')
-  async disconnectUser(@CurrentUserID() id: number) {
-    await this.userService.updateUser(id, {
-      token_42: null,
-    });
   }
 
   @Post('/2fa/enable')
   async enableTwoFA(@CurrentUser() user: User) {
-    const secret = await this.TwoFAService.generateSecret(user);
+    const secret = await this.twoFAService.generateSecret(user);
     await this.userService.updateUser(user.id, {
       secret_2fa: secret,
       is_enable_2fa: true,
@@ -193,8 +124,8 @@ export class AuthController {
 
   @Get('2fa/qr-code')
   async getQRCode(@Res() response: Response, @CurrentUser() user: User) {
-    const { otpauthUrl } = await this.TwoFAService.generateQRCode(user);
-    return this.TwoFAService.pipeQrCodeStream(response, otpauthUrl);
+    const { otpauthUrl } = await this.twoFAService.generateQRCode(user);
+    return this.twoFAService.pipeQrCodeStream(response, otpauthUrl);
   }
 
   @Post('/2fa/disable')
@@ -211,12 +142,13 @@ export class AuthController {
     @Query('jwt_id') jwt_id: string,
     @Body() body: Validate2FADto,
   ) {
-    console.log({body})
-    const user_id = await this.TwoFAService.checkAuthorization(jwt_id);
-    const user = await this.TwoFAService.getUser(user_id);
-    this.TwoFAService.check2FACodeValidity(body.code, user);
-    console.log('OK');
-    const token = await this.jwt.generateJWTToken(
+    const payload = await this.authService.checkTokenValidity(
+      jwt_id,
+      process.env.APP_TMP_SECRET,
+    );
+    const user = await this.twoFAService.getUser(payload.id);
+    this.twoFAService.check2FACodeValidity(body.code, user.secret_2fa);
+    const token = await this.authService.generateJWTToken(
       user,
       process.env.APP_SECRET,
       '3d',

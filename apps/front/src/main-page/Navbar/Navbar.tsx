@@ -4,7 +4,6 @@ import { addWindow } from "../../reducers";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
-import axios from "axios";
 import { socket } from "../../socket";
 
 interface NavbarProps extends ReduxProps {}
@@ -68,17 +67,6 @@ export function Navbar({ dispatch }: NavbarProps) {
   };
 
   const handleLogOut = () => {
-    const token = localStorage.getItem("token")
-    console.log("Logging out");
-    const config = {
-      headers: { Authorization: `Bearer ${token}` },
-    };
-
-    axios.get(
-      "/api/auth/disconnect",
-      config
-    );
-
     localStorage.removeItem("token");
     router.load();
   };

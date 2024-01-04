@@ -58,6 +58,7 @@ model User {
   friendship_user2 Friendship[]      @relation("user2_friendship")
   bannedChannels   Channel[]         @relation("BannedChannels")
   messages         Message[]         @relation()
+  isDeleted        Boolean           @default(false)
 }
 
 model Message {

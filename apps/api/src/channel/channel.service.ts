@@ -198,6 +198,7 @@ export class ChannelService {
   async getNonMembers(channel_id: number) {
     return await this.prisma.user.findMany({
       where: {
+        isDeleted: false,
         userChannels: {
           none: {
             channel_id,
