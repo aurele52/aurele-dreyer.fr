@@ -1,7 +1,6 @@
 import { router } from "../../router.ts";
 import { AxiosError } from "axios";
 import { useParams } from "@tanstack/react-router";
-import "../bg.css";
 import "./Auth2FA.css";
 import { Button } from "../../shared/ui-components/Button/Button.tsx";
 import { FormEvent } from "react";
@@ -26,11 +25,14 @@ export default function Auth2FA() {
         .catch((error: AxiosError) => {
           if (error.response?.status === 400)
             throw error.response?.data as ValidationErrorResponse;
-          else throw { code: [(error.response?.data as {message: string}).message] };
+          else
+            throw {
+              code: [(error.response?.data as { message: string }).message],
+            };
         });
     },
     onSuccess: (token: string) => {
-      router.navigate({ to: "/auth/redirect/$token", params: {token} });
+      router.navigate({ to: "/auth/redirect/$token", params: { token } });
     },
   });
 
@@ -45,37 +47,34 @@ export default function Auth2FA() {
     router.navigate({ to: "/auth" });
   };
 
-
   return (
-    <div className="bg-container">
-      <div className="purple-container">
-        <div className="twofa-title">
-          Two factor authentication
-          <div>Check your Google Authenticator app!</div>
-        </div>
-        {/* <div id="code2fa-error"></div> */}
-        <form id="twofa-form" onSubmit={handleSubmit}>
-          <Input
-            label="Enter your code:"
-            errors={(error as any)?.code}
-            type="number"
-            placeholder="6 to 8 digits code"
-            id="validation-code"
-            name="code"
-            required
-            minLength={6}
-            maxLength={8}
-          ></Input>
-          <Button content="submit" color="pink" type="submit" />
-        </form>
-        <div className="rightside-button">
-          <Button
-            content="back to sign in"
-            color="red"
-            onClick={() => handleBackToSignIn()}
-          />
-        </div>
+    <>
+      <div className="twofa-title">
+        Two factor authentication
+        <div>Check your Google Authenticator app!</div>
       </div>
-    </div>
+      {/* <div id="code2fa-error"></div> */}
+      <form id="twofa-form" onSubmit={handleSubmit}>
+        <Input
+          label="Enter your code:"
+          errors={(error as any)?.code}
+          type="number"
+          placeholder="6 to 8 digits code"
+          id="validation-code"
+          name="code"
+          required
+          minLength={6}
+          maxLength={8}
+        ></Input>
+        <Button content="submit" color="pink" type="submit" />
+      </form>
+      <div className="rightside-button">
+        <Button
+          content="back to sign in"
+          color="red"
+          onClick={() => handleBackToSignIn()}
+        />
+      </div>
+    </>
   );
 }
