@@ -5,8 +5,6 @@ import { ConnectedProps, connect } from "react-redux";
 import { delWindow, bringToFront } from "../../../reducers";
 import { Button } from "../Button/Button";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
-import { ModalType } from "../../utils/AddModal";
-import { ActionKey } from "../Modal/Modal";
 
 interface WindowProps extends ReduxProps {
 	WindowName: string;
@@ -16,12 +14,7 @@ interface WindowProps extends ReduxProps {
 	children: ReactNode;
 	handleBarButton: number;
 	color: WinColor;
-	modal?: {
-		type: ModalType;
-		content: ReactNode;
-		action?: ActionKey;
-		targetId?: number;
-	};
+	isModal?: boolean;
 	zindex: number;
 }
 
@@ -35,6 +28,7 @@ export function Window({
 	handleBarButton,
 	color,
 	zindex,
+	isModal,
 }: WindowProps) {
 	const [state, setState] = useState({
 		width,
@@ -46,6 +40,19 @@ export function Window({
 		windowResizeLock: false,
 		clickStartTime: 0,
 	});
+
+	const parentDivWidth =
+		document.getElementById("Background")?.offsetWidth || 0;
+	const parentDivHeight =
+		document.getElementById("Background")?.offsetHeight || 0;
+	const rndWidth = parseInt(state.width, 10) || 0;
+	const rndHeight = parseInt(state.height, 10) || 0;
+	const centerX = (parentDivWidth - rndWidth) / 2;
+	const centerY = (parentDivHeight - rndHeight) / 2;
+
+	const initialPosition = isModal
+		? { x: centerX, y: centerY }
+		: { x: state.posX, y: state.posY };
 
 	const rndRef = useRef<Rnd>(null);
 
@@ -117,8 +124,8 @@ export function Window({
 				width: state.width,
 			});
 			rndRef.current?.updatePosition({
-				x: state.posX,
-				y: state.posY,
+				x: initialPosition.x,
+				y: initialPosition.y,
 			});
 		}
 	}, [state.windowMoveLock]);
@@ -130,8 +137,8 @@ export function Window({
 	return (
 		<Rnd
 			default={{
-				x: state.posX,
-				y: state.posY,
+				x: initialPosition.x,
+				y: initialPosition.y,
 				width: state.width,
 				height: state.height,
 			}}
@@ -142,7 +149,7 @@ export function Window({
 			enableResizing={!state.windowResizeLock}
 			disableDragging={state.windowMoveLock}
 			ref={rndRef}
-			style={{ zIndex: zindex }}
+			style={{ zIndex: zindex, position: "fixed" }}
 		>
 			<div
 				className={state.isReduced ? "reducedWindow" : "Window"}
