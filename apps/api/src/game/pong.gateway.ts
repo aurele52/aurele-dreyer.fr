@@ -39,52 +39,44 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.openGame')
-  handleOpenGame(
-    @MessageBody() token: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    console.log('OpenGame');
+  handleOpenGame(client: Socket, data: clientInfoDto) {
+    console.log(client.id, 'OpenGame');
   }
 
   @SubscribeMessage('client.authentification')
-  async handleAuthentification(
-    @MessageBody() token: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    console.log(`${client.id}`, token); // Broadcast the message to all connected clients
-    if (!token) {
+  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
+    console.log(`${client.id}`, data.token); // Broadcast the message to all connected clients
+    if (!data.token) {
+      client.emit('401');
       client.disconnect(); //mathilde todo
       throw new UnauthorizedException();
-
     }
     try {
-      const payload = await this.jwt.verifyAsync(token, {
+      const payload = await this.jwt.verifyAsync(data.token, {
         secret: process.env.APP_SECRET,
       });
     } catch {
       client.disconnect();
       throw new UnauthorizedException();
     }
-
-  }
-
-  @SubscribeMessage('client.matchmaking')
-  handleMatchmaking(client: Socket, data: clientInfoDto) {
-    let index = this.connectedClient.findIndex((value) => {
-      return value === data;
-    });
-    if (index !== -1) {
-      client.emit('server.matchStart');
-    }
-    index = this.connectedClient.findIndex((value) => {
+    const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
       this.connectedClient[index].user = data.user;
-      this.connectedClient[index].mode = data.mode;
-      this.lobbyManager.addToQueue(this.connectedClient[index]);
     }
-    console.log(`${client.id}`, ' ', data.mode, ' ', data.user); // Broadcast the message to all connected clients
+  }
+
+  @SubscribeMessage('client.normalMatchmaking')
+  handleMatchmaking(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      client.emit('server.matchLoading');
+      this.connectedClient[index].mode = 'normal';
+      this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
+    }
   }
   @SubscribeMessage('client.input')
   handleInput(client: Socket, input: input) {
@@ -114,9 +106,10 @@ export class PongGateway {
     });
     if (index !== -1) {
       if (this.connectedClient[index].lobby != null) {
-        this.connectedClient[index].lobby.disconnect(this.connectedClient[index]);
+        this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
       }
       this.connectedClient.splice(index, 1);
     }
+    this.lobbyManager.cleanLobbies();
   }
 }

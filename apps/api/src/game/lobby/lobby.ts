@@ -25,6 +25,10 @@ interface gameInfo {
 }
 
 export class lobby {
+  isEmpty(): boolean {
+    if (this.clients.length == 0) return true;
+    return false;
+  }
   private finish = 0;
   ballWallRedir() {
     if (
@@ -35,24 +39,34 @@ export class lobby {
     if (this.gameInfo.bally - this.gameInfo.ballSpeed <= 0)
       this.gameInfo.ballDiry *= -1;
   }
-  disconnect(user: clientInfoDto) {
+  onDisconnect(user: clientInfoDto) {
     this.finish = 1;
     if (this.clients[0] == user) {
-      this.win(this.clients[1]);
+      this.win(this.clients[1], this.clients[0]);
     }
     if (this.clients[1] == user) {
-      this.win(this.clients[0]);
+      this.win(this.clients[0], this.clients[1]);
     }
-    this.clients.forEach((value) => {
-      value.lobby = null;
-    });
-    this.disconnectAll();
   }
   disconnectAll() {
     this.clients.splice(0);
   }
-  win(user: clientInfoDto) {
-    user.socket.emit('server.win');
+  win(winner: clientInfoDto, loser: clientInfoDto) {
+    winner.socket.emit('server.win');
+    /*
+     * match_id est a creer ici
+     * this.client[0] == joueur 1
+     * this.client[1] == joueur 2
+     * this.gameInfo.oneScore == score joueur 1
+     * this.gameInfo.twoScore == score joueur 2
+     * winner == winner
+     * loser == loser
+     * no created_at yet
+     * no updated_at yet
+     * winner username == winner.user
+     * loser username == winner.user
+     * match == don't ask me what is this
+     */
   }
   lose(user: clientInfoDto) {
     user.socket.emit('server.lose');
@@ -283,13 +297,17 @@ export class lobby {
       await this.delay(20);
     }
     if (this.gameInfo.oneScore == 9) {
-      this.win(this.clients[0]);
+      this.win(this.clients[0], this.clients[1]);
       this.lose(this.clients[1]);
     }
     if (this.gameInfo.twoScore == 9) {
-      this.win(this.clients[1]);
+      this.win(this.clients[1], this.clients[0]);
       this.lose(this.clients[0]);
     }
+    this.clients.forEach((value) => {
+      value.lobby = null;
+      value.status = 'connected';
+    });
     this.disconnectAll();
   }
 }
