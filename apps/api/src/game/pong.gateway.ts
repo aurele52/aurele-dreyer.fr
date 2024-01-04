@@ -9,6 +9,9 @@ import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
 import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
+import { JwtService } from '@nestjs/jwt';
+import { UnauthorizedException } from '@nestjs/common';
+
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
@@ -16,7 +19,9 @@ export class PongGateway {
   private readonly lobbyManager: lobbyManager = new lobbyManager(
     this.connectedClient,
   );
-  constructor() {}
+  constructor(  
+    private jwt: JwtService,
+  ) {}
   afterInit() {
     console.log('gateway initialised');
   }
@@ -34,36 +39,44 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.openGame')
-  handleOpenGame(
-    @MessageBody() token: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    console.log('OpenGame');
+  handleOpenGame(client: Socket, data: clientInfoDto) {
+    console.log(client.id, 'OpenGame');
   }
 
-  @SubscribeMessage('authentification')
-  handleAuthentification(
-    @MessageBody() token: string,
-    @ConnectedSocket() client: Socket,
-  ) {
-    console.log(`${client.id}`, token); // Broadcast the message to all connected clients
-    if (!token) {
+  @SubscribeMessage('client.authentification')
+  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
+    console.log(`${client.id}`, data.token); // Broadcast the message to all connected clients
+    if (!data.token) {
       client.emit('401');
       client.disconnect(); //mathilde todo
+      throw new UnauthorizedException();
     }
-  }
-
-  @SubscribeMessage('client.matchmaking')
-  handleMatchmaking(client: Socket, data: clientInfoDto) {
+    try {
+      const payload = await this.jwt.verifyAsync(data.token, {
+        secret: process.env.APP_SECRET,
+      });
+    } catch {
+      client.disconnect();
+      throw new UnauthorizedException();
+    }
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
       this.connectedClient[index].user = data.user;
-      this.connectedClient[index].mode = data.mode;
-      this.lobbyManager.addToQueue(this.connectedClient[index]);
     }
-    console.log(`${client.id}`, ' ', data.mode, ' ', data.user); // Broadcast the message to all connected clients
+  }
+
+  @SubscribeMessage('client.normalMatchmaking')
+  handleMatchmaking(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      client.emit('server.matchLoading');
+      this.connectedClient[index].mode = 'normal';
+      this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
+    }
   }
   @SubscribeMessage('client.input')
   handleInput(client: Socket, input: input) {
@@ -86,13 +99,17 @@ export class PongGateway {
     } else client.emit('server.getStatusUser', false);
   }
 
-  handleDisconnect(client: any) {
+  handleDisconnect(client: Socket) {
     console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
+      if (this.connectedClient[index].lobby != null) {
+        this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+      }
       this.connectedClient.splice(index, 1);
     }
+    this.lobbyManager.cleanLobbies();
   }
 }

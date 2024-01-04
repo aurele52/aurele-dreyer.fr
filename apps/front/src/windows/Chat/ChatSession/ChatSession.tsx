@@ -10,6 +10,7 @@ import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
+import { formatTime, formatDate } from "../../../shared/utils/DateUtils";
 
 interface ChatSessionProps {
   channelId?: number;
@@ -23,7 +24,19 @@ export type MessageData = {
     id: number;
     username: string;
     avatar_url: string;
+    friendships: {
+      id: number;
+      user1_id: number;
+      user2_id: number;
+      status: "FRIENDS" | "PENDING" | "BLOCKED";
+    }[];
   };
+};
+
+type MutedData = {
+  id: number;
+  isMuted: boolean;
+  mutedUntil: Date;
 };
 
 function ChatSession({ channelId }: ChatSessionProps) {
@@ -37,6 +50,21 @@ function ChatSession({ channelId }: ChatSessionProps) {
         return response.data;
       } catch (error) {
         console.error("Error fetching selfId:", error);
+        throw error;
+      }
+    },
+  });
+
+  const { data: userChannel } = useQuery<MutedData>({
+    queryKey: ["userChannel", channelId],
+    queryFn: async () => {
+      try {
+        const response = await api.get(
+          "/user-channel/" + channelId + "/current-user"
+        );
+        return response.data;
+      } catch (error) {
+        console.error("Error fetching userChannel:", error);
         throw error;
       }
     },
@@ -81,7 +109,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
         },
       });
 
-      eventSource.onmessage = ({data}) => {
+      eventSource.onmessage = ({ data }) => {
         if (data.user_id !== selfId)
           queryClient.invalidateQueries({ queryKey: ["messages", channelId] });
       };
@@ -158,6 +186,18 @@ function ChatSession({ channelId }: ChatSessionProps) {
     }
   };
 
+  const isBlocked = (message: MessageData) => {
+    if (message.user.id !== selfId) {
+      return message.user.friendships.some((f) => {
+        return (
+          (f.user1_id === selfId || f.user2_id === selfId) &&
+          f.status === "BLOCKED"
+        );
+      });
+    }
+    return false;
+  };
+
   return (
     <div className="ChatSession">
       <div className="headerChatSession">
@@ -171,17 +211,34 @@ function ChatSession({ channelId }: ChatSessionProps) {
       </div>
       <List ref={listRef}>
         {messages?.map((message) => {
-          return <Message message={message} key={message.id} />;
+          return !isBlocked(message) ? (
+            <Message message={message} key={message.id} />
+          ) : (
+            ""
+          );
         })}
       </List>
       <div className="footerChatSession">
-        <textarea
-          className="typeBarChatSession custom-scrollbar white-list"
-          value={valueMessage}
-          onChange={handleChange}
-          onKeyPress={handleKeyPress}
-        ></textarea>
-        <Button color="purple" content="send" onClick={handleSend} />
+        {userChannel?.isMuted ? (
+          <>
+            <textarea
+              className="typeBarChatSession custom-scrollbar white-list"
+              placeholder={`You are muted until ${formatDate(new Date (userChannel?.mutedUntil))} ${formatTime(new Date (userChannel?.mutedUntil))}`}
+              disabled
+            ></textarea>
+            <Button className="btn-disabled" color="purple" content="send" />
+          </>
+        ) : (
+          <>
+            <textarea
+              className="typeBarChatSession custom-scrollbar white-list"
+              value={valueMessage}
+              onChange={handleChange}
+              onKeyPress={handleKeyPress}
+            ></textarea>
+            <Button color="purple" content="send" onClick={handleSend} />
+          </>
+        )}
       </div>
     </div>
   );

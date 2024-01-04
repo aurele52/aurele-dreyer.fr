@@ -8,16 +8,35 @@ export class MessageService {
   constructor(private readonly prisma: PrismaService) {}
 
   async channelMessages(channel_id: number) {
-    return await this.prisma.message.findMany({
-      where: {
-        channel_id,
-      },
-      include: {
-        user: true,
-      },
-      orderBy: {
-        created_at: 'asc',
-      },
+    return (
+      await this.prisma.message.findMany({
+        where: {
+          channel_id,
+        },
+        include: {
+          user: {
+            include: {
+              friendship_user1: true,
+              friendship_user2: true,
+            },
+          },
+        },
+        orderBy: {
+          created_at: 'asc',
+        },
+      })
+    ).map((message) => {
+      const mergedFriendships = [
+        ...message.user.friendship_user1,
+        ...message.user.friendship_user2,
+      ];
+      return {
+        ...message,
+        user: {
+          ...message.user,
+          friendships: mergedFriendships,
+        },
+      };
     });
   }
 

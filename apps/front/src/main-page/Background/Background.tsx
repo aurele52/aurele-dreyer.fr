@@ -17,7 +17,7 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
-import Connection from "../../windows/Play/Connection";
+import Play from "../../windows/Play/Play.tsx";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
@@ -75,7 +75,7 @@ export function Background({ windows }: BackgroundProps) {
               color={window.color}
               zindex={window.zindex || 0}
             >
-              {window.content.type === "PLAY" && <Connection />}
+              {window.content.type === "PLAY" && <Play />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}

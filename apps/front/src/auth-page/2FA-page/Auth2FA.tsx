@@ -45,6 +45,7 @@ export default function Auth2FA() {
     router.navigate({ to: "/auth" });
   };
 
+
   return (
     <div className="bg-container">
       <div className="purple-container">

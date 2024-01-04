@@ -5,11 +5,13 @@ import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
 import axios from "axios";
+import { socket } from "../../socket";
 
 interface NavbarProps extends ReduxProps {}
 
 export function Navbar({ dispatch }: NavbarProps) {
   const handlePlay = () => {
+	socket.emit("client.openGame");
     const newWindow = {
       WindowName: "Play",
       width: "500",

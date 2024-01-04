@@ -14,9 +14,14 @@ import { FriendshipModule } from './friendship/friendship.module';
 import { PongGateway } from './game/pong.gateway';
 import { UserModule } from './user/user.module';
 import { MessageModule } from './message/message.module';
+import { ServeStaticModule } from '@nestjs/serve-static';
+import { join } from 'path';
 
 @Module({
   imports: [
+    ServeStaticModule.forRoot({
+      rootPath: join(__dirname, '../..', 'front', 'dist'),
+    }),
     GameModule,
     AuthModule,
     ChannelModule,

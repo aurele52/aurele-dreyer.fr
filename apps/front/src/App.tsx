@@ -4,22 +4,46 @@ import Background from "./main-page/Background/Background";
 import { AppState } from "./reducers";
 import { useSelector } from "react-redux";
 import { socket } from "./socket";
-import { useEffect, useState } from "react";
+import api from "./axios";
+import { useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
+//import { useState } from "react";
 
 function App() {
-	const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
+	//const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
+	const {
+		data: user,
+		//isLoading: userLoading,
+		//error: userError,
+	} = useQuery<{
+		username: string;
+		avatar_url: string;
+	}>({
+		queryKey: ["connectionUser"],
+		queryFn: async () => {
+			try {
+				const response = await api.get(`/user/`);
+				return response.data;
+			} catch (error) {
+				console.error("Error fetching user:", error);
+				throw error;
+			}
+		},
+	});
 
 	useEffect(() => {
 		socket.connect();
 		function onDisconnect() {
-			setIsConnected(false);
+			//setIsConnected(false);
 		}
 
 		socket.on("connect", () => {
-			setIsConnected(true);
+			//setIsConnected(true);
 			socket.emit(
-				"authentification",
-				window.localStorage.getItem("token")
+				"client.authentification", {
+					user: user,
+					token: window.localStorage.getItem("token")
+				}
 			);
 		});
 		socket.on("disconnect", onDisconnect);
