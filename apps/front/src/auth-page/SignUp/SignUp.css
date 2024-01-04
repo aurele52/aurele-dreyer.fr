@@ -1,0 +1,16 @@
+.AvatarUpload {
+	padding: 0px;
+	border: 5px solid red;
+	display:flex;
+	flex-direction: column;
+	align-items: center;
+	gap: 1em;
+}
+.Label {
+	border: 5px solid blue;
+}
+
+.Avatar{
+	border:5px solid green;
+	max-width: 20em;
+}

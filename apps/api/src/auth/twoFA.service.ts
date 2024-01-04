@@ -26,7 +26,7 @@ export class TwoFAService {
         secret:process.env.APP_TMP_SECRET});
       return (payload.id);
     } catch {
-      throw new UnauthorizedException();
+      throw new UnauthorizedException("You must first log in with 42");
     }
   }
 

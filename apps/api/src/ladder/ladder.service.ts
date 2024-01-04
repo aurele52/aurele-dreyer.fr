@@ -3,72 +3,70 @@ import { PrismaService } from '../prisma.service';
 
 @Injectable()
 export class LadderService {
-    private ladder: {
-        id: number;
-        username: string;
-        avatar_url: string;
-        win_count: number;
-        rank: number;
-    }[] = [];
+  private ladder: {
+    id: number;
+    username: string;
+    avatar_url: string;
+    win_count: number;
+    rank: number;
+  }[] = [];
 
-    constructor(private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-    private async generateLadder() {
-        const users = await this.prisma.user.findMany();
+  private async generateLadder() {
+    const users = await this.prisma.user.findMany();
 
-        const winCounts = await Promise.all(
-            users.map(async (user) => {
-                const count = await this.prisma.matchPlayer.count({
-                    where: {
-                        user_id: user.id,
-                        winner: true,
-                    },
-                });
-                return { userId: user.id, winCount: count };
-            }),
-        );
-
-        const ladder = users.map((user) => {
-            const winCount = winCounts.find((wc) => wc.userId === user.id)?.winCount || 0;
-            return {
-                id: user.id,
-                username: user.username,
-                avatar_url: user.avatar_url,
-                win_count: winCount,
-                rank: 0,
-            };
+    const winCounts = await Promise.all(
+      users.map(async (user) => {
+        const count = await this.prisma.matchPlayer.count({
+          where: {
+            user_id: user.id,
+            winner: true,
+          },
         });
+        return { userId: user.id, winCount: count };
+      }),
+    );
 
-        ladder.sort((a, b) => b.win_count - a.win_count);
+    const ladder = users.map((user) => {
+      const winCount =
+        winCounts.find((wc) => wc.userId === user.id)?.winCount || 0;
+      return {
+        id: user.id,
+        username: user.username,
+        avatar_url: user.avatar_url,
+        win_count: winCount,
+        rank: 0,
+      };
+    });
 
-        ladder.forEach((user, index) => {
-            user.rank = index + 1;
-        });
+    ladder.sort((a, b) => b.win_count - a.win_count);
 
-        return ladder;
+    ladder.forEach((user, index) => {
+      user.rank = index + 1;
+    });
+
+    return ladder;
+  }
+
+  async updateLadder() {
+    this.ladder = await this.generateLadder();
+  }
+
+  async listLadder() {
+    await this.updateLadder();
+    return this.ladder;
+  }
+
+  async getRank(id: number) {
+    const ladder = await this.listLadder();
+
+    const user = ladder.find((u) => u.id === id);
+
+    if (!user) {
+      throw new NotFoundException(`User with ID ${id} not found`);
     }
 
-    async updateLadder() {
-        this.ladder = await this.generateLadder();
-    }
-
-    async listLadder() {
-        if (this.ladder.length === 0) {
-            await this.updateLadder();
-        }
-
-        return this.ladder;
-    }
-
-    async getRank(id: number) {
-        const ladder = await this.listLadder();
-
-        const user = ladder.find((u) => u.id === id);
-
-        if (!user) {
-            throw new NotFoundException(`User with ID ${id} not found`);
-        }
-
-        return user.rank;
-    }
+    return user.rank;
+  }
 }

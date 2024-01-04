@@ -1,23 +1,6 @@
-import {
-  Controller,
-  Get,
-  Param,
-  Post,
-  UseInterceptors,
-  UploadedFile,
-  Res,
-  HttpStatus,
-  StreamableFile,
-  Query,
-  Body,
-  Delete,
-} from '@nestjs/common';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { Controller, Get, Param, Query } from '@nestjs/common';
 import { ProfileService } from './profile.service';
-import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
-import * as path from 'path';
-import * as fs from 'fs';
-import { Public } from 'src/auth/decorators/public.decorator';
+import { CurrentUser } from 'src/decorators/user.decorator';
 
 @Controller('profile')
 export class ProfileController {

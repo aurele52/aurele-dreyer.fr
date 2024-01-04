@@ -1,5 +1,4 @@
 import {
-  BadRequestException,
   Body,
   Controller,
   Get,
@@ -25,32 +24,12 @@ import { JwtService } from '@nestjs/jwt';
 import { FileInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
 import * as fs from 'fs';
-import { Express } from 'express';
+import { Validate2FADto } from './dto/validate2fa.dto';
+import { CreateUserDto } from './dto/createuser.dto';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
 }
-
-/* @Controller('/auth')
-export class AuthController {
-  constructor(
-    private readonly authService: AuthService,
-    private readonly TwoFAService: TwoFAService,
-    private readonly jwtService: JwtService,
-    private readonly jwt: JWT,
-    private readonly userService: UserService,
-  ) {}
-
-  @Public()
-  @Get('/')
-  @Redirect()
-  redirectTo42Auth() {
-    const api42_id = process.env.API42_ID;
-    const api42_callback = 'http://localhost:3000/api/auth/callback';
-    const state = generateRandomState();
-    const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
-    return { url: url_auth42 };
-  } */
 
 @Controller('/auth')
 export class AuthController {
@@ -69,9 +48,30 @@ export class AuthController {
     const api42_id = process.env.API42_ID;
     const api42_callback = 'http://localhost:3000/api/auth/callback';
     const state = generateRandomState();
-    const url_auth42 = `http://localhost:3000/api/auth/callback`;
+    const url_auth42 = `https://api.intra.42.fr/oauth/authorize?client_id=${api42_id}&redirect_uri=${api42_callback}&response_type=code&state=${state}`;
     return { url: url_auth42 };
   }
+
+  // @Controller('/auth')
+  // export class AuthController {
+  //   constructor(
+  //     private readonly authService: AuthService,
+  //     private readonly TwoFAService: TwoFAService,
+  //     private readonly jwtService: JwtService,
+  //     private readonly jwt: JWT,
+  //     private readonly userService: UserService,
+  //   ) {}
+
+  //   @Public()
+  //   @Get('/')
+  //   @Redirect()
+  //   redirectTo42Auth() {
+  //     const api42_id = process.env.API42_ID;
+  //     const api42_callback = 'http://localhost:3000/api/auth/callback';
+  //     const state = generateRandomState();
+  //     const url_auth42 = `http://localhost:3000/api/auth/callback`;
+  //     return { url: url_auth42 };
+  //   }
 
   @Public()
   @Redirect()
@@ -87,7 +87,7 @@ export class AuthController {
         secret: process.env.APP_TMP_SECRET,
         expiresIn: '180s',
       });
-      return { url: `http://localhost:5173/sign-up/${jwt}` };
+      return { url: `http://localhost:5173/sign-up?id=${jwt}` };
     } else {
       const data = await this.authService.signIn(user_infos_42);
       if (data.twoFA) {
@@ -103,33 +103,31 @@ export class AuthController {
   @UseInterceptors(FileInterceptor('avatar'))
   async signUp(
     @Query('id') id: string,
-    @Body('username') username: string,
-    @UploadedFile() avatar,
+    // @Body('username') username: string,
+    @Body() body: CreateUserDto
   ) {
-    console.log({ username, avatar });
-    const avatar_url = (avatar) => {
-      if (!avatar) return null;
-      const fileName =
-        'uploaded-avatar' + Date.now() + path.extname(avatar.originalname);
-      const filePath = path.join(
-        __dirname,
-        '../..',
-        'public',
-        'avatars',
-        fileName,
-      );
+    const {username} = body;
+    // const avatar_url = (avatar) => {
+    //   if (!avatar) return null;
+    //   const fileName =
+    //     'uploaded-avatar' + Date.now() + path.extname(avatar.originalname);
+    //   const filePath = path.join(
+    //     __dirname,
+    //     '../..',
+    //     'public',
+    //     'avatars',
+    //     fileName,
+    //   );
 
-      fs.writeFileSync(filePath, avatar.buffer);
+    //   fs.writeFileSync(filePath, avatar.buffer);
 
-      return 'http://localhost:5173/api/user/avatar/' + fileName;
-    };
+    //   return 'http://localhost:5173/api/user/avatar/' + fileName;
+    // };
     const user_infos_42 = await this.jwtService.verifyAsync(id, {
       secret: process.env.APP_TMP_SECRET,
     });
-
     const token = await this.authService.registerUser(
       user_infos_42,
-      avatar_url(avatar),
       username,
     );
   }
@@ -169,13 +167,13 @@ export class AuthController {
     return { url: `http://localhost:5173/auth/redirect/${token}` };
   }
 
-  @Public()
-  @Get('/abort/:id')
-  async abortAuthentication(@Param('id') id: number) {
-    await this.userService.updateUser(id, {
-      token_42: null,
-    });
-  }
+  // @Public()
+  // @Get('/abort/:id')
+  // async abortAuthentication(@Param('id') id: number) {
+  //   await this.userService.updateUser(id, {
+  //     token_42: null,
+  //   });
+  // }
 
   @Get('/disconnect')
   async disconnectUser(@CurrentUserID() id: number) {
@@ -208,11 +206,16 @@ export class AuthController {
   }
 
   @Public()
-  @Get('/2fa/submit/')
-  async submit2FACode(@Query('jwt_id') jwt_id: string, @Query('code') code) {
+  @Post('/2fa/submit/')
+  async submit2FACode(
+    @Query('jwt_id') jwt_id: string,
+    @Body() body: Validate2FADto,
+  ) {
+    console.log({body})
     const user_id = await this.TwoFAService.checkAuthorization(jwt_id);
     const user = await this.TwoFAService.getUser(user_id);
-    this.TwoFAService.check2FACodeValidity(code, user);
+    this.TwoFAService.check2FACodeValidity(body.code, user);
+    console.log('OK');
     const token = await this.jwt.generateJWTToken(
       user,
       process.env.APP_SECRET,

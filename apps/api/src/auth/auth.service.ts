@@ -36,7 +36,6 @@ export class AuthService {
     const user = await this.prisma.user.update({
       where: { id_42: user_info_42.id },
       data: {
-        username: user_info_42.login,
         token_42: user_info_42.access_token,
       },
     });
@@ -44,7 +43,7 @@ export class AuthService {
       const jwt_id = await this.jwt.generateJWTToken(
         user,
         process.env.APP_TMP_SECRET,
-        '60s',
+        '1h',
       );
       return { jwt: jwt_id, twoFA: true };
     } else {
@@ -57,27 +56,18 @@ export class AuthService {
     }
   }
 
-  async registerUser(user_infos_42, avatar_url, username) {
-    console.log({ user_infos_42, avatar_url, username });
-    const getAvatarUrl = (): string => {
-      if (avatar_url) {
-        return avatar_url;
-      } else {
-        return user_infos_42.avatar;
-      }
+  async registerUser(user_infos_42, username) {
       // !!!!! handle user == null  !!!!!
-    };
     try {
       const user = await this.prisma.user.create({
         data: {
           username: username,
-          avatar_url: getAvatarUrl(),
+          avatar_url: user_infos_42.avatar,
           id_42: user_infos_42.id,
           token_42: user_infos_42.access_token,
           is_enable_2fa: false,
         },
       });
-      console.log({ user });
       return user;
     } catch (e) {
       console.log(e);
@@ -86,7 +76,7 @@ export class AuthService {
           console.log(
             'There is a unique constraint violation, a new user cannot be created with this username',
           );
-          throw new ForbiddenException();
+          throw new ForbiddenException('This username is already taken!');
         }
         throw new ImATeapotException();
       }
