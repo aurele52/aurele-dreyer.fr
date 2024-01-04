@@ -511,12 +511,16 @@ interface sendInfo {
 	itemx: number;
 	itemy: number;
 }
+
+let height: number | undefined ; //margot changed
+let width: number | undefined ;  //margot changed
+
 function onSizeChange(p:p5) {
 	width = document.getElementById('canva')?.getBoundingClientRect().width;
 	height = document.getElementById('canva')?.getBoundingClientRect().height;
-	if (typeof width == typeof 1)
+	if (typeof width == typeof 1)// && width !== undefined && height !== undefined) ////margot
 	{
-		p.resizeCanvas(width, height);
+		p.resizeCanvas(width as number, height as number); //margot
 		p.background('black');
 		xsize = width as number;
 		ysize = height as number;
@@ -540,9 +544,6 @@ function onSizeChange(p:p5) {
 
 	}
 }
-
-let height: number | undefined;
-let width: number | undefined;
 
 export default function Pong(props: playProps) {
 	const myRef = useRef<HTMLDivElement>(null);
@@ -579,7 +580,7 @@ export default function Pong(props: playProps) {
 		p.setup = () => {
 			width = document.getElementById('canva')?.getBoundingClientRect().width;
 			height = document.getElementById('canva')?.getBoundingClientRect().height;
-			p.createCanvas(width, height);
+			p.createCanvas(width as number, height as number); //margot
 			p.frameRate(30);
 			p.noStroke();
 			drawEmpty(p);
