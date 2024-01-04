@@ -2,12 +2,12 @@ import "./AddFriends.css";
 import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import {
-	Button,
 	HeartButton,
 } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
+import { SearchBar } from "../../../../shared/ui-components/SearchBar/SearchBar";
 
 export function AddFriends() {
 	const [placeholderValue, setPlaceholderValue] = useState<string>("");
@@ -59,29 +59,21 @@ export function AddFriends() {
 		localStorage.setItem("users", JSON.stringify(users));
 	}, [placeholderValue, users]);
 
-	const handleButtonClick = async () => {
+	useEffect(() => {
 		refetchaddFriendsList();
+	}, [placeholderValue]);
+
+	const handleButtonClick = async (value: string) => {
+		setPlaceholderValue(value);
 	};
 
 	return (
 		<div className="AddFriendsModule">
 			<div className="Header">
-				<div className="SearchBar">
-					<div className="TypeBar">
-						<input
-							className="Placeholder"
-							value={placeholderValue}
-							onChange={(e) =>
-								setPlaceholderValue(e.target.value)
-							}
-						/>
-						<Button
-							icon="Lens"
-							color="purple"
-							onClick={handleButtonClick}
-						/>
-					</div>
-				</div>
+				<SearchBar
+					action={handleButtonClick}
+					button={{ color: "purple", icon: "Lens" }}
+				/>
 			</div>
 			<div className="Body">
 				<List dark={false}>

@@ -13,7 +13,6 @@ import { AppState } from "../../reducers";
 import { createSelector } from "reselect";
 import { useSelector } from "react-redux";
 import { SearchBar } from "../../shared/ui-components/SearchBar/SearchBar";
-import { colors } from "@mui/material";
 
 export type ChatType = {
 	id: number;
