@@ -87,13 +87,13 @@ export class AuthController {
         secret: process.env.APP_TMP_SECRET,
         expiresIn: '180s',
       });
-      return { url: `http://localhost:5173/sign-up?id=${jwt}` };
+      return { url: `${process.env.DOMAIN_NAME_FRONT}/sign-up?id=${jwt}` };
     } else {
       const data = await this.authService.signIn(user_infos_42);
       if (data.twoFA) {
-        return { url: `http://localhost:5173/auth/2fa/${data.jwt}` };
+        return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/2fa/${data.jwt}` };
       } else {
-        return { url: `http://localhost:5173/auth/redirect/${data.jwt}` };
+        return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${data.jwt}` };
       }
     }
   }
@@ -121,7 +121,7 @@ export class AuthController {
 
     //   fs.writeFileSync(filePath, avatar.buffer);
 
-    //   return 'http://localhost:5173/api/user/avatar/' + fileName;
+    //   return `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/` + fileName;
     // };
     const user_infos_42 = await this.jwtService.verifyAsync(id, {
       secret: process.env.APP_TMP_SECRET,
@@ -146,7 +146,7 @@ export class AuthController {
       process.env.APP_SECRET,
       '3d',
     );
-    return { url: `http://localhost:5173/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
   }
 
   // @Public()
@@ -156,17 +156,15 @@ export class AuthController {
   //   @Body('username') username: string,
   // ) {
   //   const token = await this.authService.registerFakeUser(avatar_url, username);
-  //   return { url: `http://localhost:5173/auth/redirect/${token}` };
+  //   return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
   // }
 
   @Public() // Ne pas laisser ça public car normalement réservé aux admins
   @Redirect()
   @Get('/impersonate/:id')
   async impersonateUser(@Param('id') id: number) {
-    const token = await this.jwtService.generateFakeJWTToken(id);
-    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
     const token = await this.jwt.generateFakeJWTToken(id);
-    return { url: `http://localhost:5173/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
   }
 
   // @Public()
