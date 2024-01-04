@@ -118,4 +118,12 @@ export class ChannelController {
     });
     return channel.id;
   }
+
+  @Post('/channel/:channelid/checkpwd')
+  async checkPwd(
+    @Param('channelid') channelId: number,
+    @Body('password') password: string,
+  ) {
+    return await this.channelService.checkPwd(channelId, password);
+  }
 }

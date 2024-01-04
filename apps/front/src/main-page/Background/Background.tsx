@@ -43,6 +43,7 @@ export function Background({ windows }: BackgroundProps) {
     ACHIEVEMENTS: { width: "300px", height: "300px" },
     FRIENDSLIST: { width: "450px", height: "600px" },
     MODAL: { width: "390px", height: "200px" },
+    MODALREQUESTED: { width: "390px", height: "250px" },
     PENDINGREQUESTS: { width: "300px", height: "300px" },
     BLOCKEDUSERS: { width: "300px", height: "400px" },
     TWOFAQRCODE: { width: "300px", height: "400px" },
@@ -94,7 +95,7 @@ export function Background({ windows }: BackgroundProps) {
                 <Achievements targetId={window.targetId} />
               )}
               {window.content.type === "FRIENDSLIST" && <FriendsList />}
-              {window.content.type === "MODAL" && (
+              {(window.content.type === "MODAL" || window.content.type === "MODALREQUESTED") && (
                 <Modal
                   content={window.modal?.content}
                   type={window.modal?.type}

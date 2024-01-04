@@ -56,7 +56,7 @@ function App() {
 
 	const { displayFilter, zIndexFilter } = useSelector((state: AppState) => {
 		const modalWindow = state.windows.find(
-			(window) => window.content.type === "MODAL"
+			(window) => window.content.type === "MODAL" || window.content.type === "MODALREQUESTED"
 		);
 
 		if (modalWindow) {

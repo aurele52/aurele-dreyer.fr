@@ -7,6 +7,7 @@ import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
+import { ModalType, addModal } from "../../../shared/utils/AddModal";
 
 interface FindChanProps extends ReduxProps {}
 
@@ -36,7 +37,11 @@ function FindChan({ dispatch }: FindChanProps) {
     },
   });
 
-  const handleAddChannel = async (channelId: number) => {
+  const handleAddChannel = async (channelId: number, channelType: string) => {
+    if (channelType === "PROTECTED") {
+      addModal(ModalType.REQUESTED, undefined, undefined, undefined, channelId);
+      return ;
+    }
     await createUserChannel({ channelId });
   };
 
@@ -71,7 +76,7 @@ function FindChan({ dispatch }: FindChanProps) {
                     icon="Plus"
                     color="pink"
                     onClick={() => {
-                      handleAddChannel(channel.id);
+                      handleAddChannel(channel.id, channel.type);
                     }}
                   />
                 </div>
