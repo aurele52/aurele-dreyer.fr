@@ -1,11 +1,11 @@
 import { router } from "../../router";
 import { Button } from "../../shared/ui-components/Button/Button";
 import "./SignUp.css";
-import axios, { AxiosError } from "axios";
-import { ChangeEvent, FormEvent, useState } from "react";
 import { useMutation } from "@tanstack/react-query";
 import api from "../../axios";
 import { Input } from "../../shared/ui-components/Input/Input.tsx";
+import { AxiosError } from 'axios';
+import { FormEvent } from 'react';
 
 interface ValidationErrorResponse {
   [key: string]: string[];
