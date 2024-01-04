@@ -1,23 +1,31 @@
 import {
   ForbiddenException,
-  ImATeapotException,
   Injectable,
+  NotFoundException,
+  UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { AccessToken42, UserInfo42 } from './auth.types';
-import { JWT } from './jwt.service';
 import { Prisma, User } from '@prisma/client';
+import { JwtService } from '@nestjs/jwt';
+import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
   constructor(
     private readonly prisma: PrismaService,
-    private readonly jwt: JWT,
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
   ) {}
 
   async fetchInfo42(code: string, state: string) {
     const access_token = await this.fetchAccessToken(code, state);
     const user = await this.fetchUserInfo(access_token.access_token);
+    if (!access_token || !user) {
+      const err_message = 'Fail to fetch access token or user from 42';
+      console.log('401 EXCEPTION THROWN: ', err_message);
+      throw new UnauthorizedException(err_message);
+    }
     return {
       id: user.id,
       login: user.login,
@@ -27,37 +35,37 @@ export class AuthService {
   }
 
   async getUserbyId42(id_42: number) {
-    return await this.prisma.user.findUnique({
+    const user = await this.prisma.user.findUnique({
       where: { id_42 },
     });
+    if (!user) {
+      const err_message = `User with 42 ID ${id_42} not found`;
+      console.log('404 EXCEPTION THROWN: ', err_message);
+      throw new NotFoundException(err_message);
+    }
+    return user;
   }
 
-  async signIn(user_info_42) {
-    const user = await this.prisma.user.update({
-      where: { id_42: user_info_42.id },
-      data: {
-        token_42: user_info_42.access_token,
-      },
-    });
+  async signIn(user: User, access_token_42: string) {
+    await this.userService.updateUser(user.id, { token_42: access_token_42 });
     if (user.is_enable_2fa) {
-      const jwt_id = await this.jwt.generateJWTToken(
+      const token = await this.generateJWTToken(
         user,
         process.env.APP_TMP_SECRET,
         '1h',
       );
-      return { jwt: jwt_id, twoFA: true };
+      return `${process.env.DOMAIN_NAME_FRONT}/auth/2fa/${token}`;
     } else {
-      const token = await this.jwt.generateJWTToken(
+      const token = await this.generateJWTToken(
         user,
         process.env.APP_SECRET,
         '3d',
       );
-      return { jwt: token, twoFA: false };
+      return `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}`;
     }
   }
 
   async registerUser(user_infos_42, username) {
-      // !!!!! handle user == null  !!!!!
     try {
       const user = await this.prisma.user.create({
         data: {
@@ -69,53 +77,99 @@ export class AuthService {
         },
       });
       return user;
-    } catch (e) {
-      console.log(e);
-      if (e instanceof Prisma.PrismaClientKnownRequestError) {
-        if (e.code === 'P2002') {
+    } catch (error) {
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        if (error.code === 'P2002') {
           console.log(
-            'There is a unique constraint violation, a new user cannot be created with this username',
+            '403 EXCEPTION THROWN: Unique constraint violation, a new user cannot be created with this username',
           );
           throw new ForbiddenException('This username is already taken!');
         }
-        throw new ImATeapotException();
+        const err_message = 'Could not create user';
+        console.log('403 EXCEPTION THROWN: ', err_message);
+        console.log({ error });
+        throw new ForbiddenException(err_message);
       }
     }
   }
 
   async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {
-    return fetch('https://api.intra.42.fr/oauth/token', {
-      method: 'POST',
-      headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({
-        grant_type: 'authorization_code',
-        client_id: process.env.API42_ID,
-        client_secret: process.env.API42_SECRET,
-        code: code,
-        redirect_uri: `${process.env.DOMAIN_NAME_BACK}/api/auth/callback`,
-        state: state,
-      }),
-    }).then((response) => {
-      if (!response.ok) {
-        return Promise.reject(
-          `ERROR ${response.status} - ${response.statusText}: could not fetch access token`,
-        );
-      }
-      return response.json() as any as AccessToken42;
-    });
+    try {
+      return fetch('https://api.intra.42.fr/oauth/token', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({
+          grant_type: 'authorization_code',
+          client_id: process.env.API42_ID,
+          client_secret: process.env.API42_SECRET,
+          code: code,
+          redirect_uri: `${process.env.DOMAIN_NAME_BACK}/api/auth/callback`,
+          state: state,
+        }),
+      }).then((response) => {
+        if (!response.ok) {
+          return Promise.reject(
+            `ERROR ${response.status} - ${response.statusText}: could not fetch access token`,
+          );
+        }
+        return response.json() as any as AccessToken42;
+      });
+    } catch (error) {
+      const err_message = 'Connection with 42 refused';
+      console.log('401 EXCEPTION THROWN: ', err_message);
+      console.log({ error });
+      throw new UnauthorizedException(err_message);
+    }
   }
 
   async fetchUserInfo(access_token: string): Promise<UserInfo42> {
-    return fetch('https://api.intra.42.fr/v2/me', {
-      method: 'GET',
-      headers: { Authorization: `Bearer ${access_token}` },
-    }).then((response) => {
-      if (!response.ok) {
-        return Promise.reject(
-          `ERROR ${response.status} - ${response.statusText}: could not fetch user info`,
-        );
-      }
-      return response.json() as any as UserInfo42;
-    });
+    try {
+      return fetch('https://api.intra.42.fr/v2/me', {
+        method: 'GET',
+        headers: { Authorization: `Bearer ${access_token}` },
+      }).then((response) => {
+        if (!response.ok) {
+          return Promise.reject(
+            `ERROR ${response.status} - ${response.statusText}: could not fetch user info`,
+          );
+        }
+        return response.json() as any as UserInfo42;
+      });
+    } catch (error) {
+      const err_message = 'Could not create user';
+      console.log('401 EXCEPTION THROWN: ', err_message);
+      console.log({ error });
+      throw new UnauthorizedException(err_message);
+    }
+  }
+
+  async generateJWTToken(user, secret: string, expiresIn: string) {
+    try {
+      const payload = {
+        id: user.id,
+        username: user.username,
+        connected_at: new Date(),
+      };
+      return await this.jwtService.signAsync(payload, {
+        secret,
+        expiresIn,
+      });
+    } catch (error) {
+      const err_message = 'Could not generate access token';
+      console.log('401 EXCEPTION THROWN: ', err_message);
+      console.log({ error });
+      throw new UnauthorizedException(err_message);
+    }
+  }
+
+  async checkTokenValidity(token: any, secret: string) {
+    try {
+      return await this.jwtService.verifyAsync(token, { secret });
+    } catch (error) {
+      const err_message = 'Invalid or expired token. Please log in first';
+      console.log('401 EXCEPTION THROWN: ', err_message);
+      console.log({ error });
+      throw new UnauthorizedException(err_message);
+    }
   }
 }

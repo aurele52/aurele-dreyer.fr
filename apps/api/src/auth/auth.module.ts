@@ -6,7 +6,6 @@ import { AuthService } from './auth.service';
 import { AuthGuard } from './auth.guard';
 import { PrismaService } from 'src/prisma.service';
 import { TwoFAService } from './twoFA.service';
-import { JWT } from './jwt.service';
 import { UserService } from 'src/user/user.service';
 
 @Module({
@@ -15,7 +14,6 @@ import { UserService } from 'src/user/user.service';
   providers: [
     AuthService,
     TwoFAService,
-    JWT,
     UserService,
     PrismaService,
     {
