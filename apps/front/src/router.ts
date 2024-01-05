@@ -35,12 +35,12 @@ const authTwoFARoute = new Route({
   component: Auth2FA,
 });
 const authSignUpRoute = new Route({
-  getParentRoute: () => rootRoute,
+  getParentRoute: () => authRoute,
   path: "/sign-up",
   component: SignUp,
 });
 const authRedirectRoute = new Route({
-  getParentRoute: () => authRoute,
+  getParentRoute: () => rootRoute,
   path: "/redirect/$token",
   beforeLoad: async ({ params }) => {
     if (!!params.token) {
