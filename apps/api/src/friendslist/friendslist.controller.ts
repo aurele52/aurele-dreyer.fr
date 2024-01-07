@@ -21,13 +21,7 @@ export class FriendslistController {
   }
 
   @Get('/potentialFriends')
-  async getPotentialFriends(
-    @CurrentUser() user,
-    @Query('placeholderValue') placeholderValue: string,
-  ) {
-    return this.friendslistService.getPotentialFriends(
-      placeholderValue,
-      user.id,
-    );
+  async getPotentialFriends(@CurrentUser() user) {
+    return this.friendslistService.getPotentialFriends(user.id);
   }
 }

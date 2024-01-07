@@ -21,6 +21,10 @@ export function SearchBar({ action, button }: SearchBarProps) {
 		}
 	};
 
+	const handleClick = () => {
+		if (action) action(inputValue);
+	};
+
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {
 		setInputValue(event.target.value);
 	};
@@ -42,6 +46,7 @@ export function SearchBar({ action, button }: SearchBarProps) {
 					color={button.color}
 					icon={button.icon}
 					content={button.content}
+					onClick={handleClick}
 				/>
 			)}
 		</div>
