@@ -30,8 +30,9 @@ export class lobby {
   constructor(
     connectedClientList: clientInfoDto[],
     isCustom: LobbyCustom,
-    private readonly prisma: PrismaService,
+    private readonly prisma: PrismaService = new PrismaService(),
   ) {
+    this.prisma = new PrismaService();
     this.connectedClient = connectedClientList;
     this.isCustom = isCustom;
     if (this.isCustom == 'normal') {
