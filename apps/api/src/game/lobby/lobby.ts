@@ -1,6 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
+import { PrismaService } from 'src/prisma.service';
+
 interface gameInfo {
   barDist: number;
   barSpeed: number;
@@ -25,6 +27,22 @@ interface gameInfo {
 }
 
 export class lobby {
+  constructor(
+    connectedClientList: clientInfoDto[],
+    isCustom: LobbyCustom,
+    private readonly prisma: PrismaService,
+  ) {
+    this.connectedClient = connectedClientList;
+    this.isCustom = isCustom;
+    if (this.isCustom == 'normal') {
+      this.gameInfo.ballSize = 10;
+      this.gameInfo.barSize = 100;
+    }
+    if (this.isCustom == 'custom') {
+      this.gameInfo.ballSize = 50;
+      this.gameInfo.barSize = 10;
+    }
+  }
   isEmpty(): boolean {
     if (this.clients.length == 0) return true;
     return false;
@@ -51,23 +69,59 @@ export class lobby {
   disconnectAll() {
     this.clients.splice(0);
   }
-  win(winner: clientInfoDto, loser: clientInfoDto) {
-    winner.socket.emit('server.win');
-    /*
-     * match_id est a creer ici
-     * this.client[0] == joueur 1
-     * this.client[1] == joueur 2
-     * this.gameInfo.oneScore == score joueur 1
-     * this.gameInfo.twoScore == score joueur 2
-     * winner == winner
-     * loser == loser
-     * no created_at yet
-     * no updated_at yet
-     * winner username == winner.user
-     * loser username == winner.user
-     * match == don't ask me what is this
-     */
+
+  async win(winner, loser) {
+    try {
+      winner.socket.emit('server.win');
+
+      const winnerUser = await this.prisma.user.findUnique({
+        where: { username: winner.user },
+      });
+
+      const loserUser = await this.prisma.user.findUnique({
+        where: { username: loser.user },
+      });
+
+      if (!winnerUser || !loserUser) {
+        console.error('User not found');
+        return;
+      }
+
+      const match = await this.prisma.match.create({
+        data: {
+          on_going: false,
+          players: {
+            createMany: {
+              data: [
+                {
+                  user_id: winnerUser.id,
+                  score:
+                    this.gameInfo.oneScore > this.gameInfo.twoScore
+                      ? this.gameInfo.oneScore
+                      : this.gameInfo.twoScore,
+                  winner: true,
+                },
+                {
+                  user_id: loserUser.id,
+                  score:
+                    this.gameInfo.oneScore > this.gameInfo.twoScore
+                      ? this.gameInfo.twoScore
+                      : this.gameInfo.oneScore,
+                  winner: false,
+                },
+              ],
+            },
+          },
+        },
+      });
+
+      return match;
+    } catch (error) {
+      console.error('Error in win function:', error);
+      throw error;
+    }
   }
+
   lose(user: clientInfoDto) {
     user.socket.emit('server.lose');
   }
@@ -128,11 +182,13 @@ export class lobby {
       let temp = 0;
       while (temp < this.gameInfo.ballSize) {
         if (
-          this.gameInfo.bally + temp <= this.gameInfo.oneBary + this.gameInfo.barSize &&
+          this.gameInfo.bally + temp <=
+            this.gameInfo.oneBary + this.gameInfo.barSize &&
           this.gameInfo.bally + temp >= this.gameInfo.oneBary
         ) {
           const ret =
-            (this.gameInfo.bally - this.gameInfo.oneBary) / this.gameInfo.barSize;
+            (this.gameInfo.bally - this.gameInfo.oneBary) /
+            this.gameInfo.barSize;
           [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
             ret,
             {
@@ -161,7 +217,8 @@ export class lobby {
           this.gameInfo.bally + temp >= this.gameInfo.twoBary
         ) {
           const ret =
-            (this.gameInfo.bally - this.gameInfo.twoBary) / this.gameInfo.barSize;
+            (this.gameInfo.bally - this.gameInfo.twoBary) /
+            this.gameInfo.barSize;
           [this.gameInfo.ballDirx, this.gameInfo.ballDiry] = this.redirection(
             ret,
             {
@@ -176,18 +233,7 @@ export class lobby {
       }
     }
   }
-  constructor(connectedClientList: clientInfoDto[], isCustom: LobbyCustom) {
-    this.connectedClient = connectedClientList;
-    this.isCustom = isCustom;
-    if (this.isCustom == 'normal') {
-      this.gameInfo.ballSize = 10;
-      this.gameInfo.barSize = 100;
-    }
-    if (this.isCustom == 'custom') {
-      this.gameInfo.ballSize = 50;
-      this.gameInfo.barSize = 10;
-    }
-  }
+
   public readonly isCustom: LobbyCustom;
 
   private connectedClient: clientInfoDto[];
@@ -229,13 +275,19 @@ export class lobby {
       if (this.gameInfo.oneBary > 0)
         this.gameInfo.oneBary = this.gameInfo.oneBary - this.gameInfo.barSpeed;
     if (this.clients[0].input.direction == 'down')
-      if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize)
+      if (
+        this.gameInfo.oneBary + this.gameInfo.barSize <
+        this.gameInfo.gameysize
+      )
         this.gameInfo.oneBary = this.gameInfo.oneBary + this.gameInfo.barSpeed;
     if (this.clients[1].input.direction == 'up')
       if (this.gameInfo.twoBary > 0)
         this.gameInfo.twoBary = this.gameInfo.twoBary - this.gameInfo.barSpeed;
     if (this.clients[1].input.direction == 'down')
-      if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize)
+      if (
+        this.gameInfo.twoBary + this.gameInfo.barSize <
+        this.gameInfo.gameysize
+      )
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
   }
   itemPick() {
@@ -244,11 +296,13 @@ export class lobby {
     while (tempy < this.gameInfo.ballSize) {
       while (tempx < this.gameInfo.ballSize) {
         if (
-          this.gameInfo.bally + tempy <= this.gameInfo.itemy + this.gameInfo.itemSize &&
+          this.gameInfo.bally + tempy <=
+            this.gameInfo.itemy + this.gameInfo.itemSize &&
           this.gameInfo.bally + tempy >= this.gameInfo.itemSize
         ) {
           if (
-            this.gameInfo.ballx + tempx <= this.gameInfo.itemx + this.gameInfo.itemSize &&
+            this.gameInfo.ballx + tempx <=
+              this.gameInfo.itemx + this.gameInfo.itemSize &&
             this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
           ) {
             this.gameInfo.itemSize = -1;
@@ -269,8 +323,7 @@ export class lobby {
     while (i > 0) {
       this.ballWallRedir();
       this.ballBarRedir();
-      if (this.gameInfo.itemSize > 0)
-      this.itemPick();
+      if (this.gameInfo.itemSize > 0) this.itemPick();
       this.gameInfo.ballx = this.gameInfo.ballx + this.gameInfo.ballDirx;
       this.gameInfo.bally = this.gameInfo.bally + this.gameInfo.ballDiry;
       i--;
@@ -278,7 +331,11 @@ export class lobby {
   }
 
   async start() {
-    while (this.finish === 0 && this.gameInfo.oneScore < 9 && this.gameInfo.twoScore < 9) {
+    while (
+      this.finish === 0 &&
+      this.gameInfo.oneScore < 9 &&
+      this.gameInfo.twoScore < 9
+    ) {
       this.update();
       this.clients[0].socket.emit('server.update', {
         ballx: this.gameInfo.ballx,
