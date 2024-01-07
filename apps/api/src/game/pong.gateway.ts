@@ -11,7 +11,7 @@ import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
-
+import { CurrentUser } from 'src/decorators/user.decorator';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
@@ -19,9 +19,7 @@ export class PongGateway {
   private readonly lobbyManager: lobbyManager = new lobbyManager(
     this.connectedClient,
   );
-  constructor(  
-    private jwt: JwtService,
-  ) {}
+  constructor(private jwt: JwtService) {}
   afterInit() {
     console.log('gateway initialised');
   }
@@ -44,8 +42,10 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.authentification')
-  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
-    console.log(`${client.id}`, data.token); // Broadcast the message to all connected clients
+  async handleAuthentification(
+    client: Socket,
+    data: { user: string; token: string },
+  ) {
     if (!data.token) {
       client.emit('401');
       client.disconnect(); //mathilde todo
@@ -92,11 +92,23 @@ export class PongGateway {
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
+      console.log({ value }, { data });
       return value.user === data.user;
     });
     if (index !== -1) {
-      client.emit('server.getStatusUser', true);
-    } else client.emit('server.getStatusUser', false);
+      client.emit('server.getStatusUser', {
+        data: {
+          username: data.user,
+          status:
+            this.connectedClient[index].status == 'connected'
+              ? 'ONLINE'
+              : 'INGAME',
+        },
+      });
+    } else
+      client.emit('server.getStatusUser', {
+        data: { username: data.user, status: 'OFFLINE' },
+      });
   }
 
   handleDisconnect(client: Socket) {
@@ -106,7 +118,9 @@ export class PongGateway {
     });
     if (index !== -1) {
       if (this.connectedClient[index].lobby != null) {
-        this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+        this.connectedClient[index].lobby.onDisconnect(
+          this.connectedClient[index],
+        );
       }
       this.connectedClient.splice(index, 1);
     }
