@@ -93,17 +93,11 @@ export class FriendslistService {
     return newFriendship;
   }
 
-  async getPotentialFriends(placeholderValue: string, selfId: number) {
+  async getPotentialFriends(selfId: number) {
     try {
-      const normalizedPlaceholder = placeholderValue.toLowerCase();
-
       const potentialFriends = await this.prisma.user.findMany({
         where: {
           isDeleted: false,
-          username: {
-            contains: normalizedPlaceholder,
-            mode: 'insensitive',
-          },
           AND: {
             AND: [
               {
