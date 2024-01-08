@@ -172,12 +172,24 @@ export class ChannelService {
           include: {
             User: true,
           },
+          orderBy: [
+            {
+              role: 'desc',
+            },
+            {
+              User: {
+                username: 'asc',
+              },
+            },
+          ],
         },
       },
     });
+
     if (!channel) {
       throw new NotFoundException(`Channel with ID ${id} not found`);
     }
+
     return channel;
   }
 
