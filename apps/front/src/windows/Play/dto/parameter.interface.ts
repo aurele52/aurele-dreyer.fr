@@ -1,9 +1,26 @@
 export interface parameter {
   barSize: number;
+  barDist: number;
+  barSpeed: number;
+  barLarge: number;
+
   ballSize: number;
+  ballSpeed: number;
+
+  itemSize: number;
+
+  oneScore: number;
+  twoScore: number;
+  
   menuSize: number;
-  ysize: number;
-  xsize: number;
+  borderSize: number;
+  numberSize: number;
+  numberSideDist: number;
+  numberTopDist: number;
+
+  gameysize: number;
+  gamexsize: number;
+
   oneBarColor: string;
   twoBarColor: string;
   ballColor: string;
@@ -12,16 +29,4 @@ export interface parameter {
   oneNumberColor: string;
   twoNumberColor: string;
   menuColor: string;
-  itemSize: number;
-  oneScore: number;
-  twoScore: number;
-  ballSpeed: number;
-  barDist: number;
-  barSpeed: number;
-  barLarge: number;
-  borderSize: number;
-  midSquareSize: number;
-  numberSize: number;
-  numberSideDist: number;
-  numberTopDist: number;
 }

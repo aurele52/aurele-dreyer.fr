@@ -3,19 +3,13 @@ import { Cron } from '@nestjs/schedule';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
 
 export class lobbyManager {
-  constructor(public connectedClientList: clientInfoDto[]) {
-    this.connectedClient = connectedClientList;
-  }
-
-  private connectedClient: clientInfoDto[];
   private normalLobbies: lobby[] = [];
   private customLobbies: lobby[] = [];
   private normalQueue: clientInfoDto[] = [];
   private inJoinTab: clientInfoDto[] = [];
 
   public createCustomLobby(client: clientInfoDto) {
-    // console.log('connectedClient', this.connectedClient);
-    const newLobby = new lobby(this.connectedClient, 'custom', client.matchInfo);
+    const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
     client.status = 'waiting another player';
     newLobby.addClient(client);
@@ -47,14 +41,13 @@ export class lobbyManager {
   }
   public addPlayerToMatch(client: clientInfoDto, matchInfo: string) {
     const index = this.customLobbies.findIndex((value) => {
-      // console.log(value.getMatchInfo());
       return value.getMatchInfo().name === matchInfo;
     });
     if (index !== -1) {
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
+      client.matchInfo = this.customLobbies[index].getMatchInfo();
       this.customLobbies[index].addClient(client);
-      // console.log('goof');
       this.customLobbies[index].start();
     }
   }
@@ -62,7 +55,7 @@ export class lobbyManager {
     if (this.normalQueue.length >= 2) {
       const playerOne = this.normalQueue.shift();
       const playerTwo = this.normalQueue.shift();
-      const newLobby = new lobby(this.connectedClient, 'normal', null);
+      const newLobby = new lobby('normal', null);
       playerOne.lobby = newLobby;
       playerTwo.lobby = newLobby;
       playerOne.status = 'inGame';

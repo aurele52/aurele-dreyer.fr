@@ -91,212 +91,147 @@ function drawBar(p: p5) {
 
 function drawOne(p: p5, x: number, y: number) {
 	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		x + gameInfo.numberSize * 2,
+		y,
 		gameInfo.numberSize,
 		gameInfo.numberSize * 7
 	);
 	p.rect(
-		x + gameInfo.numberSize * 2,
-		y + gameInfo.numberSize * 2,
+		x + gameInfo.numberSize,
+		y + gameInfo.numberSize,
 		gameInfo.numberSize,
 		gameInfo.numberSize
 	);
 }
 
 function drawTwo(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		y,
 		gameInfo.numberSize,
 		gameInfo.numberSize * 4
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize,
 		gameInfo.numberSize * 3
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 7,
+		y + gameInfo.numberSize * 6,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 }
 
 function drawThree(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		y,
 		gameInfo.numberSize,
-		gameInfo.numberSize * 4
+		gameInfo.numberSize * 7
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
-	);
-	p.rect(
 		x,
-		y + gameInfo.numberSize * 7,
+		y + gameInfo.numberSize * 6,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 }
 
 function drawFour(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 4);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		y,
 		gameInfo.numberSize,
-		gameInfo.numberSize * 4
+		gameInfo.numberSize * 7
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
-	);
-	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
 	);
 }
 
 function drawFive(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 4);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize,
 		gameInfo.numberSize * 3
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 7,
+		y + gameInfo.numberSize * 6,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 }
 
 function drawSix(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 7);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 6,
+		gameInfo.numberSize * 4,
+		gameInfo.numberSize
+	);
+	p.rect(
+		x,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize,
-		gameInfo.numberSize * 3
-	);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 7,
-		gameInfo.numberSize * 4,
-		gameInfo.numberSize
-	);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
+		gameInfo.numberSize * 4
 	);
 }
 
 function drawSeven(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		y,
 		gameInfo.numberSize,
 		gameInfo.numberSize * 7
 	);
 }
 
 function drawEight(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 7);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize * 4,
-		gameInfo.numberSize
-	);
-	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
-	);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 7,
-		gameInfo.numberSize * 4,
-		gameInfo.numberSize
-	);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
-	);
-	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 4
-	);
-}
-
-function drawNine(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 3,
-		gameInfo.numberSize * 4,
-		gameInfo.numberSize
-	);
-	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 3,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
-	);
-	p.rect(
-		x,
-		y + gameInfo.numberSize * 7,
+		y + gameInfo.numberSize * 6,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
@@ -304,36 +239,53 @@ function drawNine(p: p5, x: number, y: number) {
 		x + gameInfo.numberSize * 3,
 		y,
 		gameInfo.numberSize,
-		gameInfo.numberSize * 4
-	);
-}
-
-function drawZero(p: p5, x: number, y: number) {
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize * 4, gameInfo.numberSize);
-	p.rect(x, y + gameInfo.numberSize, gameInfo.numberSize, gameInfo.numberSize * 4);
-	p.rect(
-		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
+		gameInfo.numberSize * 7
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 7,
+		y + gameInfo.numberSize * 3,
+		gameInfo.numberSize * 4,
+		gameInfo.numberSize
+	);
+}
+
+function drawNine(p: p5, x: number, y: number) {
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 4);
+	p.rect(
+		x,
+		y + gameInfo.numberSize * 3,
 		gameInfo.numberSize * 4,
 		gameInfo.numberSize
 	);
 	p.rect(
 		x,
-		y + gameInfo.numberSize * 4,
-		gameInfo.numberSize,
-		gameInfo.numberSize * 3
+		y + gameInfo.numberSize * 6,
+		gameInfo.numberSize * 4,
+		gameInfo.numberSize
 	);
 	p.rect(
 		x + gameInfo.numberSize * 3,
-		y + gameInfo.numberSize,
+		y,
 		gameInfo.numberSize,
-		gameInfo.numberSize * 4
+		gameInfo.numberSize * 7
+	);
+}
+
+function drawZero(p: p5, x: number, y: number) {
+	p.rect(x, y, gameInfo.numberSize * 4, gameInfo.numberSize);
+	p.rect(x, y, gameInfo.numberSize, gameInfo.numberSize * 7);
+	p.rect(
+		x,
+		y + gameInfo.numberSize * 6,
+		gameInfo.numberSize * 4,
+		gameInfo.numberSize
+	);
+	p.rect(
+		x + gameInfo.numberSize * 3,
+		y,
+		gameInfo.numberSize,
+		gameInfo.numberSize * 7
 	);
 }
 
@@ -371,7 +323,7 @@ function scoreTwo(p: p5, nb: number) {
 		7 * gameInfo.numberSize
 	);
 	p.fill(gameInfo.oneNumberColor);
-	drawNumber(p, nb, gameInfo.xsize - gameInfo.borderSize - gameInfo.numberSideDist - 4 * gameInfo.numberSize, gameInfo.numberTopDist + gameInfo.numberTopDist);
+	drawNumber(p, nb, gameInfo.xsize - gameInfo.borderSize - gameInfo.numberSideDist - 4 * gameInfo.numberSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 
 function drawBall(p: p5) {
@@ -463,8 +415,8 @@ function clearBoard(p: p5) {
 			const updatedObject = { ...gameInfo,
 			ballSize: gameUpdate.ballSize,
 			barSize: gameUpdate.barSize,
-			xsize: gameUpdate.xsize,
-			ysize: gameUpdate.ysize,
+			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
+			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
 			oneBarColor: gameUpdate.oneBarColor,
 			twoBarColor: gameUpdate.twoBarColor,
 			ballColor: gameUpdate.ballColor,
@@ -485,8 +437,11 @@ function clearBoard(p: p5) {
 			menuSize: gameUpdate.menuSize,
 			numberSideDist: gameUpdate.numberSideDist,
 			numberTopDist: gameUpdate.numberTopDist,
+			gamex: gameUpdate.borderSize,
+			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
+			gamexsize: gameUpdate.gamexsize,
+			gameysize: gameUpdate.gameysize,
 			};
-			console.log(gameInfo.oneBarColor);
 			setGameInfo(updatedObject);
 
 		}

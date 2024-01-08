@@ -1,16 +1,13 @@
 import { useEffect, useState } from "react"
 import { socket } from "../../socket"
-import { matchInfoDto } from "./dto/matchInfo.dto";
+import { gameInfoDto } from "./dto/gameInfo.dto";
 import Boutton from "./Boutton";
 
-interface joinProps {
-	joinLobbyOnClick: () => void;
-}
-export default function JoinCustom(props: joinProps)
+export default function JoinCustom()
 {
-	const [lobbies, setLobbies] = useState<matchInfoDto[]>([]);
+	const [lobbies, setLobbies] = useState<gameInfoDto[]>([]);
 	useEffect(() => {
-		function onLobbies(lol: matchInfoDto) {
+		function onLobbies(lol: gameInfoDto) {
 			setLobbies([...lobbies, lol]);
 		}
 		socket.on("server.lobbyCustom", onLobbies);
@@ -19,6 +16,6 @@ export default function JoinCustom(props: joinProps)
 		};
 	}, [lobbies]);
 	return(
-		<div className="JoinCustom">{lobbies.map((i, index)=><div key={index} className='lobbiesEle'><Boutton matchInfo={i} joinLobbyOnClick={props.joinLobbyOnClick}/></div>)}</div>
+		<div className="JoinCustom">{lobbies.map((i, index)=><div key={index} className='lobbiesEle'><Boutton gameInfo={i} /></div>)}</div>
 	)
 }

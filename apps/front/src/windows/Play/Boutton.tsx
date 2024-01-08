@@ -1,20 +1,33 @@
 import { useEffect, useState } from "react";
-import { matchInfoDto } from "./dto/matchInfo.dto";
+import { gameInfoDto } from "./dto/gameInfo.dto";
 import { socket } from "../../socket";
+import store from "../../store";
+import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
+import { addWindow } from "../../reducers";
 
 interface BouttonProps {
-	joinLobbyOnClick: () => void;
-	matchInfo: matchInfoDto;
+	gameInfo: gameInfoDto;
 }
 export default function Boutton(props: BouttonProps)
 {
 	const [display, setDisplay] = useState<boolean>(false);
-	function displayOnClick() {
+	function previewOnClick() {
+		const newWindow = {
+			WindowName: "PREVIEW",
+			width: "900",
+			height: "900",
+			id: 0,
+			content: { type: "PREVIEW" },
+			toggle: true,
+			handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
+		socket.emit('client.previewUpdate', props.gameInfo);
 		setDisplay(!display);
 	}
 	function joinMatchOnClick() {
-		socket.emit('client.joinMatch', props.matchInfo.name);
-		props.joinLobbyOnClick();
+		socket.emit('client.joinMatch', props.gameInfo.name);
 	}
 	useEffect(() => {
 
@@ -23,12 +36,7 @@ export default function Boutton(props: BouttonProps)
 	}, []);
 	return(
 		<div className="BouttonDiv">
-			{props.matchInfo.name}<button onClick={displayOnClick}>Show</button><button onClick={joinMatchOnClick}>Join Match</button>
-			
-				{display === true && <div className="matchInfo">
-				ball Size: {props.matchInfo.ballSize}
-				bar Size: {props.matchInfo.barSize}
-			</div>}
+			{props.gameInfo.name}<button onClick={previewOnClick}>Preview</button><button onClick={joinMatchOnClick}>Join Match</button>
 		</div>
 	)
 }

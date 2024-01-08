@@ -21,8 +21,8 @@ export default function CreateCustom(props: CreateProps)
 	const [name, setName] = useState<string>('default');
 	const [ballSize, setBallSize] = useState<number>(10);
 	const [barSize, setBarSize] = useState<number>(100);
-	const [xsize, setXsize] = useState<number>(800);
-	const [ysize, setYsize] = useState<number>(500);
+	const [gamexsize, setGamexsize] = useState<number>(800);
+	const [gameysize, setGameysize] = useState<number>(500);
 	const [oneBarColor, setOneBarColor] = useState<string>('white');
 	const [twoBarColor, setTwoBarColor] = useState<string>('white');
 	const [backgroundColor, setBackgroundColor] = useState<string>('black');
@@ -53,9 +53,8 @@ export default function CreateCustom(props: CreateProps)
 	}
 	useEffect(() => {
 		const parameter: parameter = {
-			midSquareSize: 10,
-			ysize: 500,
-			xsize: 800,
+			gameysize: 500,
+			gamexsize: 800,
 			ballSize: 10,
 			barSize: 100,
 			oneBarColor: 'white',
@@ -79,8 +78,8 @@ export default function CreateCustom(props: CreateProps)
 			numberTopDist: 10,
 			menuSize: 90,
 		}
-		parameter.xsize = xsize;
-		parameter.ysize = ysize;
+		parameter.gamexsize = gamexsize;
+		parameter.gameysize = gameysize;
 		parameter.barSize = barSize;
 		parameter.ballSize = ballSize;
 		parameter.oneBarColor = oneBarColor;
@@ -105,7 +104,7 @@ export default function CreateCustom(props: CreateProps)
 		parameter.menuSize = menuSize;
 		socket.emit('client.previewUpdate', parameter);
 
-		},[menuSize, numberSideDist, numberTopDist, itemSize, oneScore, twoScore, ballSpeed, barLarge, barDist, barSpeed, borderSize,numberSize, ballSize, barSize, xsize, borderColor, ysize, oneBarColor, twoBarColor, ballColor, backgroundColor, menuColor, oneScoreColor, twoScoreColor]);
+		},[menuSize, numberSideDist, numberTopDist, itemSize, oneScore, twoScore, ballSpeed, barLarge, barDist, barSpeed, borderSize,numberSize, ballSize, barSize, gamexsize, borderColor, gameysize, oneBarColor, twoBarColor, ballColor, backgroundColor, menuColor, oneScoreColor, twoScoreColor]);
 	function PreviewOnClick() {
 		const newWindow = {
 			WindowName: "PREVIEW",
@@ -118,12 +117,79 @@ export default function CreateCustom(props: CreateProps)
 			color: WinColor.PURPLE,
 		};
 		store.dispatch(addWindow(newWindow));
+		socket.emit('client.previewUpdate', {
+			barSize: barSize,
+			barDist: barDist,
+			barSpeed: barSpeed,
+			barLarge: barLarge,
+
+			ballSize: ballSize,
+			ballSpeed: ballSpeed,
+
+			itemSize: itemSize,
+
+			oneScore: oneScore,
+			twoScore: twoScore,
+
+			menuSize: menuSize,
+			borderSize: borderSize,
+			numberSize: numberSize,
+			numberSideDist: numberSideDist,
+			numberTopDist: numberTopDist,
+
+			gameysize: gameysize,
+			gamexsize: gamexsize,
+
+			oneBarColor: oneBarColor,
+			twoBarColor: twoBarColor,
+			ballColor: ballColor,
+			backgroundColor: backgroundColor,
+			borderColor: borderColor,
+			oneNumberColor: oneScoreColor,
+			twoNumberColor: twoScoreColor,
+			menuColor: menuColor,
+		});
 	}
 	function onCreateLobby() {
 		props.socket.emit("client.createCustom", {
-			name: name,
-			ballSize: ballSize,
-			barSize: barSize,
+    ballSize: ballSize,
+    barSize: barSize,
+	gamexsize: gamexsize,
+	gameysize: gameysize,
+    oneBarColor: oneBarColor,
+    twoBarColor: twoBarColor,
+    ballColor: ballColor,
+    backgroundColor: backgroundColor,
+    borderColor: borderColor,
+    oneNumberColor: oneScoreColor,
+    twoNumberColor: twoScoreColor,
+    menuColor: menuColor,
+    itemSize: itemSize,
+    oneScore: oneScore,
+    twoScore: twoScore,
+    ballSpeed: ballSpeed,
+    barDist: barDist,
+    barSpeed: barSpeed,
+    barLarge: barLarge,
+    numberSize: numberSize,
+    borderSize: borderSize,
+    menuSize: menuSize,
+    numberSideDist: numberSideDist,
+    numberTopDist: numberTopDist,
+    name: name,
+    xsize: borderSize * 2 + gamexsize,
+    ysize: borderSize * 3 + menuSize + gameysize,
+		gamey: borderSize * 2 + menuSize,
+		gamex: borderSize,
+		ballx: barDist + barLarge + 10,
+		bally: gamexsize / 2,
+		oneBary: 5,
+		twoBary: 5,
+		ballDirx: -1,
+		ballDiry: -0.4,
+		itemx: 40,
+		itemy: 40,
+		ballDeb: 150,
 		});
 		props.createLobbyOnClick();
 	}
@@ -132,6 +198,7 @@ export default function CreateCustom(props: CreateProps)
 			<button onClick={GameDisplayOnClick}>Game Settings</button>
 			<button onClick={InterfaceDisplayOnClick}>Interface Settings</button>
 			<button onClick={PreviewOnClick}>Preview</button>
+			<button onClick={onCreateLobby}>Create Lobby</button>
 			<div className="CreateCustom">
 				{interfaceDisplay === true && <div className="customInterface">
 					<ColorSelectorComponent value={oneBarColor} setValue={setOneBarColor} label='Player One Bar Color' />
@@ -152,8 +219,8 @@ export default function CreateCustom(props: CreateProps)
 				}
 				{gameDisplay === true && <div className="customGame">
 					<label>Name: </label><input value={name} onChange={e => setName(e.target.value)}/> 
-					<RangeComponent value={xsize} setValue={setXsize} min={100} max={1000} step={100} label='Game Width'/>
-					<RangeComponent value={ysize} setValue={setYsize} min={100} max={1000} step={100} label='Game Height'/>
+					<RangeComponent value={gamexsize} setValue={setGamexsize} min={100} max={1000} step={100} label='Game Width'/>
+					<RangeComponent value={gameysize} setValue={setGameysize} min={100} max={1000} step={100} label='Game Height'/>
 					<RangeComponent value={ballSize} setValue={setBallSize} min={10} max={100} step={10} label='Ball Size'/>
 					<RangeComponent value={ballSpeed} setValue={setBallSpeed} min={1} max={30} step={1} label='Ball Speed'/>
 					<RangeComponent value={barSize} setValue={setBarSize} min={10} max={100} step={10} label='Bar Size'/>
@@ -162,7 +229,6 @@ export default function CreateCustom(props: CreateProps)
 					<RangeComponent value={oneScore} setValue={setOneScore} min={0} max={8} step={1} label='Player One Begin Score'/>
 					<RangeComponent value={twoScore} setValue={setTwoScore} min={0} max={8} step={1} label='Player Two Begin Score'/>
 					<RangeComponent value={itemSize} setValue={setItemSize} min={5} max={100} step={5} label='Item Size'/>
-					<button onClick={onCreateLobby}>Create Lobby</button>
 					</div>
 				}
 			</div>

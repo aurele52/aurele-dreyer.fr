@@ -7,7 +7,7 @@ import Lose from "./Lose";
 import { MainGameMenu } from "./mainGameMenu";
 import JoinCustom from "./JoinCustom";
 import CreateCustom from "./CreateCustom";
-import { matchInfoDto } from "./dto/matchInfo.dto";
+import { gameInfoDto } from "./dto/gameInfo.dto";
 import { gameInfo } from "./dto/gameInfo.interface";
 
 export default function Connection() {
@@ -19,34 +19,44 @@ export default function Connection() {
 	const [winDisplay, setWinDisplay] = useState<boolean>(false);
 	const [loadingDisplay, setLoadingDisplay] = useState<boolean>(false);
 	const [matchInfo, setMatchInfo] = useState<gameInfo>({
-    borderSize: 10,
-    midSquareSize: 10,
-    menuSize: 90,
-    ysize: 500,
-    xsize: 800,
-    gamey: 110,
-    gamex: 10,
-    ballx: 100,
-    bally: 100,
-    barDist: 20,
-    oneBary: 10,
-    twoBary: 10,
-    barSpeed: 2,
-    ballDirx: -1,
-    ballDiry: -0.4,
-    ballSpeed: 4.0,
-    gamexsize: 780,
-    gameysize: 380,
-    barLarge: 10,
-    oneScore: 0,
-    twoScore: 0,
-    ballDeb: 150,
-    ballSize: 10,
-    barSize: 100,
-    itemx: 40,
-    itemy: 40,
-    itemSize: 10,
-
+		name: 'normal',
+		borderSize: 10,
+		menuSize: 90,
+		ysize: 500,
+		xsize: 800,
+		gamey: 110,
+		gamex: 10,
+		ballx: 100,
+		bally: 100,
+		barDist: 20,
+		oneBary: 10,
+		twoBary: 10,
+		barSpeed: 2,
+		ballDirx: -1,
+		ballDiry: -0.4,
+		ballSpeed: 4.0,
+		gamexsize: 780,
+		gameysize: 380,
+		barLarge: 10,
+		oneScore: 0,
+		twoScore: 0,
+		ballDeb: 150,
+		ballSize: 10,
+		barSize: 100,
+		itemx: 40,
+		itemy: 40,
+		itemSize: 10,
+		numberSize: 10,
+		oneBarColor: 'white',
+		twoBarColor: 'white',
+		ballColor: 'white',
+		backgroundColor: 'black',
+		borderColor: 'white',
+		oneNumberColor: 'white',
+		twoNumberColor: 'white',
+		menuColor: 'black',
+		numberSideDist: 10,
+		numberTopDist: 10,
 	});
 	useEffect(() => {
 		function onMatchLoading() {
@@ -64,38 +74,49 @@ export default function Connection() {
 			setWinDisplay(true);
 			setPongDisplay(false);
 		}
-		function onMatchStart(matchData: matchInfoDto) {
+		function onMatchStart(gameData: gameInfoDto) {
 			setLoadingDisplay(false);
 			setJoinCustomDisplay(false);
 			setMatchInfo({
-				name: matchData.name,
-		barDist: matchData.barDist,
-		barSpeed: matchData.barSpeed,
-		barLarge: matchData.barLarge,
-		barSize: matchData.barSize,
-		ballDirx: matchData.ballDirx,
-		ballDiry: matchData.ballDiry,
-		ballSpeed: matchData.ballSpeed,
-		ballSize: matchData.ballSize,
-		ballDeb: matchData.ballDeb,
-		gamexsize: matchData.gamexsize,
-		gameysize: matchData.gameysize,
-		ballx: matchData.ballx,
-		bally: matchData.bally,
-		oneBary: matchData.oneBary,
-		twoBary: matchData.twoBary,
-		oneScore: matchData.oneScore,
-		twoScore: matchData.oneScore,
-		itemx: matchData.itemx,
-		itemy: matchData.itemy,
-		itemSize: matchData.itemSize,
-		borderSize: matchData.borderSize,
-		midSquareSize: matchData.midSquareSize,
-		menuSize: matchData.menuSize,
-		ysize: matchData.ysize,
-		xsize: matchData.xsize,
-		gamey: matchData.gamey,
-		gamex: matchData.gamex,
+		ballSize: gameData.ballSize,
+		barSize: gameData.barSize,
+		xsize: gameData.xsize,
+		ysize: gameData.ysize,
+		oneBarColor: gameData.oneBarColor,
+		twoBarColor: gameData.twoBarColor,
+		ballColor: gameData.ballColor,
+		backgroundColor: gameData.backgroundColor,
+		borderColor: gameData.borderColor,
+		oneNumberColor: gameData.oneNumberColor,
+		twoNumberColor: gameData.twoNumberColor,
+		menuColor: gameData.menuColor,
+		itemSize: gameData.itemSize,
+		oneScore: gameData.oneScore,
+		twoScore: gameData.twoScore,
+		ballSpeed: gameData.ballSpeed,
+		barDist: gameData.barDist,
+		barSpeed: gameData.barSpeed,
+		barLarge: gameData.barLarge,
+		numberSize: gameData.numberSize,
+		borderSize: gameData.borderSize,
+		menuSize: gameData.menuSize,
+		numberSideDist: gameData.numberSideDist,
+		numberTopDist: gameData.numberTopDist,
+
+		name: gameData.name,
+		ballDirx: gameData.ballDirx,
+		ballDiry: gameData.ballDiry,
+		ballDeb: gameData.ballDeb,
+		gamey: gameData.gamey,
+		gamex: gameData.gamex,
+		gamexsize: gameData.gamexsize,
+		gameysize: gameData.gameysize,
+		oneBary: gameData.oneBary,
+		twoBary: gameData.twoBary,
+		ballx: gameData.ballx,
+		bally: gameData.bally,
+		itemx: gameData.itemx,
+		itemy: gameData.itemy,
 	});
 			setPongDisplay(true);
 		}
@@ -121,10 +142,6 @@ export default function Connection() {
 		setCreateCustomDisplay(false);
 		setLoadingDisplay(true);
 	}
-	function joinLobbyOnClick() {
-		setJoinCustomDisplay(false);
-		setPongDisplay(true);
-	}
 	function normalOnClick() {
 		setMainGameMenuDisplay(false);
 		setLoadingDisplay(true);
@@ -135,9 +152,9 @@ export default function Connection() {
 		<div className="App">
 			{mainGameMenuDisplay === true && <MainGameMenu normalOnClick={normalOnClick} joinCustomOnClick={joinCustomOnClick} createCustomOnClick={createCustomOnClick} />}
 			{loadingDisplay === true && <Loading />}
-			{joinCustomDisplay === true && <JoinCustom joinLobbyOnClick={joinLobbyOnClick}/>}
+			{joinCustomDisplay === true && <JoinCustom />}
 			{createCustomDisplay === true && <CreateCustom socket={socket} createLobbyOnClick={createLobbyOnClick}/>}
-			{pongDisplay === true && <Pong matchInfo={matchInfo} />}
+			{pongDisplay === true && <Pong gameInfo={matchInfo} />}
 			{loseDisplay === true && <Lose />}
 			{winDisplay === true && <Win />}
 		</div>

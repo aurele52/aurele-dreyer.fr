@@ -1,11 +1,11 @@
-export class parameterDto {
-  barSize: number = 10;
+export class gameInfoDto {
+  barLarge: number = 10;
   barDist: number = 20;
   barSpeed: number = 20;
-  barLarge: number = 10;
+  barSize: number = 100;
 
-  ballSize: number = 10;
   ballSpeed: number = 4;
+  ballSize: number = 10;
 
   itemSize: number = 10;
 
@@ -18,8 +18,8 @@ export class parameterDto {
   numberSideDist: number = 10;
   numberTopDist: number = 10;
 
-  gamexsize: number = 800;
-  gameysize: number = 400;
+  ysize: number = 500;
+  xsize: number = 800;
 
   oneBarColor: string = 'white';
   twoBarColor: string = 'white';
@@ -29,4 +29,23 @@ export class parameterDto {
   oneNumberColor: string = 'white';
   twoNumberColor: string = 'white';
   menuColor: string = 'black';
+  // not in setting
+  name: string = 'normal';
+
+  oneBary: number = 10;
+  twoBary: number = 10;
+
+  gamey: number = 400;
+  gamex: number = 780;
+  gamexsize: number = 780;
+  gameysize: number = 380;
+
+  itemx: number = 40;
+  itemy: number = 40;
+
+  ballDirx: number = -1;
+  ballDiry: number = -0.4;
+  ballx: number = 100;
+  bally: number = 100;
+  ballDeb: number = 150;
 }

@@ -2,7 +2,7 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
-import { matchInfoDto } from './dto-interface/matchInfo.dto';
+import { gameInfoDto } from './dto-interface/gameInfo.dto';
 import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
@@ -11,50 +11,44 @@ import { lobby } from './lobby/lobby';
 import { gameInfo } from './dto-interface/gameInfo.interface';
 import { parameterDto } from './dto-interface/parameter.dto';
 
-function updateMatchInfo(update: matchInfoDto, actual: gameInfo) {
-  if (typeof update.name != 'undefined') actual.name = update.name;
-  if (typeof update.borderSize != 'undefined') actual.borderSize = update.borderSize;
-  if (typeof update.midSquareSize != 'undefined') actual.midSquareSize = update.midSquareSize;
-  if (typeof update.menuSize != 'undefined') actual.menuSize = update.menuSize;
-  if (typeof update.ysize != 'undefined') actual.ysize = update.ysize;
-  if (typeof update.xsize != 'undefined') actual.xsize = update.xsize;
-  if (typeof update.gamey != 'undefined') actual.gamey = update.gamey;
-  if (typeof update.gamex != 'undefined') actual.gamex = update.gamex;
-  if (typeof update.ballx != 'undefined') actual.ballx = update.ballx;
-  if (typeof update.bally != 'undefined') actual.bally = update.bally;
-  if (typeof update.barDist != 'undefined') actual.barDist = update.barDist;
-  if (typeof update.oneBary != 'undefined') actual.oneBary = update.oneBary;
-  if (typeof update.twoBary != 'undefined') actual.twoBary = update.twoBary;
-  if (typeof update.barSpeed != 'undefined') actual.barSpeed = update.barSpeed;
-  if (typeof update.ballDirx != 'undefined') actual.ballDirx = update.ballDirx;
-  if (typeof update.ballDiry != 'undefined') actual.ballDiry = update.ballDiry;
-  if (typeof update.ballSpeed != 'undefined') actual.ballSpeed = update.ballSpeed;
-  if (typeof update.gamexsize != 'undefined') actual.gamexsize = update.gamexsize;
-  if (typeof update.gameysize != 'undefined') actual.gameysize = update.gameysize;
-  if (typeof update.barLarge != 'undefined') actual.barLarge = update.barLarge;
-  if (typeof update.oneScore != 'undefined') actual.oneScore = update.oneScore;
-  if (typeof update.twoScore != 'undefined') actual.twoScore = update.twoScore;
-  if (typeof update.ballDeb != 'undefined') actual.ballDeb = update.ballDeb;
-  if (typeof update.ballSize != 'undefined') actual.ballSize = update.ballSize;
-  if (typeof update.barSize != 'undefined') actual.barSize = update.barSize;
-  if (typeof update.itemx != 'undefined') actual.itemx = update.itemx;
-  if (typeof update.itemy != 'undefined') actual.itemy = update.itemy;
-  if (typeof update.itemSize != 'undefined') actual.itemSize = update.itemSize;
+function updateMatchInfo(update: gameInfoDto, actual: gameInfo) {
+  // if (typeof update.name != 'undefined') actual.name = update.name;
+  // if (typeof update.borderSize != 'undefined') actual.borderSize = update.borderSize;
+  // if (typeof update.menuSize != 'undefined') actual.menuSize = update.menuSize;
+  // if (typeof update.ysize != 'undefined') actual.ysize = update.ysize;
+  // if (typeof update.xsize != 'undefined') actual.xsize = update.xsize;
+  // if (typeof update.gamey != 'undefined') actual.gamey = update.gamey;
+  // if (typeof update.gamex != 'undefined') actual.gamex = update.gamex;
+  // if (typeof update.ballx != 'undefined') actual.ballx = update.ballx;
+  // if (typeof update.bally != 'undefined') actual.bally = update.bally;
+  // if (typeof update.barDist != 'undefined') actual.barDist = update.barDist;
+  // if (typeof update.oneBary != 'undefined') actual.oneBary = update.oneBary;
+  // if (typeof update.twoBary != 'undefined') actual.twoBary = update.twoBary;
+  // if (typeof update.barSpeed != 'undefined') actual.barSpeed = update.barSpeed;
+  // if (typeof update.ballDirx != 'undefined') actual.ballDirx = update.ballDirx;
+  // if (typeof update.ballDiry != 'undefined') actual.ballDiry = update.ballDiry;
+  // if (typeof update.ballSpeed != 'undefined') actual.ballSpeed = update.ballSpeed;
+  // if (typeof update.gamexsize != 'undefined') actual.gamexsize = update.gamexsize;
+  // if (typeof update.gameysize != 'undefined') actual.gameysize = update.gameysize;
+  // if (typeof update.barLarge != 'undefined') actual.barLarge = update.barLarge;
+  // if (typeof update.oneScore != 'undefined') actual.oneScore = update.oneScore;
+  // if (typeof update.twoScore != 'undefined') actual.twoScore = update.twoScore;
+  // if (typeof update.ballDeb != 'undefined') actual.ballDeb = update.ballDeb;
+  // if (typeof update.ballSize != 'undefined') actual.ballSize = update.ballSize;
+  // if (typeof update.barSize != 'undefined') actual.barSize = update.barSize;
+  // if (typeof update.itemx != 'undefined') actual.itemx = update.itemx;
+  // if (typeof update.itemy != 'undefined') actual.itemy = update.itemy;
+  // if (typeof update.itemSize != 'undefined') actual.itemSize = update.itemSize;
 }
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfoDto[] = [];
-  private readonly lobbyManager: lobbyManager = new lobbyManager(
-    this.connectedClient,
-  );
+  private readonly lobbyManager: lobbyManager = new lobbyManager();
   constructor(private jwt: JwtService) {}
-  afterInit() {
-    console.log('gateway initialised');
-  }
+  afterInit() {}
 
   handleConnection(client: any, ...args: any[]) {
-    console.error(`Client : ${client.id} ${args}connected`);
     const newClient: clientInfoDto = new clientInfoDto();
     newClient.status = 'connected';
     newClient.socket = client;
@@ -62,7 +56,6 @@ export class PongGateway {
     newClient.matchInfo = {
       name: 'normal',
       borderSize: 10,
-      midSquareSize: 10,
       menuSize: 90,
       ysize: 500,
       xsize: 800,
@@ -88,28 +81,34 @@ export class PongGateway {
       itemx: 40,
       itemy: 40,
       itemSize: 10,
+      numberSize: 10,
+      oneBarColor: 'white',
+      twoBarColor: 'white',
+      ballColor: 'white',
+      backgroundColor: 'black',
+      borderColor: 'white',
+      oneNumberColor: 'white',
+      twoNumberColor: 'white',
+      menuColor: 'black',
+      numberSideDist: 10,
+      numberTopDist: 10,
     };
     this.connectedClient.push(newClient);
     this.connectedClient.forEach((element) => {
-      // console.log('lol', element.socket.id);
     });
   }
 
   @SubscribeMessage('client.openGame')
   handleOpenGame(client: Socket, data: clientInfoDto) {
-    // console.log(client.id, 'OpenGame : ', this.connectedClient);
   }
 
   @SubscribeMessage('client.previewUpdate')
   handlePreview(client: Socket, data: parameterDto) {
-    console.log(data);
     client.emit('server.previewUpdate', data);
-    // console.log(client.id, 'OpenGame : ', this.connectedClient);
   }
 
   @SubscribeMessage('client.authentification')
   async handleAuthentification(client: Socket, data: {user: string, token: string}) {
-    // console.log(`${client.id}`, data.token); // Broadcast the message to all connected clients
     // if (!data.token) {
     //   client.emit('401');
     //   client.disconnect(); //mathilde todo
@@ -144,28 +143,60 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.createCustom')
-  handleCreateCustom(client: Socket, data: matchInfoDto) {
+  handleCreateCustom(client: Socket, gameData: gameInfoDto) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
       this.connectedClient[index].mode = 'custom';
-    console.log('rewrewrw', this.connectedClient[index].matchInfo);
-      updateMatchInfo(data, this.connectedClient[index].matchInfo);
-    console.log('rewrewrw', this.connectedClient[index].matchInfo);
+      this.connectedClient[index].matchInfo = {
+        ballSize: gameData.ballSize,
+        barSize: gameData.barSize,
+        xsize: gameData.xsize,
+        ysize: gameData.ysize,
+        oneBarColor: gameData.oneBarColor,
+        twoBarColor: gameData.twoBarColor,
+        ballColor: gameData.ballColor,
+        backgroundColor: gameData.backgroundColor,
+        borderColor: gameData.borderColor,
+        oneNumberColor: gameData.oneNumberColor,
+        twoNumberColor: gameData.twoNumberColor,
+        menuColor: gameData.menuColor,
+        itemSize: gameData.itemSize,
+        oneScore: gameData.oneScore,
+        twoScore: gameData.twoScore,
+        ballSpeed: gameData.ballSpeed,
+        barDist: gameData.barDist,
+        barSpeed: gameData.barSpeed,
+        barLarge: gameData.barLarge,
+        numberSize: gameData.numberSize,
+        borderSize: gameData.borderSize,
+        menuSize: gameData.menuSize,
+        numberSideDist: gameData.numberSideDist,
+        numberTopDist: gameData.numberTopDist,
+
+        name: gameData.name,
+        ballDirx: gameData.ballDirx,
+        ballDiry: gameData.ballDiry,
+        ballDeb: gameData.ballDeb,
+        gamey: gameData.borderSize * 2 + gameData.menuSize,
+        gamex: gameData.borderSize,
+        gamexsize: gameData.xsize - 2 * gameData.borderSize,
+        gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
+        oneBary: gameData.oneBary,
+        twoBary: gameData.twoBary,
+        ballx: gameData.gamexsize / 2 - 10,
+        bally: gameData.gameysize / 2,
+        itemx: gameData.itemx,
+        itemy: gameData.itemy,
+      };
       this.lobbyManager.createCustomLobby(this.connectedClient[index]);
       client.emit('server.matchLoading');
-      // console.log(client, ' matchloading ', this.lobbyManager.getCustomLobbies());
     }
   }
 
-  @SubscribeMessage('client.printDebug')
-  handlePrintDebug(client: Socket, debug: string) {
-    console.log('debug: ', client.id, ' ', debug);
-  }
   @SubscribeMessage('client.joinMatch')
   handleJoinCustom(client: Socket, matchName: string) {
-    // console.log('yes0');
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
@@ -196,7 +227,6 @@ export class PongGateway {
     if (index !== -1) {
       this.connectedClient[index].input = input;
     }
-    // console.log(input.direction, input.isPressed);
   }
 
   @SubscribeMessage('client.getStatusUser')
@@ -210,7 +240,6 @@ export class PongGateway {
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });

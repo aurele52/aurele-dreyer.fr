@@ -1,32 +1,26 @@
 export interface gameInfo {
-  name: string;
   barDist: number;
   barSpeed: number;
   barLarge: number;
   barSize: number;
-  ballDirx: number;
-  ballDiry: number;
+
   ballSpeed: number;
   ballSize: number;
-  ballDeb: number;
-  gamexsize: number;
-  gameysize: number;
-  ballx: number;
-  bally: number;
-  oneBary: number;
-  twoBary: number;
+
+  itemSize: number;
+
   oneScore: number;
   twoScore: number;
-  itemx: number;
-  itemy: number;
-  itemSize: number;
+
   borderSize: number;
   numberSize: number;
   menuSize: number;
+  numberSideDist: number;
+  numberTopDist: number;
+
   ysize: number;
   xsize: number;
-  gamey: number;
-  gamex: number;
+
   oneBarColor: string;
   twoBarColor: string;
   ballColor: string;
@@ -35,6 +29,23 @@ export interface gameInfo {
   oneNumberColor: string;
   twoNumberColor: string;
   menuColor: string;
-  numberSideDist: number;
-  numberTopDist: number;
+  // not in setting
+  name: string;
+
+  oneBary: number;
+  twoBary: number;
+
+  gamey: number;
+  gamex: number;
+  gamexsize: number;
+  gameysize: number;
+
+  itemx: number;
+  itemy: number;
+
+  ballx: number;
+  bally: number;
+  ballDirx: number;
+  ballDiry: number;
+  ballDeb: number;
 }
