@@ -9,14 +9,9 @@ import { IconSVG } from "../../../../shared/utils/svgComponent";
 interface MemberSettingsProps {
 	targetId: number;
 	channelId: number;
-	winId: number;
 }
 
-export function MemberSettings({
-	targetId,
-	channelId,
-	winId,
-}: MemberSettingsProps) {
+export function MemberSettings({ targetId, channelId }: MemberSettingsProps) {
 	const {
 		data: data,
 		isLoading: dataLoading,

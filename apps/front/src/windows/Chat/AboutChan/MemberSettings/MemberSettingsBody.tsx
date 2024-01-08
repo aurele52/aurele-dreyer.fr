@@ -1,8 +1,6 @@
 import api from "../../../../axios";
-import store from "../../../../store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
-import { delWindow } from "../../../../reducers";
 import { ModalType, addModal } from "../../../../shared/utils/AddModal";
 
 interface MemberSettingsBodyProps {
