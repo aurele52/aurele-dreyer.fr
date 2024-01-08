@@ -17,7 +17,6 @@ export function MemberSettings({
 	channelId,
 	winId,
 }: MemberSettingsProps) {
-	//const queryClient = useQueryClient();
 	const {
 		data: data,
 		isLoading: dataLoading,
@@ -123,11 +122,11 @@ export function MemberSettings({
 				<MemberSettingsBody
 					user={{
 						id: targetId,
+						username: data.member.username,
 						isMuted: data.member.isMuted,
 						mutedUntil: data.member.mutedUntil,
 					}}
 					channelId={channelId}
-					winId={winId}
 				/>
 			</div>
 		);

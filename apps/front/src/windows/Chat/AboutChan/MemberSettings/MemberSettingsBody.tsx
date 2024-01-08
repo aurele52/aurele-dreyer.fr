@@ -3,21 +3,21 @@ import store from "../../../../store";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { useState } from "react";
 import { delWindow } from "../../../../reducers";
+import { ModalType, addModal } from "../../../../shared/utils/AddModal";
 
 interface MemberSettingsBodyProps {
 	user: {
 		id: number;
+		username: string;
 		isMuted: boolean;
 		mutedUntil: Date;
 	};
 	channelId: number;
-	winId: number;
 }
 
 export function MemberSettingsBody({
 	user,
 	channelId,
-	winId,
 }: MemberSettingsBodyProps) {
 	const queryClient = useQueryClient();
 
@@ -56,43 +56,6 @@ export function MemberSettingsBody({
 		},
 	});
 
-	const { mutateAsync: banUser } = useMutation({
-		mutationFn: async () => {
-			return api.post("/user-channel/moderate/ban", {
-				data: { targetId: user.id, channelId },
-			});
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["memberSettings", user.id, channelId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["chanAbout", channelId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["banList", channelId],
-			});
-			store.dispatch(delWindow(winId));
-		},
-	});
-
-	const { mutateAsync: kickUser } = useMutation({
-		mutationFn: async () => {
-			return api.post("/user-channel/moderate/kick", {
-				data: { targetId: user.id, channelId },
-			});
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["memberSettings", user.id, channelId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["chanAbout", channelId],
-			});
-			store.dispatch(delWindow(winId));
-		},
-	});
-
 	const handleMute = () => {
 		let muteTimeInSeconds;
 		if (!muteTime || parseInt(muteTime, 10) === 0) {
@@ -125,11 +88,23 @@ export function MemberSettingsBody({
 	};
 
 	const handleBan = () => {
-		banUser();
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to ban ${user.username} from channel?`,
+			"banUser",
+			user.id,
+			channelId
+		);
 	};
 
 	const handleKick = () => {
-		kickUser();
+		addModal(
+			ModalType.WARNING,
+			`Are you sure you want to kick ${user.username} from channel?`,
+			"kickUser",
+			user.id,
+			channelId
+		);
 	};
 
 	const muteDiv = (
