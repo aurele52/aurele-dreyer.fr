@@ -140,6 +140,7 @@ export function Chat() {
 				id: 0,
 				content: { type: "ABOUTCHAN", id: id },
 				toggle: false,
+				channelId: id,
 				handleBarButton:
 					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
 				color: WinColor.PURPLE,
@@ -150,6 +151,7 @@ export function Chat() {
 				id: 0,
 				content: { type: "PROFILE", id: id },
 				toggle: false,
+				channelId: id,
 				handleBarButton:
 					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
 				color: WinColor.PURPLE,
@@ -175,6 +177,7 @@ export function Chat() {
 			WindowName: chatName,
 			id: 0,
 			content: { type: "CHATSESSION", id: chatId },
+			channelId: chatId,
 			toggle: false,
 			handleBarButton:
 				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,

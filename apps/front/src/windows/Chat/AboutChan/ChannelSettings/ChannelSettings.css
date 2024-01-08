@@ -1,7 +1,48 @@
+.ChannelSettings {
+	display: flex;
+	min-height: 100px;
+	padding: 5px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 3px;
+	flex: 1 0 0;
+	align-self: stretch;
+	border-radius: 0px 0px 13px 13px;
+	background: var(--Purple-100, #f5f1fc);
+}
+
+.ChannelSettings > .Header {
+	display: flex;
+	padding: 5px;
+	align-items: center;
+	align-content: center;
+	gap: 10px;
+	align-self: stretch;
+	flex-wrap: wrap;
+}
+
+.ChannelSettings > .Header > .Title {
+	display: flex;
+	min-width: 240px;
+	align-self: stretch;
+	gap: 7px;
+	flex: 1 0 0;
+	color: var(--Base-Black, #000);
+
+	/* Heading/600 */
+	font-family: Chakra Petch;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px; /* 100% */
+}
+
 .ChanSettings {
-  display: flex;
-  flex-direction: column;
-  flex-grow: 1;
-  max-width: 100%;
-  gap: 10px;
+	display: flex;
+	flex-direction: column;
+	flex-grow: 1;
+	max-width: 100%;
+	gap: 10px;
+	align-self: stretch;
+	flex-wrap: wrap;
 }
