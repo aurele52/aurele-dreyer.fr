@@ -1,6 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { FriendshipStatus } from '@prisma/client';
+import { Subject, Observable } from 'rxjs';
+import { FriendshipEvent } from './event/friendship-event.type';
 
 @Injectable()
 export class FriendshipService {
@@ -226,5 +228,15 @@ export class FriendshipService {
         status: FriendshipStatus.FRIENDS,
       },
     });
+  }
+
+  private messageEvents = new Subject<any>();
+
+  emitFriendshipEvent(type: string) {
+    this.messageEvents.next(type);
+  }
+
+  getFriendshipEvents(): Observable<FriendshipEvent> {
+    return this.messageEvents.asObservable();
   }
 }

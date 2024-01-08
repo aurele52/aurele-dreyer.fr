@@ -52,10 +52,10 @@ function Modal({
         queryKey: ["friendsList"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["user", targetId],
+        queryKey: ["addFriendsList"],
       });
       queryClient.invalidateQueries({
-        queryKey: ["pendingRequests"],
+        queryKey: ["user", targetId],
       });
     },
   });

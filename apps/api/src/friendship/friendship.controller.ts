@@ -6,9 +6,13 @@ import {
   Param,
   Patch,
   Post,
+  Sse,
 } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
+import { Observable, interval, merge } from 'rxjs';
+import { map } from 'rxjs/operators';
+import { FriendshipEvent } from './event/friendship-event.type';
 
 @Controller()
 export class FriendshipController {
@@ -76,5 +80,16 @@ export class FriendshipController {
   @Patch('/friendship/accept/:id')
   async acceptFriendship(@CurrentUser() user, @Param('id') id: number) {
     return await this.friendshipService.acceptFriendship(id, user.id);
+  }
+
+  @Sse('/stream/messages')
+  streamMessages(): Observable<FriendshipEvent> {
+    const heartbeat = interval(30000).pipe(map(() => ({ type: '' })));
+
+    const message = this.friendshipService
+      .getFriendshipEvents()
+      .pipe(map(() => ({ type: event.type })));
+
+    return merge(heartbeat, message);
   }
 }
