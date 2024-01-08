@@ -30,7 +30,8 @@ export type ActionKey =
 	| "enableTwoFA"
 	| "disableTwoFA"
 	| "kickUser"
-	| "banUser";
+	| "banUser"
+	| "deleteChannel";
 
 function Modal({
 	content,
@@ -283,6 +284,26 @@ function Modal({
 		},
 	});
 
+	const { mutateAsync: deleteChannel } = useMutation({
+		mutationFn: async () => {
+			return api.delete(`/channel/${channelId}`);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["chats"],
+			});
+			const windows = store
+				.getState()
+				.windows.filter((window) => window.channelId === channelId);
+			if (windows) {
+				for (const window of windows) {
+					store.dispatch(delWindow(window.id));
+				}
+			}
+			store.dispatch(delWindow(winId));
+		},
+	});
+
 	const actions = {
 		deleteFriendship,
 		deleteBlockedFriendship,
@@ -295,6 +316,7 @@ function Modal({
 		disableTwoFA,
 		kickUser,
 		banUser,
+		deleteChannel,
 	};
 
 	const icon = iconsModal[type || "INFO"];

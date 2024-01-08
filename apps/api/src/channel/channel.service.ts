@@ -1,4 +1,5 @@
 import {
+  ForbiddenException,
   HttpException,
   HttpStatus,
   Injectable,
@@ -325,5 +326,35 @@ export class ChannelService {
     });
     if (!channel) return false;
     return password === channel.password;
+  }
+
+  async deleteChannel(userId: number, channelId: number) {
+    const channel = await this.prisma.channel.findUnique({
+      where: {
+        id: channelId,
+      },
+      include: {
+        userChannels: {
+          where: {
+            user_id: userId,
+            role: 'OWNER',
+          },
+        },
+      },
+    });
+
+    if (!channel || channel.userChannels.length === 0) {
+      throw new ForbiddenException(
+        `User with ID ${userId} is not the owner of the channel`,
+      );
+    }
+
+    const deletedChannel = await this.prisma.channel.delete({
+      where: {
+        id: channelId,
+      },
+    });
+
+    return deletedChannel;
   }
 }
