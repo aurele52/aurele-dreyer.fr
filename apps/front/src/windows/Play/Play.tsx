@@ -7,6 +7,8 @@ import Lose from "./Lose";
 import { MainGameMenu } from "./mainGameMenu";
 import JoinCustom from "./JoinCustom";
 import CreateCustom from "./CreateCustom";
+import { matchInfoDto } from "./dto/matchInfo.dto";
+import { gameInfo } from "./dto/gameInfo.interface";
 
 export default function Connection() {
 	const [pongDisplay, setPongDisplay] = useState<boolean>(false);
@@ -16,7 +18,36 @@ export default function Connection() {
 	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
 	const [winDisplay, setWinDisplay] = useState<boolean>(false);
 	const [loadingDisplay, setLoadingDisplay] = useState<boolean>(false);
+	const [matchInfo, setMatchInfo] = useState<gameInfo>({
+    borderSize: 10,
+    midSquareSize: 10,
+    menuSize: 90,
+    ysize: 500,
+    xsize: 800,
+    gamey: 110,
+    gamex: 10,
+    ballx: 100,
+    bally: 100,
+    barDist: 20,
+    oneBary: 10,
+    twoBary: 10,
+    barSpeed: 2,
+    ballDirx: -1,
+    ballDiry: -0.4,
+    ballSpeed: 4.0,
+    gamexsize: 780,
+    gameysize: 380,
+    barLarge: 10,
+    oneScore: 0,
+    twoScore: 0,
+    ballDeb: 150,
+    ballSize: 10,
+    barSize: 100,
+    itemx: 40,
+    itemy: 40,
+    itemSize: 10,
 
+	});
 	useEffect(() => {
 		function onMatchLoading() {
 			setLoadingDisplay(true);
@@ -33,14 +64,45 @@ export default function Connection() {
 			setWinDisplay(true);
 			setPongDisplay(false);
 		}
-		function onNormalMatchStart() {
+		function onMatchStart(matchData: matchInfoDto) {
 			setLoadingDisplay(false);
+			setJoinCustomDisplay(false);
+			setMatchInfo({
+				name: matchData.name,
+		barDist: matchData.barDist,
+		barSpeed: matchData.barSpeed,
+		barLarge: matchData.barLarge,
+		barSize: matchData.barSize,
+		ballDirx: matchData.ballDirx,
+		ballDiry: matchData.ballDiry,
+		ballSpeed: matchData.ballSpeed,
+		ballSize: matchData.ballSize,
+		ballDeb: matchData.ballDeb,
+		gamexsize: matchData.gamexsize,
+		gameysize: matchData.gameysize,
+		ballx: matchData.ballx,
+		bally: matchData.bally,
+		oneBary: matchData.oneBary,
+		twoBary: matchData.twoBary,
+		oneScore: matchData.oneScore,
+		twoScore: matchData.oneScore,
+		itemx: matchData.itemx,
+		itemy: matchData.itemy,
+		itemSize: matchData.itemSize,
+		borderSize: matchData.borderSize,
+		midSquareSize: matchData.midSquareSize,
+		menuSize: matchData.menuSize,
+		ysize: matchData.ysize,
+		xsize: matchData.xsize,
+		gamey: matchData.gamey,
+		gamex: matchData.gamex,
+	});
 			setPongDisplay(true);
 		}
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
 		socket.on("server.matchLoading", onMatchLoading);
-		socket.on("server.normalMatchStart", onNormalMatchStart);
+		socket.on("server.matchStart", onMatchStart);
 
 		return () => {
 		};
@@ -49,16 +111,19 @@ export default function Connection() {
 	function createCustomOnClick() {
 		setMainGameMenuDisplay(false);
 		setCreateCustomDisplay(true);
-		socket.emit("client.createCustom", {
-			mode: "custom",
-		});
 	}
 	function joinCustomOnClick() {
 		setMainGameMenuDisplay(false);
 		setJoinCustomDisplay(true);
-		socket.emit("client.joinCustom", {
-			mode: "custom",
-		});
+		socket.emit("client.inJoinTab");
+	}
+	function createLobbyOnClick() {
+		setCreateCustomDisplay(false);
+		setLoadingDisplay(true);
+	}
+	function joinLobbyOnClick() {
+		setJoinCustomDisplay(false);
+		setPongDisplay(true);
 	}
 	function normalOnClick() {
 		setMainGameMenuDisplay(false);
@@ -70,9 +135,9 @@ export default function Connection() {
 		<div className="App">
 			{mainGameMenuDisplay === true && <MainGameMenu normalOnClick={normalOnClick} joinCustomOnClick={joinCustomOnClick} createCustomOnClick={createCustomOnClick} />}
 			{loadingDisplay === true && <Loading />}
-			{joinCustomDisplay === true && <JoinCustom />}
-			{createCustomDisplay === true && <CreateCustom />}
-			{pongDisplay === true && <Pong socket={socket} />}
+			{joinCustomDisplay === true && <JoinCustom joinLobbyOnClick={joinLobbyOnClick}/>}
+			{createCustomDisplay === true && <CreateCustom socket={socket} createLobbyOnClick={createLobbyOnClick}/>}
+			{pongDisplay === true && <Pong matchInfo={matchInfo} />}
 			{loseDisplay === true && <Lose />}
 			{winDisplay === true && <Win />}
 		</div>

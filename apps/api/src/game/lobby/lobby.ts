@@ -1,28 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
-interface gameInfo {
-  barDist: number;
-  barSpeed: number;
-  barLarge: number;
-  barSize: number;
-  ballDirx: number;
-  ballDiry: number;
-  ballSpeed: number;
-  ballSize: number;
-  ballDeb: number;
-  gamexsize: number;
-  gameysize: number;
-  ballx: number;
-  bally: number;
-  oneBary: number;
-  twoBary: number;
-  oneScore: number;
-  twoScore: number;
-  itemx: number;
-  itemy: number;
-  itemSize: number;
-}
+import { matchInfoDto } from '../dto-interface/matchInfo.dto';
+import { gameInfo } from '../dto-interface/gameInfo.interface';
 
 export class lobby {
   isEmpty(): boolean {
@@ -47,6 +27,9 @@ export class lobby {
     if (this.clients[1] == user) {
       this.win(this.clients[0], this.clients[1]);
     }
+  }
+  getPlayer() {
+    return this.clients;
   }
   disconnectAll() {
     this.clients.splice(0);
@@ -176,19 +159,22 @@ export class lobby {
       }
     }
   }
-  constructor(connectedClientList: clientInfoDto[], isCustom: LobbyCustom) {
+  public getMatchInfo() {
+    return this.matchInfo;
+  }
+  constructor(connectedClientList: clientInfoDto[], isCustom: LobbyCustom, matchInfo: gameInfo) {
     this.connectedClient = connectedClientList;
     this.isCustom = isCustom;
-    if (this.isCustom == 'normal') {
-      this.gameInfo.ballSize = 10;
-      this.gameInfo.barSize = 100;
-    }
+    this.matchInfo = matchInfo;
     if (this.isCustom == 'custom') {
-      this.gameInfo.ballSize = 50;
-      this.gameInfo.barSize = 10;
+      this.gameInfo.ballSize = matchInfo.ballSize;
+      this.defaultGameInfo.ballSize = matchInfo.ballSize;
+      this.gameInfo.barSize = matchInfo.barSize;
+      this.defaultGameInfo.barSize = matchInfo.barSize;
     }
   }
   public readonly isCustom: LobbyCustom;
+  private readonly matchInfo: matchInfoDto;
 
   private connectedClient: clientInfoDto[];
   public readonly id: string = uuidv4();
@@ -202,7 +188,15 @@ export class lobby {
   delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  private gameInfo: gameInfo = {
+  private defaultGameInfo: gameInfo = {
+    name: 'default',
+    borderSize: 10,
+    midSquareSize: 10,
+    menuSize: 90,
+    ysize: 500,
+    xsize: 800,
+    gamey: 110,
+    gamex: 10,
     ballx: 100,
     bally: 100,
     barDist: 20,
@@ -223,6 +217,36 @@ export class lobby {
     itemx: 40,
     itemy: 40,
     itemSize: 10,
+  };
+  private gameInfo: gameInfo = {
+    name: this.defaultGameInfo.name,
+    borderSize: this.defaultGameInfo.borderSize,
+    midSquareSize: this.defaultGameInfo.midSquareSize,
+    menuSize: this.defaultGameInfo.menuSize,
+    ysize: this.defaultGameInfo.ysize,
+    xsize: this.defaultGameInfo.xsize,
+    gamey: this.defaultGameInfo.gamey,
+    gamex: this.defaultGameInfo.gamex,
+    ballx: this.defaultGameInfo.ballx,
+    bally: this.defaultGameInfo.bally,
+    barDist: this.defaultGameInfo.barDist,
+    oneBary: this.defaultGameInfo.oneBary,
+    twoBary: this.defaultGameInfo.twoBary,
+    barSpeed: this.defaultGameInfo.barSpeed,
+    ballDirx: this.defaultGameInfo.ballDirx,
+    ballDiry: this.defaultGameInfo.ballDiry,
+    ballSpeed: this.defaultGameInfo.ballSpeed,
+    gamexsize: this.defaultGameInfo.gamexsize,
+    gameysize: this.defaultGameInfo.gameysize,
+    barLarge: this.defaultGameInfo.barLarge,
+    oneScore: this.defaultGameInfo.oneScore,
+    twoScore: this.defaultGameInfo.twoScore,
+    ballDeb: this.defaultGameInfo.ballDeb,
+    ballSize: this.defaultGameInfo.ballSize,
+    barSize: this.defaultGameInfo.barSize,
+    itemx: this.defaultGameInfo.itemx,
+    itemy: this.defaultGameInfo.itemy,
+    itemSize: this.defaultGameInfo.itemSize,
   };
   move() {
     if (this.clients[0].input.direction == 'up')
@@ -278,6 +302,8 @@ export class lobby {
   }
 
   async start() {
+    this.clients[0].socket.emit('server.matchStart', this.defaultGameInfo);
+    this.clients[1].socket.emit('server.matchStart', this.defaultGameInfo);
     while (this.finish === 0 && this.gameInfo.oneScore < 9 && this.gameInfo.twoScore < 9) {
       this.update();
       this.clients[0].socket.emit('server.update', {

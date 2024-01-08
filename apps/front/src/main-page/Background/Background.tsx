@@ -23,6 +23,7 @@ import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/Channe
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
+import Preview from "../../windows/Play/Preview.tsx";
 
 interface BackgroundProps extends ReduxProps {}
 
@@ -54,6 +55,7 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
+    PREVIEW: { width: "900px", height: "900px" },
   };
 
   return (
@@ -78,6 +80,7 @@ export function Background({ windows }: BackgroundProps) {
               isModal={window.content.type === "MODAL"}
             >
               {window.content.type === "PLAY" && <Play />}
+              {window.content.type === "PREVIEW" && <Preview />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}

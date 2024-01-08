@@ -1,78 +1,49 @@
 import "./Pong.css";
 import { useEffect, useRef } from "react";
 import p5 from "p5";
-import { Socket } from "socket.io-client";
+import { socket } from "../../socket";
+import { gameInfo } from "./dto/gameInfo.interface.ts";
 
-/* Interface */
-const base_yborderSize = 10;
-const base_xborderSize = 10;
-const base_ymidSquareSize = base_yborderSize;
-const base_xmidSquareSize = base_xborderSize;
-const base_menuSize = 9 * base_yborderSize;
-const base_ysize = 500;
-const base_xsize = 800;
-const base_gamey = base_menuSize + 2 * base_yborderSize;
-const base_gamex = base_xborderSize;
-const base_gamexsize = base_xsize - 2 * base_xborderSize;
-const base_gameysize = base_ysize - base_menuSize - 3 * base_yborderSize;
+type playProps = {
+	matchInfo: gameInfo;
+};
 
-const base_oneBary = 10;
-const base_twoBary = 10;
 
-/* Bar */
-const base_barSize = 100;
-const base_barDist = 20;
-const base_barLarge = 10;
+export default function Pong(props: playProps) {
+let yborderSize = props.matchInfo.borderSize;
+let xborderSize = props.matchInfo.borderSize;
+let ymidSquareSize = props.matchInfo.midSquareSize;
+let xmidSquareSize = props.matchInfo.midSquareSize;
+let menuSize = props.matchInfo.menuSize;
+let ysize = props.matchInfo.ysize;
+let xsize = props.matchInfo.xsize;
+let gamey = props.matchInfo.gamey;
+let gamex = props.matchInfo.gamex;
+let gamexsize = props.matchInfo.gamexsize;
+let gameysize = props.matchInfo.gameysize;
 
-/* Score */
-const base_oneScore = 0;
-const base_twoScore = 0;
-
-/* Ball */
-const base_ballDeb = 150;
-const base_xballSize = 10;
-const base_yballSize = 10;
-const base_ballx = base_gamexsize / 2 - base_ballDeb;
-const base_bally = base_gameysize / 2;
-const base_itemx = 0;
-const base_itemy = 0;
-const base_yitemSize = 10;
-const base_xitemSize = 10;
-
-let yborderSize = base_yborderSize;
-let xborderSize = base_xborderSize;
-let ymidSquareSize = base_ymidSquareSize;
-let xmidSquareSize = base_xmidSquareSize;
-let menuSize = base_menuSize;
-let ysize = base_ysize;
-let xsize = base_xsize;
-let gamey = base_gamey;
-let gamex = base_gamex;
-let gamexsize = base_gamexsize;
-let gameysize = base_gameysize;
-
-let oneBary = base_oneBary;
-let twoBary = base_twoBary;
+let oneBary = props.matchInfo.oneBary;
+let twoBary = props.matchInfo.twoBary;
 
 /* Bar */
-let barSize = base_barSize;
-let barDist = base_barDist;
-let barLarge = base_barLarge;
+let barSize = props.matchInfo.barSize;
+let barDist = props.matchInfo.barDist;
+let barLarge = props.matchInfo.barLarge;
 
 /* Score */
-let oneScore = base_oneScore;
-let twoScore = base_twoScore;
+let oneScore = props.matchInfo.oneScore;
+let twoScore = props.matchInfo.twoScore;
 
 /* Ball */
-let xballSize = base_xballSize;
-let yballSize = base_yballSize;
-let ballx = base_ballx;
-let bally = base_bally;
+let xballSize = props.matchInfo.ballSize;
+let yballSize = props.matchInfo.ballSize;
+let ballx = props.matchInfo.ballx;
+let bally = props.matchInfo.bally;
 
-let itemx = base_itemx;
-let itemy = base_itemy;
-let yitemSize = base_yitemSize;
-let xitemSize = base_xitemSize;
+let itemx = props.matchInfo.itemx;
+let itemy = props.matchInfo.itemy;
+let yitemSize = props.matchInfo.itemSize;
+let xitemSize = props.matchInfo.itemSize;
 
 function drawBoardMidline(p: p5) {
 	p.fill("white");
@@ -410,7 +381,7 @@ function drawItem(p: p5) {
 
 let input = 0;
 
-function move(p: p5, socket: Socket) {
+function move(p: p5) {
 	if (input != 1 && p.keyIsDown(p.DOWN_ARROW)) {
 		socket.emit("client.input", { direction: "down", isPressed: true });
 		input = 1;
@@ -480,8 +451,8 @@ function clearBoard(p: p5) {
 	);
 }
 
-function loop(p: p5, socket: Socket) {
-	move(p, socket);
+function loop(p: p5) {
+	move(p);
 	p.fill("black");
 	clearBoard(p);
 	p.fill("white");
@@ -493,10 +464,6 @@ function loop(p: p5, socket: Socket) {
 	scoreOne(p, oneScore);
 	scoreTwo(p, twoScore);
 }
-
-type playProps = {
-	socket: Socket;
-};
 
 interface sendInfo {
 	ballx: number;
@@ -528,37 +495,35 @@ function onSizeChange(p:p5) {
 		drawBar(p);
 		scoreOne(p, 0);
 		scoreTwo(p, 0);
-		const xratio = base_xsize / xsize;
-		const yratio = base_ysize / ysize;
-		xborderSize = base_xborderSize / xratio;
-		yborderSize = base_yborderSize / yratio;
-		xmidSquareSize = base_xmidSquareSize / xratio;
-		ymidSquareSize = base_ymidSquareSize / yratio;
-		menuSize = base_menuSize / yratio;
-		barLarge = base_barLarge / xratio;
-		barDist = base_barDist / xratio;
-		gamex = base_gamex / xratio;
-		gamey = base_gamey / yratio;
-		gamexsize = base_gamexsize / xratio;
-		gameysize = base_gameysize / yratio;
+		const xratio = props.matchInfo.xsize / xsize;
+		const yratio = props.matchInfo.ysize / ysize;
+		xborderSize = props.matchInfo.borderSize / xratio;
+		yborderSize = props.matchInfo.borderSize / yratio;
+		xmidSquareSize = props.matchInfo.midSquareSize / xratio;
+		ymidSquareSize = props.matchInfo.midSquareSize / yratio;
+		menuSize = props.matchInfo.menuSize / yratio;
+		barLarge = props.matchInfo.barLarge / xratio;
+		barDist = props.matchInfo.barDist / xratio;
+		gamex = props.matchInfo.gamex / xratio;
+		gamey = props.matchInfo.gamey / yratio;
+		gamexsize = props.matchInfo.gamexsize / xratio;
+		gameysize = props.matchInfo.gameysize / yratio;
 
 	}
 }
-
-export default function Pong(props: playProps) {
 	const myRef = useRef<HTMLDivElement>(null);
 	useEffect(() => {
 		if (myRef.current) {
-			props.socket.on("server.update", onUpdate);
+			socket.on("server.update", onUpdate);
 			const myP5 = new p5(Sketch, myRef.current);
 			return () => {
 				myP5.remove();
-				props.socket.off("server.update", onUpdate);
+				socket.off("server.update", onUpdate);
 			};
 		}
 		function onUpdate(gameUpdate: sendInfo) {
-			const xratio = base_xsize / xsize;
-			const yratio = base_ysize / ysize;
+			const xratio = props.matchInfo.xsize / xsize;
+			const yratio = props.matchInfo.ysize / ysize;
 			ballx = gameUpdate.ballx / xratio;
 			bally = gameUpdate.bally / yratio;
 			oneBary = gameUpdate.oneBary / yratio;
@@ -574,7 +539,7 @@ export default function Pong(props: playProps) {
 			yitemSize = gameUpdate.itemSize / yratio;
 			console.log("yesss");
 		}
-	}, [props.socket]);
+	}, []);
 
 	const Sketch = (p: p5) => {
 		p.setup = () => {
@@ -606,7 +571,7 @@ export default function Pong(props: playProps) {
 			// 	compteur(p, 0);
 			// }
 			else {
-				loop(p, props.socket);
+				loop(p);
 			}
 		};
 		p.keyReleased = () => {
