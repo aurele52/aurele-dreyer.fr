@@ -7,6 +7,7 @@ import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+import { CurrentUser } from 'src/decorators/user.decorator';
 import { lobby } from './lobby/lobby';
 import { gameInfo } from './dto-interface/gameInfo.interface';
 import { parameterDto } from './dto-interface/parameter.dto';
@@ -46,7 +47,9 @@ export class PongGateway {
   private connectedClient: clientInfoDto[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
   constructor(private jwt: JwtService) {}
-  afterInit() {}
+  afterInit() {
+    console.log('gateway initialised');
+  }
 
   handleConnection(client: any, ...args: any[]) {
     const newClient: clientInfoDto = new clientInfoDto();
@@ -232,11 +235,23 @@ export class PongGateway {
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
+      console.log({ value }, { data });
       return value.user === data.user;
     });
     if (index !== -1) {
-      client.emit('server.getStatusUser', true);
-    } else client.emit('server.getStatusUser', false);
+      client.emit('server.getStatusUser', {
+        data: {
+          username: data.user,
+          status:
+            this.connectedClient[index].status == 'connected'
+              ? 'ONLINE'
+              : 'INGAME',
+        },
+      });
+    } else
+      client.emit('server.getStatusUser', {
+        data: { username: data.user, status: 'OFFLINE' },
+      });
   }
 
   handleDisconnect(client: Socket) {
@@ -245,7 +260,9 @@ export class PongGateway {
     });
     if (index !== -1) {
       if (this.connectedClient[index].lobby != null) {
-        this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+        this.connectedClient[index].lobby.onDisconnect(
+          this.connectedClient[index],
+        );
       }
       this.connectedClient.splice(index, 1);
     }

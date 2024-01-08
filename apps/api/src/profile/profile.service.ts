@@ -133,8 +133,14 @@ export class ProfileService {
 
       const player1_avatar = user1.avatar_url;
       const player2_avatar = user2.avatar_url;
-      const score1 = match.players[0].score;
-      const score2 = match.players[1].score;
+      const score1 =
+        match.players[0].user.id === id
+          ? match.players[0].score
+          : match.players[1].score;
+      const score2 =
+        match.players[0].user.id === id
+          ? match.players[1].score
+          : match.players[0].score;
 
       return {
         id: match.id,

@@ -1,4 +1,12 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  Delete,
+} from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
@@ -125,5 +133,14 @@ export class ChannelController {
     @Body('password') password: string,
   ) {
     return await this.channelService.checkPwd(channelId, password);
+  }
+
+  @Delete('/channel/:channelid')
+  async deleteChannel(
+    @Param('channelid') channelId: number,
+    @CurrentUserID() userId,
+  ) {
+    console.log('Delete Channel');
+    return await this.channelService.deleteChannel(userId, channelId);
   }
 }

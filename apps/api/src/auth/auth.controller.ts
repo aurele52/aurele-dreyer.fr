@@ -68,7 +68,7 @@ export class AuthController {
         expiresIn: '180s',
       });
       return {
-        url: `${process.env.DOMAIN_NAME_FRONT}/sign-up?id=${token_tmp}`,
+        url: `${process.env.DOMAIN_NAME_FRONT}/auth/sign-up?id=${token_tmp}`,
       };
     }
   }
@@ -97,7 +97,7 @@ export class AuthController {
       process.env.APP_SECRET,
       '3d',
     );
-    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
   }
 
   @Public() // Ne pas laisser ça public car normalement réservé aux admins
@@ -110,7 +110,7 @@ export class AuthController {
       process.env.APP_SECRET,
       '3d',
     );
-    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
   }
 
   @Post('/2fa/enable')

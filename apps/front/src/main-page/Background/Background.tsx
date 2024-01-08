@@ -57,7 +57,6 @@ export function Background({ windows }: BackgroundProps) {
     CHATSESSION: { width: "350px", height: "500px" },
     PREVIEW: { width: "900px", height: "900px" },
   };
-
   return (
     <div id="Background">
       {Array.isArray(windows) &&
@@ -123,7 +122,6 @@ export function Background({ windows }: BackgroundProps) {
                 <MemberSettings
                   targetId={window.targetId ? window.targetId : 0}
                   channelId={window.channelId ? window.channelId : 0}
-                  winId={window.id}
                 />
               )}
               {window.content.type === "CHANSETTINGS" && (

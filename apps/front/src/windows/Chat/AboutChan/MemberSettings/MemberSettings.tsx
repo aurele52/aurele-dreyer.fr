@@ -9,15 +9,9 @@ import { IconSVG } from "../../../../shared/utils/svgComponent";
 interface MemberSettingsProps {
 	targetId: number;
 	channelId: number;
-	winId: number;
 }
 
-export function MemberSettings({
-	targetId,
-	channelId,
-	winId,
-}: MemberSettingsProps) {
-	//const queryClient = useQueryClient();
+export function MemberSettings({ targetId, channelId }: MemberSettingsProps) {
 	const {
 		data: data,
 		isLoading: dataLoading,
@@ -123,11 +117,11 @@ export function MemberSettings({
 				<MemberSettingsBody
 					user={{
 						id: targetId,
+						username: data.member.username,
 						isMuted: data.member.isMuted,
 						mutedUntil: data.member.mutedUntil,
 					}}
 					channelId={channelId}
-					winId={winId}
 				/>
 			</div>
 		);

@@ -6,57 +6,45 @@ import { useSelector } from "react-redux";
 import { socket } from "./socket";
 import api from "./axios";
 import { useEffect } from "react";
-import { useQuery } from "@tanstack/react-query";
-//import { useState } from "react";
 
 function App() {
-	//const [isConnected, setIsConnected] = useState<boolean>(socket.connected);
-	const {
-		data: user,
-		//isLoading: userLoading,
-		//error: userError,
-	} = useQuery<{
-		username: string;
-		avatar_url: string;
-	}>({
-		queryKey: ["connectionUser"],
-		queryFn: async () => {
+	useEffect(() => {
+		const fetchData = async () => {
 			try {
-				const response = await api.get(`/user/`);
-				return response.data;
+				const response = await api.get(`/user`);
+				const userData = response.data;
+
+				if (userData && userData.username) {
+					socket.emit("client.authentification", {
+						user: userData.username,
+						token: window.localStorage.getItem("token"),
+					});
+				}
 			} catch (error) {
 				console.error("Error fetching user:", error);
-				throw error;
 			}
-		},
-	});
+		};
 
-	useEffect(() => {
 		socket.connect();
-		function onDisconnect() {
-			//setIsConnected(false);
-		}
 
 		socket.on("connect", () => {
-			//setIsConnected(true);
-			socket.emit(
-				"client.authentification", {
-					user: user,
-					token: window.localStorage.getItem("token")
-				}
-			);
+			fetchData();
 		});
-		socket.on("disconnect", onDisconnect);
+
+		socket.on("disconnect", (reason) => {
+			console.log("Disconnected : " + reason);
+		});
 
 		return () => {
 			socket.off("connect");
-			socket.off("disconnect", onDisconnect);
+			socket.off("disconnect");
 		};
 	}, []);
-
 	const { displayFilter, zIndexFilter } = useSelector((state: AppState) => {
 		const modalWindow = state.windows.find(
-			(window) => window.content.type === "MODAL" || window.content.type === "MODALREQUESTED"
+			(window) =>
+				window.content.type === "MODAL" ||
+				window.content.type === "MODALREQUESTED"
 		);
 
 		if (modalWindow) {
