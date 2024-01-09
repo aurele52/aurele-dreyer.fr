@@ -57,7 +57,7 @@ export function Background({ windows }: BackgroundProps) {
 	};
 
 	return (
-		<div id="Background">
+		<div id="Background" >
 			{Array.isArray(windows) &&
 				windows.map((window) => {
 					const dimensions = windowDimensions[

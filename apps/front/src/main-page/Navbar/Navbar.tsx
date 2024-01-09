@@ -5,6 +5,7 @@ import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
 import { socket } from "../../socket";
+import { IconSVG } from "../../shared/utils/svgComponent";
 
 interface NavbarProps extends ReduxProps {}
 
@@ -87,7 +88,9 @@ export function Navbar({ dispatch }: NavbarProps) {
           MY PROFILE
         </button>
       </div>
-      <Button icon="LogOut" color="red" onClick={handleLogOut} />
+      <button type="button" className="DecoButton" onClick={handleLogOut}>
+        <div>{IconSVG['LogOut']}</div>
+      </button>
     </div>
   );
 }
