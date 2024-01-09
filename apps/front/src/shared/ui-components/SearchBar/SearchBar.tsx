@@ -10,19 +10,22 @@ interface SearchBarProps {
 		content?: string;
 		color: string;
 	};
+	deleteOnEnter?: boolean;
 }
 
-export function SearchBar({ action, button }: SearchBarProps) {
+export function SearchBar({ action, button, deleteOnEnter }: SearchBarProps) {
 	const [inputValue, setInputValue] = useState("");
 
 	const handleKeyDown = (event: KeyboardEvent<HTMLInputElement>) => {
 		if (event.key === "Enter") {
 			if (action) action(inputValue);
+			if (deleteOnEnter) setInputValue("");
 		}
 	};
 
 	const handleClick = () => {
 		if (action) action(inputValue);
+		if (deleteOnEnter) setInputValue("");
 	};
 
 	const handleInputChange = (event: ChangeEvent<HTMLInputElement>) => {

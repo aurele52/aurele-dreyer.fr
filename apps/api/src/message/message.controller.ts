@@ -1,6 +1,7 @@
 import {
   Body,
   Controller,
+  Delete,
   Get,
   MessageEvent,
   Param,
@@ -53,5 +54,13 @@ export class MessageController {
       ),
     );
     return merge(heartbeat, message);
+  }
+
+  @Delete('/message/invitation')
+  async deleteInvitation(
+    @Body('channel_id') channel_id: number,
+    @CurrentUserID() user_id: number,
+  ) {
+    return this.messageService.deleteInvitation(user_id, channel_id);
   }
 }
