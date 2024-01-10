@@ -89,7 +89,7 @@ export function Navbar({ dispatch }: NavbarProps) {
         </button>
       </div>
       <button type="button" className="DecoButton" onClick={handleLogOut}>
-        <div>{IconSVG['LogOut']}</div>
+        <div className={'DecoButtonInner'}>{IconSVG['LogOut']}</div>
       </button>
     </div>
   );
