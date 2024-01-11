@@ -9,10 +9,10 @@ import {
   Sse,
 } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
-import { CurrentUser } from 'src/decorators/user.decorator';
+import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { Observable, interval, merge } from 'rxjs';
-import { map } from 'rxjs/operators';
-import { FriendshipEvent } from './event/friendship-event.type';
+import { map, filter } from 'rxjs/operators';
+import { FriendshipEventType } from './event/friendship-event.type';
 
 @Controller()
 export class FriendshipController {
@@ -33,17 +33,38 @@ export class FriendshipController {
 
   @Delete('/relationship/friends/:id')
   async deleteFriends(@Param('id') user1_id: number, @CurrentUser() user2) {
-    return await this.friendshipService.deleteFriendship(user1_id, user2.id);
+    const ret = await this.friendshipService.deleteFriendship(
+      user1_id,
+      user2.id,
+    );
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.FRIENDSHIPREMOVED,
+      user1_id,
+      user2.id,
+    );
+    return ret;
   }
 
   @Delete('/relationship/blocked/:id')
   async deleteBlocked(@Param('id') user1_id: number, @CurrentUser() user2) {
-    return await this.friendshipService.deleteBlocked(user1_id, user2.id);
+    const ret = await this.friendshipService.deleteBlocked(user1_id, user2.id);
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.USERUNBLOCKED,
+      user1_id,
+      user2.id,
+    );
+    return ret;
   }
 
   @Delete('/relationship/pending/:id')
   async deletePending(@Param('id') user1_id: number, @CurrentUser() user2) {
-    return await this.friendshipService.deletePending(user1_id, user2.id);
+    const ret = await this.friendshipService.deletePending(user1_id, user2.id);
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.FRIENDREQUESTREVOKED,
+      user1_id,
+      user2.id,
+    );
+    return ret;
   }
 
   @Post('/friendship')
@@ -51,7 +72,16 @@ export class FriendshipController {
     @CurrentUser() user1,
     @Body('user2_id') user2_id: number,
   ) {
-    return await this.friendshipService.createFriendship(user1.id, user2_id);
+    const ret = await this.friendshipService.createFriendship(
+      user1.id,
+      user2_id,
+    );
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.FRIENDREQUESTRECEIVED,
+      user2_id,
+      user1.id,
+    );
+    return ret;
   }
 
   @Post('/block/:id')
@@ -59,37 +89,55 @@ export class FriendshipController {
     @Param('id') user2_id: number,
     @CurrentUser() user1,
   ) {
-    return await this.friendshipService.createBlockedFriendship(
+    const ret = await this.friendshipService.createBlockedFriendship(
       user1.id,
       user2_id,
     );
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.USERBLOCKED,
+      user2_id,
+      user1.id,
+    );
+    return ret;
   }
 
   @Get('/friendships/pendingList')
   async getPendingInvitations(@CurrentUser() currUser) {
-    console.log('Pending request list');
     return await this.friendshipService.getPendingInvitations(currUser.id);
   }
 
   @Get('/friendships/blockedList')
   async getBlockedList(@CurrentUser() currUser) {
-    console.log('Pending request list');
     return await this.friendshipService.getBlockedList(currUser.id);
   }
 
   @Patch('/friendship/accept/:id')
   async acceptFriendship(@CurrentUser() user, @Param('id') id: number) {
-    return await this.friendshipService.acceptFriendship(id, user.id);
+    const ret = await this.friendshipService.acceptFriendship(id, user.id);
+    this.friendshipService.emitFriendshipEvent(
+      FriendshipEventType.FRIENDREQUESTACCEPTED,
+      id,
+      user.id,
+    );
+    return ret;
   }
 
-  @Sse('/stream/messages')
-  streamMessages(): Observable<FriendshipEvent> {
-    const heartbeat = interval(30000).pipe(map(() => ({ type: '' })));
+  @Sse('/stream/friendshipevents')
+  streamFriendshipEvents(@CurrentUserID() user_id): Observable<any> {
+    const heartbeat = interval(30000).pipe(
+      map(() => ({
+        type: 'heartbeat',
+        data: JSON.stringify({}),
+      })),
+    );
 
-    const message = this.friendshipService
-      .getFriendshipEvents()
-      .pipe(map(() => ({ type: event.type })));
-
-    return merge(heartbeat, message);
+    const friendshipEvent = this.friendshipService.getFriendshipEvents().pipe(
+      filter((event) => event.recipientId === user_id),
+      map((event) => ({
+        type: 'message',
+        data: JSON.stringify({ type: event.type, targetId: event.initiatorId }),
+      })),
+    );
+    return merge(heartbeat, friendshipEvent);
   }
 }

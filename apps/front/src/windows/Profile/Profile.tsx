@@ -10,6 +10,7 @@ import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
 import { useState } from "react";
 import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
+import { AxiosError } from "axios";
 
 interface ProfileProps {
   targetId?: number;
@@ -41,7 +42,7 @@ export function Profile({ targetId }: ProfileProps) {
       user2_id: number;
     };
   }>({
-    queryKey: ["user", targetId],
+    queryKey: ["profile", targetId],
     queryFn: async () => {
       try {
         const response = targetId
@@ -105,14 +106,15 @@ export function Profile({ targetId }: ProfileProps) {
               params: { historicMaxDisplay },
             });
         return response.data;
-      } catch (error: any) {
+      } catch (error: unknown) {
+        const e = error as AxiosError;
         //console.error("Error fetching historic:", error);
-        if (error.response) {
+        if (e.response) {
           // Handle error response from the server
-          console.error("Server responded with:", error.response.data);
+          console.error("Server responded with:", e.response.data);
         } else {
           // Handle network or other errors
-          console.error("Network error or other issue:", error.message);
+          console.error("Network error or other issue:", e.message);
         }
         throw error;
       }
@@ -139,13 +141,19 @@ export function Profile({ targetId }: ProfileProps) {
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["user", targetId],
+        queryKey: ["friendship", profile?.id],
       });
       queryClient.invalidateQueries({
-        queryKey: ["historic", targetId],
+        queryKey: ["addFriendsList"],
       });
       queryClient.invalidateQueries({
         queryKey: ["pendingRequests"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user", profile?.id],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", profile?.id],
       });
     },
   });

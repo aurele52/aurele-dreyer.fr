@@ -4,7 +4,7 @@ import { ModalType, addModal, iconsModal } from "../../utils/AddModal";
 import { Button } from "../Button/Button";
 import store from "../../../store";
 import { addWindow, delWindow } from "../../../reducers";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import { router } from "../../../router";
 import { WinColor } from "../../utils/WindowTypes";
@@ -40,6 +40,31 @@ function Modal({
 }: ModalProps) {
   const queryClient = useQueryClient();
 
+  const { data: commonChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["commonChannels"],
+    queryFn: () => {
+      return api
+        .get("/channels/common/" + targetId)
+        .then((response) => response.data);
+    },
+  });
+
+  const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["currUserOnlyChannels"],
+    queryFn: () => {
+      return api
+        .get("/channels/excluded/" + targetId)
+        .then((response) => response.data);
+    },
+  });
+
+  const { data: user } = useQuery<{ id: number, username: string}>({
+    queryKey: ["username", targetId],
+    queryFn: () => {
+      return api.get("/user/" + targetId).then((response) => response.data);
+    }
+  })
+
   const { mutateAsync: deleteFriendship } = useMutation({
     mutationFn: async () => {
       return api.delete("/relationship/friends/" + targetId);
@@ -57,32 +82,15 @@ function Modal({
       queryClient.invalidateQueries({
         queryKey: ["user", targetId],
       });
-    },
-  });
-  console.log({ channelId });
-  const { mutateAsync: deleteBlockedFriendship } = useMutation({
-    mutationFn: async () => {
-      return api.delete("/relationship/blocked/" + targetId);
-    },
-    onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["friendship", targetId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["blockedUsers"],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["user", targetId],
-      });
-      queryClient.invalidateQueries({
-        queryKey: ["pendingRequests"],
+        queryKey: ["profile", targetId],
       });
     },
   });
 
-  const { mutateAsync: addBlockedFriendship } = useMutation({
+  const { mutateAsync: deleteBlockedFriendship } = useMutation({
     mutationFn: async () => {
-      return api.post("/block/" + targetId);
+      return await api.delete("/relationship/blocked/" + targetId);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -95,8 +103,74 @@ function Modal({
         queryKey: ["user", targetId],
       });
       queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
+      invalidateMessagesQueries();
+      queryClient.invalidateQueries({
+        queryKey: ["addFriendsList"],
+      });
+      invalidateAddChannelQueries();
+    },
+  });
+
+  const invalidateMessagesQueries = () => {
+    commonChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["messages", c.id],
+      });
+    });
+  };
+
+  const invalidateAddChannelQueries = () => {
+    currUserOnlyChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["addChannel", c.id],
+      });
+    });
+  };
+
+  const closeDMWindow = () => {
+    const windows = store.getState().windows;
+    windows
+      .filter((window) => window.WindowName === user?.username && window.content.type === "CHATSESSION")
+      .forEach((window) => store.dispatch(delWindow(window.id)));
+  };
+
+  const { mutateAsync: addBlockedFriendship } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/block/" + targetId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friendship", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["blockedUsers"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
+      queryClient.invalidateQueries({
         queryKey: ["pendingRequests"],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+      invalidateMessagesQueries();
+      queryClient.invalidateQueries({
+        queryKey: ["friendsList"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["addFriendsList"],
+      });
+      invalidateAddChannelQueries();
+      closeDMWindow();
     },
   });
 
@@ -192,7 +266,7 @@ function Modal({
     },
   });
 
-	const { mutateAsync: createUserChannel } = useMutation({
+  const { mutateAsync: createUserChannel } = useMutation({
     mutationFn: async (param: { channelId: number }) => {
       return api.post("/user-channel", param);
     },
@@ -202,9 +276,11 @@ function Modal({
     },
   });
 
-	const { mutateAsync: checkPasswordChannel } = useMutation({
+  const { mutateAsync: checkPasswordChannel } = useMutation({
     mutationFn: async (param: { password: string }) => {
-      return api.post("/channel/" + channelId + "/checkpwd", param).then((response) => response.data);
+      return api
+        .post("/channel/" + channelId + "/checkpwd", param)
+        .then((response) => response.data);
     },
   });
 
@@ -215,13 +291,13 @@ function Modal({
   };
 
   const handlePasswordSubmit = async () => {
-    const pwdCorrect = await checkPasswordChannel({ password })
-		handleClose(winId);
-		if (pwdCorrect) {
-			await createUserChannel({ channelId: (channelId || -1) });
-		} else {
-			addModal(ModalType.ERROR, "Wrong password");
-		}
+    const pwdCorrect = await checkPasswordChannel({ password });
+    handleClose(winId);
+    if (pwdCorrect) {
+      await createUserChannel({ channelId: channelId || -1 });
+    } else {
+      addModal(ModalType.ERROR, "Wrong password");
+    }
   };
 
   const actions = {
@@ -304,7 +380,7 @@ function Modal({
             <Button
               color="purple"
               content="ok"
-							onClick={handlePasswordSubmit}
+              onClick={handlePasswordSubmit}
             />
             <Button
               color="purple"

@@ -24,74 +24,64 @@ export class ChannelService {
 
   async channelsCurrentUser(params: { currUserId: number }) {
     const { currUserId } = params;
-    return (
-      await this.prisma.channel.findMany({
-        where: {
-          userChannels: {
-            some: {
-              user_id: currUserId,
-            },
+
+    const blockedUserIds = await this.prisma.friendship.findMany({
+      where: {
+        OR: [
+          { user1_id: currUserId, status: 'BLOCKED' },
+          { user2_id: currUserId, status: 'BLOCKED' },
+        ],
+      },
+      select: {
+        user1_id: true,
+        user2_id: true,
+      },
+    });
+
+    const blockedIds = blockedUserIds
+      .flatMap((u) => [u.user1_id, u.user2_id])
+      .filter((id) => id !== currUserId);
+
+    const userChannels = await this.prisma.channel.findMany({
+      where: {
+        userChannels: {
+          some: {
+            user_id: currUserId,
           },
-          NOT: {
-            AND: [
-              {
-                type: ChanType.DM,
-              },
-              {
-                userChannels: {
-                  some: {
-                    AND: [
-                      {
-                        user_id: {
-                          not: currUserId,
-                        },
-                      },
-                      {
-                        OR: [
-                          {
-                            User: {
-                              friendship_user1: {
-                                some: {
-                                  user2_id: currUserId,
-                                  status: FriendshipStatus.BLOCKED,
-                                },
-                              },
-                            },
-                          },
-                          {
-                            User: {
-                              friendship_user2: {
-                                some: {
-                                  user1_id: currUserId,
-                                  status: FriendshipStatus.BLOCKED,
-                                },
-                              },
-                            },
-                          },
-                        ],
-                      },
-                    ],
+        },
+        NOT: {
+          AND: [
+            {
+              type: ChanType.DM,
+            },
+            {
+              userChannels: {
+                some: {
+                  user_id: {
+                    in: blockedIds,
                   },
                 },
               },
-            ],
+            },
+          ],
+        },
+      },
+      include: {
+        userChannels: {
+          include: {
+            User: true,
           },
         },
-        include: {
-          userChannels: {
-            include: {
-              User: true,
-            },
-          },
-          messages: {
-            take: 1,
-            orderBy: {
-              created_at: 'desc',
-            },
+        messages: {
+          take: 1,
+          orderBy: {
+            created_at: 'desc',
           },
         },
-      })
-    )
+      },
+    });
+
+    const sortedChannels = userChannels
       .map((el) => ({
         ...el,
         interlocutor: el.userChannels.find((uc) => uc.User?.id !== currUserId)
@@ -109,6 +99,8 @@ export class ChannelService {
         );
         return dateB - dateA;
       });
+
+    return sortedChannels;
   }
 
   async chat(user_id: number, channel_id: number) {
@@ -129,11 +121,66 @@ export class ChannelService {
         },
       },
     });
+    if (!chat) return undefined;
     return {
       ...chat,
       interlocutor: chat.userChannels?.find((uc) => uc.User?.id !== user_id)
         ?.User,
     };
+  }
+
+  async getCommonChats(user1_id: number, user2_id: number) {
+    return await this.prisma.channel.findMany({
+      where: {
+        AND: [
+          {
+            userChannels: {
+              some: {
+                user_id: user1_id,
+              },
+            },
+          },
+          {
+            userChannels: {
+              some: {
+                user_id: user2_id,
+              },
+            },
+          },
+        ],
+        type: { not: ChanType.DM },
+      },
+      select: {
+        id: true,
+      },
+    });
+  }
+
+  async getExcludedChats(user1_id: number, user2_id: number) {
+    return await this.prisma.channel.findMany({
+      where: {
+        AND: [
+          {
+            userChannels: {
+              some: {
+                user_id: user1_id,
+              },
+            },
+          },
+          {
+            userChannels: {
+              none: {
+                user_id: user2_id,
+              },
+            },
+          },
+        ],
+        type: { not: ChanType.DM },
+      },
+      select: {
+        id: true,
+      },
+    });
   }
 
   async otherChannels(params: { currUserId: number }) {
@@ -195,7 +242,7 @@ export class ChannelService {
     return channel !== null;
   }
 
-  async getNonMembers(channel_id: number) {
+  async getNonMembers(channel_id: number, user_id: number) {
     return await this.prisma.user.findMany({
       where: {
         isDeleted: false,
@@ -207,6 +254,18 @@ export class ChannelService {
         bannedChannels: {
           none: {
             id: channel_id,
+          },
+        },
+        friendship_user1: {
+          none: {
+            user2_id: user_id,
+            status: FriendshipStatus.BLOCKED,
+          },
+        },
+        friendship_user2: {
+          none: {
+            user1_id: user_id,
+            status: FriendshipStatus.BLOCKED,
           },
         },
       },

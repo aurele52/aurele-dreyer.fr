@@ -88,6 +88,9 @@ export function HeartButton({
       queryClient.invalidateQueries({
         queryKey: ["user", userId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", userId],
+      });
     },
   });
 
@@ -201,6 +204,9 @@ export function PendingButton({
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friendsList"] });
       queryClient.invalidateQueries({ queryKey: ["addFriendsList"] });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", userId],
+      });
     },
   });
 
@@ -217,6 +223,9 @@ export function PendingButton({
       queryClient.invalidateQueries({
         queryKey: ["user", userId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", userId],
+      });
     },
   });
 
@@ -230,7 +239,7 @@ export function PendingButton({
 
   const handleRefuseRequest = () => {
     deletePendingFriendship();
-  }
+  };
 
   return (
     <>
@@ -242,7 +251,11 @@ export function PendingButton({
       >
         <div className={`ButtonInner`}>{IconSVG[requestStatus]}</div>
       </button>
-      {requestStatus === "EmptyHeart" ? <Button color="pink" icon="Cross" onClick={handleRefuseRequest} /> : ""}
+      {requestStatus === "EmptyHeart" ? (
+        <Button color="pink" icon="Cross" onClick={handleRefuseRequest} />
+      ) : (
+        ""
+      )}
     </>
   );
 }
