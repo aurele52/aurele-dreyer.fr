@@ -26,12 +26,14 @@
 
 .Ladder > div > .User {
 	display: flex;
+	height: 70px;
 	min-width: 170px;
 	padding: 5px 10px;
 	align-items: center;
 	align-self: stretch;
 	border-radius: var(--radius-radius-rounded, 8px);
 	border: 1px solid var(--border-border-outside, #000);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
 	-webkit-user-select: none; /* Safari */
 	-ms-user-select: none; /* IE 10 and IE 11 */
 	user-select: none; /* Standard syntax */
@@ -49,39 +51,16 @@
 }
 
 .Ladder > div > .SelfUser {
-	background: var(
-		--Blue-Gradient-Ladder,
-		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(173, 216, 230, 0.2) 91.15%
-		),
-		linear-gradient(261deg, #fff 8.97%, #b0e0e6 27.9%, #00bfff 72.53%)
-	);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
 }
 
 .Ladder > div > .OtherUser {
-	background: var(
-		--Pink-Gradient-Ladder,
-		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(255, 101, 190, 0.2) 91.15%
-		),
-		linear-gradient(261deg, #fff 8.97%, #f8e5f8 27.9%, #fd9ad2 72.53%)
-	);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
+
 }
 
 .Ladder > div > .OtherUser:hover {
-	background: var(
-		--Pink-Gradient-LadderReverse,
-		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(255, 101, 190, 0.2) 91.15%
-		),
-		linear-gradient(261deg, #fd9ad2 22.49%, #f8e5f8 60.36%, #fff 95.52%)
-	);
+	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #FFCAE7 17.61%, #FFF 49.92%, #2BDEC9 80.98%); 
 }
 
 .Ladder > div > .User > .Rank {
@@ -118,15 +97,15 @@
 .Ladder > div > .User > .Avatar {
 	display: flex;
 	width: 84px;
-	height: 85px;
+	height: 68px;
 	padding: 10px;
 	flex-direction: column;
 	align-items: flex-start;
 }
 
 .Ladder > div > .User > .Avatar > .Frame {
-	width: 64px;
-	height: 64px;
+	width: 55px;
+	height: 55px;
 	flex-shrink: 0;
 	border-radius: var(--radius-radius-rounded, 8px);
 	border: 7px solid var(--colors-grey-white, #fff);

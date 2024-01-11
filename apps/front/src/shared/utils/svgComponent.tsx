@@ -772,8 +772,8 @@ export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 	LogOut: (
 		<svg
 			xmlns="http://www.w3.org/2000/svg"
-			width="44"
-			height="44"
+			width="34"
+			height="34"
 			viewBox="0 0 44 44"
 			fill="none"
 		>
