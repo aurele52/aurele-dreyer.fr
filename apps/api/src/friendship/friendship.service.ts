@@ -1,6 +1,11 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { FriendshipStatus } from '@prisma/client';
+import { Subject, Observable } from 'rxjs';
+import {
+  FriendshipEvent,
+  FriendshipEventType,
+} from './event/friendship-event.type';
 
 @Injectable()
 export class FriendshipService {
@@ -141,7 +146,7 @@ export class FriendshipService {
   async createBlockedFriendship(user1_id: number, user2_id: number) {
     const currentFriendship = await this.userFriendship(user1_id, user2_id);
     if (currentFriendship) {
-      if (currentFriendship.status == FriendshipStatus.BLOCKED) return;
+      if (currentFriendship.status === FriendshipStatus.BLOCKED) return;
       else this.deleteFriendship(user1_id, user2_id);
     }
     return await this.prisma.friendship.create({
@@ -162,7 +167,6 @@ export class FriendshipService {
   }
 
   async getPendingInvitations(id: number) {
-    console.log('Get pending invit');
     const invitations = await this.prisma.friendship.findMany({
       where: {
         OR: [
@@ -214,6 +218,19 @@ export class FriendshipService {
     return res;
   }
 
+  async isBlockedRelationship(user1_id: number, user2_id: number) {
+    const relationship = await this.prisma.friendship.findFirst({
+      where: {
+        OR: [
+          { user1_id: user1_id, user2_id: user2_id },
+          { user1_id: user2_id, user2_id: user1_id },
+        ],
+        status: FriendshipStatus.BLOCKED,
+      },
+    });
+    return relationship !== null;
+  }
+
   async acceptFriendship(user1_id: number, user2_id: number) {
     return await this.prisma.friendship.update({
       where: {
@@ -226,5 +243,20 @@ export class FriendshipService {
         status: FriendshipStatus.FRIENDS,
       },
     });
+  }
+
+  private friendshipEvents = new Subject<any>();
+
+  emitFriendshipEvent(
+    type: FriendshipEventType,
+    recipientId: number,
+    initiatorId: number,
+  ) {
+    console.log('emit');
+    this.friendshipEvents.next({ type, initiatorId, recipientId });
+  }
+
+  getFriendshipEvents(): Observable<FriendshipEvent> {
+    return this.friendshipEvents.asObservable();
   }
 }
