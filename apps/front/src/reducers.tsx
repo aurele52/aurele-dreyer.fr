@@ -67,6 +67,7 @@ const windowsSlice = createSlice({
 				"MEMBERSETTINGS",
 				"BANLIST",
 				"TWOFAQRCODE",
+				"FRIENDSLIST",
 			];
 
 			if (

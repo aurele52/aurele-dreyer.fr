@@ -1,17 +1,15 @@
-import { router } from "../../router";
-import { Button } from "../../shared/ui-components/Button/Button";
+import { router } from "../../router.ts";
+import { Button } from "../../shared/ui-components/Button/Button.tsx";
 import "./SignUp.css";
 import { useMutation } from "@tanstack/react-query";
-import api from "../../axios";
+import api from "../../axios.ts";
 import { Input } from "../../shared/ui-components/Input/Input.tsx";
-import { AxiosError } from 'axios';
-import { FormEvent } from 'react';
+import { AxiosError } from "axios";
+import { FormEvent } from "react";
 
 interface ValidationErrorResponse {
   [key: string]: string[];
 }
-
-//virer le del de la pdp
 
 export default function Initialise() {
   const queryParameters = new URLSearchParams(window.location.search);
@@ -58,14 +56,12 @@ export default function Initialise() {
   );
 
   return (
-    <div className="bg-container">
-      <div className="purple-container">
-        <form onSubmit={handleContinue}>
-          {usernameDiv}
-          <Button content="continue" type="submit" color="pink" />
-        </form>
-        <Button content="return" color="red" onClick={handleReturn} />
-      </div>
-    </div>
+    <>
+      <form onSubmit={handleContinue}>
+        {usernameDiv}
+        <Button content="continue" type="submit" color="pink" />
+      </form>
+      <Button content="return" color="red" onClick={handleReturn} />
+    </>
   );
 }

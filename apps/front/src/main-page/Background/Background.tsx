@@ -23,6 +23,7 @@ import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/Channe
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
+import Preview from "../../windows/Play/Preview.tsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
@@ -71,6 +72,7 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
+		PREVIEW: { width: "900px", height: "900px" },
   };
 
   const [currentTargetId, setCurrentTargetId] = useState(null);
@@ -329,7 +331,17 @@ export function Background({ windows }: BackgroundProps) {
               zindex={window.zindex || 0}
               isModal={window.content.type === "MODAL"}
             >
-              {window.content.type === "PLAY" && <Play />}
+              {window.content.type === "PLAY" && (
+								<Play
+									windowId={window.id}
+									privateLobby={
+										window.targetId
+											? { targetId: window.targetId }
+											: undefined
+									}
+								/>
+							)}
+							{window.content.type === "PREVIEW" && <Preview />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}
@@ -373,7 +385,6 @@ export function Background({ windows }: BackgroundProps) {
                 <MemberSettings
                   targetId={window.targetId ? window.targetId : 0}
                   channelId={window.channelId ? window.channelId : 0}
-                  winId={window.id}
                 />
               )}
               {window.content.type === "CHANSETTINGS" && (

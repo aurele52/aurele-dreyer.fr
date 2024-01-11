@@ -1,116 +1,51 @@
 import "./Pong.css";
-import { useEffect, useRef } from "react";
+import { useEffect, useRef, useState } from "react";
 import p5 from "p5";
 import { socket } from "../../socket";
 import { gameInfo } from "./dto/gameInfo.interface.ts";
-import { gameInfoDto } from "./dto/gameInfo.dto.ts";
+import { parameterDto } from "./dto/parameter.dto.ts";
 
-interface scaleInfo {
-		yborderSize: number,
-		xborderSize: number,
-		ynumberSize: number,
-		xnumberSize: number,
-		yitemSize: number,
-		xitemSize: number,
-		xballSize: number,
-		yballSize: number,
-}
-interface pongProps {
-	gameInfo: gameInfo;
-}
-
-export default function Pong(props: pongProps) {
-	const defaultGameInfo = {
-			ballSize: props.gameInfo.ballSize,
-			barSize: props.gameInfo.barSize,
-			xsize: props.gameInfo.xsize,
-			ysize: props.gameInfo.ysize,
-			oneBarColor: props.gameInfo.oneBarColor,
-			twoBarColor: props.gameInfo.twoBarColor,
-			ballColor: props.gameInfo.ballColor,
-			backgroundColor: props.gameInfo.backgroundColor,
-			borderColor: props.gameInfo.borderColor,
-			oneNumberColor: props.gameInfo.oneNumberColor,
-			twoNumberColor: props.gameInfo.twoNumberColor,
-			menuColor: props.gameInfo.menuColor,
-			itemSize: props.gameInfo.itemSize,
-			oneScore: props.gameInfo.oneScore,
-			twoScore: props.gameInfo.twoScore,
-			ballSpeed: props.gameInfo.ballSpeed,
-			barDist: props.gameInfo.barDist,
-			barSpeed: props.gameInfo.barSpeed,
-			barLarge: props.gameInfo.barLarge,
-			numberSize: props.gameInfo.numberSize,
-			borderSize: props.gameInfo.borderSize,
-			menuSize: props.gameInfo.menuSize,
-			numberSideDist: props.gameInfo.numberSideDist,
-			numberTopDist: props.gameInfo.numberTopDist,
-			name: props.gameInfo.name,
-			ballDirx: props.gameInfo.ballDirx,
-			ballDiry: props.gameInfo.ballDiry,
-			ballDeb: props.gameInfo.ballDeb,
-			gamey: props.gameInfo.borderSize * 2 + props.gameInfo.menuSize,
-			gamex: props.gameInfo.borderSize,
-			gamexsize: props.gameInfo.gamexsize,
-			gameysize: props.gameInfo.gameysize,
-			oneBary: props.gameInfo.oneBary,
-			twoBary: props.gameInfo.twoBary,
-			ballx: props.gameInfo.ballx,
-			bally: props.gameInfo.bally,
-			itemx: props.gameInfo.itemx,
-			itemy: props.gameInfo.itemy,
-	};
-	const gameInfo: gameInfo ={
-			ballSize: props.gameInfo.ballSize,
-			barSize: props.gameInfo.barSize,
-			xsize: props.gameInfo.xsize,
-			ysize: props.gameInfo.ysize,
-			oneBarColor: props.gameInfo.oneBarColor,
-			twoBarColor: props.gameInfo.twoBarColor,
-			ballColor: props.gameInfo.ballColor,
-			backgroundColor: props.gameInfo.backgroundColor,
-			borderColor: props.gameInfo.borderColor,
-			oneNumberColor: props.gameInfo.oneNumberColor,
-			twoNumberColor: props.gameInfo.twoNumberColor,
-			menuColor: props.gameInfo.menuColor,
-			itemSize: props.gameInfo.itemSize,
-			oneScore: props.gameInfo.oneScore,
-			twoScore: props.gameInfo.twoScore,
-			ballSpeed: props.gameInfo.ballSpeed,
-			barDist: props.gameInfo.barDist,
-			barSpeed: props.gameInfo.barSpeed,
-			barLarge: props.gameInfo.barLarge,
-			numberSize: props.gameInfo.numberSize,
-			borderSize: props.gameInfo.borderSize,
-			menuSize: props.gameInfo.menuSize,
-			numberSideDist: props.gameInfo.numberSideDist,
-			numberTopDist: props.gameInfo.numberTopDist,
-			name: props.gameInfo.name,
-			ballDirx: props.gameInfo.ballDirx,
-			ballDiry: props.gameInfo.ballDiry,
-			ballDeb: props.gameInfo.ballDeb,
-			gamey: props.gameInfo.borderSize * 2 + props.gameInfo.menuSize,
-			gamex: props.gameInfo.borderSize,
-			gamexsize: props.gameInfo.gamexsize,
-			gameysize: props.gameInfo.gameysize,
-			oneBary: props.gameInfo.oneBary,
-			twoBary: props.gameInfo.twoBary,
-			ballx: props.gameInfo.ballx,
-			bally: props.gameInfo.bally,
-			itemx: props.gameInfo.itemx,
-			itemy: props.gameInfo.itemy,
-	};
-	const scaleInfo: scaleInfo ={
-		yborderSize: gameInfo.borderSize,
-		xborderSize: gameInfo.borderSize,
-		ynumberSize: gameInfo.borderSize,
-		xnumberSize: gameInfo.borderSize,
-		yitemSize: gameInfo.itemSize,
-		xitemSize: gameInfo.itemSize,
-		xballSize: gameInfo.ballSize,
-		yballSize: gameInfo.ballSize,
-	};
-
+export default function Preview() {
+	const [gameInfo, setGameInfo] = useState<gameInfo>({
+		name: 'normal',
+		borderSize: 10,
+		menuSize: 90,
+		ysize: 500,
+		xsize: 800,
+		gamey: 110,
+		gamex: 10,
+		ballx: 100,
+		bally: 100,
+		barDist: 20,
+		oneBary: 10,
+		twoBary: 10,
+		barSpeed: 2,
+		ballDirx: -1,
+		ballDiry: -0.4,
+		ballSpeed: 4.0,
+		gamexsize: 780,
+		gameysize: 380,
+		barLarge: 10,
+		oneScore: 0,
+		twoScore: 0,
+		ballDeb: 150,
+		ballSize: 10,
+		barSize: 100,
+		itemx: 40,
+		itemy: 40,
+		itemSize: 10,
+		numberSize: 10,
+		oneBarColor: 'white',
+		twoBarColor: 'white',
+		ballColor: 'white',
+		backgroundColor: 'black',
+		borderColor: 'white',
+		oneNumberColor: 'white',
+		twoNumberColor: 'white',
+		menuColor: 'black',
+		numberSideDist: 10,
+		numberTopDist: 10,
+	});
 
 function drawBoardMidline(p: p5) {
 	p.fill(gameInfo.borderColor);
@@ -406,35 +341,17 @@ function move(p: p5) {
 	if (input != 1 && p.keyIsDown(p.DOWN_ARROW)) {
 		socket.emit("client.input", { direction: "down", isPressed: true });
 		input = 1;
+		// if (oneBary + barSize < gameysize)
+		// oneBary = oneBary + (p.deltaTime / 1000) * barSpeed;
 	} else if (input != 2 && p.keyIsDown(p.UP_ARROW)) {
 		socket.emit("client.input", { direction: "up", isPressed: true });
 		input = 2;
+		// if (oneBary > 0)
+		// oneBary = oneBary - (p.deltaTime / 1000) * barSpeed;
 	} else if (input == 0) {
 		socket.emit("client.input", { direction: null, isPressed: false });
 		input = -1;
 	}
-}
-
-function compteur(p: p5, nb: number) {
-	p.fill(gameInfo.borderColor);
-	p.circle(gameInfo.xsize / 2, gameInfo.ysize / 2, 150);
-	p.fill(gameInfo.backgroundColor);
-	p.circle(gameInfo.xsize / 2, gameInfo.ysize / 2, 150 - 10 * 2);
-	p.fill("white");
-	if (nb != 1)
-		drawNumber(
-			p,
-			nb,
-			gameInfo.xsize / 2 - scaleInfo.xborderSize * 2,
-			gameInfo.ysize / 2 - scaleInfo.yborderSize * 5.5
-		);
-	else
-		drawNumber(
-			p,
-			nb,
-			gameInfo.xsize / 2 - scaleInfo.xborderSize * 3,
-			gameInfo.ysize / 2 - scaleInfo.yborderSize * 5.5
-		);
 }
 
 function drawMenuBar(p: p5) {
@@ -482,7 +399,70 @@ function clearBoard(p: p5) {
 	);
 }
 
-function loop(p: p5) {
+	const myRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (myRef.current) {
+			socket.on("server.previewUpdate", onUpdate);
+			const myP5 = new p5(Sketch, myRef.current);
+			return () => {
+				myP5.remove();
+				socket.off("server.previewUpdate", onUpdate);
+			};
+		}
+
+		function onUpdate(gameUpdate: parameterDto) {
+			console.log(gameUpdate);
+			const updatedObject = { ...gameInfo,
+			ballSize: gameUpdate.ballSize,
+			barSize: gameUpdate.barSize,
+			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
+			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
+			oneBarColor: gameUpdate.oneBarColor,
+			twoBarColor: gameUpdate.twoBarColor,
+			ballColor: gameUpdate.ballColor,
+			backgroundColor: gameUpdate.backgroundColor,
+			borderColor: gameUpdate.borderColor,
+			oneNumberColor: gameUpdate.oneNumberColor,
+			twoNumberColor: gameUpdate.twoNumberColor,
+			menuColor: gameUpdate.menuColor,
+			itemSize: gameUpdate.itemSize,
+			oneScore: gameUpdate.oneScore,
+			twoScore: gameUpdate.twoScore,
+			ballSpeed: gameUpdate.ballSpeed,
+			barDist: gameUpdate.barDist,
+			barSpeed: gameUpdate.barSpeed,
+			barLarge: gameUpdate.barLarge,
+			numberSize: gameUpdate.numberSize,
+			borderSize: gameUpdate.borderSize,
+			menuSize: gameUpdate.menuSize,
+			numberSideDist: gameUpdate.numberSideDist,
+			numberTopDist: gameUpdate.numberTopDist,
+			gamex: gameUpdate.borderSize,
+			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
+			gamexsize: gameUpdate.gamexsize,
+			gameysize: gameUpdate.gameysize,
+			};
+			setGameInfo(updatedObject);
+
+		}
+		}, [gameInfo]);
+
+	const Sketch = (p: p5) => {
+		p.setup = () => {
+			p.createCanvas(gameInfo.xsize, gameInfo.ysize);
+			p.frameRate(30);
+			p.noStroke();
+			drawEmpty(p);
+			drawBar(p);
+			scoreOne(p, gameInfo.oneScore);
+			scoreTwo(p, gameInfo.twoScore);
+		};
+		p.draw = () => {
+			p.resizeCanvas(gameInfo.xsize, gameInfo.ysize); //margot
+			drawEmpty(p);
+			drawBar(p);
+			scoreOne(p, gameInfo.oneScore);
+			scoreTwo(p, gameInfo.twoScore);
 			move(p);
 			clearBoard(p);
 			drawBar(p);
@@ -492,132 +472,6 @@ function loop(p: p5) {
 			drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
-}
-
-interface sendInfo {
-	ballx: number;
-	bally: number;
-	oneBary: number;
-	twoBary: number;
-	itemx: number;
-	itemy: number;
-
-  barDist: number;
-  barLarge: number;
-  barSize: number;
-
-  ballSize: number;
-
-  itemSize: number;
-
-  oneScore: number;
-  twoScore: number;
-}
-
-let height: number | undefined ; //margot changed
-let width: number | undefined ;  //margot changed
-
-function onSizeChange(p:p5) {
-	width = document.getElementById('canva')?.getBoundingClientRect().width;
-	height = document.getElementById('canva')?.getBoundingClientRect().height;
-	if (typeof width == typeof 1)// && width !== undefined && height !== undefined) ////margot
-	{
-		p.resizeCanvas(width as number, height as number); //margot
-		gameInfo.xsize = width as number;
-		gameInfo.ysize = height as number;
-		drawEmpty(p);
-		drawBar(p);
-		scoreOne(p, gameInfo.oneScore);
-		scoreTwo(p, gameInfo.twoScore);
-		const xratio = defaultGameInfo.xsize / gameInfo.xsize;
-		const yratio = defaultGameInfo.ysize / gameInfo.ysize;
-
-			gameInfo.gamex = defaultGameInfo.gamex / xratio;
-			gameInfo.gamey = defaultGameInfo.gamey / yratio;
-			gameInfo.gamexsize = defaultGameInfo.gamexsize / xratio;
-			gameInfo.gameysize = defaultGameInfo.gameysize / yratio;
-
-			gameInfo.barSize = defaultGameInfo.barSize / yratio;
-			gameInfo.barDist = defaultGameInfo.barDist / xratio;
-			gameInfo.barLarge = defaultGameInfo.barLarge / xratio;
-			gameInfo.menuSize = defaultGameInfo.menuSize / yratio;
-			gameInfo.numberSideDist = defaultGameInfo.numberSideDist / xratio;
-			gameInfo.numberTopDist = defaultGameInfo.numberTopDist / yratio;
-				scaleInfo.xborderSize = defaultGameInfo.borderSize / xratio;
-				scaleInfo.yborderSize = defaultGameInfo.borderSize / yratio;
-				scaleInfo.xballSize = defaultGameInfo.ballSize / xratio;
-				scaleInfo.yballSize = defaultGameInfo.ballSize / yratio;
-				scaleInfo.xitemSize = defaultGameInfo.itemSize / xratio;
-				scaleInfo.yitemSize = defaultGameInfo.itemSize / yratio;
-				scaleInfo.xnumberSize = defaultGameInfo.numberSize / xratio;
-				scaleInfo.ynumberSize = defaultGameInfo.numberSize / yratio;
-
-	}
-}
-	const myRef = useRef<HTMLDivElement>(null);
-	useEffect(() => {
-		if (myRef.current) {
-			socket.on("server.update", onUpdate);
-			const myP5 = new p5(Sketch, myRef.current);
-			return () => {
-				myP5.remove();
-				socket.off("server.update", onUpdate);
-			};
-		}
-		function onUpdate(gameUpdate: sendInfo) {
-			console.log('fds', gameUpdate.bally);
-			const xratio = defaultGameInfo.xsize / gameInfo.xsize;
-			const yratio = defaultGameInfo.ysize / gameInfo.ysize;
-			gameInfo.barSize = gameUpdate.barSize / yratio;
-			gameInfo.barDist = gameUpdate.barDist / xratio;
-			gameInfo.barLarge = gameUpdate.barLarge / xratio;
-			gameInfo.ballx = gameUpdate.ballx / xratio;
-			gameInfo.bally = gameUpdate.bally / yratio;
-			gameInfo.oneBary = gameUpdate.oneBary / yratio;
-			gameInfo.twoBary = gameUpdate.twoBary / yratio;
-			gameInfo.itemx = gameUpdate.itemx / xratio;
-			gameInfo.itemy = gameUpdate.itemy / yratio;
-			gameInfo.oneScore = gameUpdate.oneScore;
-			gameInfo.twoScore = gameUpdate.twoScore;
-			scaleInfo.xballSize = gameUpdate.ballSize / xratio;
-			scaleInfo.yballSize = gameUpdate.ballSize / yratio;
-			scaleInfo.xitemSize = gameUpdate.itemSize / xratio;
-			scaleInfo.yitemSize = gameUpdate.itemSize / yratio;
-		}
-	}, []);
-
-	const Sketch = (p: p5) => {
-		p.setup = () => {
-			width = document.getElementById('canva')?.getBoundingClientRect().width;
-			height = document.getElementById('canva')?.getBoundingClientRect().height;
-			p.createCanvas(defaultGameInfo.xsize, defaultGameInfo.ysize); //margot
-			p.frameRate(30);
-			p.noStroke();
-			drawEmpty(p);
-			drawBar(p);
-			scoreOne(p, defaultGameInfo.oneScore);
-			scoreTwo(p, defaultGameInfo.twoScore);
-		};
-		p.draw = () => {
-			// if (document.getElementById('canva')?.getBoundingClientRect().width != width || document.getElementById('canva')?.getBoundingClientRect().height != height) {
-				// onSizeChange(p);
-			// }
-			const ms = p.millis();
-			if (ms < 1000) {
-				compteur(p, 3);
-			}
-			// else if (ms < 2000) {
-			// 	compteur(p, 2);
-			// }
-			// else if (ms < 3000) {
-			// 	compteur(p, 1);
-			// }
-			// else if (ms < 3200) {
-			// 	compteur(p, 0);
-			// }
-			else {
-				loop(p);
-			}
 		};
 		p.keyReleased = () => {
 			input = 0;

@@ -1,44 +1,72 @@
 import { lobby } from './lobby';
 import { Cron } from '@nestjs/schedule';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
-import { Socket } from 'socket.io';
 
 export class lobbyManager {
-  constructor(public connectedClientList: clientInfoDto[]) {
-    this.connectedClient = connectedClientList;
+  private normalLobbies: lobby[] = [];
+  private customLobbies: lobby[] = [];
+  private normalQueue: clientInfoDto[] = [];
+  private inJoinTab: clientInfoDto[] = [];
+
+  public createCustomLobby(client: clientInfoDto) {
+    const newLobby = new lobby('custom', client.matchInfo);
+    client.lobby = newLobby;
+    client.status = 'waiting another player';
+    newLobby.addClient(client);
+    this.customLobbies.push(newLobby);
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
   }
-
-  private connectedClient: clientInfoDto[];
-  private lobbies: lobby[] = [];
-  private queue: clientInfoDto[] = [];
-
+  public addInJoinTab(client: clientInfoDto) {
+    this.inJoinTab.push(client);
+  }
+  public removeInJoinTab(client: clientInfoDto) {
+    const index = this.inJoinTab.findIndex((value) => {
+      return value === client;
+    });
+    if (index !== -1) {
+      this.inJoinTab.splice(index, 1);
+    }
+  }
   public addToNormalQueue(client: clientInfoDto) {
-    this.queue.push(client);
-    console.log('queue', this.queue);
-    console.log('connectedClient', this.connectedClient);
+    this.normalQueue.push(client);
+    client.status = 'waiting another player';
     this.MATCH();
   }
   public cleanLobbies() {
-    this.lobbies.filter((lobby) => lobby.isEmpty() === true);
+    this.normalLobbies.filter((lobby) => lobby.isEmpty() === true);
+    this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
+  }
+  public getCustomLobbies() {
+    return this.customLobbies;
+  }
+  public addPlayerToMatch(client: clientInfoDto, matchInfo: string) {
+    const index = this.customLobbies.findIndex((value) => {
+      return value.getMatchInfo().name === matchInfo;
+    });
+    if (index !== -1) {
+      this.customLobbies[index].getPlayer()[0].status = 'inGame';
+      client.status = 'inGame';
+      client.matchInfo = this.customLobbies[index].getMatchInfo();
+      this.customLobbies[index].addClient(client);
+      this.customLobbies[index].start();
+    }
   }
   private MATCH() {
-    if (this.queue.length >= 2) {
-      const playerOne = this.queue.shift();
-      const playerTwo = this.queue.shift();
-      playerOne.socket.emit('server.normalMatchStart');
-      playerTwo.socket.emit('server.normalMatchStart');
-      const newLobby = new lobby(this.connectedClient, playerOne.mode);
+    if (this.normalQueue.length >= 2) {
+      const playerOne = this.normalQueue.shift();
+      const playerTwo = this.normalQueue.shift();
+      const newLobby = new lobby('normal', null);
       playerOne.lobby = newLobby;
       playerTwo.lobby = newLobby;
       playerOne.status = 'inGame';
       playerTwo.status = 'inGame';
       newLobby.addClient(playerOne);
       newLobby.addClient(playerTwo);
+      this.normalLobbies.push(newLobby);
       newLobby.start();
-      this.lobbies.push(newLobby);
     }
   }
-  // Periodically clean up lobbies
+  // Periodically clean up normalLobbies
   @Cron('*/5 * * * *')
-  private lobbiesCleaner(): void {}
+  private normalLobbiesCleaner(): void {}
 }

@@ -92,6 +92,32 @@ export function User({ userId, channel }: UserProps) {
 		},
 	});
 
+	const { mutateAsync: sendGameInvitation } = useMutation({
+		mutationFn: async (param: { message: string; targetId: number }) => {
+			const dm = dmId
+				? dmId
+				: await api.post("/dm", { userId }).then((res) => res.data);
+			return api.post("/message", {
+				message: param.message,
+				channel_id: dm,
+			});
+		},
+		onSuccess: () => {
+			const newWindow = {
+				WindowName: "Play",
+				id: 0,
+				toggle: false,
+				content: { type: "PLAY" },
+				handleBarButton:
+					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+				targetId: userId,
+				color: WinColor.PURPLE,
+			};
+			store.dispatch(addWindow(newWindow));
+			queryClient.invalidateQueries({ queryKey: ["chats"] });
+		},
+	});
+
 	if (!userId) {
 		return <div></div>;
 	}
@@ -154,6 +180,13 @@ export function User({ userId, channel }: UserProps) {
 		store.dispatch(addWindow(newWindow));
 	};
 
+	const handleMatch = async () => {
+		sendGameInvitation({
+			message: "/PongInvitation",
+			targetId: userId,
+		});
+	};
+
 	if (!user) {
 		return (
 			<div className="UserComponent">
@@ -175,11 +208,7 @@ export function User({ userId, channel }: UserProps) {
 	);
 
 	const matchButton = (
-		<Button
-			content="Match"
-			color="blue"
-			/*onClick={() => handleMatch(userId, user.username)}*/
-		/>
+		<Button content="Match" color="blue" onClick={() => handleMatch()} />
 	);
 
 	const channelSettingsButton = channel ? (

@@ -1,64 +1,130 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
-  WebSocketGateway,
-} from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
+import { gameInfoDto } from './dto-interface/gameInfo.dto';
 import { input } from './dto-interface/input.interface';
 import { da } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
 import { UnauthorizedException } from '@nestjs/common';
+import { CurrentUser } from 'src/decorators/user.decorator';
+import { lobby } from './lobby/lobby';
+import { gameInfo } from './dto-interface/gameInfo.interface';
+import { parameterDto } from './dto-interface/parameter.dto';
 
+function updateMatchInfo(update: gameInfoDto, actual: gameInfo) {
+  // if (typeof update.name != 'undefined') actual.name = update.name;
+  // if (typeof update.borderSize != 'undefined') actual.borderSize = update.borderSize;
+  // if (typeof update.menuSize != 'undefined') actual.menuSize = update.menuSize;
+  // if (typeof update.ysize != 'undefined') actual.ysize = update.ysize;
+  // if (typeof update.xsize != 'undefined') actual.xsize = update.xsize;
+  // if (typeof update.gamey != 'undefined') actual.gamey = update.gamey;
+  // if (typeof update.gamex != 'undefined') actual.gamex = update.gamex;
+  // if (typeof update.ballx != 'undefined') actual.ballx = update.ballx;
+  // if (typeof update.bally != 'undefined') actual.bally = update.bally;
+  // if (typeof update.barDist != 'undefined') actual.barDist = update.barDist;
+  // if (typeof update.oneBary != 'undefined') actual.oneBary = update.oneBary;
+  // if (typeof update.twoBary != 'undefined') actual.twoBary = update.twoBary;
+  // if (typeof update.barSpeed != 'undefined') actual.barSpeed = update.barSpeed;
+  // if (typeof update.ballDirx != 'undefined') actual.ballDirx = update.ballDirx;
+  // if (typeof update.ballDiry != 'undefined') actual.ballDiry = update.ballDiry;
+  // if (typeof update.ballSpeed != 'undefined') actual.ballSpeed = update.ballSpeed;
+  // if (typeof update.gamexsize != 'undefined') actual.gamexsize = update.gamexsize;
+  // if (typeof update.gameysize != 'undefined') actual.gameysize = update.gameysize;
+  // if (typeof update.barLarge != 'undefined') actual.barLarge = update.barLarge;
+  // if (typeof update.oneScore != 'undefined') actual.oneScore = update.oneScore;
+  // if (typeof update.twoScore != 'undefined') actual.twoScore = update.twoScore;
+  // if (typeof update.ballDeb != 'undefined') actual.ballDeb = update.ballDeb;
+  // if (typeof update.ballSize != 'undefined') actual.ballSize = update.ballSize;
+  // if (typeof update.barSize != 'undefined') actual.barSize = update.barSize;
+  // if (typeof update.itemx != 'undefined') actual.itemx = update.itemx;
+  // if (typeof update.itemy != 'undefined') actual.itemy = update.itemy;
+  // if (typeof update.itemSize != 'undefined') actual.itemSize = update.itemSize;
+}
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfoDto[] = [];
-  private readonly lobbyManager: lobbyManager = new lobbyManager(
-    this.connectedClient,
-  );
-  constructor(  
-    private jwt: JwtService,
-  ) {}
+  private readonly lobbyManager: lobbyManager = new lobbyManager();
+  constructor(private jwt: JwtService) {}
   afterInit() {
     console.log('gateway initialised');
   }
 
   handleConnection(client: any, ...args: any[]) {
-    console.error(`Client : ${client.id} ${args}connected`);
     const newClient: clientInfoDto = new clientInfoDto();
     newClient.status = 'connected';
     newClient.socket = client;
     newClient.input = { direction: null, isPressed: false };
+    newClient.matchInfo = {
+      name: 'normal',
+      borderSize: 10,
+      menuSize: 90,
+      ysize: 500,
+      xsize: 800,
+      gamey: 110,
+      gamex: 10,
+      ballx: 100,
+      bally: 100,
+      barDist: 20,
+      oneBary: 10,
+      twoBary: 10,
+      barSpeed: 2,
+      ballDirx: -1,
+      ballDiry: -0.4,
+      ballSpeed: 4.0,
+      gamexsize: 780,
+      gameysize: 380,
+      barLarge: 10,
+      oneScore: 0,
+      twoScore: 0,
+      ballDeb: 150,
+      ballSize: 10,
+      barSize: 100,
+      itemx: 40,
+      itemy: 40,
+      itemSize: 10,
+      numberSize: 10,
+      oneBarColor: 'white',
+      twoBarColor: 'white',
+      ballColor: 'white',
+      backgroundColor: 'black',
+      borderColor: 'white',
+      oneNumberColor: 'white',
+      twoNumberColor: 'white',
+      menuColor: 'black',
+      numberSideDist: 10,
+      numberTopDist: 10,
+    };
     this.connectedClient.push(newClient);
     this.connectedClient.forEach((element) => {
-      console.log('lol', element.socket.id);
     });
   }
 
   @SubscribeMessage('client.openGame')
   handleOpenGame(client: Socket, data: clientInfoDto) {
-    console.log(client.id, 'OpenGame');
+  }
+
+  @SubscribeMessage('client.previewUpdate')
+  handlePreview(client: Socket, data: parameterDto) {
+    client.emit('server.previewUpdate', data);
   }
 
   @SubscribeMessage('client.authentification')
   async handleAuthentification(client: Socket, data: {user: string, token: string}) {
-    console.log(`${client.id}`, data.token); // Broadcast the message to all connected clients
-    if (!data.token) {
-      client.emit('401');
-      client.disconnect(); //mathilde todo
-      throw new UnauthorizedException();
-    }
-    try {
-      const payload = await this.jwt.verifyAsync(data.token, {
-        secret: process.env.APP_SECRET,
-      });
-    } catch {
-      client.disconnect();
-      throw new UnauthorizedException();
-    }
+    // if (!data.token) {
+    //   client.emit('401');
+    //   client.disconnect(); //mathilde todo
+    //   throw new UnauthorizedException();
+    // }
+    // try {
+    //   const payload = await this.jwt.verifyAsync(data.token, {
+    //     secret: process.env.APP_SECRET,
+    //   });
+    // } catch {
+    //   client.disconnect();
+    //   throw new UnauthorizedException();
+    // }
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
@@ -78,6 +144,84 @@ export class PongGateway {
       this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
     }
   }
+
+  @SubscribeMessage('client.createCustom')
+  handleCreateCustom(client: Socket, gameData: gameInfoDto) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].mode = 'custom';
+      this.connectedClient[index].matchInfo = {
+        ballSize: gameData.ballSize,
+        barSize: gameData.barSize,
+        xsize: gameData.xsize,
+        ysize: gameData.ysize,
+        oneBarColor: gameData.oneBarColor,
+        twoBarColor: gameData.twoBarColor,
+        ballColor: gameData.ballColor,
+        backgroundColor: gameData.backgroundColor,
+        borderColor: gameData.borderColor,
+        oneNumberColor: gameData.oneNumberColor,
+        twoNumberColor: gameData.twoNumberColor,
+        menuColor: gameData.menuColor,
+        itemSize: gameData.itemSize,
+        oneScore: gameData.oneScore,
+        twoScore: gameData.twoScore,
+        ballSpeed: gameData.ballSpeed,
+        barDist: gameData.barDist,
+        barSpeed: gameData.barSpeed,
+        barLarge: gameData.barLarge,
+        numberSize: gameData.numberSize,
+        borderSize: gameData.borderSize,
+        menuSize: gameData.menuSize,
+        numberSideDist: gameData.numberSideDist,
+        numberTopDist: gameData.numberTopDist,
+
+        name: gameData.name,
+        ballDirx: gameData.ballDirx,
+        ballDiry: gameData.ballDiry,
+        ballDeb: gameData.ballDeb,
+        gamey: gameData.borderSize * 2 + gameData.menuSize,
+        gamex: gameData.borderSize,
+        gamexsize: gameData.xsize - 2 * gameData.borderSize,
+        gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
+        oneBary: gameData.oneBary,
+        twoBary: gameData.twoBary,
+        ballx: gameData.gamexsize / 2 - 10,
+        bally: gameData.gameysize / 2,
+        itemx: gameData.itemx,
+        itemy: gameData.itemy,
+      };
+      this.lobbyManager.createCustomLobby(this.connectedClient[index]);
+      client.emit('server.matchLoading');
+    }
+  }
+
+  @SubscribeMessage('client.joinMatch')
+  handleJoinCustom(client: Socket, matchName: string) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].status = 'inGame';
+      this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
+      this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchName);
+    }
+  }
+  @SubscribeMessage('client.inJoinTab')
+  handleJoin(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].status = 'inJoinTab';
+      this.lobbyManager.addInJoinTab(this.connectedClient[index]);
+    }
+    const lobbies = this.lobbyManager.getCustomLobbies();
+    lobbies.forEach((value) => {client.emit('server.lobbyCustom', value.getMatchInfo());});
+  }
+
   @SubscribeMessage('client.input')
   handleInput(client: Socket, input: input) {
     const index = this.connectedClient.findIndex((value) => {
@@ -86,27 +230,39 @@ export class PongGateway {
     if (index !== -1) {
       this.connectedClient[index].input = input;
     }
-    console.log(input.direction, input.isPressed);
   }
 
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
+      console.log({ value }, { data });
       return value.user === data.user;
     });
     if (index !== -1) {
-      client.emit('server.getStatusUser', true);
-    } else client.emit('server.getStatusUser', false);
+      client.emit('server.getStatusUser', {
+        data: {
+          username: data.user,
+          status:
+            this.connectedClient[index].status == 'connected'
+              ? 'ONLINE'
+              : 'INGAME',
+        },
+      });
+    } else
+      client.emit('server.getStatusUser', {
+        data: { username: data.user, status: 'OFFLINE' },
+      });
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
       if (this.connectedClient[index].lobby != null) {
-        this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+        this.connectedClient[index].lobby.onDisconnect(
+          this.connectedClient[index],
+        );
       }
       this.connectedClient.splice(index, 1);
     }

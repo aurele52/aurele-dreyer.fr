@@ -61,7 +61,7 @@ export class AuthService {
         process.env.APP_SECRET,
         '3d',
       );
-      return `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}`;
+      return `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}`;
     }
   }
 
