@@ -327,6 +327,7 @@ function scoreTwo(p: p5, nb: number) {
 }
 
 function drawBall(p: p5) {
+	p.fill(gameInfo.ballColor);
 	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, gameInfo.ballSize, gameInfo.ballSize);
 }
 

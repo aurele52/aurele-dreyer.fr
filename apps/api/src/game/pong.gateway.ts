@@ -3,14 +3,10 @@ import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
 import { gameInfoDto } from './dto-interface/gameInfo.dto';
-import { input } from './dto-interface/input.interface';
-import { da } from '@faker-js/faker';
 import { JwtService } from '@nestjs/jwt';
-import { UnauthorizedException } from '@nestjs/common';
-import { CurrentUser } from 'src/decorators/user.decorator';
-import { lobby } from './lobby/lobby';
 import { gameInfo } from './dto-interface/gameInfo.interface';
 import { parameterDto } from './dto-interface/parameter.dto';
+import { input } from './dto-interface/input.interface';
 
 function updateMatchInfo(update: gameInfoDto, actual: gameInfo) {
   // if (typeof update.name != 'undefined') actual.name = update.name;
@@ -51,7 +47,7 @@ export class PongGateway {
     console.log('gateway initialised');
   }
 
-  handleConnection(client: any, ...args: any[]) {
+  handleConnection(client: any) {
     const newClient: clientInfoDto = new clientInfoDto();
     newClient.status = 'connected';
     newClient.socket = client;
@@ -97,8 +93,6 @@ export class PongGateway {
       numberTopDist: 10,
     };
     this.connectedClient.push(newClient);
-    this.connectedClient.forEach((element) => {
-    });
   }
 
   @SubscribeMessage('client.openGame')
@@ -125,7 +119,21 @@ export class PongGateway {
     //   client.disconnect();
     //   throw new UnauthorizedException();
     // }
-    const index = this.connectedClient.findIndex((value) => {
+    // let index = this.connectedClient.findIndex((value) => {
+    //   return value.user === data.user;
+    // });
+    // if (index !== -1) {
+    //   this.connectedClient[index].socket.emit('server.disconnect');
+    //   if (this.connectedClient[index].lobby != null) {
+    //     this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+    //   }
+    //   this.lobbyManager.cleanLobbies();
+    //   if (this.connectedClient[index].status = 'inJoinTab') {
+    //     this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
+    //   }
+    //   this.connectedClient.splice(index, 1);
+    // }
+    let index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
@@ -152,46 +160,14 @@ export class PongGateway {
     });
     if (index !== -1) {
       this.connectedClient[index].mode = 'custom';
-      this.connectedClient[index].matchInfo = {
-        ballSize: gameData.ballSize,
-        barSize: gameData.barSize,
-        xsize: gameData.xsize,
-        ysize: gameData.ysize,
-        oneBarColor: gameData.oneBarColor,
-        twoBarColor: gameData.twoBarColor,
-        ballColor: gameData.ballColor,
-        backgroundColor: gameData.backgroundColor,
-        borderColor: gameData.borderColor,
-        oneNumberColor: gameData.oneNumberColor,
-        twoNumberColor: gameData.twoNumberColor,
-        menuColor: gameData.menuColor,
-        itemSize: gameData.itemSize,
-        oneScore: gameData.oneScore,
-        twoScore: gameData.twoScore,
-        ballSpeed: gameData.ballSpeed,
-        barDist: gameData.barDist,
-        barSpeed: gameData.barSpeed,
-        barLarge: gameData.barLarge,
-        numberSize: gameData.numberSize,
-        borderSize: gameData.borderSize,
-        menuSize: gameData.menuSize,
-        numberSideDist: gameData.numberSideDist,
-        numberTopDist: gameData.numberTopDist,
-
-        name: gameData.name,
-        ballDirx: gameData.ballDirx,
-        ballDiry: gameData.ballDiry,
-        ballDeb: gameData.ballDeb,
+      this.connectedClient[index].status = 'waiting another player';
+      this.connectedClient[index].matchInfo = { ...gameData,
         gamey: gameData.borderSize * 2 + gameData.menuSize,
-        gamex: gameData.borderSize,
         gamexsize: gameData.xsize - 2 * gameData.borderSize,
         gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
-        oneBary: gameData.oneBary,
-        twoBary: gameData.twoBary,
         ballx: gameData.gamexsize / 2 - 10,
         bally: gameData.gameysize / 2,
-        itemx: gameData.itemx,
-        itemy: gameData.itemy,
+
       };
       this.lobbyManager.createCustomLobby(this.connectedClient[index]);
       client.emit('server.matchLoading');
@@ -207,6 +183,7 @@ export class PongGateway {
       this.connectedClient[index].status = 'inGame';
       this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
       this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchName);
+      this.lobbyManager.removeMatch(matchName);
     }
   }
   @SubscribeMessage('client.inJoinTab')
@@ -223,12 +200,12 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.input')
-  handleInput(client: Socket, input: input) {
+  handleInput(client: Socket, inputData: input) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].input = input;
+      this.connectedClient[index].input = inputData;
     }
   }
 
