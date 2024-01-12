@@ -33,7 +33,6 @@
 	align-self: stretch;
 	border-radius: var(--radius-radius-rounded, 8px);
 	border: 1px solid var(--border-border-outside, #000);
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
 	-webkit-user-select: none; /* Safari */
 	-ms-user-select: none; /* IE 10 and IE 11 */
 	user-select: none; /* Standard syntax */
@@ -51,16 +50,32 @@
 }
 
 .Ladder > div > .SelfUser {
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
+	background: var(
+		--Ladder-Gradient,
+		linear-gradient(
+			180deg, 
+			rgba(255, 255, 255, 0.00) 67.04%, 
+	    	rgba(240, 127, 189, 0.20) 86.54%
+		), 
+		linear-gradient(210deg, #FFCAE7 17.61%, #FFF 40.99%, #2BDEC9 80.98%)
+	); 
 }
 
 .Ladder > div > .OtherUser {
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #2BDEC9 8.97%, #FFF 40.99%, #FFCAE7 76.04%);
-
+	background: var(
+		--Ladder-Gradient,
+		linear-gradient(
+			180deg, 
+			rgba(255, 255, 255, 0.00) 67.04%, 
+	    	rgba(240, 127, 189, 0.20) 86.54%
+		), 
+	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 39.55%,  #FFCAE7 76.04%)
+	);
 }
 
 .Ladder > div > .OtherUser:hover {
-	background: linear-gradient(180deg, rgba(255, 255, 255, 0.00) 67.04%, rgba(240, 127, 189, 0.20) 86.54%), linear-gradient(261deg, #FFCAE7 17.61%, #FFF 49.92%, #2BDEC9 80.98%); 
+	background:
+		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 39.55%,   #2BDEC9 76.04%); 
 }
 
 .Ladder > div > .User > .Rank {
@@ -81,17 +96,20 @@
 }
 
 .Ladder > div > .SelfUser > .Rank > div {
-	background: linear-gradient(180deg, #8a2be2 45.77%, #6a5acd 100%);
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 0.35px #000;
+	-webkit-text-stroke: 0.35px #000;
 }
 
 .Ladder > div > .OtherUser > .Rank > div {
-	background: linear-gradient(180deg, #42edd8 45.77%, #3071d2 100%);
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 0.35px #000;
 }
 
 .Ladder > div > .User > .Avatar {

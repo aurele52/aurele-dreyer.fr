@@ -2,7 +2,6 @@ import "./Navbar.css";
 import { connect, ConnectedProps } from "react-redux";
 import { addWindow } from "../../reducers";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
 import { socket } from "../../socket";
 import { IconSVG } from "../../shared/utils/svgComponent";
