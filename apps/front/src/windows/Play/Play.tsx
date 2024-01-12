@@ -7,8 +7,8 @@ import Lose from "./Lose";
 import { MainGameMenu } from "./mainGameMenu";
 import JoinCustom from "./JoinCustom";
 import CreateCustom from "./CreateCustom";
-import { gameInfoDto } from "./dto/gameInfo.dto";
-import { gameInfo } from "./dto/gameInfo.interface";
+import { gameInfoDto } from "./dto/gameInfo.dto.ts";
+import { gameInfo } from "./dto/gameInfo.interface.ts";
 
 interface ConnectionProps {
 	windowId: number;

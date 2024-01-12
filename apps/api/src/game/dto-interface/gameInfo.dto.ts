@@ -39,7 +39,7 @@ export class gameInfoDto {
   gamex: number = 780;
   gamexsize: number = 780;
   gameysize: number = 380;
-
+  
   itemx: number = 40;
   itemy: number = 40;
 

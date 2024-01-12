@@ -4,39 +4,8 @@ import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
 import { gameInfoDto } from './dto-interface/gameInfo.dto';
 import { JwtService } from '@nestjs/jwt';
-import { gameInfo } from './dto-interface/gameInfo.interface';
 import { parameterDto } from './dto-interface/parameter.dto';
 import { input } from './dto-interface/input.interface';
-
-function updateMatchInfo(update: gameInfoDto, actual: gameInfo) {
-  // if (typeof update.name != 'undefined') actual.name = update.name;
-  // if (typeof update.borderSize != 'undefined') actual.borderSize = update.borderSize;
-  // if (typeof update.menuSize != 'undefined') actual.menuSize = update.menuSize;
-  // if (typeof update.ysize != 'undefined') actual.ysize = update.ysize;
-  // if (typeof update.xsize != 'undefined') actual.xsize = update.xsize;
-  // if (typeof update.gamey != 'undefined') actual.gamey = update.gamey;
-  // if (typeof update.gamex != 'undefined') actual.gamex = update.gamex;
-  // if (typeof update.ballx != 'undefined') actual.ballx = update.ballx;
-  // if (typeof update.bally != 'undefined') actual.bally = update.bally;
-  // if (typeof update.barDist != 'undefined') actual.barDist = update.barDist;
-  // if (typeof update.oneBary != 'undefined') actual.oneBary = update.oneBary;
-  // if (typeof update.twoBary != 'undefined') actual.twoBary = update.twoBary;
-  // if (typeof update.barSpeed != 'undefined') actual.barSpeed = update.barSpeed;
-  // if (typeof update.ballDirx != 'undefined') actual.ballDirx = update.ballDirx;
-  // if (typeof update.ballDiry != 'undefined') actual.ballDiry = update.ballDiry;
-  // if (typeof update.ballSpeed != 'undefined') actual.ballSpeed = update.ballSpeed;
-  // if (typeof update.gamexsize != 'undefined') actual.gamexsize = update.gamexsize;
-  // if (typeof update.gameysize != 'undefined') actual.gameysize = update.gameysize;
-  // if (typeof update.barLarge != 'undefined') actual.barLarge = update.barLarge;
-  // if (typeof update.oneScore != 'undefined') actual.oneScore = update.oneScore;
-  // if (typeof update.twoScore != 'undefined') actual.twoScore = update.twoScore;
-  // if (typeof update.ballDeb != 'undefined') actual.ballDeb = update.ballDeb;
-  // if (typeof update.ballSize != 'undefined') actual.ballSize = update.ballSize;
-  // if (typeof update.barSize != 'undefined') actual.barSize = update.barSize;
-  // if (typeof update.itemx != 'undefined') actual.itemx = update.itemx;
-  // if (typeof update.itemy != 'undefined') actual.itemy = update.itemy;
-  // if (typeof update.itemSize != 'undefined') actual.itemSize = update.itemSize;
-}
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
