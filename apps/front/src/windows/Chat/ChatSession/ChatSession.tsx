@@ -42,6 +42,11 @@ type MutedData = {
 function ChatSession({ channelId }: ChatSessionProps) {
 	const queryClient = useQueryClient();
 
+	const [receivedInvitation, setReceivedInvitation] = useState<{
+		username: string;
+		id: number;
+	} | null>(null);
+
 	const { data: selfId } = useQuery<number>({
 		queryKey: ["selfId"],
 		queryFn: async () => {
@@ -102,6 +107,20 @@ function ChatSession({ channelId }: ChatSessionProps) {
 				queryKey: ["messages", channelId],
 			});
 			setValueMessage("");
+		},
+	});
+
+	const { mutateAsync: deleteGameInvitation } = useMutation({
+		mutationFn: async () => {
+			return api.delete(`/message/invitation`);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({
+				queryKey: ["messages", channelId],
+			});
+		},
+		onError: (error) => {
+			console.error(error.message);
 		},
 	});
 
@@ -192,6 +211,9 @@ function ChatSession({ channelId }: ChatSessionProps) {
 		if (listRef.current) {
 			listRef.current.scrollTop = listRef.current.scrollHeight;
 		}
+		return () => {
+			if (receivedInvitation) setReceivedInvitation(null);
+		};
 	}, [messages]);
 
 	const handleKeyPress = (
@@ -215,6 +237,63 @@ function ChatSession({ channelId }: ChatSessionProps) {
 		return false;
 	};
 
+	const handleAcceptGameRequest = async () => {
+		const newWindow = {
+			WindowName: "Play",
+			id: 0,
+			toggle: false,
+			content: { type: "PLAY" },
+			handleBarButton:
+				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+			targetId: receivedInvitation?.id,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
+		deleteGameInvitation();
+	};
+
+	const handleRejectGameRequest = async () => {
+		//send socket to cancel game
+		deleteGameInvitation();
+	};
+
+	const handleMatchButton = async () => {
+		sendMessage({ message: "/PongInvitation", channel_id: channelId });
+		const newWindow = {
+			WindowName: "Play",
+			id: 0,
+			toggle: false,
+			content: { type: "PLAY" },
+			handleBarButton:
+				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+			targetId: chat?.interlocutor.id,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
+	};
+
+	const pendingGameRequest = () => {
+		if (receivedInvitation)
+			return (
+				<div className="PendingGameRequest">
+					<div className="Text">
+						{receivedInvitation.username} send you a game request
+					</div>
+					<Button
+						color="pink"
+						icon="Check"
+						onClick={handleAcceptGameRequest}
+					/>
+					<Button
+						color="red"
+						icon="WhiteClose"
+						onClick={handleRejectGameRequest}
+					/>
+				</div>
+			);
+		else return null;
+	};
+
 	return (
 		<div className="ChatSession">
 			<div className="headerChatSession">
@@ -224,14 +303,31 @@ function ChatSession({ channelId }: ChatSessionProps) {
 					title="About"
 					onClick={handleDetails}
 				/>
-				{chat?.type === "DM" ? (
-					<Button content="Match" color="blue" />
+				{chat?.type === "DM" && !receivedInvitation ? (
+					<Button
+						content="Match"
+						color="blue"
+						onClick={handleMatchButton}
+					/>
 				) : (
 					""
 				)}
 			</div>
+			{receivedInvitation ? pendingGameRequest() : ""}
 			<List ref={listRef}>
 				{messages?.map((message) => {
+					if (
+						message.content === "/PongInvitation" &&
+						chat?.type === "DM"
+					) {
+						if (message.user.id !== selfId && !receivedInvitation)
+							setReceivedInvitation({
+								username: message.user.username,
+								id: message.user.id,
+							});
+
+						return "";
+					}
 					return !isBlocked(message) ? (
 						<Message message={message} key={message.id} />
 					) : (

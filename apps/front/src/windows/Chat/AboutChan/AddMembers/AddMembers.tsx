@@ -17,7 +17,7 @@ function AddMembers({ channelId }: AddMembersProps) {
 	const [searchBarValue, setSearchBarValue] = useState("");
 
 	const { data: users } = useQuery<{ id: number; username: string }[]>({
-		queryKey: ["users", channelId],
+		queryKey: ["addChannel", channelId],
 		queryFn: async () => {
 			return api
 				.get("/channel/" + channelId + "/nonmembers")

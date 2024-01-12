@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { FriendslistService } from './friendslist.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 

@@ -1,6 +1,6 @@
 import "./Background.css";
 import { connect } from "react-redux";
-import { AppState } from "../../reducers";
+import { AppState, delWindow } from "../../reducers";
 import { ConnectedProps } from "react-redux";
 import Window from "../../shared/ui-components/Window/Window";
 import Chat from "../../windows/Chat/Chat";
@@ -24,15 +24,32 @@ import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
 import Preview from "../../windows/Play/Preview.tsx";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useEffect, useState } from "react";
+import { EventSourcePolyfill } from "event-source-polyfill";
+import api from "../../axios.ts";
+import store from "../../store.tsx";
+
+enum FriendshipEventType {
+  FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
+  FRIENDSHIPREMOVED = "FRIENDSHIPREMOVED",
+  FRIENDREQUESTREVOKED = "FRIENDREQUESTREVOKED",
+  FRIENDREQUESTACCEPTED = "FRIENDREQUESTACCEPTED",
+  USERBLOCKED = "USERBLOCKED",
+  USERUNBLOCKED = "USERUNBLOCKED",
+  NOEVENT = "NOEVENT",
+}
 
 interface BackgroundProps extends ReduxProps {}
 
 export function Background({ windows }: BackgroundProps) {
-	interface WindowDimensions {
-		width: string;
-		height: string;
-	}
-  
+  const queryClient = useQueryClient();
+
+  interface WindowDimensions {
+    width: string;
+    height: string;
+  }
+
   const windowDimensions: Record<string, WindowDimensions> = {
     PLAY: { width: "820px", height: "540px" },
     LADDER: { width: "450px", height: "600px" },
@@ -55,8 +72,244 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
-    PREVIEW: { width: "900px", height: "900px" },
+		PREVIEW: { width: "900px", height: "900px" },
   };
+
+  const [currentTargetId, setCurrentTargetId] = useState(null);
+
+  const { data: commonChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["commonChannels", currentTargetId],
+    queryFn: () => {
+      return api
+        .get("/channels/common/" + currentTargetId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetId,
+  });
+
+  const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["currUserOnlyChannels", currentTargetId],
+    queryFn: () => {
+      return api
+        .get("/channels/excluded/" + currentTargetId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetId,
+  });
+
+  const { data: targetUser } = useQuery<{ id: number; username: string }>({
+    queryKey: ["username", currentTargetId],
+    queryFn: () => {
+      return api
+        .get("/user/" + currentTargetId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetId,
+  });
+
+  const invalidateMessagesQueries = () => {
+    commonChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["messages", c.id],
+      });
+    });
+  };
+
+  const invalidateAddChannelQueries = () => {
+    currUserOnlyChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["addChannel", c.id],
+      });
+    });
+  };
+
+  const closeDMWindow = () => {
+    let windows = store.getState().windows;
+    console.log(targetUser);
+    windows = windows.filter(
+      (window) =>
+        window.WindowName === targetUser?.username &&
+        window.content.type === "CHATSESSION"
+    );
+    windows.forEach((window) => store.dispatch(delWindow(window.id)));
+  };
+
+  const [friendshipEventType, setFriendshipEventType] = useState(
+    FriendshipEventType.NOEVENT
+  );
+
+  useEffect(() => {
+    switch (friendshipEventType) {
+      case FriendshipEventType.FRIENDREQUESTRECEIVED:
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        break;
+      case FriendshipEventType.FRIENDSHIPREMOVED:
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        break;
+      case FriendshipEventType.FRIENDREQUESTREVOKED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        break;
+      case FriendshipEventType.FRIENDREQUESTACCEPTED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        break;
+      case FriendshipEventType.USERUNBLOCKED:
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        invalidateMessagesQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        invalidateAddChannelQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        break;
+      case FriendshipEventType.USERBLOCKED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        invalidateAddChannelQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetId],
+        });
+        invalidateMessagesQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetId],
+        });
+        closeDMWindow();
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [friendshipEventType]);
+
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      const eventSource = new EventSourcePolyfill(
+        "api/stream/friendshipevents",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      eventSource.onmessage = ({ data }) => {
+        const parsedData = JSON.parse(data);
+        const type = parsedData.type;
+        const targetId = parsedData.targetId;
+        setCurrentTargetId(targetId);
+        setFriendshipEventType(type);
+      };
+
+      eventSource.onerror = (error) => {
+        console.error("EventSource failed:", error);
+      };
+
+      return () => {
+        eventSource.close();
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryClient, setCurrentTargetId]);
+
   return (
     <div id="Background">
       {Array.isArray(windows) &&
@@ -78,8 +331,17 @@ export function Background({ windows }: BackgroundProps) {
               zindex={window.zindex || 0}
               isModal={window.content.type === "MODAL"}
             >
-              {window.content.type === "PLAY" && <Play />}
-              {window.content.type === "PREVIEW" && <Preview />}
+              {window.content.type === "PLAY" && (
+								<Play
+									windowId={window.id}
+									privateLobby={
+										window.targetId
+											? { targetId: window.targetId }
+											: undefined
+									}
+								/>
+							)}
+							{window.content.type === "PREVIEW" && <Preview />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}
@@ -98,7 +360,8 @@ export function Background({ windows }: BackgroundProps) {
                 <Achievements targetId={window.targetId} />
               )}
               {window.content.type === "FRIENDSLIST" && <FriendsList />}
-              {(window.content.type === "MODAL" || window.content.type === "MODALREQUESTED") && (
+              {(window.content.type === "MODAL" ||
+                window.content.type === "MODALREQUESTED") && (
                 <Modal
                   content={window.modal?.content}
                   type={window.modal?.type}
@@ -141,7 +404,7 @@ export function Background({ windows }: BackgroundProps) {
 }
 
 const mapStateToProps = (state: AppState) => ({
-	windows: state.windows,
+  windows: state.windows,
 });
 
 const connector = connect(mapStateToProps);

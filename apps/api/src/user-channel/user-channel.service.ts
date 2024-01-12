@@ -2,10 +2,36 @@ import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { UserChannelRoles } from './roles/user-channel.roles';
 import { DateTime } from 'luxon';
+import { ChanType } from '@prisma/client';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Injectable()
 export class UserChannelService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+    private readonly friendshipService: FriendshipService,
+  ) {}
+
+  async containBlockedUser(channel_id: number, user_id: number) {
+    const userChannels = await this.prisma.userChannel.findMany({
+      where: {
+        channel_id,
+        user_id: { not: user_id },
+      },
+      include: {
+        User: true,
+      },
+    });
+
+    for (const uc of userChannels) {
+      if (
+        await this.friendshipService.isBlockedRelationship(uc.User.id, user_id)
+      ) {
+        return true;
+      }
+    }
+    return false;
+  }
 
   async createUserChannel(params: {
     userId: number;
@@ -20,6 +46,7 @@ export class UserChannelService {
       },
       include: {
         banList: true,
+        userChannels: {},
       },
     });
 
@@ -31,7 +58,14 @@ export class UserChannelService {
       throw new Error('User is banned in this channel.');
     }
 
-    const createUserChannel = await this.prisma.userChannel.create({
+    if (
+      channel.type === ChanType.DM &&
+      (await this.containBlockedUser(channelId, userId))
+    ) {
+      throw new Error('DM cannot be created');
+    }
+
+    return await this.prisma.userChannel.create({
       data: {
         User: {
           connect: {
@@ -46,8 +80,6 @@ export class UserChannelService {
         role,
       },
     });
-
-    return createUserChannel;
   }
 
   async deleteUserChannel(id: number) {

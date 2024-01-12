@@ -118,10 +118,7 @@ export class FriendslistService {
               {
                 friendship_user2: {
                   none: {
-                    OR: [
-                      { status: { equals: 'FRIENDS' }, user1_id: selfId },
-                      { status: { equals: 'BLOCKED' }, user1_id: selfId },
-                    ],
+                    user1_id: selfId,
                   },
                 },
               },
