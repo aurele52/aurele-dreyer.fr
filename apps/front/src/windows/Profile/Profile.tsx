@@ -613,8 +613,8 @@ export function Profile({ targetId }: ProfileProps) {
 					{nameDiv()}
 					<div className="Stats">
 						<div>
-							<div className="Rank">
-								<div className="Position">
+							<div className="Rank" >
+								<div className="Position" onClick={handleOpenLadder}>
 									<div>Rank #{profile?.rank ?? 0}</div>
 								</div>
 								<div
@@ -626,25 +626,13 @@ export function Profile({ targetId }: ProfileProps) {
 										{profile?.loose_count ?? 0}
 									</div>
 								</div>
-								<Button
-									icon="Arrow"
-									color="pink"
-									style={{ display: "flex" }}
-									onClick={handleOpenLadder}
-								/>
 							</div>
 						</div>
 					</div>
-					<div className="ProfileAchievements">
-						<div style={{ paddingRight: "4px" }}>
-							Achievements lvl. {profile?.achievement_lvl}
+					<div className="ProfileAchievements" onClick={() => handleOpenAchievements()}>
+						<div style={{ paddingRight: "4px" }}>	
+							Achievements lvl. {profile?.achievement_lvl}	
 						</div>
-						<Button
-							icon="Arrow"
-							color="pink"
-							style={{ display: "flex" }}
-							onClick={() => handleOpenAchievements()}
-						/>
 					</div>
 					{buttons}
 				</div>

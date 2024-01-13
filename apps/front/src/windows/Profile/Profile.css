@@ -163,6 +163,7 @@
 }
 
 .Profile > .Header > .Text > .Stats > div > .Rank > .Position {
+	cursor: pointer;
 	display: flex;
 	width: 84px;
 	align-items: center;
@@ -208,6 +209,7 @@
 
 .Profile > .Header > .Text > .ProfileAchievements > div {
 	color: var(--Base-Black, #000);
+	cursor: pointer;
 
 	/* Text/400/Regular */
 	font-family: Chakra Petch;
