@@ -2,9 +2,8 @@ import "./Pong.css";
 import { useEffect, useRef, useState } from "react";
 import p5 from "p5";
 import { socket } from "../../socket";
-import { gameInfo } from "./dto/gameInfo.interface.ts";
-import { parameterDto } from "./dto/parameter.dto.ts";
-import { normalGameInfo } from "./dto/normalGameInfo.ts";
+import { gameInfo } from "shared/src/gameInfo.interface";
+import { normalGameInfo } from "shared/src/normalGameInfo";
 
 export default function Preview() {
 	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);

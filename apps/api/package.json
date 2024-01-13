@@ -25,6 +25,7 @@
     "with-env": "dotenv -e ../../.env.local -- $@"
   },
   "dependencies": {
+    "shared": "file:../shared",
     "@nestjs/common": "^10.0.0",
     "@nestjs/core": "^10.0.0",
     "@nestjs/event-emitter": "^2.0.3",

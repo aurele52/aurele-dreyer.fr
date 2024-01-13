@@ -9,7 +9,7 @@
   },
   "workspaces": [
     "api",
-    "packages/*",
+    "shared",
     "front"
   ],
   "dependencies": {

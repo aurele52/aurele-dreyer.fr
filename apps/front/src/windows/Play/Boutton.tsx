@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { gameInfoDto } from "./dto/gameInfo.dto";
+import { gameInfoDto } from "shared/src/gameInfo.dto";
 import { socket } from "../../socket";
 import store from "../../store";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";

@@ -2,9 +2,10 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
-import { gameInfoDto } from './dto-interface/gameInfo.dto';
+import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
+import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
 import { JwtService } from '@nestjs/jwt';
-import { parameterDto } from './dto-interface/parameter.dto';
+import { parameterDto } from './dto-interface/shared/parameter.dto';
 import { input } from './dto-interface/input.interface';
 
 @WebSocketGateway({ cors: true })
@@ -21,52 +22,12 @@ export class PongGateway {
     newClient.status = 'connected';
     newClient.socket = client;
     newClient.input = { direction: null, isPressed: false };
-    newClient.matchInfo = {
-      name: 'normal',
-      borderSize: 10,
-      menuSize: 90,
-      ysize: 500,
-      xsize: 800,
-      gamey: 110,
-      gamex: 10,
-      ballx: 100,
-      bally: 100,
-      barDist: 20,
-      oneBary: 10,
-      twoBary: 10,
-      barSpeed: 2,
-      ballDirx: -1,
-      ballDiry: -0.4,
-      ballSpeed: 4.0,
-      gamexsize: 780,
-      gameysize: 380,
-      barLarge: 10,
-      oneScore: 0,
-      twoScore: 0,
-      ballDeb: 150,
-      ballSize: 10,
-      barSize: 100,
-      itemx: 40,
-      itemy: 40,
-      itemSize: 10,
-      numberSize: 10,
-      oneBarColor: 'white',
-      twoBarColor: 'white',
-      ballColor: 'white',
-      backgroundColor: 'black',
-      borderColor: 'white',
-      oneNumberColor: 'white',
-      twoNumberColor: 'white',
-      menuColor: 'black',
-      numberSideDist: 10,
-      numberTopDist: 10,
-    };
+    newClient.matchInfo = { ...normalGameInfo };
     this.connectedClient.push(newClient);
   }
 
   @SubscribeMessage('client.openGame')
-  handleOpenGame(client: Socket, data: clientInfoDto) {
-  }
+  handleOpenGame(client: Socket, data: clientInfoDto) {}
 
   @SubscribeMessage('client.previewUpdate')
   handlePreview(client: Socket, data: parameterDto) {
@@ -130,13 +91,14 @@ export class PongGateway {
     if (index !== -1) {
       this.connectedClient[index].mode = 'custom';
       this.connectedClient[index].status = 'waiting another player';
-      this.connectedClient[index].matchInfo = { ...gameData,
+      this.connectedClient[index].matchInfo = {
+        ...normalGameInfo,
+        ...gameData,
         gamey: gameData.borderSize * 2 + gameData.menuSize,
         gamexsize: gameData.xsize - 2 * gameData.borderSize,
         gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
         ballx: gameData.gamexsize / 2 - 10,
         bally: gameData.gameysize / 2,
-
       };
       this.lobbyManager.createCustomLobby(this.connectedClient[index]);
       client.emit('server.matchLoading');

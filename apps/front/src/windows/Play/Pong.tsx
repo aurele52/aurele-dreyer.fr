@@ -2,7 +2,7 @@ import "./Pong.css";
 import { useEffect, useRef } from "react";
 import p5 from "p5";
 import { socket } from "../../socket";
-import { gameInfo } from "./dto/gameInfo.interface.ts";
+import { gameInfo } from "shared/src/gameInfo.interface";
 
 interface scaleInfo {
 		yborderSize: number,

@@ -1,6 +1,6 @@
-import { gameInfoDto } from "./gameInfo.dto";
+import { gameInfo } from "./gameInfo.interface";
 
-  export const normalGameInfo: gameInfoDto = {
+  export const normalGameInfo: gameInfo = {
     name: 'normal',
     borderSize: 10,
     menuSize: 90,
