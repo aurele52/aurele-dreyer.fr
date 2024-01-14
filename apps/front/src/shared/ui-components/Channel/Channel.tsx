@@ -5,7 +5,7 @@ type ChannelProps = {
   name: string;
   clickable: boolean;
   image?: string;
-  notif: number;
+  notif: number
 } & React.HTMLAttributes<HTMLDivElement>;
 
 function Channel({
@@ -17,6 +17,7 @@ function Channel({
   notif,
   ...props
 }: ChannelProps) {
+
   return (
     <div
       {...props}
