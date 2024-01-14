@@ -1,5 +1,8 @@
 {
   "compilerOptions": {
+	   "paths": {
+    "@shared/*": ["../../packages/shared/src/*"]
+  },
     "module": "commonjs",
     "declaration": true,
     "removeComments": true,
@@ -17,5 +20,7 @@
     "strictBindCallApply": false,
     "forceConsistentCasingInFileNames": false,
     "noFallthroughCasesInSwitch": false
-  }
+  },
+  "include": ["src"],
+  "references": [{ "path": "./tsconfig.node.json" }]
 }

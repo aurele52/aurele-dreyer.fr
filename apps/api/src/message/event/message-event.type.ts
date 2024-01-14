@@ -1,4 +1,4 @@
-export interface CustomMessageEvent {
+export type CustomMessageEvent = {
   message: string;
   channel_id: number;
-}
+};

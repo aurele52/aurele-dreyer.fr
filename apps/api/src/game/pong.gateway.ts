@@ -1,65 +1,69 @@
-import {
-  ConnectedSocket,
-  MessageBody,
-  SubscribeMessage,
-  WebSocketGateway,
-} from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfoDto } from './dto-interface/clientInfo.dto';
-import { input } from './dto-interface/input.interface';
-import { da } from '@faker-js/faker';
+import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
+import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
 import { JwtService } from '@nestjs/jwt';
-import { UnauthorizedException } from '@nestjs/common';
-import { CurrentUser } from 'src/decorators/user.decorator';
+import { parameterDto } from './dto-interface/shared/parameter.dto';
+import { input } from './dto-interface/input.interface';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfoDto[] = [];
-  private readonly lobbyManager: lobbyManager = new lobbyManager(
-    this.connectedClient,
-  );
+  private readonly lobbyManager: lobbyManager = new lobbyManager();
   constructor(private jwt: JwtService) {}
   afterInit() {
     console.log('gateway initialised');
   }
 
-  handleConnection(client: any, ...args: any[]) {
-    console.error(`Client : ${client.id} ${args}connected`);
+  handleConnection(client: any) {
     const newClient: clientInfoDto = new clientInfoDto();
     newClient.status = 'connected';
     newClient.socket = client;
     newClient.input = { direction: null, isPressed: false };
+    newClient.matchInfo = { ...normalGameInfo };
     this.connectedClient.push(newClient);
-    this.connectedClient.forEach((element) => {
-      console.log('lol', element.socket.id);
-    });
   }
 
   @SubscribeMessage('client.openGame')
-  handleOpenGame(client: Socket, data: clientInfoDto) {
-    console.log(client.id, 'OpenGame');
+  handleOpenGame(client: Socket, data: clientInfoDto) {}
+
+  @SubscribeMessage('client.previewUpdate')
+  handlePreview(client: Socket, data: parameterDto) {
+    client.emit('server.previewUpdate', data);
   }
 
   @SubscribeMessage('client.authentification')
-  async handleAuthentification(
-    client: Socket,
-    data: { user: string; token: string },
-  ) {
-    if (!data.token) {
-      client.emit('401');
-      client.disconnect(); //mathilde todo
-      throw new UnauthorizedException();
-    }
-    try {
-      const payload = await this.jwt.verifyAsync(data.token, {
-        secret: process.env.APP_SECRET,
-      });
-    } catch {
-      client.disconnect();
-      throw new UnauthorizedException();
-    }
-    const index = this.connectedClient.findIndex((value) => {
+  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
+    // if (!data.token) {
+    //   client.emit('401');
+    //   client.disconnect(); //mathilde todo
+    //   throw new UnauthorizedException();
+    // }
+    // try {
+    //   const payload = await this.jwt.verifyAsync(data.token, {
+    //     secret: process.env.APP_SECRET,
+    //   });
+    // } catch {
+    //   client.disconnect();
+    //   throw new UnauthorizedException();
+    // }
+    // let index = this.connectedClient.findIndex((value) => {
+    //   return value.user === data.user;
+    // });
+    // if (index !== -1) {
+    //   this.connectedClient[index].socket.emit('server.disconnect');
+    //   if (this.connectedClient[index].lobby != null) {
+    //     this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
+    //   }
+    //   this.lobbyManager.cleanLobbies();
+    //   if (this.connectedClient[index].status = 'inJoinTab') {
+    //     this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
+    //   }
+    //   this.connectedClient.splice(index, 1);
+    // }
+    let index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
@@ -78,15 +82,62 @@ export class PongGateway {
       this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
     }
   }
-  @SubscribeMessage('client.input')
-  handleInput(client: Socket, input: input) {
+
+  @SubscribeMessage('client.createCustom')
+  handleCreateCustom(client: Socket, gameData: gameInfoDto) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].input = input;
+      this.connectedClient[index].mode = 'custom';
+      this.connectedClient[index].status = 'waiting another player';
+      this.connectedClient[index].matchInfo = {
+        ...normalGameInfo,
+        ...gameData,
+        gamey: gameData.borderSize * 2 + gameData.menuSize,
+        gamexsize: gameData.xsize - 2 * gameData.borderSize,
+        gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
+        ballx: gameData.gamexsize / 2 - 10,
+        bally: gameData.gameysize / 2,
+      };
+      this.lobbyManager.createCustomLobby(this.connectedClient[index]);
+      client.emit('server.matchLoading');
     }
-    console.log(input.direction, input.isPressed);
+  }
+
+  @SubscribeMessage('client.joinMatch')
+  handleJoinCustom(client: Socket, matchName: string) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].status = 'inGame';
+      this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
+      this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchName);
+      this.lobbyManager.removeMatch(matchName);
+    }
+  }
+  @SubscribeMessage('client.inJoinTab')
+  handleJoin(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].status = 'inJoinTab';
+      this.lobbyManager.addInJoinTab(this.connectedClient[index]);
+    }
+    const lobbies = this.lobbyManager.getCustomLobbies();
+    lobbies.forEach((value) => {client.emit('server.lobbyCustom', value.getMatchInfo());});
+  }
+
+  @SubscribeMessage('client.input')
+  handleInput(client: Socket, inputData: input) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.connectedClient[index].input = inputData;
+    }
   }
 
   @SubscribeMessage('client.getStatusUser')
@@ -112,7 +163,6 @@ export class PongGateway {
   }
 
   handleDisconnect(client: Socket) {
-    console.log(`Cliend ${client.id} disconnected`);
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });

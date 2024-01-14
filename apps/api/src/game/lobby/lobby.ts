@@ -2,48 +2,9 @@ import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
 import { PrismaService } from 'src/prisma.service';
-
-interface gameInfo {
-  barDist: number;
-  barSpeed: number;
-  barLarge: number;
-  barSize: number;
-  ballDirx: number;
-  ballDiry: number;
-  ballSpeed: number;
-  ballSize: number;
-  ballDeb: number;
-  gamexsize: number;
-  gameysize: number;
-  ballx: number;
-  bally: number;
-  oneBary: number;
-  twoBary: number;
-  oneScore: number;
-  twoScore: number;
-  itemx: number;
-  itemy: number;
-  itemSize: number;
-}
+import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
 
 export class lobby {
-  constructor(
-    connectedClientList: clientInfoDto[],
-    isCustom: LobbyCustom,
-    private readonly prisma: PrismaService = new PrismaService(),
-  ) {
-    this.prisma = new PrismaService();
-    this.connectedClient = connectedClientList;
-    this.isCustom = isCustom;
-    if (this.isCustom == 'normal') {
-      this.gameInfo.ballSize = 10;
-      this.gameInfo.barSize = 100;
-    }
-    if (this.isCustom == 'custom') {
-      this.gameInfo.ballSize = 50;
-      this.gameInfo.barSize = 10;
-    }
-  }
   isEmpty(): boolean {
     if (this.clients.length == 0) return true;
     return false;
@@ -66,6 +27,9 @@ export class lobby {
     if (this.clients[1] == user) {
       this.win(this.clients[0], this.clients[1]);
     }
+  }
+  getPlayer() {
+    return this.clients;
   }
   disconnectAll() {
     this.clients.splice(0);
@@ -234,10 +198,19 @@ export class lobby {
       }
     }
   }
-
+  public getMatchInfo() {
+    return this.defaultGameInfo;
+  }
+  constructor(isCustom: LobbyCustom, matchInfo: gameInfo, private readonly prisma: PrismaService = new PrismaService()) {
+    this.prisma = new PrismaService();
+    this.isCustom = isCustom;
+    if (this.isCustom == 'custom') {
+      this.defaultGameInfo = matchInfo;
+      this.gameInfo = {...matchInfo};
+    }
+  }
   public readonly isCustom: LobbyCustom;
 
-  private connectedClient: clientInfoDto[];
   public readonly id: string = uuidv4();
 
   private clients: clientInfoDto[] = [];
@@ -249,7 +222,14 @@ export class lobby {
   delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  private gameInfo: gameInfo = {
+  private defaultGameInfo: gameInfo = {
+    name: 'normal',
+    borderSize: 10,
+    menuSize: 90,
+    ysize: 500,
+    xsize: 800,
+    gamey: 110,
+    gamex: 10,
     ballx: 100,
     bally: 100,
     barDist: 20,
@@ -270,6 +250,60 @@ export class lobby {
     itemx: 40,
     itemy: 40,
     itemSize: 10,
+    numberSize: 10,
+    oneBarColor: 'white',
+    twoBarColor: 'white',
+    ballColor: 'white',
+    backgroundColor: 'black',
+    borderColor: 'white',
+    oneNumberColor: 'white',
+    twoNumberColor: 'white',
+    menuColor: 'black',
+    numberSideDist: 10,
+    numberTopDist: 10,
+  };
+  private gameInfo: gameInfo = {
+    ballSize: this.defaultGameInfo.ballSize,
+    barSize: this.defaultGameInfo.barSize,
+    xsize: this.defaultGameInfo.xsize,
+    ysize: this.defaultGameInfo.ysize,
+    oneBarColor: this.defaultGameInfo.oneBarColor,
+    twoBarColor: this.defaultGameInfo.twoBarColor,
+    ballColor: this.defaultGameInfo.ballColor,
+    backgroundColor: this.defaultGameInfo.backgroundColor,
+    borderColor: this.defaultGameInfo.borderColor,
+    oneNumberColor: this.defaultGameInfo.oneNumberColor,
+    twoNumberColor: this.defaultGameInfo.twoNumberColor,
+    menuColor: this.defaultGameInfo.menuColor,
+    itemSize: this.defaultGameInfo.itemSize,
+    oneScore: this.defaultGameInfo.oneScore,
+    twoScore: this.defaultGameInfo.twoScore,
+    ballSpeed: this.defaultGameInfo.ballSpeed,
+    barDist: this.defaultGameInfo.barDist,
+    barSpeed: this.defaultGameInfo.barSpeed,
+    barLarge: this.defaultGameInfo.barLarge,
+    numberSize: this.defaultGameInfo.numberSize,
+    borderSize: this.defaultGameInfo.borderSize,
+    menuSize: this.defaultGameInfo.menuSize,
+    numberSideDist: this.defaultGameInfo.numberSideDist,
+    numberTopDist: this.defaultGameInfo.numberTopDist,
+
+    name: this.defaultGameInfo.name,
+    // ballDirx: this.defaultGameInfo.ballDirx,
+    // ballDiry: this.defaultGameInfo.ballDiry,
+    ballDirx: 0,
+    ballDiry: 1,
+    ballDeb: this.defaultGameInfo.ballDeb,
+    gamey: this.defaultGameInfo.gamey,
+    gamex: this.defaultGameInfo.gamex,
+    gamexsize: this.defaultGameInfo.gamexsize,
+    gameysize: this.defaultGameInfo.gameysize,
+    oneBary: this.defaultGameInfo.oneBary,
+    twoBary: this.defaultGameInfo.twoBary,
+    ballx: this.defaultGameInfo.ballx,
+    bally: this.defaultGameInfo.bally,
+    itemx: this.defaultGameInfo.itemx,
+    itemy: this.defaultGameInfo.itemy,
   };
   move() {
     if (this.clients[0].input.direction == 'up')
@@ -332,13 +366,14 @@ export class lobby {
   }
 
   async start() {
-    while (
-      this.finish === 0 &&
-      this.gameInfo.oneScore < 9 &&
-      this.gameInfo.twoScore < 9
-    ) {
+    this.clients[0].socket.emit('server.matchStart', this.defaultGameInfo);
+    this.clients[1].socket.emit('server.matchStart', this.defaultGameInfo);
+    while (this.finish === 0 && this.gameInfo.oneScore < 9 && this.gameInfo.twoScore < 9) {
       this.update();
       this.clients[0].socket.emit('server.update', {
+        barDist: this.gameInfo.barDist,
+        barLarge: this.gameInfo.barLarge,
+        itemSize: this.gameInfo.itemSize,
         ballx: this.gameInfo.ballx,
         bally: this.gameInfo.bally,
         oneBary: this.gameInfo.oneBary,
@@ -349,7 +384,6 @@ export class lobby {
         barSize: this.gameInfo.barSize,
         itemx: this.gameInfo.itemx,
         itemy: this.gameInfo.itemy,
-        itemSize: this.gameInfo.itemSize,
       });
       this.clients[1].socket.emit('server.update', this.gameInfo);
       await this.delay(20);

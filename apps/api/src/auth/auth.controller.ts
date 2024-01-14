@@ -110,7 +110,7 @@ export class AuthController {
       process.env.APP_SECRET,
       '3d',
     );
-    return { url: `${process.env.DOMAIN_NAME_FRONT}/auth/redirect/${token}` };
+    return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
   }
 
   @Post('/2fa/enable')

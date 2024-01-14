@@ -1,3 +1,4 @@
+import "./mainGameMenu.css";
 
 interface mainGameMenuProps {
 	normalOnClick: () => void;
@@ -8,9 +9,9 @@ interface mainGameMenuProps {
 export function MainGameMenu(props: mainGameMenuProps) {
 	return (
 		<div className="mainGameMenu">
-			<button onClick={props.normalOnClick}>Normal Game</button>
-			<button onClick={props.createCustomOnClick}>Create Custom Game</button>
-			<button onClick={props.joinCustomOnClick}>Join Custom Game</button>
+			<button className="joinNormalButton" onClick={props.normalOnClick}>Normal Game</button>
+			<button className="joinCustomButton" onClick={props.createCustomOnClick}>Create Custom Game</button>
+			<button className="createCustomButton" onClick={props.joinCustomOnClick}>Join Custom Game</button>
 		</div>
 	);
 }

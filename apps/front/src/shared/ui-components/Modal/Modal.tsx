@@ -4,7 +4,7 @@ import { ModalType, addModal, iconsModal } from "../../utils/AddModal";
 import { Button } from "../Button/Button";
 import store from "../../../store";
 import { addWindow, delWindow } from "../../../reducers";
-import { useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../../axios";
 import { router } from "../../../router";
 import { WinColor } from "../../utils/WindowTypes";
@@ -43,65 +43,145 @@ function Modal({
 }: ModalProps) {
 	const queryClient = useQueryClient();
 
-	const { mutateAsync: deleteFriendship } = useMutation({
-		mutationFn: async () => {
-			return api.delete("/relationship/friends/" + targetId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["friendship", targetId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["friendsList"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["user", targetId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["pendingRequests"],
-			});
-		},
-	});
-	console.log({ channelId });
-	const { mutateAsync: deleteBlockedFriendship } = useMutation({
-		mutationFn: async () => {
-			return api.delete("/relationship/blocked/" + targetId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["friendship", targetId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["blockedUsers"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["user", targetId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["pendingRequests"],
-			});
-		},
-	});
+  const { data: commonChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["commonChannels"],
+    queryFn: () => {
+      return api
+        .get("/channels/common/" + targetId)
+        .then((response) => response.data);
+    },
+  });
 
-	const { mutateAsync: addBlockedFriendship } = useMutation({
-		mutationFn: async () => {
-			return api.post("/block/" + targetId);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({
-				queryKey: ["friendship", targetId],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["blockedUsers"],
-			});
-			queryClient.invalidateQueries({
-				queryKey: ["user", targetId],
-			});
+  const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["currUserOnlyChannels"],
+    queryFn: () => {
+      return api
+        .get("/channels/excluded/" + targetId)
+        .then((response) => response.data);
+    },
+  });
+
+  const { data: user } = useQuery<{ id: number, username: string}>({
+    queryKey: ["username", targetId],
+    queryFn: () => {
+      return api.get("/user/" + targetId).then((response) => response.data);
+    }
+  })
+
+  const { mutateAsync: deleteFriendship } = useMutation({
+    mutationFn: async () => {
+      return api.delete("/relationship/friends/" + targetId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friendship", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["friendsList"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["addFriendsList"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
 			queryClient.invalidateQueries({
 				queryKey: ["pendingRequests"],
 			});
-		},
-	});
+    },
+  });
+
+  const { mutateAsync: deleteBlockedFriendship } = useMutation({
+    mutationFn: async () => {
+      return await api.delete("/relationship/blocked/" + targetId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friendship", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["blockedUsers"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
+      invalidateMessagesQueries();
+      queryClient.invalidateQueries({
+        queryKey: ["addFriendsList"],
+      });
+      invalidateAddChannelQueries();
+			queryClient.invalidateQueries({
+				queryKey: ["pendingRequests"],
+			});
+    },
+  });
+
+  const invalidateMessagesQueries = () => {
+    commonChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["messages", c.id],
+      });
+    });
+  };
+
+  const invalidateAddChannelQueries = () => {
+    currUserOnlyChannels?.forEach((c) => {
+      queryClient.invalidateQueries({
+        queryKey: ["addChannel", c.id],
+      });
+    });
+  };
+
+  const closeDMWindow = () => {
+    const windows = store.getState().windows;
+    windows
+      .filter((window) => window.WindowName === user?.username && window.content.type === "CHATSESSION")
+      .forEach((window) => store.dispatch(delWindow(window.id)));
+  };
+
+  const { mutateAsync: addBlockedFriendship } = useMutation({
+    mutationFn: async () => {
+      return await api.post("/block/" + targetId);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["friendship", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["blockedUsers"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["user", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["pendingRequests"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+      invalidateMessagesQueries();
+      queryClient.invalidateQueries({
+        queryKey: ["friendsList"],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["addFriendsList"],
+      });
+      invalidateAddChannelQueries();
+      closeDMWindow();
+    },
+  });
 
 	const { mutateAsync: makeAdmin } = useMutation({
 		mutationFn: async () => {
@@ -197,23 +277,23 @@ function Modal({
 		},
 	});
 
-	const { mutateAsync: createUserChannel } = useMutation({
-		mutationFn: async (param: { channelId: number }) => {
-			return api.post("/user-channel", param);
-		},
-		onSuccess: () => {
-			queryClient.invalidateQueries({ queryKey: ["channels"] });
-			queryClient.invalidateQueries({ queryKey: ["chats"] });
-		},
-	});
+  const { mutateAsync: createUserChannel } = useMutation({
+    mutationFn: async (param: { channelId: number }) => {
+      return api.post("/user-channel", param);
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["channels"] });
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+    },
+  });
 
-	const { mutateAsync: checkPasswordChannel } = useMutation({
-		mutationFn: async (param: { password: string }) => {
-			return api
-				.post("/channel/" + channelId + "/checkpwd", param)
-				.then((response) => response.data);
-		},
-	});
+  const { mutateAsync: checkPasswordChannel } = useMutation({
+    mutationFn: async (param: { password: string }) => {
+      return api
+        .post("/channel/" + channelId + "/checkpwd", param)
+        .then((response) => response.data);
+    },
+  });
 
 	const [password, setPassword] = useState("");
 

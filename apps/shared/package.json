@@ -1,0 +1,20 @@
+{
+  "name": "shared",
+  "version": "1.0.0",
+  "description": "shared type dto and interface",
+  "main": "dist/index.js",
+  "module": "src/index.ts",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "tsc"
+  },
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/node": "*",
+    "typescript": "^5.3.2"
+  },
+  "dependencies": {
+    "class-validator": "^0.14.1"
+  }
+}

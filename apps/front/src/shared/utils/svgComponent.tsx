@@ -5,6 +5,7 @@ export type IconSVGKey =
 	| "Reduce"
 	| "Enlarge"
 	| "Close"
+	| "WhiteClose"
 	| "Plus"
 	| "Lens"
 	| "Chat"
@@ -267,6 +268,88 @@ export const IconSVG: { [key in IconSVGKey]: ReactElement } = {
 				height="2"
 				fill="#F06E8D"
 				stroke="#F06E8D"
+			/>
+		</svg>
+	),
+	WhiteClose: (
+		<svg
+			width="18"
+			height="18"
+			viewBox="0 0 18 18"
+			fill="none"
+			xmlns="http://www.w3.org/2000/svg"
+		>
+			<rect
+				x="4"
+				y="5"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="10"
+				y="7"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="12"
+				y="5"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="6"
+				y="7"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="6"
+				y="11"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="4"
+				y="13"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="8"
+				y="9"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="10"
+				y="11"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
+			/>
+			<rect
+				x="12"
+				y="13"
+				width="2"
+				height="2"
+				fill="white"
+				stroke="white"
 			/>
 		</svg>
 	),
