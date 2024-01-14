@@ -6,7 +6,7 @@ export const baseClientInfo: clientInfo = {
   socket: null,
   lobby: null,
   user: '',
-  mode: 'normal',
+  mode: null,
   status: 'connected',
   input: { ...baseInput },
   matchInfo: { ...normalGameInfo },

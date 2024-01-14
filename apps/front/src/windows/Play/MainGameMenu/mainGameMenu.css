@@ -64,3 +64,9 @@ background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%,
 .joinCustomWaitingButton {
 background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
 }
+.createCustomInTabButton {
+background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+}
+.joinCustomInTabButton {
+background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+}

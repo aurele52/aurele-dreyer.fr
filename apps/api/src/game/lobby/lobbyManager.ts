@@ -10,7 +10,7 @@ export class lobbyManager {
   public createCustomLobby(client: clientInfo) {
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
-    client.status = 'waiting another player';
+    client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
     this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
@@ -31,7 +31,7 @@ export class lobbyManager {
   }
   public addToNormalQueue(client: clientInfo) {
     this.normalQueue.push(client);
-    client.status = 'waiting another player';
+    client.status = 'waiting join normal';
     this.MATCH();
   }
   public cleanLobbies() {

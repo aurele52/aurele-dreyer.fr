@@ -284,7 +284,7 @@ function scoreTwo(p: p5, nb: number) {
 		4 * gameInfo.numberSize,
 		7 * gameInfo.numberSize
 	);
-	p.fill(gameInfo.oneScoreColor);
+	p.fill(gameInfo.twoScoreColor);
 	drawNumber(p, nb, gameInfo.xsize - gameInfo.borderSize - gameInfo.numberSideDist - 4 * gameInfo.numberSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 

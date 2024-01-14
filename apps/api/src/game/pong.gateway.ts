@@ -4,7 +4,6 @@ import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfo } from './dto-interface/clientInfo.interface';
 import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
 import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
-import { JwtService } from '@nestjs/jwt';
 import { input } from './dto-interface/input.interface';
 import { baseClientInfo } from './dto-interface/baseClientInfo';
 
@@ -12,7 +11,6 @@ import { baseClientInfo } from './dto-interface/baseClientInfo';
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
-  constructor(private jwt: JwtService) {}
   afterInit() {
     console.log('gateway initialised');
   }
@@ -26,8 +24,8 @@ export class PongGateway {
   @SubscribeMessage('client.openGame')
   handleOpenGame(client: Socket) {}
 
-  @SubscribeMessage('client.closeGame')
-  handleCloseGame(client: Socket) {
+  @SubscribeMessage('client.closeMainWindow')
+  handleCloseMainWindow(client: Socket) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
@@ -36,6 +34,8 @@ export class PongGateway {
         this.connectedClient[index].lobby.onDisconnect(
           this.connectedClient[index],
         );
+      }
+      if (this.connectedClient[index].status == 'waiting join normal') {
       }
     }
     this.lobbyManager.cleanLobbies();
@@ -86,6 +86,7 @@ export class PongGateway {
 
   @SubscribeMessage('client.normalMatchmaking')
   handleMatchmaking(client: Socket) {
+    console.log('lol');
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
@@ -103,7 +104,7 @@ export class PongGateway {
     });
     if (index !== -1) {
       this.connectedClient[index].mode = 'custom';
-      this.connectedClient[index].status = 'waiting another player';
+      this.connectedClient[index].status = 'waiting create custom';
       this.connectedClient[index].matchInfo = {
         ...normalGameInfo,
         ...gameData,
