@@ -23,10 +23,12 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	const [createCustomInGameDisplay, setCreateCustomInGameDisplay] = useState<boolean>(false);
 	const [createCustomWaitingDisplay, setCreateCustomWaitingDisplay] = useState<boolean>(false);
 	const [createCustomDesactivateDisplay, setCreateCustomDesactivateDisplay] = useState<boolean>(false);
+	const [createCustomInTabDisplay, setCreateCustomInTabDisplay] = useState<boolean>(false);
 	const [joinCustomDefaultDisplay, setJoinCustomDefaultDisplay] = useState<boolean>(true);
 	const [joinCustomInGameDisplay, setJoinCustomInGameDisplay] = useState<boolean>(false);
 	const [joinCustomWaitingDisplay, setJoinCustomWaitingDisplay] = useState<boolean>(false);
 	const [joinCustomDesactivateDisplay, setJoinCustomDesactivateDisplay] = useState<boolean>(false);
+	const [joinCustomInTabDisplay, setJoinCustomInTabDisplay] = useState<boolean>(false);
 
 	function onMatchStart(gameInfo: gameInfo) {
 		const newWindow = {
@@ -49,6 +51,8 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		}
 		socket.on('server.matchStart', onMatchStart);
 		return () => {
+			socket.emit('server.closeMainWindow');
+			socket.off('server.matchStart', onMatchStart);
 		};
 	}, [privateLobby]);
 
@@ -78,7 +82,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(false);
 		setJoinCustomDesactivateDisplay(true);
 		setCreateCustomDefaultDisplay(false);
-		setCreateCustomWaitingDisplay(true);
+		setCreateCustomInTabDisplay(true);
 	}
 	function joinCustomDefaultOnClick() {
 		const newWindow = {
@@ -95,7 +99,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinNormalDefaultDisplay(false);
 		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDefaultDisplay(false);
-		setJoinCustomWaitingDisplay(true);
+		setJoinCustomInTabDisplay(true);
 		setCreateCustomDefaultDisplay(false);
 		setCreateCustomDesactivateDisplay(true);
 	}
@@ -106,6 +110,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(true);
 		setCreateCustomDesactivateDisplay(false);
 		setCreateCustomDefaultDisplay(true);
+		socket.emit('client.joinNormalAbort');
 	}
 	function createCustomWaitingOnClick() {
 		setJoinNormalDesactivateDisplay(false);
@@ -114,6 +119,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(true);
 		setCreateCustomWaitingDisplay(false);
 		setCreateCustomDefaultDisplay(true);
+		socket.emit('client.createCustomAbort');
 	}
 	function joinCustomWaitingOnClick() {
 		setJoinNormalDesactivateDisplay(false);
@@ -122,6 +128,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(true);
 		setCreateCustomDesactivateDisplay(false);
 		setCreateCustomDefaultDisplay(true);
+		socket.emit('client.joinCustomAbort');
 	}
 	function joinNormalDesactivateOnClick() {
 	}
@@ -135,6 +142,10 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	}
 	function joinCustomInGameOnClick() {
 	}
+	function createCustomInTabOnClick() {
+	}
+	function joinCustomInTabOnClick() {
+	}
 	return (
 		<div className="mainGameMenu">
 			{joinNormalDefaultDisplay === true && <button className="joinNormalDefaultButton" onClick={joinNormalDefaultOnClick}>Normal Game</button>}
@@ -145,10 +156,12 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 			{createCustomDesactivateDisplay === true && <button className="createCustomDesativateButton" onClick={createCustomDesactivateOnClick}>Create Custom Game</button>}
 			{createCustomInGameDisplay === true && <button className="createCustomInGameButton" onClick={createCustomInGameOnClick}>In Game</button>}
 			{createCustomWaitingDisplay === true && <button className="createCustomWaitingButton" onClick={createCustomWaitingOnClick}>Waiting</button>}
+			{createCustomInTabDisplay === true && <button className="createCustomInTabButton" onClick={createCustomInTabOnClick}>In Create Custom Windows</button>}
 			{joinCustomDefaultDisplay === true && <button className="joinCustomDefaultButton" onClick={joinCustomDefaultOnClick}>Join Custom Game</button>}
 			{joinCustomDesactivateDisplay === true && <button className="joinCustomDesactivateButton" onClick={joinCustomDesactivateOnClick}>Join Custom Game</button>}
 			{joinCustomInGameDisplay === true && <button className="joinCustomInGameButton" onClick={joinCustomInGameOnClick}>In Game</button>}
 			{joinCustomWaitingDisplay === true && <button className="joinCustomWaitingButton" onClick={joinCustomWaitingOnClick}>Waiting</button>}
+			{joinCustomInTabDisplay === true && <button className="joinCustomInTabButton" onClick={joinCustomInTabOnClick}>In Join Window</button>}
 		</div>
 	);
 }

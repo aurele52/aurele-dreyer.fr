@@ -12,7 +12,7 @@ export class clientInfoDto {
   @IsString()
   mode: 'normal' | 'custom';
   @IsString()
-  status: 'connected' | 'waiting another player' | 'inGame' | 'inJoinTab';
+  status: 'connected' | 'waiting join normal' | 'waiting create custom' | 'inGame' | 'inJoinTab';
   input: input;
   matchInfo: gameInfo;
 }

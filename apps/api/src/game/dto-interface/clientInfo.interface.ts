@@ -8,7 +8,7 @@ export interface clientInfo {
   lobby?: lobby | null;
   user: string;
   mode: 'normal' | 'custom';
-  status: 'connected' | 'waiting another player' | 'inGame' | 'inJoinTab';
+  status: 'connected' | 'waiting join normal' | 'waiting create custom' | 'inGame' | 'inJoinTab';
   input: input;
   matchInfo: gameInfo;
 }
