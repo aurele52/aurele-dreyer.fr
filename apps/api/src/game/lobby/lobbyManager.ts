@@ -1,13 +1,13 @@
 import { lobby } from './lobby';
-import { clientInfoDto } from '../dto-interface/clientInfo.dto';
+import { clientInfo } from '../dto-interface/clientInfo.interface';
 
 export class lobbyManager {
   private normalLobbies: lobby[] = [];
   private customLobbies: lobby[] = [];
-  private normalQueue: clientInfoDto[] = [];
-  private inJoinTab: clientInfoDto[] = [];
+  private normalQueue: clientInfo[] = [];
+  private inJoinTab: clientInfo[] = [];
 
-  public createCustomLobby(client: clientInfoDto) {
+  public createCustomLobby(client: clientInfo) {
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
     client.status = 'waiting another player';
@@ -18,10 +18,10 @@ export class lobbyManager {
   public removeMatch(matchName: string) {
     this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
   }
-  public addInJoinTab(client: clientInfoDto) {
+  public addInJoinTab(client: clientInfo) {
     this.inJoinTab.push(client);
   }
-  public removeInJoinTab(client: clientInfoDto) {
+  public removeInJoinTab(client: clientInfo) {
     const index = this.inJoinTab.findIndex((value) => {
       return value === client;
     });
@@ -29,7 +29,7 @@ export class lobbyManager {
       this.inJoinTab.splice(index, 1);
     }
   }
-  public addToNormalQueue(client: clientInfoDto) {
+  public addToNormalQueue(client: clientInfo) {
     this.normalQueue.push(client);
     client.status = 'waiting another player';
     this.MATCH();
@@ -41,7 +41,7 @@ export class lobbyManager {
   public getCustomLobbies() {
     return this.customLobbies;
   }
-  public addPlayerToMatch(client: clientInfoDto, matchInfo: string) {
+  public addPlayerToMatch(client: clientInfo, matchInfo: string) {
     const index = this.customLobbies.findIndex((value) => {
       return value.getMatchInfo().name === matchInfo;
     });

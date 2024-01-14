@@ -1,8 +1,9 @@
 import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
-import { clientInfoDto } from '../dto-interface/clientInfo.dto';
 import { PrismaService } from 'src/prisma.service';
 import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
+import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
+import { clientInfo } from '../dto-interface/clientInfo.interface';
 
 export class lobby {
   isEmpty(): boolean {
@@ -11,6 +12,7 @@ export class lobby {
   }
   private finish = 0;
   ballWallRedir() {
+    console.log(this.gameInfo.ballSize);
     if (
       this.gameInfo.bally + this.gameInfo.ballSize + this.gameInfo.ballSpeed >=
       this.gameInfo.gameysize
@@ -19,7 +21,7 @@ export class lobby {
     if (this.gameInfo.bally - this.gameInfo.ballSpeed <= 0)
       this.gameInfo.ballDiry *= -1;
   }
-  onDisconnect(user: clientInfoDto) {
+  onDisconnect(user: clientInfo) {
     this.finish = 1;
     if (this.clients[0] == user) {
       this.win(this.clients[1], this.clients[0]);
@@ -35,7 +37,7 @@ export class lobby {
     this.clients.splice(0);
   }
 
-  async win(winner, loser) {
+  async win(winner: clientInfo, loser: clientInfo) {
     try {
       winner.socket.emit('server.win');
 
@@ -87,7 +89,7 @@ export class lobby {
     }
   }
 
-  lose(user: clientInfoDto) {
+  lose(user: clientInfo) {
     user.socket.emit('server.lose');
   }
 
@@ -213,98 +215,17 @@ export class lobby {
 
   public readonly id: string = uuidv4();
 
-  private clients: clientInfoDto[] = [];
+  private clients: clientInfo[] = [];
 
-  addClient(client: clientInfoDto) {
+  addClient(client: clientInfo) {
     this.clients.push(client);
   }
 
   delay(ms: number) {
     return new Promise((resolve) => setTimeout(resolve, ms));
   }
-  private defaultGameInfo: gameInfo = {
-    name: 'normal',
-    borderSize: 10,
-    menuSize: 90,
-    ysize: 500,
-    xsize: 800,
-    gamey: 110,
-    gamex: 10,
-    ballx: 100,
-    bally: 100,
-    barDist: 20,
-    oneBary: 10,
-    twoBary: 10,
-    barSpeed: 2,
-    ballDirx: -1,
-    ballDiry: -0.4,
-    ballSpeed: 4.0,
-    gamexsize: 780,
-    gameysize: 380,
-    barLarge: 10,
-    oneScore: 0,
-    twoScore: 0,
-    ballDeb: 150,
-    ballSize: 10,
-    barSize: 100,
-    itemx: 40,
-    itemy: 40,
-    itemSize: 10,
-    numberSize: 10,
-    oneBarColor: 'white',
-    twoBarColor: 'white',
-    ballColor: 'white',
-    backgroundColor: 'black',
-    borderColor: 'white',
-    oneNumberColor: 'white',
-    twoNumberColor: 'white',
-    menuColor: 'black',
-    numberSideDist: 10,
-    numberTopDist: 10,
-  };
-  private gameInfo: gameInfo = {
-    ballSize: this.defaultGameInfo.ballSize,
-    barSize: this.defaultGameInfo.barSize,
-    xsize: this.defaultGameInfo.xsize,
-    ysize: this.defaultGameInfo.ysize,
-    oneBarColor: this.defaultGameInfo.oneBarColor,
-    twoBarColor: this.defaultGameInfo.twoBarColor,
-    ballColor: this.defaultGameInfo.ballColor,
-    backgroundColor: this.defaultGameInfo.backgroundColor,
-    borderColor: this.defaultGameInfo.borderColor,
-    oneNumberColor: this.defaultGameInfo.oneNumberColor,
-    twoNumberColor: this.defaultGameInfo.twoNumberColor,
-    menuColor: this.defaultGameInfo.menuColor,
-    itemSize: this.defaultGameInfo.itemSize,
-    oneScore: this.defaultGameInfo.oneScore,
-    twoScore: this.defaultGameInfo.twoScore,
-    ballSpeed: this.defaultGameInfo.ballSpeed,
-    barDist: this.defaultGameInfo.barDist,
-    barSpeed: this.defaultGameInfo.barSpeed,
-    barLarge: this.defaultGameInfo.barLarge,
-    numberSize: this.defaultGameInfo.numberSize,
-    borderSize: this.defaultGameInfo.borderSize,
-    menuSize: this.defaultGameInfo.menuSize,
-    numberSideDist: this.defaultGameInfo.numberSideDist,
-    numberTopDist: this.defaultGameInfo.numberTopDist,
-
-    name: this.defaultGameInfo.name,
-    // ballDirx: this.defaultGameInfo.ballDirx,
-    // ballDiry: this.defaultGameInfo.ballDiry,
-    ballDirx: 0,
-    ballDiry: 1,
-    ballDeb: this.defaultGameInfo.ballDeb,
-    gamey: this.defaultGameInfo.gamey,
-    gamex: this.defaultGameInfo.gamex,
-    gamexsize: this.defaultGameInfo.gamexsize,
-    gameysize: this.defaultGameInfo.gameysize,
-    oneBary: this.defaultGameInfo.oneBary,
-    twoBary: this.defaultGameInfo.twoBary,
-    ballx: this.defaultGameInfo.ballx,
-    bally: this.defaultGameInfo.bally,
-    itemx: this.defaultGameInfo.itemx,
-    itemy: this.defaultGameInfo.itemy,
-  };
+  private defaultGameInfo: gameInfo = { ...normalGameInfo };
+  private gameInfo: gameInfo = { ...this.defaultGameInfo };
   move() {
     if (this.clients[0].input.direction == 'up')
       if (this.gameInfo.oneBary > 0)
@@ -340,8 +261,8 @@ export class lobby {
               this.gameInfo.itemx + this.gameInfo.itemSize &&
             this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
           ) {
-            this.gameInfo.itemSize = -1;
-            this.gameInfo.ballSize = 10;
+            this.gameInfo.itemSize = 0;
+            this.gameInfo.ballSize = 100;
             return;
           }
         }

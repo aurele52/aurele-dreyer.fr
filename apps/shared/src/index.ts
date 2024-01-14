@@ -1,5 +1,3 @@
-export const lol = 'bonjour';
-
 export interface gameInfo {
   barDist: number;
   barSpeed: number;
@@ -28,8 +26,8 @@ export interface gameInfo {
   ballColor: string;
   backgroundColor: string;
   borderColor: string;
-  oneNumberColor: string;
-  twoNumberColor: string;
+  oneScoreColor: string;
+  twoScoreColor: string;
   menuColor: string;
   // not in setting
   name: string;
@@ -79,8 +77,8 @@ export class gameInfoDto {
   ballColor: string = 'white';
   backgroundColor: string = 'black';
   borderColor: string = 'white';
-  oneNumberColor: string = 'white';
-  twoNumberColor: string = 'white';
+  oneScoreColor: string = 'white';
+  twoScoreColor: string = 'white';
   menuColor: string = 'black';
   // not in setting
   name: string = 'normal';

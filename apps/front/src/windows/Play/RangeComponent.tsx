@@ -10,30 +10,31 @@ const Input = styled(MuiInput)`
 `;
 
 interface rangeProps{
+	name: string,
 	min: number,
 	max: number,
 	step: number,
 	value: number,
 	label: string;
-	setValue: (Value: number) => void;
+	setValue: (Name: string, Value: number) => void;
 }
 
 export default function RangeComponent(props: rangeProps) {
 
   const handleSliderChange = (event: Event, newValue: number | number[]) => {
-    props.setValue(newValue as number);
+    props.setValue(props.name, newValue as number);
   };
 
   const handleInputChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    props.setValue(event.target.value === '' ? props.min : Number(event.target.value));
+    props.setValue(props.name, event.target.value === '' ? props.min : Number(event.target.value));
   };
 
   const handleBlur = () => {
-	props.setValue(props.value - props.value % props.step);
+	props.setValue(props.name, props.value - props.value % props.step);
     if (props.value < props.min) {
-      props.setValue(0);
+      props.setValue(props.name, 0);
     } else if (props.value > props.max) {
-      props.setValue(100);
+      props.setValue(props.name, 100);
     }
   };
 

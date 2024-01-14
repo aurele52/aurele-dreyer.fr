@@ -51,7 +51,6 @@ export function Background({ windows }: BackgroundProps) {
   }
 
   const windowDimensions: Record<string, WindowDimensions> = {
-    PLAY: { width: "820px", height: "540px" },
     LADDER: { width: "450px", height: "600px" },
     CHAT: { width: "400px", height: "400px" },
     PROFILE: { width: "500px", height: "500px" },
@@ -72,7 +71,11 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
-		PREVIEW: { width: "900px", height: "900px" },
+    PLAY: { width: "820px", height: "540px" },
+    PONG: { width: "820px", height: "540px" },
+	PREVIEW: { width: "900px", height: "900px" },
+	CREATECUSTOM: { width: "900px", height: "900px" },
+	JOINCUSTOM: { width: "900px", height: "900px" },
   };
 
   const [currentTargetId, setCurrentTargetId] = useState(null);
@@ -331,17 +334,6 @@ export function Background({ windows }: BackgroundProps) {
               zindex={window.zindex || 0}
               isModal={window.content.type === "MODAL"}
             >
-              {window.content.type === "PLAY" && (
-								<Play
-									windowId={window.id}
-									privateLobby={
-										window.targetId
-											? { targetId: window.targetId }
-											: undefined
-									}
-								/>
-							)}
-							{window.content.type === "PREVIEW" && <Preview />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}
@@ -396,6 +388,20 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "CHATSESSION" && (
                 <ChatSession channelId={window.content.id} />
               )}
+              {window.content.type === "PLAY" && (
+								<Play
+									windowId={window.id}
+									privateLobby={
+										window.targetId
+											? { targetId: window.targetId }
+											: undefined
+									}
+								/>
+							)}
+			{window.content.type === "PONG" && <Preview />}
+			{window.content.type === "PREVIEW" && <Preview />}
+			{window.content.type === "CREATECUSTOM" && <Preview />}
+			{window.content.type === "JOINCUSTOM" && <Preview />}
             </Window>
           );
         })}
