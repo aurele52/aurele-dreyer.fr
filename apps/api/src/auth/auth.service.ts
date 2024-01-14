@@ -1,7 +1,6 @@
 import {
   ForbiddenException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
@@ -34,16 +33,52 @@ export class AuthService {
     };
   }
 
+  async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {
+    return fetch('https://api.intra.42.fr/oauth/token', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        grant_type: 'authorization_code',
+        client_id: process.env.API42_ID,
+        client_secret: process.env.API42_SECRET,
+        code: code,
+        redirect_uri: `${process.env.DOMAIN_NAME_BACK}/api/auth/callback`,
+        state: state,
+      }),
+    }).then((response) => {
+      if (!response.ok) {
+        console.log(
+          `${response.status}: ${response.statusText} - could not fetch access token from 42`,
+        );
+        const err_message = 'Connection with 42 refused';
+        console.log('401 EXCEPTION THROWN: ', err_message);
+        throw new UnauthorizedException(err_message);
+      }
+      return response.json() as any as AccessToken42;
+    });
+  }
+
+  async fetchUserInfo(access_token: string): Promise<UserInfo42> {
+    return fetch('https://api.intra.42.fr/v2/me', {
+      method: 'GET',
+      headers: { Authorization: `Bearer ${access_token}` },
+    }).then((response) => {
+      if (!response.ok) {
+        console.log(
+          `${response.status}: ${response.statusText} - could not fetch user info from 42`,
+        );
+        const err_message = 'Connection with 42 refused';
+        console.log('401 EXCEPTION THROWN: ', err_message);
+        throw new UnauthorizedException(err_message);
+      }
+      return response.json() as any as UserInfo42;
+    });
+  }
+
   async getUserbyId42(id_42: number) {
-    const user = await this.prisma.user.findUnique({
+    return await this.prisma.user.findUnique({
       where: { id_42 },
     });
-    if (!user) {
-      const err_message = `User with 42 ID ${id_42} not found`;
-      console.log('404 EXCEPTION THROWN: ', err_message);
-      throw new NotFoundException(err_message);
-    }
-    return user;
   }
 
   async signIn(user: User, access_token_42: string) {
@@ -90,56 +125,6 @@ export class AuthService {
         console.log({ error });
         throw new ForbiddenException(err_message);
       }
-    }
-  }
-
-  async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {
-    try {
-      return fetch('https://api.intra.42.fr/oauth/token', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({
-          grant_type: 'authorization_code',
-          client_id: process.env.API42_ID,
-          client_secret: process.env.API42_SECRET,
-          code: code,
-          redirect_uri: `${process.env.DOMAIN_NAME_BACK}/api/auth/callback`,
-          state: state,
-        }),
-      }).then((response) => {
-        if (!response.ok) {
-          return Promise.reject(
-            `ERROR ${response.status} - ${response.statusText}: could not fetch access token`,
-          );
-        }
-        return response.json() as any as AccessToken42;
-      });
-    } catch (error) {
-      const err_message = 'Connection with 42 refused';
-      console.log('401 EXCEPTION THROWN: ', err_message);
-      console.log({ error });
-      throw new UnauthorizedException(err_message);
-    }
-  }
-
-  async fetchUserInfo(access_token: string): Promise<UserInfo42> {
-    try {
-      return fetch('https://api.intra.42.fr/v2/me', {
-        method: 'GET',
-        headers: { Authorization: `Bearer ${access_token}` },
-      }).then((response) => {
-        if (!response.ok) {
-          return Promise.reject(
-            `ERROR ${response.status} - ${response.statusText}: could not fetch user info`,
-          );
-        }
-        return response.json() as any as UserInfo42;
-      });
-    } catch (error) {
-      const err_message = 'Could not create user';
-      console.log('401 EXCEPTION THROWN: ', err_message);
-      console.log({ error });
-      throw new UnauthorizedException(err_message);
     }
   }
 

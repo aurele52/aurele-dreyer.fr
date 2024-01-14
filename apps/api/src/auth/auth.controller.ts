@@ -54,21 +54,30 @@ export class AuthController {
     @Query('code') code: string,
     @Query('state') state: string,
   ) {
-    const user_infos_42 = await this.authService.fetchInfo42(code, state);
     try {
+      const user_infos_42 = await this.authService.fetchInfo42(code, state);
       const user = await this.authService.getUserbyId42(user_infos_42.id);
-      const redirect_url = await this.authService.signIn(
-        user,
-        user_infos_42.access_token,
-      );
-      return { url: redirect_url };
-    } catch {
-      const token_tmp = await this.jwtService.signAsync(user_infos_42, {
-        secret: process.env.APP_TMP_SECRET,
-        expiresIn: '180s',
-      });
+      if (user) {
+        const redirect_url = await this.authService.signIn(
+          user,
+          user_infos_42.access_token,
+        );
+        return { url: redirect_url };
+      } else {
+        const token_tmp = await this.jwtService.signAsync(user_infos_42, {
+          secret: process.env.APP_TMP_SECRET,
+          expiresIn: '180s',
+        });
+        return {
+          url: `${process.env.DOMAIN_NAME_FRONT}/auth/sign-up?id=${token_tmp}`,
+        };
+      }
+    } catch (error) {
       return {
-        url: `${process.env.DOMAIN_NAME_FRONT}/auth/sign-up?id=${token_tmp}`,
+        message: error.response?.message,
+        error: error.response?.error,
+        statusCode: error.response?.statusCode,
+        url: `${process.env.DOMAIN_NAME_FRONT}/auth`,
       };
     }
   }
