@@ -17,18 +17,21 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
-import Play from "../../windows/Play/Play.tsx";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
-import Preview from "../../windows/Play/Preview.tsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import api from "../../axios.ts";
-import store from "../../store.tsx";
+import api from "../../axios";
+import store from "../../store";
+import Pong from "../../windows/Play/Pong/Pong";
+import CreateCustom from "../../windows/Play/CreateGame/CreateCustom";
+import JoinCustom from "../../windows/Play/JoinGame/JoinCustom";
+import MainGameMenu from "../../windows/Play/MainGameMenu/mainGameMenu";
+import Preview from "../../windows/Play/Preview/Preview";
 
 enum FriendshipEventType {
   FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
@@ -389,7 +392,7 @@ export function Background({ windows }: BackgroundProps) {
                 <ChatSession channelId={window.content.id} />
               )}
               {window.content.type === "PLAY" && (
-								<Play
+								<MainGameMenu
 									windowId={window.id}
 									privateLobby={
 										window.targetId
@@ -398,10 +401,10 @@ export function Background({ windows }: BackgroundProps) {
 									}
 								/>
 							)}
-			{window.content.type === "PONG" && <Preview />}
+			{window.content.type === "PONG" && <Pong gameInfo={window.gameInfo}/>}
 			{window.content.type === "PREVIEW" && <Preview />}
-			{window.content.type === "CREATECUSTOM" && <Preview />}
-			{window.content.type === "JOINCUSTOM" && <Preview />}
+			{window.content.type === "CREATECUSTOM" && <CreateCustom />}
+			{window.content.type === "JOINCUSTOM" && <JoinCustom />}
             </Window>
           );
         })}

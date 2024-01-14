@@ -1,43 +1,13 @@
-import "./Pong.css";
-import { useEffect, useRef } from "react";
+import "../Pong/Pong.css";
+import { useEffect, useRef, useState } from "react";
 import p5 from "p5";
-import { socket } from "../../socket";
 import { gameInfo } from "shared/src/gameInfo.interface";
+import { normalGameInfo } from "shared/src/normalGameInfo";
+import { gameInfoDto } from "shared/src/gameInfo.dto";
+import { socket } from "../../../socket";
 
-interface scaleInfo {
-		yborderSize: number,
-		xborderSize: number,
-		ynumberSize: number,
-		xnumberSize: number,
-		yitemSize: number,
-		xitemSize: number,
-		xballSize: number,
-		yballSize: number,
-}
-interface pongProps {
-	gameInfo: gameInfo;
-}
-
-export default function Pong(props: pongProps) {
-	const defaultGameInfo = {
-			...props.gameInfo,
-			gamex: props.gameInfo.borderSize,
-			gamey: props.gameInfo.borderSize * 2 + props.gameInfo.menuSize,
-	};
-	const gameInfo: gameInfo ={
-		...defaultGameInfo
-	};
-	const scaleInfo: scaleInfo ={
-		yborderSize: gameInfo.borderSize,
-		xborderSize: gameInfo.borderSize,
-		ynumberSize: gameInfo.borderSize,
-		xnumberSize: gameInfo.borderSize,
-		yitemSize: gameInfo.itemSize,
-		xitemSize: gameInfo.itemSize,
-		xballSize: gameInfo.ballSize,
-		yballSize: gameInfo.ballSize,
-	};
-
+export default function Preview() {
+	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
 
 function drawBoardMidline(p: p5) {
 	p.fill(gameInfo.borderColor);
@@ -334,35 +304,17 @@ function move(p: p5) {
 	if (input != 1 && p.keyIsDown(p.DOWN_ARROW)) {
 		socket.emit("client.input", { direction: "down", isPressed: true });
 		input = 1;
+		// if (oneBary + barSize < gameysize)
+		// oneBary = oneBary + (p.deltaTime / 1000) * barSpeed;
 	} else if (input != 2 && p.keyIsDown(p.UP_ARROW)) {
 		socket.emit("client.input", { direction: "up", isPressed: true });
 		input = 2;
+		// if (oneBary > 0)
+		// oneBary = oneBary - (p.deltaTime / 1000) * barSpeed;
 	} else if (input == 0) {
 		socket.emit("client.input", { direction: null, isPressed: false });
 		input = -1;
 	}
-}
-
-function compteur(p: p5, nb: number) {
-	p.fill(gameInfo.borderColor);
-	p.circle(gameInfo.xsize / 2, gameInfo.ysize / 2, 150);
-	p.fill(gameInfo.backgroundColor);
-	p.circle(gameInfo.xsize / 2, gameInfo.ysize / 2, 150 - 10 * 2);
-	p.fill("white");
-	if (nb != 1)
-		drawNumber(
-			p,
-			nb,
-			gameInfo.xsize / 2 - scaleInfo.xborderSize * 2,
-			gameInfo.ysize / 2 - scaleInfo.yborderSize * 5.5
-		);
-	else
-		drawNumber(
-			p,
-			nb,
-			gameInfo.xsize / 2 - scaleInfo.xborderSize * 3,
-			gameInfo.ysize / 2 - scaleInfo.yborderSize * 5.5
-		);
 }
 
 function drawMenuBar(p: p5) {
@@ -410,142 +362,55 @@ function clearBoard(p: p5) {
 	);
 }
 
-function loop(p: p5) {
+	const myRef = useRef<HTMLDivElement>(null);
+	useEffect(() => {
+		if (myRef.current) {
+			socket.on("server.previewUpdate", onUpdate);
+			const myP5 = new p5(Sketch, myRef.current);
+			return () => {
+				myP5.remove();
+				socket.off("server.previewUpdate", onUpdate);
+			};
+		}
+
+		function onUpdate(gameUpdate: gameInfoDto) {
+			console.log(gameUpdate);
+			const updatedObject = { ...gameInfo,
+				...gameUpdate,
+			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
+			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
+			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
+			};
+			setGameInfo(updatedObject);
+
+		}
+		}, [gameInfo]);
+
+	const Sketch = (p: p5) => {
+		p.setup = () => {
+			p.createCanvas(gameInfo.xsize, gameInfo.ysize);
+			p.frameRate(30);
+			p.noStroke();
+			drawEmpty(p);
+			drawBar(p);
+			scoreOne(p, gameInfo.oneScore);
+			scoreTwo(p, gameInfo.twoScore);
+		};
+		p.draw = () => {
+			p.resizeCanvas(gameInfo.xsize, gameInfo.ysize); //margot
+			drawEmpty(p);
+			drawBar(p);
+			scoreOne(p, gameInfo.oneScore);
+			scoreTwo(p, gameInfo.twoScore);
 			move(p);
 			clearBoard(p);
 			drawBar(p);
 			drawBall(p);
 			drawBoardMidline(p);
 			if (gameInfo.itemSize > 0)
-				drawItem(p);
+			drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
-}
-
-interface sendInfo {
-	ballx: number;
-	bally: number;
-	oneBary: number;
-	twoBary: number;
-	itemx: number;
-	itemy: number;
-
-  barDist: number;
-  barLarge: number;
-  barSize: number;
-
-  ballSize: number;
-
-  itemSize: number;
-
-  oneScore: number;
-  twoScore: number;
-}
-
-let height: number | undefined ; //margot changed
-let width: number | undefined ;  //margot changed
-
-function onSizeChange(p:p5) {
-	width = document.getElementById('canva')?.getBoundingClientRect().width;
-	height = document.getElementById('canva')?.getBoundingClientRect().height;
-	if (typeof width == typeof 1)// && width !== undefined && height !== undefined) ////margot
-	{
-		p.resizeCanvas(width as number, height as number); //margot
-		gameInfo.xsize = width as number;
-		gameInfo.ysize = height as number;
-		drawEmpty(p);
-		drawBar(p);
-		scoreOne(p, gameInfo.oneScore);
-		scoreTwo(p, gameInfo.twoScore);
-		const xratio = defaultGameInfo.xsize / gameInfo.xsize;
-		const yratio = defaultGameInfo.ysize / gameInfo.ysize;
-
-			gameInfo.gamex = defaultGameInfo.gamex / xratio;
-			gameInfo.gamey = defaultGameInfo.gamey / yratio;
-			gameInfo.gamexsize = defaultGameInfo.gamexsize / xratio;
-			gameInfo.gameysize = defaultGameInfo.gameysize / yratio;
-
-			gameInfo.barSize = defaultGameInfo.barSize / yratio;
-			gameInfo.barDist = defaultGameInfo.barDist / xratio;
-			gameInfo.barLarge = defaultGameInfo.barLarge / xratio;
-			gameInfo.menuSize = defaultGameInfo.menuSize / yratio;
-			gameInfo.numberSideDist = defaultGameInfo.numberSideDist / xratio;
-			gameInfo.numberTopDist = defaultGameInfo.numberTopDist / yratio;
-				scaleInfo.xborderSize = defaultGameInfo.borderSize / xratio;
-				scaleInfo.yborderSize = defaultGameInfo.borderSize / yratio;
-				scaleInfo.xballSize = defaultGameInfo.ballSize / xratio;
-				scaleInfo.yballSize = defaultGameInfo.ballSize / yratio;
-				scaleInfo.xitemSize = defaultGameInfo.itemSize / xratio;
-				scaleInfo.yitemSize = defaultGameInfo.itemSize / yratio;
-				scaleInfo.xnumberSize = defaultGameInfo.numberSize / xratio;
-				scaleInfo.ynumberSize = defaultGameInfo.numberSize / yratio;
-
-	}
-}
-	const myRef = useRef<HTMLDivElement>(null);
-	useEffect(() => {
-		if (myRef.current) {
-			socket.on("server.update", onUpdate);
-			const myP5 = new p5(Sketch, myRef.current);
-			return () => {
-				myP5.remove();
-				socket.off("server.update", onUpdate);
-			};
-		}
-		function onUpdate(gameUpdate: sendInfo) {
-			console.log('fds', gameUpdate.bally);
-			const xratio = defaultGameInfo.xsize / gameInfo.xsize;
-			const yratio = defaultGameInfo.ysize / gameInfo.ysize;
-			gameInfo.barSize = gameUpdate.barSize / yratio;
-			gameInfo.barDist = gameUpdate.barDist / xratio;
-			gameInfo.barLarge = gameUpdate.barLarge / xratio;
-			gameInfo.ballx = gameUpdate.ballx / xratio;
-			gameInfo.bally = gameUpdate.bally / yratio;
-			gameInfo.oneBary = gameUpdate.oneBary / yratio;
-			gameInfo.twoBary = gameUpdate.twoBary / yratio;
-			gameInfo.itemx = gameUpdate.itemx / xratio;
-			gameInfo.itemy = gameUpdate.itemy / yratio;
-			gameInfo.oneScore = gameUpdate.oneScore;
-			gameInfo.twoScore = gameUpdate.twoScore;
-			scaleInfo.xballSize = gameUpdate.ballSize / xratio;
-			scaleInfo.yballSize = gameUpdate.ballSize / yratio;
-			scaleInfo.xitemSize = gameUpdate.itemSize / xratio;
-			scaleInfo.yitemSize = gameUpdate.itemSize / yratio;
-		}
-	}, []);
-
-	const Sketch = (p: p5) => {
-		p.setup = () => {
-			width = document.getElementById('canva')?.getBoundingClientRect().width;
-			height = document.getElementById('canva')?.getBoundingClientRect().height;
-			p.createCanvas(defaultGameInfo.xsize, defaultGameInfo.ysize); //margot
-			p.frameRate(30);
-			p.noStroke();
-			drawEmpty(p);
-			drawBar(p);
-			scoreOne(p, defaultGameInfo.oneScore);
-			scoreTwo(p, defaultGameInfo.twoScore);
-		};
-		p.draw = () => {
-			// if (document.getElementById('canva')?.getBoundingClientRect().width != width || document.getElementById('canva')?.getBoundingClientRect().height != height) {
-				// onSizeChange(p);
-			// }
-			const ms = p.millis();
-			if (ms < 1000) {
-				compteur(p, 3);
-			}
-			// else if (ms < 2000) {
-			// 	compteur(p, 2);
-			// }
-			// else if (ms < 3000) {
-			// 	compteur(p, 1);
-			// }
-			// else if (ms < 3200) {
-			// 	compteur(p, 0);
-			// }
-			else {
-				loop(p);
-			}
 		};
 		p.keyReleased = () => {
 			input = 0;

@@ -1,21 +1,15 @@
 import { useEffect, useState } from 'react';
 import './CreateCustom.css';
-import RangeComponent from './RangeComponent';
-import { Socket } from 'socket.io-client';
-import { HBButton, WinColor } from '../../shared/utils/WindowTypes';
-import store from '../../store';
-import { addWindow } from '../../reducers';
-import { socket } from '../../socket';
 import ColorSelectorComponent from './ColorSelectorComponent';
 import { gameInfo } from 'shared/src/gameInfo.interface';
 import { normalGameInfo } from 'shared/src/normalGameInfo';
+import { socket } from '../../../socket';
+import { HBButton, WinColor } from '../../../shared/utils/WindowTypes';
+import store from '../../../store';
+import { addWindow } from '../../../reducers';
+import RangeComponent from '../JoinGame/RangeComponent';
 
-interface CreateProps {
-	socket: Socket;
-	createLobbyOnClick: () => void;
-}
-
-export default function CreateCustom(props: CreateProps)
+export default function CreateCustom()
 {
 	const [interfaceDisplay, setInterfaceDisplay] = useState<boolean>(false);
 	const [gameDisplay, setGameDisplay] = useState<boolean>(true);
@@ -54,8 +48,7 @@ export default function CreateCustom(props: CreateProps)
 		socket.emit('client.previewUpdate', gameInfo);
 	}
 	function onCreateLobby() {
-		props.socket.emit("client.createCustom", gameInfo);
-		props.createLobbyOnClick();
+		socket.emit("client.createCustom", gameInfo);
 	}
 	return(
 		<>

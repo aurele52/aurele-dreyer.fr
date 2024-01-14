@@ -37,27 +37,16 @@ export default function Connection({ privateLobby }: ConnectionProps) {
 			setLoadingDisplay(true);
 		}
 		function onMatchLoading() {
-			setLoadingDisplay(true);
-			setMainGameMenuDisplay(false);
-			setJoinCustomDisplay(false);
-			setCreateCustomDisplay(false);
 		}
 		function onLose() {
-			setLoseDisplay(true);
-			setPongDisplay(false);
 		}
 		function onWin() {
-			setWinDisplay(true);
-			setPongDisplay(false);
 		}
 		function onMatchStart(gameData: gameInfoDto) {
-			setLoadingDisplay(false);
-			setJoinCustomDisplay(false);
 			setMatchInfo({
 				...normalGameInfo,
 				...gameData,
 			});
-			setPongDisplay(true);
 		}
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
@@ -74,21 +63,13 @@ export default function Connection({ privateLobby }: ConnectionProps) {
 	}, []);
 
 	function createCustomOnClick() {
-		setMainGameMenuDisplay(false);
-		setCreateCustomDisplay(true);
 	}
 	function joinCustomOnClick() {
-		setMainGameMenuDisplay(false);
-		setJoinCustomDisplay(true);
 		socket.emit("client.inJoinTab");
 	}
 	function createLobbyOnClick() {
-		setCreateCustomDisplay(false);
-		setLoadingDisplay(true);
 	}
 	function normalOnClick() {
-		setMainGameMenuDisplay(false);
-		setLoadingDisplay(true);
 		socket.emit("client.normalMatchmaking");
 	}
 

@@ -3,6 +3,7 @@ import { WinColor } from "./shared/utils/WindowTypes";
 import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
+import { gameInfo } from "shared/src/gameInfo.interface";
 
 interface WindowData {
 	WindowName: string;
@@ -25,6 +26,7 @@ interface WindowData {
 	targetId?: number;
 	channelId?: number;
 	zindex?: number;
+	gameInfo?: gameInfo;
 }
 
 export interface AppState {
