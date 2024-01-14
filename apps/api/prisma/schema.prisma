@@ -32,6 +32,7 @@ model UserChannel {
   channel_id Int
   role       Role
   mute       DateTime?
+  read_until DateTime  @default(now())
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [id])

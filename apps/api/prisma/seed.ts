@@ -12,7 +12,7 @@ async function createUsers() {
     const user = {
       username: faker.internet.userName(),
       avatar_url: faker.image.avatar(),
-      id_42: faker.number.int({min: 0, max: 10000}),
+      id_42: faker.number.int({ min: 0, max: 10000 }),
       token_42: faker.string.alphanumeric(20),
       secret_2fa: faker.string.alphanumeric(20),
       is_enable_2fa: false,

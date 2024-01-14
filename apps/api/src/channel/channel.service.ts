@@ -74,7 +74,6 @@ export class ChannelService {
           },
         },
         messages: {
-          take: 1,
           orderBy: {
             created_at: 'desc',
           },
@@ -89,6 +88,14 @@ export class ChannelService {
           ?.User,
         myUserChannel: el.userChannels.find((uc) => uc.User?.id === currUserId),
       }))
+      .map((el) => ({
+        ...el,
+        notif: el.messages.filter(
+          (m) =>
+            m.user_id !== currUserId &&
+            m.created_at.getTime() > el.myUserChannel.read_until.getTime(),
+        ).length,
+      }))
       .sort((a, b) => {
         const dateA = Math.max(
           a.myUserChannel.created_at.getTime() ?? 0,
@@ -100,7 +107,6 @@ export class ChannelService {
         );
         return dateB - dateA;
       });
-
     return sortedChannels;
   }
 

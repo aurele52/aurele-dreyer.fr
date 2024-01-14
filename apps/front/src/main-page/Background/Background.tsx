@@ -282,6 +282,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["profile", currentTargetId],
         });
         closeDMWindow();
+        break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [friendshipEventType]);
