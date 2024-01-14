@@ -240,4 +240,12 @@ export class UserChannelController {
       throw error;
     }
   }
+
+  @Patch('/user-channel/:channelid/readuntil')
+  async updateReadUntil(
+    @CurrentUserID() user_id,
+    @Param('channelid') channel_id: number,
+  ) {
+    return await this.userChannelService.updateReadUntil(user_id, channel_id);
+  }
 }

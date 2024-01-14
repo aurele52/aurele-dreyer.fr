@@ -252,7 +252,6 @@ export class FriendshipService {
     recipientId: number,
     initiatorId: number,
   ) {
-    console.log('emit');
     this.friendshipEvents.next({ type, initiatorId, recipientId });
   }
 

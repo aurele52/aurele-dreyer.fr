@@ -122,4 +122,18 @@ export class UserChannelService {
       mutedUntil: DateTime.fromJSDate(mute).toJSDate(),
     };
   }
+
+  async updateReadUntil(user_id: number, channel_id: number) {
+    return await this.prisma.userChannel.update({
+      where: {
+        user_id_channel_id: {
+          user_id,
+          channel_id,
+        },
+      },
+      data: {
+        read_until: new Date(),
+      },
+    });
+  }
 }
