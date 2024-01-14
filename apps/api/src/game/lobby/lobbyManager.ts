@@ -1,5 +1,4 @@
 import { lobby } from './lobby';
-import { Cron } from '@nestjs/schedule';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
 
 export class lobbyManager {
@@ -15,6 +14,9 @@ export class lobbyManager {
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
     this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
+  }
+  public removeMatch(matchName: string) {
+    this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
   }
   public addInJoinTab(client: clientInfoDto) {
     this.inJoinTab.push(client);
@@ -66,7 +68,4 @@ export class lobbyManager {
       newLobby.start();
     }
   }
-  // Periodically clean up normalLobbies
-  @Cron('*/5 * * * *')
-  private normalLobbiesCleaner(): void {}
 }

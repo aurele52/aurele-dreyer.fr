@@ -2,50 +2,11 @@ import "./Pong.css";
 import { useEffect, useRef, useState } from "react";
 import p5 from "p5";
 import { socket } from "../../socket";
-import { gameInfo } from "./dto/gameInfo.interface.ts";
-import { parameterDto } from "./dto/parameter.dto.ts";
+import { gameInfo } from "shared/src/gameInfo.interface";
+import { normalGameInfo } from "shared/src/normalGameInfo";
 
 export default function Preview() {
-	const [gameInfo, setGameInfo] = useState<gameInfo>({
-		name: 'normal',
-		borderSize: 10,
-		menuSize: 90,
-		ysize: 500,
-		xsize: 800,
-		gamey: 110,
-		gamex: 10,
-		ballx: 100,
-		bally: 100,
-		barDist: 20,
-		oneBary: 10,
-		twoBary: 10,
-		barSpeed: 2,
-		ballDirx: -1,
-		ballDiry: -0.4,
-		ballSpeed: 4.0,
-		gamexsize: 780,
-		gameysize: 380,
-		barLarge: 10,
-		oneScore: 0,
-		twoScore: 0,
-		ballDeb: 150,
-		ballSize: 10,
-		barSize: 100,
-		itemx: 40,
-		itemy: 40,
-		itemSize: 10,
-		numberSize: 10,
-		oneBarColor: 'white',
-		twoBarColor: 'white',
-		ballColor: 'white',
-		backgroundColor: 'black',
-		borderColor: 'white',
-		oneNumberColor: 'white',
-		twoNumberColor: 'white',
-		menuColor: 'black',
-		numberSideDist: 10,
-		numberTopDist: 10,
-	});
+	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
 
 function drawBoardMidline(p: p5) {
 	p.fill(gameInfo.borderColor);
@@ -327,6 +288,7 @@ function scoreTwo(p: p5, nb: number) {
 }
 
 function drawBall(p: p5) {
+	p.fill(gameInfo.ballColor);
 	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, gameInfo.ballSize, gameInfo.ballSize);
 }
 

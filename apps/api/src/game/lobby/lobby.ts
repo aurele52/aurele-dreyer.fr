@@ -1,8 +1,8 @@
 import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
 import { clientInfoDto } from '../dto-interface/clientInfo.dto';
-import { gameInfo } from '../dto-interface/gameInfo.interface';
 import { PrismaService } from 'src/prisma.service';
+import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
 
 export class lobby {
   isEmpty(): boolean {
