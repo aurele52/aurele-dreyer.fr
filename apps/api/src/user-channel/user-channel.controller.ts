@@ -13,12 +13,14 @@ import { UserChannelService } from './user-channel.service';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { UserChannelRoles } from './roles/user-channel.roles';
 import { UserChannelModerateService } from './user-channel.moderate.service';
+import { MessageService } from 'src/message/message.service';
 
 @Controller()
 export class UserChannelController {
   constructor(
     private readonly userChannelService: UserChannelService,
     private readonly userChannelModerateService: UserChannelModerateService,
+    private readonly messageService: MessageService,
   ) {}
 
   @Post('/user-channel')

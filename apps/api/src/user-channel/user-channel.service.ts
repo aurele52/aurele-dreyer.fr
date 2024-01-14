@@ -30,7 +30,19 @@ export class UserChannelService {
         return true;
       }
     }
-    return false;
+
+    return Promise.all(
+      userChannels.map((uc) =>
+        this.friendshipService
+          .isBlockedRelationship(uc.User.id, user_id)
+          .then((r) => {
+            if (r) return Promise.reject();
+            return Promise.resolve();
+          }),
+      ),
+    )
+      .then(() => false)
+      .catch(() => true);
   }
 
   async createUserChannel(params: {
@@ -65,7 +77,7 @@ export class UserChannelService {
       throw new Error('DM cannot be created');
     }
 
-    return await this.prisma.userChannel.create({
+    return this.prisma.userChannel.create({
       data: {
         User: {
           connect: {
@@ -82,8 +94,8 @@ export class UserChannelService {
     });
   }
 
-  async deleteUserChannel(id: number) {
-    return await this.prisma.userChannel.delete({
+  deleteUserChannel(id: number) {
+    return this.prisma.userChannel.delete({
       where: {
         id,
       },
@@ -123,8 +135,8 @@ export class UserChannelService {
     };
   }
 
-  async updateReadUntil(user_id: number, channel_id: number) {
-    return await this.prisma.userChannel.update({
+  updateReadUntil(user_id: number, channel_id: number) {
+    return this.prisma.userChannel.update({
       where: {
         user_id_channel_id: {
           user_id,

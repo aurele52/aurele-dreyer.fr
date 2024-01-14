@@ -98,11 +98,23 @@ export class ChannelService {
       }))
       .sort((a, b) => {
         const dateA = Math.max(
-          a.myUserChannel.created_at.getTime() ?? 0,
+          a.userChannels
+            .reduce((latest, current) => {
+              const latestDate = new Date(latest.created_at);
+              const currentDate = new Date(current.created_at);
+              return latestDate > currentDate ? latest : current;
+            })
+            .created_at.getTime() ?? 0,
           a.messages[0]?.created_at.getTime() ?? 0,
         );
         const dateB = Math.max(
-          b.myUserChannel.created_at.getTime() ?? 0,
+          b.userChannels
+            .reduce((latest, current) => {
+              const latestDate = new Date(latest.created_at);
+              const currentDate = new Date(current.created_at);
+              return latestDate > currentDate ? latest : current;
+            })
+            .created_at.getTime() ?? 0,
           b.messages[0]?.created_at.getTime() ?? 0,
         );
         return dateB - dateA;

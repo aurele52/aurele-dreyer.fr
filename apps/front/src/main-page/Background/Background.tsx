@@ -17,18 +17,18 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
-import Play from "../../windows/Play/Play.tsx";
+import Play from "../../windows/Play/Play";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
-import Preview from "../../windows/Play/Preview.tsx";
+import Preview from "../../windows/Play/Preview";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import api from "../../axios.ts";
-import store from "../../store.tsx";
+import api from "../../axios";
+import store from "../../store";
 
 enum FriendshipEventType {
   FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
