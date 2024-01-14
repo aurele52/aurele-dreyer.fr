@@ -50,18 +50,25 @@
 }
 
 .Ladder > div > .SelfUser {
+	transition: all 1s ease-in-out;
 	background: var(
 		--Ladder-Gradient,
 		linear-gradient(
 			180deg, 
 			rgba(255, 255, 255, 0.00) 67.04%, 
 	    	rgba(240, 127, 189, 0.20) 86.54%
-		), 
-		linear-gradient(210deg, #FFCAE7 17.61%, #FFF 40.99%, #2BDEC9 80.98%)
+		),
+		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 40.55%, #FFF 49.55%,   #2BDEC9 76.04%)
 	); 
 }
 
+.Ladder > div > .SelfUser:hover {
+	background:
+	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 40.55%, #FFF 49.55%, #FFCAE7 76.04%)
+}
+
 .Ladder > div > .OtherUser {
+	transition: all 1s ease-in-out;
 	background: var(
 		--Ladder-Gradient,
 		linear-gradient(
@@ -69,13 +76,13 @@
 			rgba(255, 255, 255, 0.00) 67.04%, 
 	    	rgba(240, 127, 189, 0.20) 86.54%
 		), 
-	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 39.55%,  #FFCAE7 76.04%)
+	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 40.55%, #FFF 49.55%, #FFCAE7 76.04%)
 	);
 }
 
 .Ladder > div > .OtherUser:hover {
 	background:
-		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 39.55%,   #2BDEC9 76.04%); 
+		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 40.55%, #FFF 49.55%,   #2BDEC9 76.04%); 
 }
 
 .Ladder > div > .User > .Rank {
