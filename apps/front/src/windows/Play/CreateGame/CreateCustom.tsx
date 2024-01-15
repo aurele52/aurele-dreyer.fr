@@ -6,13 +6,16 @@ import { normalGameInfo } from 'shared/src/normalGameInfo';
 import { socket } from '../../../socket';
 import { HBButton, WinColor } from '../../../shared/utils/WindowTypes';
 import store from '../../../store';
-import { addWindow } from '../../../reducers';
+import { addWindow, delWindow } from '../../../reducers';
 import RangeComponent from '../JoinGame/RangeComponent';
+import CheckboxComponent from './CheckboxComponent';
 
 export default function CreateCustom()
 {
 	const [interfaceDisplay, setInterfaceDisplay] = useState<boolean>(false);
 	const [gameDisplay, setGameDisplay] = useState<boolean>(true);
+	const [PowerUpDisplay, setPowerUpDisplay] = useState<boolean>(false);
+	const [createLobbyClick, setCreateLobbyClick] = useState<boolean>(false);
 
 	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
 	const setValue = (name: string, value: number | string) => {
@@ -21,19 +24,36 @@ export default function CreateCustom()
 			[name]: value
 			}));
 	};
+	function PowerUpDisplayOnClick() {
+		setInterfaceDisplay(false);
+		setPowerUpDisplay(true);
+		setGameDisplay(false);
+	}
 	function InterfaceDisplayOnClick() {
 		setInterfaceDisplay(true);
+		setPowerUpDisplay(false);
 		setGameDisplay(false);
 	}
 	function GameDisplayOnClick() {
 		setInterfaceDisplay(false);
+		setPowerUpDisplay(false);
 		setGameDisplay(true);
 	}
 	useEffect(() => {
 		socket.emit('client.previewUpdate', gameInfo);
+		return (() => {
+		});
 
 		},[gameInfo]);
 	function PreviewOnClick() {
+			const memberSettingsWindow = store
+				.getState()
+				.windows.find(
+					(window) => window.content.type === "PREVIEW"
+				);
+			if (memberSettingsWindow) {
+				store.dispatch(delWindow(memberSettingsWindow.id));
+			}
 		const newWindow = {
 			WindowName: "PREVIEW",
 			width: "900",
@@ -48,12 +68,14 @@ export default function CreateCustom()
 		socket.emit('client.previewUpdate', gameInfo);
 	}
 	function onCreateLobby() {
+		setCreateLobbyClick(true);
 		socket.emit("client.createCustom", gameInfo);
 	}
 	return(
 		<>
 			<button onClick={GameDisplayOnClick}>Game Settings</button>
 			<button onClick={InterfaceDisplayOnClick}>Interface Settings</button>
+			<button onClick={PowerUpDisplayOnClick}>PowerUp Settings</button>
 			<button onClick={PreviewOnClick}>Preview</button>
 			<button onClick={onCreateLobby}>Create Lobby</button>
 			<div className="CreateCustom">
@@ -86,6 +108,10 @@ export default function CreateCustom()
 					<RangeComponent name={"oneScore"} value={gameInfo.oneScore} setValue={setValue} min={0} max={8} step={1} label='Player One Begin Score'/>
 					<RangeComponent name={"twoScore"} value={gameInfo.twoScore} setValue={setValue} min={0} max={8} step={1} label='Player Two Begin Score'/>
 					<RangeComponent name={"itemSize"} value={gameInfo.itemSize} setValue={setValue} min={5} max={100} step={5} label='Item Size'/>
+					</div>
+				}
+				{PowerUpDisplay === true && <div className="customPowerUp">
+					<CheckboxComponent name={"upBallSize"} value={gameInfo.upBallSize} setValue={setValue} label='Increase Ball Size'/>
 					</div>
 				}
 			</div>

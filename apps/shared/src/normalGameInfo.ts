@@ -39,4 +39,6 @@ import { gameInfo } from "./gameInfo.interface";
     menuColor: 'black',
     numberSideDist: 10,
     numberTopDist: 10,
+    upBallSize: false,
+    downBallSize: false,
   };
