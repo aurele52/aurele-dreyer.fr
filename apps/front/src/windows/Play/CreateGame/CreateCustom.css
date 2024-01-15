@@ -1,9 +1,28 @@
-.CreateCustom {
+.create-custom {
 	width: 100%;
 	height: 100%;
-	background-color: lightgrey;
 	display: flex;
 	flex-direction: column;
-	justify-content: center;
+	/* justify-content: center; */
 	align-items: center;
+}
+
+.header-createcustom {
+	display: flex;
+	padding: 15px;
+	align-items: center;
+	align-content: center;
+	gap: 10px;
+	align-self: stretch;
+	flex-wrap: wrap;
+}
+
+.custom-interface {
+	display: flex;
+	padding: 5px 10px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+	flex: 1 0 0;
+	align-self: stretch;
 }
