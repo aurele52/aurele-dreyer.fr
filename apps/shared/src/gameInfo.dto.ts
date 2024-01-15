@@ -72,10 +72,10 @@ export class gameInfoDto {
   borderColor?: string = 'white';
   @IsOptional()
   @IsString()
-  oneNumberColor?: string = 'white';
+  oneScoreColor?: string = 'white';
   @IsOptional()
   @IsString()
-  twoNumberColor?: string = 'white';
+  twoScoreColor?: string = 'white';
   @IsOptional()
   @IsString()
   menuColor?: string = 'black';

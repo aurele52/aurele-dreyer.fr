@@ -75,29 +75,43 @@ export function Window({
 			setState({
 				...state,
 				isReduced: false,
-				clickStartTime: 0,
-				windowMoveLock: false,
+				clickStartTime: 220,
 				windowResizeLock: false,
+				windowMoveLock: false,
 			});
 			rndRef.current?.updateSize({
 				height: state.height,
-				width: "",
+				width: state.width,
 			});
 		}
 	};
 
 	const handleReduce = () => {
-		setState({
-			...state,
-			isReduced: !state.isReduced,
-			clickStartTime: 0,
-			windowResizeLock: !state.isReduced,
-			windowMoveLock: false,
-		});
-		rndRef.current?.updateSize({
-			height: "70px",
-			width: "",
-		});
+		if (state.isReduced) {
+			setState({
+				...state,
+				isReduced: false,
+				clickStartTime: 220,
+				windowResizeLock: false,
+				windowMoveLock: false,
+			});
+			rndRef.current?.updateSize({
+				height: state.height,
+				width: state.width,
+			});
+		} else {
+			setState({
+				...state,
+				isReduced: true,
+				clickStartTime: 0,
+				windowResizeLock: true,
+				windowMoveLock: false,
+			});
+			rndRef.current?.updateSize({
+				height: "40px",
+				width: "250px",
+			});
+		}
 	};
 
 	const handleEnlarge = () => {
@@ -150,16 +164,28 @@ export function Window({
 			disableDragging={state.windowMoveLock}
 			ref={rndRef}
 			style={{ zIndex: zindex, position: "fixed" }}
+			onResizeStop={(e, direction, ref, delta, position) => {
+				setState({
+					...state,
+					width: ref.style.width,
+					height: ref.style.height,
+				});
+			}}
 		>
 			<div
 				className={state.isReduced ? "reducedWindow" : "Window"}
-				onMouseDown={
-					state.isReduced ? handleMouseDown : handleUpdateZindex
-				}
-				onMouseUp={state.isReduced ? handleMouseUp : undefined}
+				onMouseDown={handleUpdateZindex}
 			>
 				<div className={`handleBar ${color}`}>
-					<div className="WindowName heading-500">{WindowName}</div>
+					<div
+						className="WindowName heading-500"
+						onMouseDown={
+							state.isReduced ? handleMouseDown : undefined
+						}
+						onMouseUp={state.isReduced ? handleMouseUp : undefined}
+					>
+						{WindowName}
+					</div>
 					{!!(handleBarButton & HBButton.Reduce) && (
 						<Button
 							icon="Reduce"

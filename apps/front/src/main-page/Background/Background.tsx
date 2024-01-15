@@ -17,18 +17,21 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
-import Play from "../../windows/Play/Play.tsx";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
-import Preview from "../../windows/Play/Preview.tsx";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import api from "../../axios.ts";
-import store from "../../store.tsx";
+import api from "../../axios";
+import store from "../../store";
+import Pong from "../../windows/Play/Pong/Pong";
+import CreateCustom from "../../windows/Play/CreateGame/CreateCustom";
+import JoinCustom from "../../windows/Play/JoinGame/JoinCustom";
+import MainGameMenu from "../../windows/Play/MainGameMenu/mainGameMenu";
+import Preview from "../../windows/Play/Preview/Preview";
 
 enum FriendshipEventType {
   FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
@@ -51,7 +54,6 @@ export function Background({ windows }: BackgroundProps) {
   }
 
   const windowDimensions: Record<string, WindowDimensions> = {
-    PLAY: { width: "820px", height: "540px" },
     LADDER: { width: "450px", height: "600px" },
     CHAT: { width: "400px", height: "400px" },
     PROFILE: { width: "500px", height: "500px" },
@@ -72,7 +74,11 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
-		PREVIEW: { width: "900px", height: "900px" },
+    PLAY: { width: "820px", height: "540px" },
+    PONG: { width: "820px", height: "540px" },
+	PREVIEW: { width: "900px", height: "900px" },
+	CREATECUSTOM: { width: "900px", height: "900px" },
+	JOINCUSTOM: { width: "900px", height: "900px" },
   };
 
   const [currentTargetId, setCurrentTargetId] = useState(null);
@@ -332,17 +338,6 @@ export function Background({ windows }: BackgroundProps) {
               zindex={window.zindex || 0}
               isModal={window.content.type === "MODAL"}
             >
-              {window.content.type === "PLAY" && (
-								<Play
-									windowId={window.id}
-									privateLobby={
-										window.targetId
-											? { targetId: window.targetId }
-											: undefined
-									}
-								/>
-							)}
-							{window.content.type === "PREVIEW" && <Preview />}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}
@@ -397,6 +392,20 @@ export function Background({ windows }: BackgroundProps) {
               {window.content.type === "CHATSESSION" && (
                 <ChatSession channelId={window.content.id} />
               )}
+              {window.content.type === "PLAY" && (
+								<MainGameMenu
+									windowId={window.id}
+									privateLobby={
+										window.targetId
+											? { targetId: window.targetId }
+											: undefined
+									}
+								/>
+							)}
+			{window.content.type === "PONG" && <Pong gameInfo={window.gameInfo}/>}
+			{window.content.type === "PREVIEW" && <Preview />}
+			{window.content.type === "CREATECUSTOM" && <CreateCustom />}
+			{window.content.type === "JOINCUSTOM" && <JoinCustom />}
             </Window>
           );
         })}

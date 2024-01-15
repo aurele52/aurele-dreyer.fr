@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
-import { socket } from "../../socket"
 import { gameInfoDto } from "shared/src/gameInfo.dto";
 import Boutton from "./Boutton";
+import { socket } from "../../../socket";
 
 export default function JoinCustom()
 {

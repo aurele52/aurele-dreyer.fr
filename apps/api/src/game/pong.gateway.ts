@@ -1,36 +1,49 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
-import { clientInfoDto } from './dto-interface/clientInfo.dto';
+import { clientInfo } from './dto-interface/clientInfo.interface';
 import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
 import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
-import { JwtService } from '@nestjs/jwt';
-import { parameterDto } from './dto-interface/shared/parameter.dto';
 import { input } from './dto-interface/input.interface';
+import { baseClientInfo } from './dto-interface/baseClientInfo';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
-  private connectedClient: clientInfoDto[] = [];
+  private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
-  constructor(private jwt: JwtService) {}
   afterInit() {
     console.log('gateway initialised');
   }
 
   handleConnection(client: any) {
-    const newClient: clientInfoDto = new clientInfoDto();
-    newClient.status = 'connected';
+    const newClient: clientInfo = { ...baseClientInfo };
     newClient.socket = client;
-    newClient.input = { direction: null, isPressed: false };
-    newClient.matchInfo = { ...normalGameInfo };
     this.connectedClient.push(newClient);
   }
 
   @SubscribeMessage('client.openGame')
-  handleOpenGame(client: Socket, data: clientInfoDto) {}
+  handleOpenGame(client: Socket) {}
+
+  @SubscribeMessage('client.closeMainWindow')
+  handleCloseMainWindow(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      if (this.connectedClient[index].lobby != null) {
+        this.connectedClient[index].lobby.onDisconnect(
+          this.connectedClient[index],
+        );
+      }
+      if (this.connectedClient[index].status == 'waiting join normal') {
+      }
+    }
+    this.lobbyManager.cleanLobbies();
+  }
 
   @SubscribeMessage('client.previewUpdate')
-  handlePreview(client: Socket, data: parameterDto) {
+  handlePreview(client: Socket, data: gameInfoDto) {
+    console.log(data);
     client.emit('server.previewUpdate', data);
   }
 
@@ -63,7 +76,7 @@ export class PongGateway {
     //   }
     //   this.connectedClient.splice(index, 1);
     // }
-    let index = this.connectedClient.findIndex((value) => {
+    const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
@@ -73,6 +86,7 @@ export class PongGateway {
 
   @SubscribeMessage('client.normalMatchmaking')
   handleMatchmaking(client: Socket) {
+    console.log('lol');
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
@@ -90,7 +104,7 @@ export class PongGateway {
     });
     if (index !== -1) {
       this.connectedClient[index].mode = 'custom';
-      this.connectedClient[index].status = 'waiting another player';
+      this.connectedClient[index].status = 'waiting create custom';
       this.connectedClient[index].matchInfo = {
         ...normalGameInfo,
         ...gameData,

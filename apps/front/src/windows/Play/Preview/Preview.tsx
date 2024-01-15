@@ -1,9 +1,10 @@
-import "./Pong.css";
+import "../Pong/Pong.css";
 import { useEffect, useRef, useState } from "react";
 import p5 from "p5";
-import { socket } from "../../socket";
 import { gameInfo } from "shared/src/gameInfo.interface";
 import { normalGameInfo } from "shared/src/normalGameInfo";
+import { gameInfoDto } from "shared/src/gameInfo.dto";
+import { socket } from "../../../socket";
 
 export default function Preview() {
 	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
@@ -271,7 +272,7 @@ function scoreOne(p: p5, nb: number) {
 		4 * gameInfo.numberSize,
 		7 * gameInfo.numberSize
 	);
-	p.fill(gameInfo.oneNumberColor);
+	p.fill(gameInfo.oneScoreColor);
 	drawNumber(p, nb, gameInfo.numberSideDist + gameInfo.borderSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 
@@ -283,7 +284,7 @@ function scoreTwo(p: p5, nb: number) {
 		4 * gameInfo.numberSize,
 		7 * gameInfo.numberSize
 	);
-	p.fill(gameInfo.oneNumberColor);
+	p.fill(gameInfo.twoScoreColor);
 	drawNumber(p, nb, gameInfo.xsize - gameInfo.borderSize - gameInfo.numberSideDist - 4 * gameInfo.numberSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 
@@ -372,37 +373,13 @@ function clearBoard(p: p5) {
 			};
 		}
 
-		function onUpdate(gameUpdate: parameterDto) {
+		function onUpdate(gameUpdate: gameInfoDto) {
 			console.log(gameUpdate);
 			const updatedObject = { ...gameInfo,
-			ballSize: gameUpdate.ballSize,
-			barSize: gameUpdate.barSize,
+				...gameUpdate,
 			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
 			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
-			oneBarColor: gameUpdate.oneBarColor,
-			twoBarColor: gameUpdate.twoBarColor,
-			ballColor: gameUpdate.ballColor,
-			backgroundColor: gameUpdate.backgroundColor,
-			borderColor: gameUpdate.borderColor,
-			oneNumberColor: gameUpdate.oneNumberColor,
-			twoNumberColor: gameUpdate.twoNumberColor,
-			menuColor: gameUpdate.menuColor,
-			itemSize: gameUpdate.itemSize,
-			oneScore: gameUpdate.oneScore,
-			twoScore: gameUpdate.twoScore,
-			ballSpeed: gameUpdate.ballSpeed,
-			barDist: gameUpdate.barDist,
-			barSpeed: gameUpdate.barSpeed,
-			barLarge: gameUpdate.barLarge,
-			numberSize: gameUpdate.numberSize,
-			borderSize: gameUpdate.borderSize,
-			menuSize: gameUpdate.menuSize,
-			numberSideDist: gameUpdate.numberSideDist,
-			numberTopDist: gameUpdate.numberTopDist,
-			gamex: gameUpdate.borderSize,
 			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
-			gamexsize: gameUpdate.gamexsize,
-			gameysize: gameUpdate.gameysize,
 			};
 			setGameInfo(updatedObject);
 
@@ -430,7 +407,7 @@ function clearBoard(p: p5) {
 			drawBar(p);
 			drawBall(p);
 			drawBoardMidline(p);
-			if (gameInfo.itemSize > 0 && gameInfo.itemSize > 0)
+			if (gameInfo.itemSize > 0)
 			drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);

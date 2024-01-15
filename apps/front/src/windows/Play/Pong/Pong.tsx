@@ -1,7 +1,7 @@
 import "./Pong.css";
 import { useEffect, useRef } from "react";
 import p5 from "p5";
-import { socket } from "../../socket";
+import { socket } from "../../../socket";
 import { gameInfo } from "shared/src/gameInfo.interface";
 
 interface scaleInfo {
@@ -302,7 +302,7 @@ function scoreOne(p: p5, nb: number) {
 		4 * gameInfo.numberSize,
 		7 * gameInfo.numberSize
 	);
-	p.fill(gameInfo.oneNumberColor);
+	p.fill(gameInfo.oneScoreColor);
 	drawNumber(p, nb, gameInfo.numberSideDist + gameInfo.borderSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 
@@ -314,7 +314,7 @@ function scoreTwo(p: p5, nb: number) {
 		4 * gameInfo.numberSize,
 		7 * gameInfo.numberSize
 	);
-	p.fill(gameInfo.oneNumberColor);
+	p.fill(gameInfo.twoScoreColor);
 	drawNumber(p, nb, gameInfo.xsize - gameInfo.borderSize - gameInfo.numberSideDist - 4 * gameInfo.numberSize, gameInfo.numberTopDist + gameInfo.borderSize);
 }
 
@@ -416,8 +416,8 @@ function loop(p: p5) {
 			drawBar(p);
 			drawBall(p);
 			drawBoardMidline(p);
-			if (gameInfo.itemSize > 0 && gameInfo.itemSize > 0)
-			drawItem(p);
+			if (gameInfo.itemSize > 0)
+				drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
 }
