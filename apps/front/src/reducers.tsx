@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 import { gameInfo } from "shared/src/gameInfo.interface";
+import { socket } from "./socket";
 import store from "./store";
 
 interface WindowData {
@@ -111,22 +112,40 @@ const windowsSlice = createSlice({
 			state.id++;
 		},
 		delWindow: (state, action: PayloadAction<number>) => {
+			const deleteWindow = (toDel: number) => {
+				if (toDel !== -1) {
+					const toDelZindex = state.windows[toDel].zindex || 1000;
+
+					state.windows.splice(toDel, 1);
+
+					state.windows.forEach((window) => {
+						if (window.zindex && window.zindex > toDelZindex) {
+							window.zindex -= 1;
+						}
+					});
+				}
+			};
+
+			//audreyer start
+			if (
+				state.windows.find((window) => window.id === action.payload)
+					.content.type === "PLAY"
+			) {
+				{
+					const createCustomIndex = state.windows.findIndex(
+						(window) => window.content.type === "CREATECUSTOM"
+					);
+					deleteWindow(createCustomIndex);
+				}
+				//etc....
+				//socket.emit()
+			}
+			//end
+
 			const deletedWindowIndex = state.windows.findIndex(
 				(window) => window.id === action.payload
 			);
-
-			if (deletedWindowIndex !== -1) {
-				const deletedWindowZIndex =
-					state.windows[deletedWindowIndex].zindex || 1000;
-
-				state.windows.splice(deletedWindowIndex, 1);
-
-				state.windows.forEach((window) => {
-					if (window.zindex && window.zindex > deletedWindowZIndex) {
-						window.zindex -= 1;
-					}
-				});
-			}
+			deleteWindow(deletedWindowIndex);
 		},
 		bringToFront: (state, action: PayloadAction<number>) => {
 			const windowToBringToFrontIndex = state.windows.findIndex(
