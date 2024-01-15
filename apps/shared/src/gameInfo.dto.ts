@@ -9,14 +9,13 @@ import {
   ValidatorConstraint,
   ValidatorConstraintInterface,
 } from 'class-validator';
-
 @ValidatorConstraint({ name: 'ballSize', async: false })
 class BallSizeConstraint implements ValidatorConstraintInterface {
   validate(ballSize: number, args: ValidationArguments) {
     const gamexsize = (args.object as any).gamexsize;
     const gameysize = (args.object as any).gameysize;
     const mindim = Math.min(gamexsize, gameysize);
-    return ballSize >= 0.005 && ballSize <= 0.02;
+    return ballSize >= 0.005 * mindim && ballSize <= 0.02 * mindim;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -72,28 +71,6 @@ class BarSpeedConstraint implements ValidatorConstraintInterface {
   }
 }
 
-@ValidatorConstraint({ name: 'oneScore', async: false })
-class OneScoreConstraint implements ValidatorConstraintInterface {
-  validate(oneScore: number, args: ValidationArguments) {
-    return oneScore >= 0 && oneScore <= 8;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `invalid oneScore`;
-  }
-}
-
-@ValidatorConstraint({ name: 'twoScore', async: false })
-class TwoScoreConstraint implements ValidatorConstraintInterface {
-  validate(twoScore: number, args: ValidationArguments) {
-    return twoScore >= 0 && twoScore <= 8;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `invalid twoScore`;
-  }
-}
-
 @ValidatorConstraint({ name: 'itemSize', async: false })
 class ItemSizeConstraint implements ValidatorConstraintInterface {
   validate(itemSize: number, args: ValidationArguments) {
@@ -119,27 +96,36 @@ export class gameInfoDto {
   barDist?: number = 20;
   @IsOptional()
   @IsInt()
+  @Validate(BarSpeedConstraint)
   barSpeed?: number = 20;
   @IsOptional()
   @IsInt()
+  @Validate(BarSizeConstraint)
   barSize?: number = 100;
 
   @IsOptional()
   @IsInt()
+  @Validate(BallSpeedConstraint)
   ballSpeed?: number = 4;
   @IsOptional()
   @IsInt()
+  @Validate(BallSizeConstraint)
   ballSize?: number = 10;
 
   @IsOptional()
   @IsInt()
+  @Validate(ItemSizeConstraint)
   itemSize?: number = 10;
 
   @IsOptional()
   @IsInt()
+  @Min(0)
+  @Max(8)
   oneScore?: number = 0;
   @IsOptional()
   @IsInt()
+  @Min(0)
+  @Max(8)
   twoScore?: number = 0;
 
   @IsOptional()
