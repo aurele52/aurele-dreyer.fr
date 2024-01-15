@@ -4,6 +4,7 @@ import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 import { gameInfo } from "shared/src/gameInfo.interface";
+import store from "./store";
 
 interface WindowData {
 	WindowName: string;
@@ -87,7 +88,17 @@ const windowsSlice = createSlice({
 						window.WindowName === action.payload.WindowName
 				);
 				if (state.windows[windowIndex].toggle) {
-					state.windows.splice(windowIndex, 1);
+					state.windows.forEach((window) => {
+						if (
+							window.zindex &&
+							window.zindex > state.windows[windowIndex].zindex
+						) {
+							window.zindex -= 1;
+						}
+					});
+
+					state.windows[windowIndex].zindex =
+						state.windows.length - 1;
 				}
 				return;
 			}
