@@ -6,6 +6,8 @@ import { useSelector } from "react-redux";
 import { socket } from "./socket";
 import api from "./axios";
 import { useEffect } from "react";
+import 'nes.css/css/nes.min.css';
+
 
 function App() {
 	useEffect(() => {

@@ -5,6 +5,7 @@ import {
   HttpStatus,
   Param,
   Post,
+  Sse,
   StreamableFile,
   UploadedFile,
   UseInterceptors,
@@ -15,6 +16,8 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import * as path from 'path';
 import * as fs from 'fs';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { Observable, interval, merge } from 'rxjs';
+import { map, filter } from 'rxjs/operators';
 
 @Controller('user')
 export class UserController {
@@ -92,5 +95,25 @@ export class UserController {
   @Delete()
   async deleteUser(@CurrentUserID() id: number) {
     return this.userService.deleteUser(id);
+  }
+
+  @Sse('/stream/userevents')
+  streamUserEvents(@CurrentUserID() user_id): Observable<any> {
+    const heartbeat = interval(30000).pipe(
+      map(() => ({
+        type: 'heartbeat',
+        data: JSON.stringify({}),
+      })),
+    );
+
+    const userEvent = this.userService.getUserEvents().pipe(
+      filter((event) => event.recipientId === user_id),
+      map((event) => ({
+        type: 'message',
+        data: JSON.stringify({ type: event.type, targetId: event.initiatorId }),
+      })),
+    );
+
+    return merge(heartbeat, userEvent);
   }
 }

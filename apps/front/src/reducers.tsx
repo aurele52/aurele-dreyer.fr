@@ -4,7 +4,7 @@ import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 
-interface WindowData {
+export interface WindowData {
 	WindowName: string;
 	position?: {
 		x: string;

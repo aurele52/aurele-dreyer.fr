@@ -29,15 +29,22 @@ import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import api from "../../axios";
 import store from "../../store";
+import { WindowData } from "../../reducers"
 
-enum FriendshipEventType {
+enum UserEventType {
+  NOEVENT = "NOEVENT",
   FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
   FRIENDSHIPREMOVED = "FRIENDSHIPREMOVED",
   FRIENDREQUESTREVOKED = "FRIENDREQUESTREVOKED",
   FRIENDREQUESTACCEPTED = "FRIENDREQUESTACCEPTED",
   USERBLOCKED = "USERBLOCKED",
   USERUNBLOCKED = "USERUNBLOCKED",
-  NOEVENT = "NOEVENT",
+  ADDEDTOCHAN = 'ADDEDTOCHAN',
+  KICKFROMCHAN = 'KICKFROMCHAN',
+  BANFROMCHAN = 'BANFROMCHAN',
+  MUTEINCHAN = 'MUTEINCHAN',
+  CHANDELETION = 'CHANDELETION',
+  DEPARTUREFROMCHAN = 'DEPARTUREFROMCHAN',
 }
 
 interface BackgroundProps extends ReduxProps {}
@@ -72,7 +79,7 @@ export function Background({ windows }: BackgroundProps) {
     CHANSETTINGS: { width: "500px", height: "350px" },
     BANLIST: { width: "300px", height: "400px" },
     CHATSESSION: { width: "350px", height: "500px" },
-		PREVIEW: { width: "900px", height: "900px" },
+    PREVIEW: { width: "900px", height: "900px" },
   };
 
   const [currentTargetId, setCurrentTargetId] = useState(null);
@@ -134,13 +141,11 @@ export function Background({ windows }: BackgroundProps) {
     windows.forEach((window) => store.dispatch(delWindow(window.id)));
   };
 
-  const [friendshipEventType, setFriendshipEventType] = useState(
-    FriendshipEventType.NOEVENT
-  );
+  const [userEventType, setUserEventType] = useState(UserEventType.NOEVENT);
 
   useEffect(() => {
-    switch (friendshipEventType) {
-      case FriendshipEventType.FRIENDREQUESTRECEIVED:
+    switch (userEventType) {
+      case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
         });
@@ -163,7 +168,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["pendingRequests", "Profile"],
         });
         break;
-      case FriendshipEventType.FRIENDSHIPREMOVED:
+      case UserEventType.FRIENDSHIPREMOVED:
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
         });
@@ -180,7 +185,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendship", currentTargetId],
         });
         break;
-      case FriendshipEventType.FRIENDREQUESTREVOKED:
+      case UserEventType.FRIENDREQUESTREVOKED:
         queryClient.invalidateQueries({
           queryKey: ["pendingRequests"],
         });
@@ -200,7 +205,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendship", currentTargetId],
         });
         break;
-      case FriendshipEventType.FRIENDREQUESTACCEPTED:
+      case UserEventType.FRIENDREQUESTACCEPTED:
         queryClient.invalidateQueries({
           queryKey: ["pendingRequests"],
         });
@@ -223,7 +228,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendship", currentTargetId],
         });
         break;
-      case FriendshipEventType.USERUNBLOCKED:
+      case UserEventType.USERUNBLOCKED:
         queryClient.invalidateQueries({
           queryKey: ["user", currentTargetId],
         });
@@ -248,7 +253,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["profile", currentTargetId],
         });
         break;
-      case FriendshipEventType.USERBLOCKED:
+      case UserEventType.USERBLOCKED:
         queryClient.invalidateQueries({
           queryKey: ["pendingRequests"],
         });
@@ -279,12 +284,12 @@ export function Background({ windows }: BackgroundProps) {
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [friendshipEventType]);
+  }, [UserEventType]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
       const eventSource = new EventSourcePolyfill(
-        "api/stream/friendshipevents",
+        "api/user/stream/userevents",
         {
           headers: {
             Authorization: `Bearer ${localStorage.getItem("token")}`,
@@ -293,11 +298,12 @@ export function Background({ windows }: BackgroundProps) {
       );
 
       eventSource.onmessage = ({ data }) => {
+        console.log("onmessage");
         const parsedData = JSON.parse(data);
         const type = parsedData.type;
         const targetId = parsedData.targetId;
         setCurrentTargetId(targetId);
-        setFriendshipEventType(type);
+        setUserEventType(type);
       };
 
       eventSource.onerror = (error) => {
@@ -333,16 +339,13 @@ export function Background({ windows }: BackgroundProps) {
               isModal={window.content.type === "MODAL"}
             >
               {window.content.type === "PLAY" && (
-								<Play
-									windowId={window.id}
-									privateLobby={
-										window.targetId
-											? { targetId: window.targetId }
-											: undefined
-									}
-								/>
-							)}
-							{window.content.type === "PREVIEW" && <Preview />}
+                <Play
+                  windowId={window.id}
+                  privateLobby={
+                    window.targetId ? { targetId: window.targetId } : undefined
+                  }
+                />
+              )}
               {window.content.type === "LADDER" && (
                 <Ladder targetId={window.targetId} />
               )}

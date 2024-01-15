@@ -1,12 +1,12 @@
-import { router } from "../../router.ts";
+import { router } from "../../router";
 import { AxiosError } from "axios";
 import { useParams } from "@tanstack/react-router";
 import "./Auth2FA.css";
-import { Button } from "../../shared/ui-components/Button/Button.tsx";
+import { Button } from "../../shared/ui-components/Button/Button";
 import { FormEvent } from "react";
-import { Input } from "../../shared/ui-components/Input/Input.tsx";
+import { Input } from "../../shared/ui-components/Input/Input";
 import { useMutation } from "@tanstack/react-query";
-import api from "../../axios.ts";
+import api from "../../axios";
 
 interface ValidationErrorResponse {
 	[key: string]: string[];

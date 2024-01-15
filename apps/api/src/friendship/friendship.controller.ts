@@ -6,17 +6,18 @@ import {
   Param,
   Patch,
   Post,
-  Sse,
 } from '@nestjs/common';
 import { FriendshipService } from './friendship.service';
-import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
-import { Observable, interval, merge } from 'rxjs';
-import { map, filter } from 'rxjs/operators';
-import { FriendshipEventType } from './event/friendship-event.type';
+import { CurrentUser } from 'src/decorators/user.decorator';
+import { UserEventType } from '../user/types/user-event.types';
+import { UserService } from 'src/user/user.service';
 
 @Controller()
 export class FriendshipController {
-  constructor(private readonly friendshipService: FriendshipService) {}
+  constructor(
+    private readonly friendshipService: FriendshipService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/friendships')
   async getCurrUserFriendships(@CurrentUser() currUser) {
@@ -37,8 +38,8 @@ export class FriendshipController {
       user1_id,
       user2.id,
     );
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.FRIENDSHIPREMOVED,
+    this.userService.emitUserEvent(
+      UserEventType.FRIENDSHIPREMOVED,
       user1_id,
       user2.id,
     );
@@ -48,8 +49,8 @@ export class FriendshipController {
   @Delete('/relationship/blocked/:id')
   async deleteBlocked(@Param('id') user1_id: number, @CurrentUser() user2) {
     const ret = await this.friendshipService.deleteBlocked(user1_id, user2.id);
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.USERUNBLOCKED,
+    this.userService.emitUserEvent(
+      UserEventType.USERUNBLOCKED,
       user1_id,
       user2.id,
     );
@@ -59,8 +60,8 @@ export class FriendshipController {
   @Delete('/relationship/pending/:id')
   async deletePending(@Param('id') user1_id: number, @CurrentUser() user2) {
     const ret = await this.friendshipService.deletePending(user1_id, user2.id);
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.FRIENDREQUESTREVOKED,
+    this.userService.emitUserEvent(
+      UserEventType.FRIENDREQUESTREVOKED,
       user1_id,
       user2.id,
     );
@@ -76,8 +77,8 @@ export class FriendshipController {
       user1.id,
       user2_id,
     );
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.FRIENDREQUESTRECEIVED,
+    this.userService.emitUserEvent(
+      UserEventType.FRIENDREQUESTRECEIVED,
       user2_id,
       user1.id,
     );
@@ -93,8 +94,8 @@ export class FriendshipController {
       user1.id,
       user2_id,
     );
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.USERBLOCKED,
+    this.userService.emitUserEvent(
+      UserEventType.USERBLOCKED,
       user2_id,
       user1.id,
     );
@@ -114,30 +115,11 @@ export class FriendshipController {
   @Patch('/friendship/accept/:id')
   async acceptFriendship(@CurrentUser() user, @Param('id') id: number) {
     const ret = await this.friendshipService.acceptFriendship(id, user.id);
-    this.friendshipService.emitFriendshipEvent(
-      FriendshipEventType.FRIENDREQUESTACCEPTED,
+    this.userService.emitUserEvent(
+      UserEventType.FRIENDREQUESTACCEPTED,
       id,
       user.id,
     );
     return ret;
-  }
-
-  @Sse('/stream/friendshipevents')
-  streamFriendshipEvents(@CurrentUserID() user_id): Observable<any> {
-    const heartbeat = interval(30000).pipe(
-      map(() => ({
-        type: 'heartbeat',
-        data: JSON.stringify({}),
-      })),
-    );
-
-    const friendshipEvent = this.friendshipService.getFriendshipEvents().pipe(
-      filter((event) => event.recipientId === user_id),
-      map((event) => ({
-        type: 'message',
-        data: JSON.stringify({ type: event.type, targetId: event.initiatorId }),
-      })),
-    );
-    return merge(heartbeat, friendshipEvent);
   }
 }
