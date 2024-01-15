@@ -44,9 +44,9 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	}
 	function onCreateLobby() {
 		setCreateCustomDisplay(false);
-		setJoinCustomWaitingDisplay(true);
+		setCreateCustomWaitingDisplay(true);
 		setJoinNormalDesactivateDisplay(true);
-		setCreateCustomDesactivateDisplay(true);
+		setJoinCustomDesactivateDisplay(true);
 	}
 	function onMatchStart(data: gameInfo) {
 		setGameInfo({ ...normalGameInfo, ...data
