@@ -53,6 +53,9 @@ export class lobby {
         console.error('User not found');
         return;
       }
+      if (winnerUser.id === loserUser.id) {
+        return;
+      }
 
       const match = await this.prisma.match.create({
         data: {
@@ -203,12 +206,16 @@ export class lobby {
   public getMatchInfo() {
     return this.defaultGameInfo;
   }
-  constructor(isCustom: LobbyCustom, matchInfo: gameInfo, private readonly prisma: PrismaService = new PrismaService()) {
+  constructor(
+    isCustom: LobbyCustom,
+    matchInfo: gameInfo,
+    private readonly prisma: PrismaService = new PrismaService(),
+  ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
     if (this.isCustom == 'custom') {
       this.defaultGameInfo = matchInfo;
-      this.gameInfo = {...matchInfo};
+      this.gameInfo = { ...matchInfo };
     }
   }
   public readonly isCustom: LobbyCustom;
@@ -289,7 +296,11 @@ export class lobby {
   async start() {
     this.clients[0].socket.emit('server.matchStart', this.defaultGameInfo);
     this.clients[1].socket.emit('server.matchStart', this.defaultGameInfo);
-    while (this.finish === 0 && this.gameInfo.oneScore < 9 && this.gameInfo.twoScore < 9) {
+    while (
+      this.finish === 0 &&
+      this.gameInfo.oneScore < 9 &&
+      this.gameInfo.twoScore < 9
+    ) {
       this.update();
       this.clients[0].socket.emit('server.update', {
         barDist: this.gameInfo.barDist,

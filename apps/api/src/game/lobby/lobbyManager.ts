@@ -34,6 +34,16 @@ export class lobbyManager {
     client.status = 'waiting join normal';
     this.MATCH();
   }
+
+  public removeToNormalQueue(client: clientInfo) {
+    const index = this.normalQueue.findIndex((value) => {
+      return value === client;
+    });
+    if (index !== -1) {
+      this.normalQueue.splice(index, 1);
+    }
+  }
+
   public cleanLobbies() {
     this.normalLobbies.filter((lobby) => lobby.isEmpty() === true);
     this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
@@ -41,9 +51,10 @@ export class lobbyManager {
   public getCustomLobbies() {
     return this.customLobbies;
   }
-  public addPlayerToMatch(client: clientInfo, matchInfo: string) {
+
+  public addPlayerToMatch(client: clientInfo, matchName: string) {
     const index = this.customLobbies.findIndex((value) => {
-      return value.getMatchInfo().name === matchInfo;
+      return value.getMatchInfo().name === matchName;
     });
     if (index !== -1) {
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
