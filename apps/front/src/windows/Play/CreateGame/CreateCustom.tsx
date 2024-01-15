@@ -10,11 +10,15 @@ import { addWindow, delWindow } from "../../../reducers";
 import RangeComponent from "../JoinGame/RangeComponent";
 import CheckboxComponent from "./CheckboxComponent";
 
-export default function CreateCustom() {
+interface createCustomProps {
+	onCreateLobby: () => void,
+}
+
+export default function CreateCustom(props: createCustomProps)
+{
 	const [interfaceDisplay, setInterfaceDisplay] = useState<boolean>(false);
 	const [gameDisplay, setGameDisplay] = useState<boolean>(true);
 	const [PowerUpDisplay, setPowerUpDisplay] = useState<boolean>(false);
-	const [createLobbyClick, setCreateLobbyClick] = useState<boolean>(false);
 
 	const [relativeGameInfo, setRelativeGameInfo] = useState<gameInfo>({
 		...normalGameInfo,
@@ -169,7 +173,15 @@ export default function CreateCustom() {
 		socket.emit("client.previewUpdate", absoluteGameInfo);
 	}
 	function onCreateLobby() {
-		setCreateLobbyClick(true);
+		const memberSettingsWindow = store
+		.getState()
+		.windows.find(
+			(window) => window.content.type === "PREVIEW"
+		);
+		if (memberSettingsWindow) {
+			store.dispatch(delWindow(memberSettingsWindow.id));
+		}
+		props.onCreateLobby();
 		socket.emit("client.createCustom", absoluteGameInfo);
 	}
 	return (
