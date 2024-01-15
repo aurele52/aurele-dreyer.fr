@@ -48,4 +48,7 @@ export interface gameInfo {
   ballDirx: number;
   ballDiry: number;
   ballDeb: number;
+
+  upBallSize: boolean;
+  downBallSize: boolean;
 }

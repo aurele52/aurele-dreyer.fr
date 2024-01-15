@@ -1,8 +1,9 @@
-import { IsInt, IsOptional, IsString } from "class-validator";
+import { IsInt, IsOptional, IsString, Max } from "class-validator";
 
 export class gameInfoDto {
   @IsOptional()
   @IsInt()
+  @Max(100)
   barLarge?: number = 10;
   @IsOptional()
   @IsInt()
@@ -126,4 +127,9 @@ export class gameInfoDto {
   @IsOptional()
   @IsInt()
   ballDeb?: number = 150;
+
+  @IsOptional()
+  upBallSize: boolean = false;
+  @IsOptional()
+  downBallSize: boolean = false;
 }
