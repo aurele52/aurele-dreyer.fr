@@ -4,12 +4,15 @@ import Boutton from "./Boutton";
 import { socket } from "../../../socket";
 import store from "../../../store";
 import { delWindow } from "../../../reducers";
-
-export default function JoinCustom()
+interface joinCustomProps {
+	onJoinCustom: () => void,
+}
+export default function JoinCustom(props: joinCustomProps)
 {
 	const [lobbies, setLobbies] = useState<gameInfoDto[]>([]);
 	const [joinLobbyClick, setJoinLobbyClick] = useState<boolean>(false);
 	function joinLobbyOnClick() {
+		props.onJoinCustom();
 		setJoinLobbyClick(true);
 	}
 	useEffect(() => {
@@ -31,7 +34,7 @@ export default function JoinCustom()
 				socket.emit('client.closeJoinCustom');
 			}
 		};
-	}, [lobbies]);
+	}, [lobbies, joinLobbyClick]);
 	return(
 		<div className="JoinCustom">{lobbies.map((i, index)=><div key={index} className='lobbiesEle'><Boutton joinLobbyOnClick={joinLobbyOnClick} gameInfo={i} /></div>)}</div>
 	)

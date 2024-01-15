@@ -44,16 +44,6 @@ export class PongGateway {
     }
   }
 
-  @SubscribeMessage('client.closeJoinCustom')
-  handleCloseJoinCustom(client: Socket) {
-    client.emit('server.closeJoinCustom');
-  }
-
-  @SubscribeMessage('client.closeCreateCustom')
-  handleCloseCreateCustom(client: Socket) {
-    client.emit('server.closeCreateCustom');
-  }
-
   @SubscribeMessage('client.closeMainWindow')
   handleCloseMainWindow(client: Socket) {
     const index = this.connectedClient.findIndex((value) => {
@@ -148,7 +138,6 @@ export class PongGateway {
         bally: gameData.gameysize / 2,
       };
       this.lobbyManager.createCustomLobby(this.connectedClient[index]);
-      client.emit('server.matchLoading');
     }
   }
 
