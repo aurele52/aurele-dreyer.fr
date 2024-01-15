@@ -129,7 +129,6 @@ const windowsSlice = createSlice({
 			}
 		},
 		bringToFront: (state, action: PayloadAction<number>) => {
-			console.log(action);
 			const windowToBringToFrontIndex = state.windows.findIndex(
 				(window) => window.id === action.payload
 			);
