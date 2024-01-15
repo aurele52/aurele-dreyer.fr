@@ -2,38 +2,39 @@ import { Injectable, CanActivate, ExecutionContext } from '@nestjs/common';
 import { WsException } from '@nestjs/websockets';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
+import { Reflector } from '@nestjs/core';
+import { IS_PUBLIC_KEY } from 'src/auth/decorators/public.decorator';
 
 @Injectable()
 export class WsGuard implements CanActivate {
   constructor(
     private readonly userService: UserService,
     private readonly authService: AuthService,
+    private reflector: Reflector,
   ) {}
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
-    console.log('WSGUARD');
-    const token = context
-      .switchToWs()
-      .getClient()
-      .handshake.headers.authorization.split(' ')[1]; // token saved as `Bearer ${token}`
-
+    console.log('*********************WSGUARD');
+    const isPublic = this.reflector.getAllAndOverride<boolean>(IS_PUBLIC_KEY, [
+      context.getHandler(),
+      context.getClass(),
+    ]);
+    if (isPublic) {
+      return true;
+    }
+    const token = context.switchToWs().getClient().handshake.auth.token; // token saved as `Bearer ${token}`
     try {
       const payload = await this.authService.checkTokenValidity(
-        String(token),
+        token,
         process.env.APP_SECRET,
       );
-
-      return new Promise((resolve, reject) => {
-        return this.userService.getUser(payload.id).then((user) => {
-          if (user) {
-            context.switchToWs().getData().user = user; // save user info to a user object.
-            resolve(Boolean(user));
-          } else {
-            reject(false);
-          }
-        });
-      });
+      const user = await this.userService.getUser(payload.id);
+      // context.switchToWs().getData().user = user; // save user info to a user object.
+      console.log('WSGUARD OK******************');
+      return true;
     } catch (ex) {
+      console.log('WSGUARD FAILED******************');
+      console.log({ex})
       throw new WsException(ex.message);
     }
   }

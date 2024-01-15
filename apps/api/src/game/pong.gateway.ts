@@ -1,4 +1,7 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+} from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfo } from './dto-interface/clientInfo.interface';
@@ -6,7 +9,13 @@ import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
 import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
 import { input } from './dto-interface/input.interface';
 import { baseClientInfo } from './dto-interface/baseClientInfo';
+import { UseGuards } from '@nestjs/common';
+import { WsGuard } from './ws.guard';
+import { AuthService } from 'src/auth/auth.service';
+import { UserService } from 'src/user/user.service';
 
+//aurele to-do
+@UseGuards(WsGuard)
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
@@ -15,7 +24,7 @@ export class PongGateway {
     console.log('gateway initialised');
   }
 
-  handleConnection(client: any) {
+  async handleConnection(client: any) {
     const newClient: clientInfo = { ...baseClientInfo };
     newClient.socket = client;
     this.connectedClient.push(newClient);
@@ -48,7 +57,10 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.authentification')
-  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
+  async handleAuthentification(
+    client: Socket,
+    data: { user: string; token: string },
+  ) {
     // if (!data.token) {
     //   client.emit('401');
     //   client.disconnect(); //mathilde todo
@@ -127,7 +139,10 @@ export class PongGateway {
     if (index !== -1) {
       this.connectedClient[index].status = 'inGame';
       this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
-      this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchName);
+      this.lobbyManager.addPlayerToMatch(
+        this.connectedClient[index],
+        matchName,
+      );
       this.lobbyManager.removeMatch(matchName);
     }
   }
@@ -141,7 +156,9 @@ export class PongGateway {
       this.lobbyManager.addInJoinTab(this.connectedClient[index]);
     }
     const lobbies = this.lobbyManager.getCustomLobbies();
-    lobbies.forEach((value) => {client.emit('server.lobbyCustom', value.getMatchInfo());});
+    lobbies.forEach((value) => {
+      client.emit('server.lobbyCustom', value.getMatchInfo());
+    });
   }
 
   @SubscribeMessage('client.input')
