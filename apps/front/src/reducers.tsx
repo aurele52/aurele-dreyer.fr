@@ -4,8 +4,6 @@ import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 import { gameInfo } from "shared/src/gameInfo.interface";
-import { socket } from "./socket";
-import store from "./store";
 
 interface WindowData {
 	WindowName: string;
