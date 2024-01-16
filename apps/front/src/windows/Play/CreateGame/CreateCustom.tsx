@@ -11,30 +11,18 @@ import RangeComponent from "../JoinGame/RangeComponent";
 import CheckboxComponent from "./CheckboxComponent";
 
 interface createCustomProps {
-	onCreateLobby: () => void,
+	onCreateLobby: () => void;
 }
 
-export default function CreateCustom(props: createCustomProps)
-{
+export default function CreateCustom(props: createCustomProps) {
 	const [interfaceDisplay, setInterfaceDisplay] = useState<boolean>(false);
 	const [gameDisplay, setGameDisplay] = useState<boolean>(true);
 	const [PowerUpDisplay, setPowerUpDisplay] = useState<boolean>(false);
 
 	const [relativeGameInfo, setRelativeGameInfo] = useState<gameInfo>({
 		...normalGameInfo,
-		numberSize:
-			(normalGameInfo.numberSize /
-				((normalGameInfo.menuSize /
-					Math.min(
-						normalGameInfo.gamexsize,
-						normalGameInfo.gameysize
-					)) *
-					100)) *
-			100,
-		barLarge:
-			(normalGameInfo.barLarge /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
+		numberSize: 100,
+		barLarge: (normalGameInfo.barLarge / normalGameInfo.gamexsize) * 100,
 		menuSize:
 			(normalGameInfo.menuSize /
 				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
@@ -73,13 +61,6 @@ export default function CreateCustom(props: createCustomProps)
 	const setAbsoluteValue = () => {
 		setAbsoluteGameInfo(() => ({
 			...relativeGameInfo,
-			borderSize:
-				(relativeGameInfo.borderSize *
-					Math.min(
-						relativeGameInfo.gamexsize,
-						relativeGameInfo.gameysize
-					)) /
-				100,
 			barLarge:
 				(relativeGameInfo.barLarge * relativeGameInfo.gamexsize) / 100,
 			menuSize:
@@ -174,10 +155,8 @@ export default function CreateCustom(props: createCustomProps)
 	}
 	function onCreateLobby() {
 		const memberSettingsWindow = store
-		.getState()
-		.windows.find(
-			(window) => window.content.type === "PREVIEW"
-		);
+			.getState()
+			.windows.find((window) => window.content.type === "PREVIEW");
 		if (memberSettingsWindow) {
 			store.dispatch(delWindow(memberSettingsWindow.id));
 		}
