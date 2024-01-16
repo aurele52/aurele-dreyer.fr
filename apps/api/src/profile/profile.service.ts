@@ -21,9 +21,6 @@ export class ProfileService {
     if (!id) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
-    if (!self_id) {
-      throw new NotFoundException(`User with ID ${self_id} not found`);
-    }
 
     const user = await this.prisma.user.findUnique({
       where: {
