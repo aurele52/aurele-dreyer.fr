@@ -57,10 +57,16 @@ export class lobby {
       if (winnerUser.id === loserUser.id) {
         return;
       }
-
+      const gameMode =
+        winner.mode === 'normal'
+          ? 'NORMAL'
+          : winner.mode === 'custom'
+            ? 'CUSTOM'
+            : 'PRIVATE';
       const match = await this.prisma.match.create({
         data: {
           on_going: false,
+          type: gameMode,
           players: {
             createMany: {
               data: [
