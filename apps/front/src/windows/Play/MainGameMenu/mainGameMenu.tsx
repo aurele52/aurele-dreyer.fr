@@ -8,6 +8,7 @@ import { normalGameInfo } from "shared/src/normalGameInfo";
 import Pong from "../Pong/Pong";
 import Win from "../Win/Win";
 import Lose from "../Lose/Lose";
+import PrivateWaiting from "../PrivateWaiting/PrivateWaiting";
 
 
 interface mainGameMenuProps {
@@ -17,7 +18,7 @@ interface mainGameMenuProps {
 	};
 }
 
-export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
+export default function MainGameMenu(props: mainGameMenuProps) {
 	const [joinNormalDefaultDisplay, setJoinNormalDefaultDisplay] = useState<boolean>(true);
 	const [joinNormalWaitingDisplay, setJoinNormalWaitingDisplay] = useState<boolean>(false);
 	const [joinNormalDesactivateDisplay, setJoinNormalDesactivateDisplay] = useState<boolean>(false);
@@ -33,6 +34,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
 	const [winDisplay, setWinDisplay] = useState<boolean>(false);
 	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
+	const [privateWaitingDisplay, setPrivateWaitingDisplay] = useState<boolean>(false);
 
 	function onWin() {
 		setPongDisplay(false);
@@ -63,11 +65,26 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinNormalWaitingDisplay(false);
 		setJoinCustomWaitingDisplay(false);
 		setCreateCustomWaitingDisplay(false);
+		setPrivateWaitingDisplay(false);
 		setPongDisplay(true);
 	}
+	function onPrivateMatch() {
+		setGameInfo({ ...normalGameInfo	});
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setJoinNormalDefaultDisplay(false);
+		setJoinCustomDefaultDisplay(false);
+		setCreateCustomDefaultDisplay(false);
+		setPrivateWaitingDisplay(true);
+		socket.emit('client.privateMatchmaking', props.privateLobby.targetId);
+	}
 	useEffect(() => {
-		if (privateLobby) {
-			console.log('create private match');
+		if (props.privateLobby) {
+			onPrivateMatch();
 		}
 		socket.on('server.matchStart', onMatchStart);
 		socket.on("server.win", onWin);
@@ -76,7 +93,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 			socket.emit('client.closeMainWindow');
 			socket.off('server.matchStart', onMatchStart);
 		};
-	}, [privateLobby]);
+	}, [props.privateLobby]);
 
 	function joinNormalDefaultOnClick() {
 		setJoinNormalDefaultDisplay(false);
@@ -151,6 +168,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 			{pongDisplay === true && <Pong gameInfo={gameInfo}/>}
 			{loseDisplay === true && <Lose />}
 			{winDisplay === true && <Win />}
+			{privateWaitingDisplay === true && <PrivateWaiting />}
 			</>
 	);
 }
