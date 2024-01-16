@@ -13,7 +13,6 @@ export class lobby {
   }
   private finish = 0;
   ballWallRedir() {
-    console.log(this.gameInfo.ballSize);
     if (
       this.gameInfo.bally + this.gameInfo.ballSize + this.gameInfo.ballSpeed >=
       this.gameInfo.gameysize

@@ -188,6 +188,7 @@ export class PongGateway {
     }
     const lobbies = this.lobbyManager.getCustomLobbies();
     lobbies.forEach((value) => {
+      if (value.getPlayer()[0].status != 'inGame')
       client.emit('server.lobbyCustom', value.getMatchInfo());
     });
   }
