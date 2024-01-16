@@ -51,4 +51,6 @@ export interface gameInfo {
 
   upBallSize: boolean;
   downBallSize: boolean;
+
+  id?: number;
 }
