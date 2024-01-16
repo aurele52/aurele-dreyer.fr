@@ -5,7 +5,7 @@ import { baseInput } from './baseInput';
 export const baseClientInfo: clientInfo = {
   socket: null,
   lobby: null,
-  user: '',
+  user: null,
   mode: null,
   status: 'connected',
   input: { ...baseInput },

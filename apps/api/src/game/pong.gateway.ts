@@ -9,12 +9,14 @@ import { input } from './dto-interface/input.interface';
 import { baseClientInfo } from './dto-interface/baseClientInfo';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
+import { privateLobbyManager } from './lobby/privateLobbyManager';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
   private readonly normalLobbyManager: normalLobbyManager = new normalLobbyManager();
+  private readonly privateLobbyManager: privateLobbyManager = new privateLobbyManager();
 
   constructor(
     private readonly authService: AuthService,
@@ -35,7 +37,7 @@ export class PongGateway {
       const user = await this.userService.getUser(payload.id);
       const newClient: clientInfo = { ...baseClientInfo };
       newClient.socket = client;
-      newClient.user = user.username;
+      newClient.user = user;
       this.connectedClient.push(newClient);
       console.log('socket connection successfull');
     } catch (ex) {
@@ -58,6 +60,8 @@ export class PongGateway {
         this.normalLobbyManager.removeToNormalQueue(polo);
       if (polo.status === 'waiting create custom')
         this.lobbyManager.removeToCustomQueue(polo);
+      if (polo.status === 'inJoinTab')
+        this.lobbyManager.removeInJoinTab(polo);
       this.connectedClient[index].status = 'connected';
     }
     this.lobbyManager.cleanLobbies();
@@ -74,6 +78,8 @@ export class PongGateway {
       }
       if (polo.status === 'waiting join normal')
         this.normalLobbyManager.removeToNormalQueue(polo);
+      if (polo.status === 'inJoinTab')
+        this.lobbyManager.removeInJoinTab(polo);
       if (polo.status === 'waiting create custom')
         this.lobbyManager.removeToCustomQueue(polo);
       this.connectedClient.splice(index, 1);
@@ -154,6 +160,16 @@ export class PongGateway {
     }
   }
 
+  @SubscribeMessage('client.privateMatchmaking')
+  handlePrivateMatchmaking(client: Socket, id: number) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.privateLobbyManager.addToPrivateQueue(this.connectedClient[index], id);
+    }
+  }
+
   @SubscribeMessage('client.input')
   handleInput(client: Socket, inputData: input) {
     const index = this.connectedClient.findIndex((value) => {
@@ -168,7 +184,7 @@ export class PongGateway {
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
       console.log({ value }, { data });
-      return value.user === data.user;
+      return value.user.username === data.user;
     });
     if (index !== -1) {
       client.emit('server.getStatusUser', {
