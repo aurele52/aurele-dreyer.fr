@@ -6,6 +6,7 @@ import { WsGuard } from './ws.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
 import { PrismaService } from 'src/prisma.service';
+import { AchievementsService } from 'src/achievements/achievements.service';
 
 @Module({
   providers: [
@@ -21,6 +22,7 @@ import { PrismaService } from 'src/prisma.service';
     AuthService,
     UserService,
     PrismaService,
+    AchievementsService,
   ],
 })
 export class GameModule {}
