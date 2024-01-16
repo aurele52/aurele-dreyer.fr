@@ -4,6 +4,7 @@ import { PrismaService } from 'src/prisma.service';
 import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
 import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 import { clientInfo } from '../dto-interface/clientInfo.interface';
+import { AchievementsService } from 'src/achievements/achievements.service';
 
 export class lobby {
   isEmpty(): boolean {
@@ -87,6 +88,8 @@ export class lobby {
           },
         },
       });
+      this.achievements.updateAchievements(winnerUser.id);
+      this.achievements.updateAchievements(loserUser.id);
 
     console.log('test 4');
       return match;
@@ -216,6 +219,9 @@ export class lobby {
     isCustom: LobbyCustom,
     matchInfo: gameInfo,
     private readonly prisma: PrismaService = new PrismaService(),
+    private readonly achievements: AchievementsService = new AchievementsService(
+      prisma,
+    ),
   ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
