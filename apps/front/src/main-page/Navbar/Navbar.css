@@ -71,8 +71,8 @@
 }
 
 .NavButton:hover {
-  background: var(--PinkPurpleMix-Main, #ede6f9);
-  border-color: var(--PinkPurpleMix-Main, #ede6f9);
+	background: var(--PinkPurpleMix-Main, #ede6f9);
+	border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }
 
 /* @media only screen and (max-width: 768px) {

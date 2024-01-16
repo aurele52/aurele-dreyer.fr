@@ -1,10 +1,13 @@
 import { useEffect, useState } from "react";
 import "./mainGameMenu.css";
 import { socket } from "../../../socket";
-import store from "../../../store";
-import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
-import { addWindow } from "../../../reducers";
 import { gameInfo } from "shared/src/gameInfo.interface";
+import CreateCustom from "../CreateGame/CreateCustom";
+import JoinCustom from "../JoinGame/JoinCustom";
+import { normalGameInfo } from "shared/src/normalGameInfo";
+import Pong from "../Pong/Pong";
+import Win from "../Win/Win";
+import Lose from "../Lose/Lose";
 
 
 interface mainGameMenuProps {
@@ -17,41 +20,60 @@ interface mainGameMenuProps {
 export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	const [joinNormalDefaultDisplay, setJoinNormalDefaultDisplay] = useState<boolean>(true);
 	const [joinNormalWaitingDisplay, setJoinNormalWaitingDisplay] = useState<boolean>(false);
-	const [joinNormalInGameDisplay, setJoinNormalInGameDisplay] = useState<boolean>(false);
 	const [joinNormalDesactivateDisplay, setJoinNormalDesactivateDisplay] = useState<boolean>(false);
 	const [createCustomDefaultDisplay, setCreateCustomDefaultDisplay] = useState<boolean>(true);
-	const [createCustomInGameDisplay, setCreateCustomInGameDisplay] = useState<boolean>(false);
 	const [createCustomWaitingDisplay, setCreateCustomWaitingDisplay] = useState<boolean>(false);
 	const [createCustomDesactivateDisplay, setCreateCustomDesactivateDisplay] = useState<boolean>(false);
-	const [createCustomInTabDisplay, setCreateCustomInTabDisplay] = useState<boolean>(false);
 	const [joinCustomDefaultDisplay, setJoinCustomDefaultDisplay] = useState<boolean>(true);
-	const [joinCustomInGameDisplay, setJoinCustomInGameDisplay] = useState<boolean>(false);
 	const [joinCustomWaitingDisplay, setJoinCustomWaitingDisplay] = useState<boolean>(false);
 	const [joinCustomDesactivateDisplay, setJoinCustomDesactivateDisplay] = useState<boolean>(false);
-	const [joinCustomInTabDisplay, setJoinCustomInTabDisplay] = useState<boolean>(false);
+	const [joinCustomDisplay, setJoinCustomDisplay] = useState<boolean>(false);
+	const [createCustomDisplay, setCreateCustomDisplay] = useState<boolean>(false);
+	const [pongDisplay, setPongDisplay] = useState<boolean>(false);
+	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
+	const [winDisplay, setWinDisplay] = useState<boolean>(false);
+	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
 
-	function onMatchStart(gameInfo: gameInfo) {
-		const newWindow = {
-			WindowName: "PONG",
-			width: "900",
-			height: "900",
-			id: 0,
-			content: { type: "PONG" },
-			toggle: true,
-			handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
-			color: WinColor.PURPLE,
-			gameInfo: gameInfo,
-		};
-		store.dispatch(addWindow(newWindow));
+	function onWin() {
+		setPongDisplay(false);
+		setWinDisplay(true);
 	}
-
+	function onLose() {
+		setPongDisplay(false);
+		setLoseDisplay(true);
+	}
+	function onCreateLobby() {
+		setCreateCustomDisplay(false);
+		setCreateCustomWaitingDisplay(true);
+		setJoinNormalDesactivateDisplay(true);
+		setJoinCustomDesactivateDisplay(true);
+	}
+	function onJoinLobby() {
+		setJoinCustomDisplay(false);
+		setJoinCustomWaitingDisplay(true);
+		setJoinNormalDesactivateDisplay(true);
+		setCreateCustomDesactivateDisplay(true);
+	}
+	function onMatchStart(data: gameInfo) {
+		setGameInfo({ ...normalGameInfo, ...data
+		});
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setPongDisplay(true);
+	}
 	useEffect(() => {
 		if (privateLobby) {
 			console.log('create private match');
 		}
 		socket.on('server.matchStart', onMatchStart);
+		socket.on("server.win", onWin);
+		socket.on("server.lose", onLose);
 		return () => {
-			socket.emit('server.closeMainWindow');
+			socket.emit('client.closeMainWindow');
 			socket.off('server.matchStart', onMatchStart);
 		};
 	}, [privateLobby]);
@@ -66,42 +88,17 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		socket.emit("client.normalMatchmaking");
 	}
 	function createCustomDefaultOnClick() {
-		const newWindow = {
-			WindowName: "CREATECUSTOM",
-			width: "900",
-			height: "900",
-			id: 0,
-			content: { type: "CREATECUSTOM" },
-			toggle: true,
-			handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
-			color: WinColor.PURPLE,
-		};
-		store.dispatch(addWindow(newWindow));
 		setJoinNormalDefaultDisplay(false);
-		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDefaultDisplay(false);
-		setJoinCustomDesactivateDisplay(true);
 		setCreateCustomDefaultDisplay(false);
-		setCreateCustomInTabDisplay(true);
+		setCreateCustomDisplay(true);
 	}
 	function joinCustomDefaultOnClick() {
-		const newWindow = {
-			WindowName: "JOINCUSTOM",
-			width: "900",
-			height: "900",
-			id: 0,
-			content: { type: "JOINCUSTOM" },
-			toggle: true,
-			handleBarButton: HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
-			color: WinColor.PURPLE,
-		};
-		store.dispatch(addWindow(newWindow));
 		setJoinNormalDefaultDisplay(false);
-		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDefaultDisplay(false);
-		setJoinCustomInTabDisplay(true);
 		setCreateCustomDefaultDisplay(false);
-		setCreateCustomDesactivateDisplay(true);
+		setJoinCustomDisplay(true);
+		socket.emit("client.inJoinTab");
 	}
 	function joinNormalWaitingOnClick() {
 		setJoinNormalWaitingDisplay(false);
@@ -135,16 +132,6 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	function createCustomDesactivateOnClick() {
 	}
 	function joinCustomDesactivateOnClick() {
-	}
-	function joinNormalInGameOnClick() {
-	}
-	function createCustomInGameOnClick() {
-	}
-	function joinCustomInGameOnClick() {
-	}
-	function createCustomInTabOnClick() {
-	}
-	function joinCustomInTabOnClick() {
 	}
 	return (
 		<div className="game-menu">
@@ -205,5 +192,11 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 				IN CUSTOM
 			</div>}
 		</div>
+			{createCustomDisplay === true && <CreateCustom onCreateLobby={onCreateLobby}/>}
+			{joinCustomDisplay === true && <JoinCustom onJoinCustom={onJoinLobby}/>}
+			{pongDisplay === true && <Pong gameInfo={gameInfo}/>}
+			{loseDisplay === true && <Lose />}
+			{winDisplay === true && <Win />}
+			</>
 	);
 }

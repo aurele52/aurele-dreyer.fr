@@ -95,7 +95,6 @@
 	min-width: 50px;
 
 	/* Heading/700 */
-	font-family: Chakra Petch;
 	font-size: 36px;
 	font-style: normal;
 	font-weight: 700;
@@ -170,7 +169,6 @@
 
 .Ladder > div > .User > .Stat > div {
 	color: var(--text-text-primary, #000);
-	font-family: Chakra Petch;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 600;

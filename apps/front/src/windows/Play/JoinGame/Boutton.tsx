@@ -3,15 +3,23 @@ import { gameInfoDto } from "shared/src/gameInfo.dto";
 import { socket } from "../../../socket";
 import store from "../../../store";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
-import { addWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 
 interface BouttonProps {
 	gameInfo: gameInfoDto;
+	joinLobbyOnClick: () => void;
 }
 export default function Boutton(props: BouttonProps)
 {
-	const [display, setDisplay] = useState<boolean>(false);
 	function previewOnClick() {
+			const memberSettingsWindow = store
+				.getState()
+				.windows.find(
+					(window) => window.content.type === "PREVIEW"
+				);
+			if (memberSettingsWindow) {
+				store.dispatch(delWindow(memberSettingsWindow.id));
+			}
 		const newWindow = {
 			WindowName: "PREVIEW",
 			width: "900",
@@ -24,9 +32,9 @@ export default function Boutton(props: BouttonProps)
 		};
 		store.dispatch(addWindow(newWindow));
 		socket.emit('client.previewUpdate', props.gameInfo);
-		setDisplay(!display);
 	}
 	function joinMatchOnClick() {
+		props.joinLobbyOnClick();
 		socket.emit('client.joinMatch', props.gameInfo.name);
 	}
 	useEffect(() => {

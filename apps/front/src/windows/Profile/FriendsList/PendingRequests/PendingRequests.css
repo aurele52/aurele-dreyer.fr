@@ -29,7 +29,6 @@
 
 .PendingRequestsComponent > .Body > .List > .SectionName > div {
 	color: var(--text-text-primary, #000);
-	font-family: Chakra Petch;
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 600;

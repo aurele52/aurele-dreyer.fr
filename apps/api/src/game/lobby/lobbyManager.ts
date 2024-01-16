@@ -13,8 +13,9 @@ export class lobbyManager {
     client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo); console.log('yes');});
   }
+
   public removeMatch(matchName: string) {
     this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
   }
@@ -34,6 +35,26 @@ export class lobbyManager {
     client.status = 'waiting join normal';
     this.MATCH();
   }
+
+  public removeToCustomQueue(client: clientInfo) {
+    const index = this.customLobbies.findIndex((value) => {
+      return value.getPlayer()[0] === client;
+    });
+    if (index !== -1) {
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
+      this.customLobbies.splice(index, 1);
+    }
+  }
+
+  public removeToNormalQueue(client: clientInfo) {
+    const index = this.normalQueue.findIndex((value) => {
+      return value === client;
+    });
+    if (index !== -1) {
+      this.normalQueue.splice(index, 1);
+    }
+  }
+
   public cleanLobbies() {
     this.normalLobbies.filter((lobby) => lobby.isEmpty() === true);
     this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
@@ -41,14 +62,17 @@ export class lobbyManager {
   public getCustomLobbies() {
     return this.customLobbies;
   }
-  public addPlayerToMatch(client: clientInfo, matchInfo: string) {
+
+  public addPlayerToMatch(client: clientInfo, matchName: string) {
     const index = this.customLobbies.findIndex((value) => {
-      return value.getMatchInfo().name === matchInfo;
+      return value.getMatchInfo().name === matchName;
     });
     if (index !== -1) {
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.matchInfo = this.customLobbies[index].getMatchInfo();
+      client.lobby = this.customLobbies[index];
       this.customLobbies[index].addClient(client);
       this.customLobbies[index].start();
     }
