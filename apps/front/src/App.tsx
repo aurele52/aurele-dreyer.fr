@@ -40,40 +40,45 @@ function App() {
       console.log("Disconnected : " + reason);
     });
 
-    return () => {
-      socket.off("connect");
-      socket.off("disconnect");
-    };
-  }, []);
-  const { displayFilter, zIndexFilter } = useSelector((state: AppState) => {
-    const modalWindow = state.windows.find(
-      (window) =>
-        window.content.type === "MODAL" ||
-        window.content.type === "MODALREQUESTED"
-    );
+		return () => {
+			socket.off("connect");
+			socket.off("disconnect");
+		};
+	}, []);
+	const { displayFilter, zIndexFilter } = useSelector(
+		(state: AppState) => {
+			const modalWindow = state.windows.find(
+				(window) =>
+					window.content.type === "MODAL" ||
+					window.content.type === "MODALREQUESTED"
+			);
 
-    if (modalWindow) {
-      return {
-        displayFilter: "block",
-        zIndexFilter: modalWindow.zindex || 0,
-      };
-    } else {
-      return {
-        displayFilter: "none",
-        zIndexFilter: 0,
-      };
-    }
-  });
-  return (
-    <div className="App">
-      <div
-        className="Filter"
-        style={{ display: displayFilter, zIndex: zIndexFilter }}
-      ></div>
-      <Navbar />
-      <Background />
-    </div>
-  );
+			if (modalWindow) {
+				return {
+					displayFilter: "block",
+					zIndexFilter: modalWindow.zindex || 0,
+				};
+			} else {
+				return {
+					displayFilter: "none",
+					zIndexFilter: 0,
+				};
+			}
+		},
+		(prev, next) =>
+			prev.displayFilter === next.displayFilter &&
+			prev.zIndexFilter === next.zIndexFilter
+	);
+	return (
+		<div className="App">
+			<div
+				className="Filter"
+				style={{ display: displayFilter, zIndex: zIndexFilter }}
+			></div>
+			<Navbar />
+			<Background />
+		</div>
+	);
 }
 
 export default App;

@@ -48,6 +48,12 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDesactivateDisplay(true);
 	}
+	function onJoinLobby() {
+		setJoinCustomDisplay(false);
+		setJoinCustomWaitingDisplay(true);
+		setJoinNormalDesactivateDisplay(true);
+		setCreateCustomDesactivateDisplay(true);
+	}
 	function onMatchStart(data: gameInfo) {
 		setGameInfo({ ...normalGameInfo, ...data
 		});
@@ -92,6 +98,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(false);
 		setCreateCustomDefaultDisplay(false);
 		setJoinCustomDisplay(true);
+		socket.emit("client.inJoinTab");
 	}
 	function joinNormalWaitingOnClick() {
 		setJoinNormalWaitingDisplay(false);
@@ -140,7 +147,7 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 			{joinCustomWaitingDisplay === true && <button className="joinCustomWaitingButton" onClick={joinCustomWaitingOnClick}>Waiting</button>}
 		</div>
 			{createCustomDisplay === true && <CreateCustom onCreateLobby={onCreateLobby}/>}
-			{joinCustomDisplay === true && <JoinCustom />}
+			{joinCustomDisplay === true && <JoinCustom onJoinCustom={onJoinLobby}/>}
 			{pongDisplay === true && <Pong gameInfo={gameInfo}/>}
 			{loseDisplay === true && <Lose />}
 			{winDisplay === true && <Win />}
