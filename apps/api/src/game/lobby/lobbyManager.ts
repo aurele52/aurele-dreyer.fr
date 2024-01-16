@@ -24,11 +24,14 @@ export class lobbyManager {
     client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo); console.log('yes');});
+    this.inJoinTab.forEach((value) => {
+      value.socket.emit('server.lobbyCustom', client.matchInfo);
+      console.log('yes');
+    });
   }
 
-  public removeMatch(matchName: string) {
-    this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
+  public removeMatch(matchId: number) {
+    this.customLobbies.filter((lobby) => lobby.getMatchInfo().id === matchId);
   }
   public addInJoinTab(client: clientInfo) {
     client.status = 'inJoinTab';
@@ -53,7 +56,12 @@ export class lobbyManager {
         return value === client.lobby;
       });
       if (index !== -1) {
-        this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.lobby.getMatchInfo());});
+        this.inJoinTab.forEach((value) => {
+          value.socket.emit(
+            'server.lobbyCustomDelete',
+            client.lobby.getMatchInfo(),
+          );
+        });
         this.customLobbies.splice(index, 1);
       }
     }
@@ -67,15 +75,18 @@ export class lobbyManager {
     return this.customLobbies;
   }
 
-  public addPlayerToMatch(client: clientInfo, matchName: string) {
+  public addPlayerToMatch(client: clientInfo, matchId: number) {
     client.status = 'inGame';
     this.removeInJoinTab(client);
-    this.removeMatch(matchName);
+    this.removeMatch(matchId);
     const index = this.customLobbies.findIndex((value) => {
-      return value.getMatchInfo().name === matchName;
+      return value.getMatchInfo().id === matchId;
     });
     if (index !== -1) {
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
+      this.inJoinTab.forEach((value) => {
+        value.socket.emit('server.lobbyCustomDelete', client.matchInfo);
+        console.log('yes');
+      });
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.matchInfo = this.customLobbies[index].getMatchInfo();

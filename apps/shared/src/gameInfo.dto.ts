@@ -231,4 +231,8 @@ export class gameInfoDto {
   upBallSize: boolean = false;
   @IsOptional()
   downBallSize: boolean = false;
+
+  @IsOptional()
+  @IsInt()
+  id?: number;
 }
