@@ -51,18 +51,16 @@ export default function CreateCustom()
 		socket.emit("client.createCustom", gameInfo);
 	}
 	return(
-		<>
-			
 			<div className="create-custom">
 				<div className="header-createcustom">
 					<button onClick={GameDisplayOnClick}>Game Settings</button>
 					<button onClick={InterfaceDisplayOnClick}>Interface Settings</button>
 					<button onClick={PreviewOnClick}>Preview</button>
-					<button onClick={onCreateLobby}>Create Lobby</button>
 				</div>
 
 				
-				{interfaceDisplay === true && <div className="custom-interface">
+				{interfaceDisplay === true && 
+				<div className="custom-interface">
 					<ColorSelector name={"oneBarColor"} value={gameInfo.oneBarColor} setValue={setValue} label='P1 BAR :' />
 					<ColorSelector name={"twoBarColor"} value={gameInfo.twoBarColor} setValue={setValue} label='P2 BAR :' />
 					<ColorSelector name={"borderColor"} value={gameInfo.borderColor} setValue={setValue} label='BORDER :' />
@@ -77,9 +75,10 @@ export default function CreateCustom()
 					<RangeSlider name={"menuSize"} value={gameInfo.menuSize} setValue={setValue} min={40} max={200} step={10} label='MENU SIZE :'/>
 					<RangeSlider name={"numberTopDist"} value={gameInfo.numberTopDist} setValue={setValue} min={5} max={100} step={5} label='SCORE TOP DIST :'/>
 					<RangeSlider name={"numberSideDist"} value={gameInfo.numberSideDist} setValue={setValue} min={5} max={100} step={5} label='SCORE SIDE DIST :'/>
-					</div>
+				</div>
 				}
-				{gameDisplay === true && <div className="customGame">
+				{gameDisplay === true && 
+				<div className="customGame">
 					<label>Name: </label><input value={gameInfo.name} onChange={e => setValue('name', e.target.value)}/> 
 					<RangeSlider name={"gamexsize"} value={gameInfo.gamexsize} setValue={setValue} min={100} max={1000} step={100} label='Game Width'/>
 					<RangeSlider name={"gameysize"} value={gameInfo.gameysize} setValue={setValue} min={100} max={1000} step={100} label='Game Height'/>
@@ -91,9 +90,16 @@ export default function CreateCustom()
 					<RangeSlider name={"oneScore"} value={gameInfo.oneScore} setValue={setValue} min={0} max={8} step={1} label='Player One Begin Score'/>
 					<RangeSlider name={"twoScore"} value={gameInfo.twoScore} setValue={setValue} min={0} max={8} step={1} label='Player Two Begin Score'/>
 					<RangeSlider name={"itemSize"} value={gameInfo.itemSize} setValue={setValue} min={5} max={100} step={5} label='Item Size'/>
-					</div>
+				</div>
 				}
+				
+				<div className="footer-createcustom">
+					<div className="custom-button-default" onClick={onCreateLobby}>
+						PLAY
+					</div>
+				</div> 
+				
+
 			</div>
-		</>
 	)
 }

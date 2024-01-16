@@ -147,21 +147,63 @@ export default function MainGameMenu({ privateLobby }: mainGameMenuProps) {
 	function joinCustomInTabOnClick() {
 	}
 	return (
-		<div className="mainGameMenu">
-			{joinNormalDefaultDisplay === true && <button className="joinNormalDefaultButton" onClick={joinNormalDefaultOnClick}>Normal Game</button>}
-			{joinNormalDesactivateDisplay === true && <button className="joinNormalDesactivateButton" onClick={joinNormalDesactivateOnClick}>Normal Game</button>}
-			{joinNormalInGameDisplay === true && <button className="joinNormalInGameButton" onClick={joinNormalInGameOnClick}>In Game</button>}
-			{joinNormalWaitingDisplay === true && <button className="joinNormalWaitingButton" onClick={joinNormalWaitingOnClick}>Waiting</button>}
-			{createCustomDefaultDisplay === true && <button className="createCustomDefaultButton" onClick={createCustomDefaultOnClick}>Create Custom Game</button>}
-			{createCustomDesactivateDisplay === true && <button className="createCustomDesativateButton" onClick={createCustomDesactivateOnClick}>Create Custom Game</button>}
-			{createCustomInGameDisplay === true && <button className="createCustomInGameButton" onClick={createCustomInGameOnClick}>In Game</button>}
-			{createCustomWaitingDisplay === true && <button className="createCustomWaitingButton" onClick={createCustomWaitingOnClick}>Waiting</button>}
-			{createCustomInTabDisplay === true && <button className="createCustomInTabButton" onClick={createCustomInTabOnClick}>In Create Custom Windows</button>}
-			{joinCustomDefaultDisplay === true && <button className="joinCustomDefaultButton" onClick={joinCustomDefaultOnClick}>Join Custom Game</button>}
-			{joinCustomDesactivateDisplay === true && <button className="joinCustomDesactivateButton" onClick={joinCustomDesactivateOnClick}>Join Custom Game</button>}
-			{joinCustomInGameDisplay === true && <button className="joinCustomInGameButton" onClick={joinCustomInGameOnClick}>In Game</button>}
-			{joinCustomWaitingDisplay === true && <button className="joinCustomWaitingButton" onClick={joinCustomWaitingOnClick}>Waiting</button>}
-			{joinCustomInTabDisplay === true && <button className="joinCustomInTabButton" onClick={joinCustomInTabOnClick}>In Join Window</button>}
+		<div className="game-menu">
+			{joinNormalDefaultDisplay === true && 
+			<div className="play-button-default" onClick={joinNormalDefaultOnClick}>
+				PLAY
+			</div>}
+			{joinNormalWaitingDisplay === true && 
+			<div className="play-button-waiting" onClick={joinNormalWaitingOnClick}>
+				WAITING...
+			</div>}
+			{joinNormalInGameDisplay === true && 
+			<div className="play-button-ingame" onClick={joinNormalInGameOnClick}>
+				IN GAME
+			</div>}
+			{joinNormalDesactivateDisplay === true && 
+			<div className="play-button-off" onClick={joinNormalDesactivateOnClick}>
+				PLAY
+			</div>}
+			{joinCustomDefaultDisplay === true && 
+			<div className="join-button-default" onClick={joinCustomDefaultOnClick}>
+				JOIN
+			</div>}
+			{joinCustomDesactivateDisplay === true && 
+			<div className="join-button-off" onClick={joinCustomDesactivateOnClick}>
+				JOIN
+			</div>}
+			{joinCustomInGameDisplay === true && 
+			<div className="join-button-ingame" onClick={joinCustomInGameOnClick}>
+				IN GAME
+			</div>}
+			{joinCustomWaitingDisplay === true && 
+			<div className="join-button-waiting" onClick={joinCustomWaitingOnClick}>
+				WAITING...
+			</div>}
+			{joinCustomInTabDisplay === true && 
+			<div className="join-button-intab" onClick={joinCustomInTabOnClick}>
+				IN GAME
+			</div>}
+			{createCustomDefaultDisplay === true && 
+			<div className="custom-button-default" onClick={createCustomDefaultOnClick}>
+				CUSTOM
+			</div>}
+			{createCustomDesactivateDisplay === true && 
+			<div className="custom-button-off" onClick={createCustomDesactivateOnClick}>
+				CUSTOM
+			</div>}
+			{createCustomInGameDisplay === true && 
+			<div className="custom-button-ingame" onClick={createCustomInGameOnClick}>
+				IN CUSTOM
+			</div>}
+			{createCustomWaitingDisplay === true && 
+			<div className="ccustom-button-waiting" onClick={createCustomWaitingOnClick}>
+				WAITING...
+			</div>}
+			{createCustomInTabDisplay === true && 
+			<div className="custom-button-intab" onClick={createCustomInTabOnClick}>
+				IN CUSTOM
+			</div>}
 		</div>
 	);
 }
