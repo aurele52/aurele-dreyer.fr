@@ -91,6 +91,9 @@ export class AchievementsService {
   }
 
   async userAchievements(userId: number): Promise<AchievementsInfo[]> {
+    if (!userId) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     try {
       const user = await this.prisma.user.findUnique({
         where: {
@@ -180,6 +183,9 @@ export class AchievementsService {
   }
 
   async checkLastTenGamesWin(userId: number): Promise<boolean> {
+    if (!userId) {
+      throw new NotFoundException(`User with ID ${userId} not found`);
+    }
     try {
       const lastTenGames = await this.prisma.matchPlayer.findMany({
         where: {

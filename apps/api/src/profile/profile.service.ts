@@ -18,6 +18,13 @@ export class ProfileService {
   ) {}
 
   async profile(id: number, self_id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+    if (!self_id) {
+      throw new NotFoundException(`User with ID ${self_id} not found`);
+    }
+
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
@@ -32,6 +39,9 @@ export class ProfileService {
       where: {
         user_id: id,
         winner: true,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -39,6 +49,9 @@ export class ProfileService {
       where: {
         user_id: id,
         winner: false,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -61,6 +74,7 @@ export class ProfileService {
         is2FaEnabled: user.is_enable_2fa,
       };
     }
+
     const friendship = await this.frienship.userFriendship(self_id, id);
 
     if (friendship) {
@@ -91,9 +105,15 @@ export class ProfileService {
   }
 
   async historic(id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     const matches = await this.prisma.matchPlayer.findMany({
       where: {
         user_id: id,
+        match: {
+          type: 'NORMAL',
+        },
       },
       include: {
         match: {

@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  ForbiddenException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { UserChannelRoles } from './roles/user-channel.roles';
 import { DateTime } from 'luxon';
@@ -13,6 +17,13 @@ export class UserChannelService {
   ) {}
 
   async containBlockedUser(channel_id: number, user_id: number) {
+    if (!channel_id) {
+      throw new NotFoundException(`User with ID ${channel_id} not found`);
+    }
+    if (!user_id) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
+    }
+
     const userChannels = await this.prisma.userChannel.findMany({
       where: {
         channel_id,
@@ -22,6 +33,8 @@ export class UserChannelService {
         User: true,
       },
     });
+
+    if (!userChannels) return false;
 
     for (const uc of userChannels) {
       if (
@@ -38,6 +51,13 @@ export class UserChannelService {
     channelId: number;
     role: UserChannelRoles;
   }) {
+    if (!params.channelId) {
+      throw new NotFoundException(`User with ID ${params.channelId} not found`);
+    }
+    if (!params.userId) {
+      throw new NotFoundException(`User with ID ${params.userId} not found`);
+    }
+
     const { userId, channelId, role } = params;
 
     const channel = await this.prisma.channel.findUnique({
@@ -55,14 +75,14 @@ export class UserChannelService {
     }
 
     if (channel && channel.banList.some((user) => user.id === userId)) {
-      throw new Error('User is banned in this channel.');
+      throw new ForbiddenException('User is banned in this channel.');
     }
 
     if (
       channel.type === ChanType.DM &&
       (await this.containBlockedUser(channelId, userId))
     ) {
-      throw new Error('DM cannot be created');
+      throw new ForbiddenException('DM cannot be created');
     }
 
     return await this.prisma.userChannel.create({
@@ -83,6 +103,7 @@ export class UserChannelService {
   }
 
   async deleteUserChannel(id: number) {
+    if (!id) throw new NotFoundException(`UserChannel with id ${id} not found`);
     return await this.prisma.userChannel.delete({
       where: {
         id,
@@ -91,6 +112,12 @@ export class UserChannelService {
   }
 
   async currUser(user_id: number, channel_id: number) {
+    if (!channel_id) {
+      throw new NotFoundException(`User with ID ${channel_id} not found`);
+    }
+    if (!user_id) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
+    }
     const userChan = await this.prisma.userChannel.findUnique({
       where: {
         user_id_channel_id: {
@@ -124,6 +151,12 @@ export class UserChannelService {
   }
 
   async updateReadUntil(user_id: number, channel_id: number) {
+    if (!channel_id) {
+      throw new NotFoundException(`User with ID ${channel_id} not found`);
+    }
+    if (!user_id) {
+      throw new NotFoundException(`User with ID ${user_id} not found`);
+    }
     return await this.prisma.userChannel.update({
       where: {
         user_id_channel_id: {
