@@ -39,8 +39,10 @@ export class lobby {
   }
 
   async win(winner: clientInfo, loser: clientInfo) {
+    console.log('test 1');
     try {
-      winner.socket.emit('server.win');
+      if (winner.socket.connected) winner.socket.emit('server.win');
+    console.log('test 2');
 
       const winnerUser = await this.prisma.user.findUnique({
         where: { username: winner.user },
@@ -63,6 +65,7 @@ export class lobby {
           : winner.mode === 'custom'
             ? 'CUSTOM'
             : 'PRIVATE';
+    console.log('test 3');
       const match = await this.prisma.match.create({
         data: {
           on_going: false,
@@ -94,15 +97,18 @@ export class lobby {
       this.achievements.updateAchievements(winnerUser.id);
       this.achievements.updateAchievements(loserUser.id);
 
+    console.log('test 4');
       return match;
     } catch (error) {
       console.error('Error in win function:', error);
+    console.log('test 5');
       throw error;
     }
+    console.log('test 6');
   }
 
   lose(user: clientInfo) {
-    user.socket.emit('server.lose');
+    if (user.socket.connected) user.socket.emit('server.lose');
   }
 
   score() {
@@ -314,21 +320,7 @@ export class lobby {
       this.gameInfo.twoScore < 9
     ) {
       this.update();
-      this.clients[0].socket.emit('server.update', {
-        barDist: this.gameInfo.barDist,
-        barLarge: this.gameInfo.barLarge,
-        itemSize: this.gameInfo.itemSize,
-        ballx: this.gameInfo.ballx,
-        bally: this.gameInfo.bally,
-        oneBary: this.gameInfo.oneBary,
-        twoBary: this.gameInfo.twoBary,
-        oneScore: this.gameInfo.oneScore,
-        twoScore: this.gameInfo.twoScore,
-        ballSize: this.gameInfo.ballSize,
-        barSize: this.gameInfo.barSize,
-        itemx: this.gameInfo.itemx,
-        itemy: this.gameInfo.itemy,
-      });
+      this.clients[0].socket.emit('server.update', this.gameInfo);
       this.clients[1].socket.emit('server.update', this.gameInfo);
       await this.delay(20);
     }

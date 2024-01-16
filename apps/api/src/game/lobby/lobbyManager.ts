@@ -16,6 +16,7 @@ export class lobbyManager {
     console.log(this.inJoinTab);
     this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo); console.log('yes');});
   }
+
   public removeMatch(matchName: string) {
     this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
   }
@@ -34,6 +35,17 @@ export class lobbyManager {
     this.normalQueue.push(client);
     client.status = 'waiting join normal';
     this.MATCH();
+  }
+
+  public removeToCustomQueue(client: clientInfo) {
+    const index = this.customLobbies.findIndex((value) => {
+      return value.getPlayer()[0] === client;
+    });
+    if (index !== -1) {
+      console.log(client.matchInfo);
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
+      this.customLobbies.splice(index, 1);
+    }
   }
 
   public removeToNormalQueue(client: clientInfo) {
@@ -58,6 +70,7 @@ export class lobbyManager {
       return value.getMatchInfo().name === matchName;
     });
     if (index !== -1) {
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.matchInfo = this.customLobbies[index].getMatchInfo();
