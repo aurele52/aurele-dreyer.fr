@@ -19,7 +19,19 @@ export default function JoinCustom(props: joinCustomProps)
 		function onLobbies(lol: gameInfoDto) {
 			setLobbies([...lobbies, lol]);
 		}
+		function onLobbiesDelete(lol: gameInfoDto) {
+			const index = lobbies.findIndex((value) => {
+				console.log('val', value.name, 'lol', lol.name);
+				return value.name === lol.name;
+			});
+			if (index !== -1) {
+				const temp: gameInfoDto[] = [...lobbies];
+				temp.splice(index, 1);
+				setLobbies(temp);
+			}
+		}
 		socket.on("server.lobbyCustom", onLobbies);
+		socket.on("server.lobbyCustomDelete", onLobbiesDelete);
 
 		return () => {
 			const memberSettingsWindow = store

@@ -44,6 +44,17 @@ export class PongGateway {
     }
   }
 
+  @SubscribeMessage('client.createCustomAbort')
+  handleCreateCustomAbort(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+    console.log('abort');
+      this.lobbyManager.removeToCustomQueue(this.connectedClient[index]);
+    }
+  }
+
   @SubscribeMessage('client.closeMainWindow')
   handleCloseMainWindow(client: Socket) {
     const index = this.connectedClient.findIndex((value) => {
@@ -113,7 +124,6 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      client.emit('server.matchLoading');
       this.connectedClient[index].mode = 'normal';
       this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
       this.connectedClient[index].status = 'waiting join normal';
@@ -208,13 +218,15 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      if (this.connectedClient[index].lobby != null) {
+      if (this.connectedClient[index].lobby != null && this.connectedClient[index].status != 'waiting create custom') {
         this.connectedClient[index].lobby.onDisconnect(
           this.connectedClient[index],
         );
       }
       if (this.connectedClient[index].status === 'waiting join normal')
       this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
+      if (this.connectedClient[index].status === 'waiting create custom')
+      this.lobbyManager.removeToCustomQueue(this.connectedClient[index]);
       this.connectedClient.splice(index, 1);
     }
     this.lobbyManager.cleanLobbies();
