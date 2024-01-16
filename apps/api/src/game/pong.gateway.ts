@@ -1,7 +1,4 @@
-import {
-  SubscribeMessage,
-  WebSocketGateway,
-} from '@nestjs/websockets';
+import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
 import { clientInfo } from './dto-interface/clientInfo.interface';
@@ -9,25 +6,39 @@ import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
 import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
 import { input } from './dto-interface/input.interface';
 import { baseClientInfo } from './dto-interface/baseClientInfo';
-import { UseGuards } from '@nestjs/common';
-import { WsGuard } from './ws.guard';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
 
-//aurele to-do
-@UseGuards(WsGuard)
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
+
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
+
   afterInit() {
     console.log('gateway initialised');
   }
 
   async handleConnection(client: any) {
-    const newClient: clientInfo = { ...baseClientInfo };
-    newClient.socket = client;
-    this.connectedClient.push(newClient);
+    console.log('trying to connect socket...');
+    try {
+      const payload = await this.authService.checkTokenValidity(
+        client.handshake.auth.token,
+        process.env.APP_SECRET,
+      );
+      const user = await this.userService.getUser(payload.id);
+      const newClient: clientInfo = { ...baseClientInfo };
+      newClient.socket = client;
+      this.connectedClient.push(newClient);
+      console.log('socket connection successfull');
+    } catch (ex) {
+      console.log('socket connection failed');
+      client.emit('connect_failed');
+    }
   }
 
   @SubscribeMessage('client.openGame')
@@ -225,7 +236,7 @@ export class PongGateway {
         );
       }
       if (this.connectedClient[index].status === 'waiting join normal')
-      this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
+        this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
       this.connectedClient.splice(index, 1);
     }
     this.lobbyManager.cleanLobbies();

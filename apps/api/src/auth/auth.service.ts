@@ -151,9 +151,8 @@ export class AuthService {
     try {
       return await this.jwtService.verifyAsync(token, { secret });
     } catch (error) {
-      const err_message = 'Invalid or expired token. Please log in first';
-      console.log('401 EXCEPTION THROWN: ', err_message);
-      console.log({ error });
+      const err_message = `${error.message}. Please log in`;
+      console.log('401 EXCEPTION THROWN:', err_message, );
       throw new UnauthorizedException(err_message);
     }
   }

@@ -9,27 +9,31 @@ import { useEffect } from "react";
 
 function App() {
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await api.get(`/user`);
-        const userData = response.data;
+    // const fetchData = async () => {
+    //   try {
+    //     const response = await api.get(`/user`);
+    //     const userData = response.data;
 
-        if (userData && userData.username) {
-          socket.emit("client.authentification", {
-            user: userData.username,
-            token: window.localStorage.getItem("token"),
-          });
-        }
-      } catch (error) {
-        console.error("Error fetching user:", error);
-      }
-    };
+    //     if (userData && userData.username) {
+    //       socket.emit("client.authentification", {
+    //         user: userData.username,
+    //         token: window.localStorage.getItem("token"),
+    //       });
+    //     }
+    //   } catch (error) {
+    //     console.error("Error fetching user:", error);
+    //   }
+    // };
 
-	socket.auth = {token: localStorage.getItem("token")};
+    socket.auth = { token: localStorage.getItem("token") };
     socket.connect();
 
     socket.on("connect", () => {
-      fetchData();
+      // fetchData();
+    });
+
+    socket.on("connect_failed", (err) => {
+      console.log("connect failed");
     });
 
     socket.on("disconnect", (reason) => {
