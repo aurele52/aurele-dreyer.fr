@@ -51,6 +51,7 @@ function Modal({
 				.get("/channels/common/" + targetId)
 				.then((response) => response.data);
 		},
+		enabled: !!targetId,
 	});
 
 	const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
@@ -60,14 +61,17 @@ function Modal({
 				.get("/channels/excluded/" + targetId)
 				.then((response) => response.data);
 		},
+		enabled: !!targetId,
 	});
 
 	const { data: user } = useQuery<{ id: number; username: string }>({
 		queryKey: ["username", targetId],
 		queryFn: () => {
-			return api
-				.get("/user/" + targetId)
-				.then((response) => response.data);
+			if (targetId)
+				return api
+					.get("/user/" + targetId)
+					.then((response) => response.data);
+			else return api.get("/user").then((response) => response.data);
 		},
 	});
 
