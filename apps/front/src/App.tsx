@@ -8,32 +8,33 @@ import api from "./axios";
 import { useEffect } from "react";
 
 function App() {
-	useEffect(() => {
-		const fetchData = async () => {
-			try {
-				const response = await api.get(`/user`);
-				const userData = response.data;
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const response = await api.get(`/user`);
+        const userData = response.data;
 
-				if (userData && userData.username) {
-					socket.emit("client.authentification", {
-						user: userData.username,
-						token: window.localStorage.getItem("token"),
-					});
-				}
-			} catch (error) {
-				console.error("Error fetching user:", error);
-			}
-		};
+        if (userData && userData.username) {
+          socket.emit("client.authentification", {
+            user: userData.username,
+            token: window.localStorage.getItem("token"),
+          });
+        }
+      } catch (error) {
+        console.error("Error fetching user:", error);
+      }
+    };
 
-		socket.connect();
+	socket.auth = {token: localStorage.getItem("token")};
+    socket.connect();
 
-		socket.on("connect", () => {
-			fetchData();
-		});
+    socket.on("connect", () => {
+      fetchData();
+    });
 
-		socket.on("disconnect", (reason) => {
-			console.log("Disconnected : " + reason);
-		});
+    socket.on("disconnect", (reason) => {
+      console.log("Disconnected : " + reason);
+    });
 
 		return () => {
 			socket.off("connect");

@@ -13,7 +13,8 @@ export class lobbyManager {
     client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
+    console.log(this.inJoinTab);
+    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo); console.log('yes');});
   }
   public removeMatch(matchName: string) {
     this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
