@@ -13,7 +13,6 @@ export class lobbyManager {
     client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
-    console.log(this.inJoinTab);
     this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo); console.log('yes');});
   }
 
@@ -42,7 +41,6 @@ export class lobbyManager {
       return value.getPlayer()[0] === client;
     });
     if (index !== -1) {
-      console.log(client.matchInfo);
     this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
       this.customLobbies.splice(index, 1);
     }
@@ -74,6 +72,7 @@ export class lobbyManager {
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.matchInfo = this.customLobbies[index].getMatchInfo();
+      client.lobby = this.customLobbies[index];
       this.customLobbies[index].addClient(client);
       this.customLobbies[index].start();
     }
