@@ -35,7 +35,10 @@ export class PongGateway {
   }
 
   @SubscribeMessage('client.authentification')
-  async handleAuthentification(client: Socket, data: {user: string, token: string}) {
+  async handleAuthentification(
+    client: Socket,
+    data: { user: string; token: string },
+  ) {
     // if (!data.token) {
     //   client.emit('401');
     //   client.disconnect(); //mathilde todo
@@ -113,7 +116,10 @@ export class PongGateway {
     if (index !== -1) {
       this.connectedClient[index].status = 'inGame';
       this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
-      this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchName);
+      this.lobbyManager.addPlayerToMatch(
+        this.connectedClient[index],
+        matchName,
+      );
       this.lobbyManager.removeMatch(matchName);
     }
   }
@@ -127,7 +133,9 @@ export class PongGateway {
       this.lobbyManager.addInJoinTab(this.connectedClient[index]);
     }
     const lobbies = this.lobbyManager.getCustomLobbies();
-    lobbies.forEach((value) => {client.emit('server.lobbyCustom', value.getMatchInfo());});
+    lobbies.forEach((value) => {
+      client.emit('server.lobbyCustom', value.getMatchInfo());
+    });
   }
 
   @SubscribeMessage('client.input')
@@ -143,7 +151,7 @@ export class PongGateway {
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
-      console.log({ value }, { data });
+      //console.log({ value }, { data });
       return value.user === data.user;
     });
     if (index !== -1) {

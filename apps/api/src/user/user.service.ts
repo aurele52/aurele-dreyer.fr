@@ -240,11 +240,7 @@ export class UserService {
 
   private userEvents = new Subject<any>();
 
-  emitUserEvent(
-    type: UserEventType,
-    recipientId: number,
-    initiatorId: number,
-  ) {
+  emitUserEvent(type: UserEventType, recipientId: number, initiatorId: number) {
     this.userEvents.next({ type, initiatorId, recipientId });
   }
 

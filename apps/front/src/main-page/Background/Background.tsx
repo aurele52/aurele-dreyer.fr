@@ -23,13 +23,11 @@ import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/Channe
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
-import Preview from "../../windows/Play/Preview";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import api from "../../axios";
 import store from "../../store";
-import { WindowData } from "../../reducers"
 
 enum UserEventType {
   NOEVENT = "NOEVENT",
@@ -284,7 +282,7 @@ export function Background({ windows }: BackgroundProps) {
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [UserEventType]);
+  }, [userEventType]);
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -298,7 +296,6 @@ export function Background({ windows }: BackgroundProps) {
       );
 
       eventSource.onmessage = ({ data }) => {
-        console.log("onmessage");
         const parsedData = JSON.parse(data);
         const type = parsedData.type;
         const targetId = parsedData.targetId;
