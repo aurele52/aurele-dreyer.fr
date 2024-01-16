@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { FriendshipStatus } from '@prisma/client';
 import { Subject, Observable } from 'rxjs';
@@ -12,6 +12,9 @@ export class FriendshipService {
   constructor(private readonly prisma: PrismaService) {}
 
   async userFriendships(id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     return await this.prisma.friendship.findMany({
       where: {
         OR: [{ user1_id: id }, { user2_id: id }],
@@ -20,6 +23,12 @@ export class FriendshipService {
   }
 
   async userFriendship(selfId: number, targetId: number) {
+    if (!selfId) {
+      throw new NotFoundException(`User with ID ${selfId} not found`);
+    }
+    if (!targetId) {
+      throw new NotFoundException(`User with ID ${targetId} not found`);
+    }
     if (!selfId || !targetId) return {};
     const friendship = await this.prisma.friendship.findFirst({
       where: {
@@ -59,6 +68,12 @@ export class FriendshipService {
   }
 
   async deleteFriends(user1_id, user2_id) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     return await this.prisma.friendship.deleteMany({
       where: {
         OR: [
@@ -71,6 +86,12 @@ export class FriendshipService {
   }
 
   async deletePending(user1_id, user2_id) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     return await this.prisma.friendship.deleteMany({
       where: {
         OR: [
@@ -83,6 +104,12 @@ export class FriendshipService {
   }
 
   async deleteBlocked(user1_id, user2_id) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     return await this.prisma.friendship.deleteMany({
       where: {
         OR: [
@@ -95,6 +122,12 @@ export class FriendshipService {
   }
 
   async deleteFriendship(user1_id, user2_id) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     return await this.prisma.friendship.deleteMany({
       where: {
         AND: [
@@ -116,6 +149,12 @@ export class FriendshipService {
   }
 
   async createFriendship(user1_id: number, user2_id: number) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     const currentFriendship = await this.userFriendship(user1_id, user2_id);
     if (currentFriendship) {
       if (currentFriendship.status === FriendshipStatus.PENDING)
@@ -144,6 +183,12 @@ export class FriendshipService {
   }
 
   async createBlockedFriendship(user1_id: number, user2_id: number) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     const currentFriendship = await this.userFriendship(user1_id, user2_id);
     if (currentFriendship) {
       if (currentFriendship.status === FriendshipStatus.BLOCKED) return;
@@ -167,6 +212,10 @@ export class FriendshipService {
   }
 
   async getPendingInvitations(id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
+
     const invitations = await this.prisma.friendship.findMany({
       where: {
         OR: [
@@ -198,6 +247,9 @@ export class FriendshipService {
   }
 
   async getBlockedList(id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     const blocked = await this.prisma.friendship.findMany({
       where: {
         user1_id: id,
@@ -219,6 +271,12 @@ export class FriendshipService {
   }
 
   async isBlockedRelationship(user1_id: number, user2_id: number) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     const relationship = await this.prisma.friendship.findFirst({
       where: {
         OR: [
@@ -232,6 +290,12 @@ export class FriendshipService {
   }
 
   async acceptFriendship(user1_id: number, user2_id: number) {
+    if (!user1_id) {
+      throw new NotFoundException(`User with ID ${user1_id} not found`);
+    }
+    if (!user2_id) {
+      throw new NotFoundException(`User with ID ${user2_id} not found`);
+    }
     return await this.prisma.friendship.update({
       where: {
         user1_id_user2_id: {

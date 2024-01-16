@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  ForbiddenException,
+  HttpStatus,
+  Injectable,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { NotFoundException } from '@nestjs/common';
 import { FriendshipStatus, User } from '@prisma/client';
@@ -61,6 +66,9 @@ export class UserService {
   }
 
   async getUser(id: number) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     const user = await this.prisma.user.findUnique({
       where: {
         id,
@@ -97,10 +105,7 @@ export class UserService {
       };
     } catch (error) {
       if (error instanceof PrismaClientKnownRequestError) {
-        return {
-          statusCode: HttpStatus.BAD_REQUEST,
-          message: 'Failed to update username: Prisma error',
-        };
+        throw new ForbiddenException('Failed to update username: Prisma error');
       }
       return {
         statusCode: HttpStatus.INTERNAL_SERVER_ERROR,
@@ -110,6 +115,9 @@ export class UserService {
   }
 
   async postAvatar(id: number, avatarUrl: string) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     try {
       await this.prisma.user.update({
         where: {
@@ -138,81 +146,86 @@ export class UserService {
     }
   }
 
-  async deleteUser(id: number) {
-    const user = await this.prisma.user.findUnique({
-      where: {
-        id: id,
-      },
-    });
-
-    if (!user) {
+  async deleteUser(id: number): Promise<number> {
+    if (!id) {
       throw new NotFoundException(`User with ID ${id} not found`);
     }
+    try {
+      if (!Number.isInteger(id) || id <= 0) {
+        throw new BadRequestException('Invalid user ID provided');
+      }
 
-    const friendships = await this.prisma.friendship.findMany({
-      where: {
-        OR: [{ user1_id: id }, { user2_id: id }],
-      },
-    });
-
-    await Promise.all(
-      friendships.map(async (friendship) => {
-        await this.prisma.friendship.delete({
-          where: { id: friendship.id },
-        });
-      }),
-    );
-
-    const userChannels = await this.prisma.userChannel.findMany({
-      where: {
-        user_id: id,
-      },
-      include: {
-        Channel: true,
-      },
-    });
-
-    await Promise.all(
-      userChannels.map(async (userChannel) => {
-        await this.prisma.userChannel.delete({
-          where: { id: userChannel.id },
-        });
-
-        if (userChannel.Channel.type === 'DM') {
-          const channel_id = userChannel.Channel.id;
-
-          await this.prisma.channel.delete({
-            where: {
-              id: channel_id,
+      const user = await this.prisma.user.findUnique({
+        where: { id },
+        include: {
+          userChannels: {
+            include: {
+              Channel: true,
             },
-          });
-        }
-      }),
-    );
+          },
+        },
+      });
 
-    await this.prisma.userAchievement.deleteMany({
-      where: {
-        user_id: id,
-      },
-    });
+      if (!user) {
+        throw new NotFoundException(`User with ID ${id} not found`);
+      }
 
-    await this.prisma.user.update({
-      where: { id: user.id },
-      data: {
-        isDeleted: true,
-        id_42: null,
-        token_42: null,
-        secret_2fa: null,
-        avatar_url: `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/deletedUser.png`,
-        username: 'deletedUser' + id,
-        is_enable_2fa: false, // Assuming you want to disable 2FA when deleting the user
-      },
-    });
+      await this.prisma.$transaction(async (prisma) => {
+        await prisma.friendship.deleteMany({
+          where: { OR: [{ user1_id: id }, { user2_id: id }] },
+        });
 
-    return HttpStatus.OK;
+        await Promise.all(
+          user.userChannels.map(async (userChannel) => {
+            await prisma.userChannel.delete({
+              where: { id: userChannel.id },
+            });
+
+            if (userChannel.Channel.type === 'DM') {
+              await prisma.channel.delete({
+                where: { id: userChannel.Channel.id },
+              });
+            }
+          }),
+        );
+
+        await prisma.userAchievement.deleteMany({
+          where: { user_id: id },
+        });
+
+        await prisma.user.update({
+          where: { id },
+          data: {
+            isDeleted: true,
+            id_42: null,
+            token_42: null,
+            secret_2fa: null,
+            avatar_url: `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/deletedUser.png`,
+            username: 'deletedUser' + id,
+            is_enable_2fa: false,
+          },
+        });
+      });
+
+      return HttpStatus.OK;
+    } catch (error) {
+      console.error(`Error in deleteUser for userId ${id}:`, error);
+
+      if (
+        error instanceof BadRequestException ||
+        error instanceof NotFoundException
+      ) {
+        throw error;
+      }
+
+      throw new Error('An unexpected error occurred while deleting user');
+    }
   }
 
   async updateUser(id: number, data) {
+    if (!id) {
+      throw new NotFoundException(`User with ID ${id} not found`);
+    }
     try {
       await this.prisma.user.update({
         where: { id },
