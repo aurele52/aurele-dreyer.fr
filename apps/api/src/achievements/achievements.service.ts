@@ -92,7 +92,8 @@ export class AchievementsService {
 
   async userAchievements(userId: number): Promise<AchievementsInfo[]> {
     if (!userId) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      console.error(`User with ID ${userId} not found`);
+      throw new NotFoundException(`User not found`);
     }
     try {
       const user = await this.prisma.user.findUnique({
@@ -105,7 +106,8 @@ export class AchievementsService {
       });
 
       if (!user) {
-        throw new Error(`User with ID ${userId} not found`);
+        console.error(`User with ID ${userId} not found`);
+        throw new NotFoundException(`User not found`);
       }
 
       const achievementsInfo: AchievementsInfo[] = user.achievement.map((ua) =>
