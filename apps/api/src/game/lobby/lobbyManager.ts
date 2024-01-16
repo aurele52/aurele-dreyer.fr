@@ -1,13 +1,24 @@
 import { lobby } from './lobby';
 import { clientInfo } from '../dto-interface/clientInfo.interface';
+import { gameInfo } from '../dto-interface/shared';
+import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 
 export class lobbyManager {
-  private normalLobbies: lobby[] = [];
   private customLobbies: lobby[] = [];
-  private normalQueue: clientInfo[] = [];
   private inJoinTab: clientInfo[] = [];
 
-  public createCustomLobby(client: clientInfo) {
+  public createCustomLobby(client: clientInfo, gameInfo: gameInfo) {
+    client.mode = 'custom';
+    client.status = 'waiting create custom';
+    client.matchInfo = {
+      ...normalGameInfo,
+      ...gameInfo,
+      gamey: gameInfo.borderSize * 2 + gameInfo.menuSize,
+      gamexsize: gameInfo.xsize - 2 * gameInfo.borderSize,
+      gameysize: gameInfo.ysize - 3 * gameInfo.borderSize - gameInfo.menuSize,
+      ballx: gameInfo.gamexsize / 2 - 10,
+      bally: gameInfo.gameysize / 2,
+    };
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
     client.status = 'waiting create custom';
@@ -20,6 +31,11 @@ export class lobbyManager {
     this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
   }
   public addInJoinTab(client: clientInfo) {
+    client.status = 'inJoinTab';
+    this.customLobbies.forEach((value) => {
+      if (value.getPlayer()[0].status != 'inGame')
+        client.socket.emit('server.lobbyCustom', value.getMatchInfo());
+    });
     this.inJoinTab.push(client);
   }
   public removeInJoinTab(client: clientInfo) {
@@ -30,33 +46,21 @@ export class lobbyManager {
       this.inJoinTab.splice(index, 1);
     }
   }
-  public addToNormalQueue(client: clientInfo) {
-    this.normalQueue.push(client);
-    client.status = 'waiting join normal';
-    this.MATCH();
-  }
 
   public removeToCustomQueue(client: clientInfo) {
-    const index = this.customLobbies.findIndex((value) => {
-      return value.getPlayer()[0] === client;
-    });
-    if (index !== -1) {
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.matchInfo); console.log('yes');});
-      this.customLobbies.splice(index, 1);
+    if (client.lobby) {
+      const index = this.customLobbies.findIndex((value) => {
+        return value === client.lobby;
+      });
+      if (index !== -1) {
+        this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustomDelete', client.lobby.getMatchInfo());});
+        this.customLobbies.splice(index, 1);
+      }
     }
-  }
-
-  public removeToNormalQueue(client: clientInfo) {
-    const index = this.normalQueue.findIndex((value) => {
-      return value === client;
-    });
-    if (index !== -1) {
-      this.normalQueue.splice(index, 1);
-    }
+    client.status = 'connected';
   }
 
   public cleanLobbies() {
-    this.normalLobbies.filter((lobby) => lobby.isEmpty() === true);
     this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
   }
   public getCustomLobbies() {
@@ -64,6 +68,9 @@ export class lobbyManager {
   }
 
   public addPlayerToMatch(client: clientInfo, matchName: string) {
+    client.status = 'inGame';
+    this.removeInJoinTab(client);
+    this.removeMatch(matchName);
     const index = this.customLobbies.findIndex((value) => {
       return value.getMatchInfo().name === matchName;
     });
@@ -75,21 +82,6 @@ export class lobbyManager {
       client.lobby = this.customLobbies[index];
       this.customLobbies[index].addClient(client);
       this.customLobbies[index].start();
-    }
-  }
-  private MATCH() {
-    if (this.normalQueue.length >= 2) {
-      const playerOne = this.normalQueue.shift();
-      const playerTwo = this.normalQueue.shift();
-      const newLobby = new lobby('normal', null);
-      playerOne.lobby = newLobby;
-      playerTwo.lobby = newLobby;
-      playerOne.status = 'inGame';
-      playerTwo.status = 'inGame';
-      newLobby.addClient(playerOne);
-      newLobby.addClient(playerTwo);
-      this.normalLobbies.push(newLobby);
-      newLobby.start();
     }
   }
 }
