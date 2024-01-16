@@ -32,7 +32,7 @@ export type ActionKey =
 	| "kickUser"
 	| "banUser"
 	| "deleteChannel"
-	| "leaveHome";
+	| "logOut";
 
 function Modal({
 	content,
@@ -391,8 +391,9 @@ function Modal({
 		},
 	});
 
-	const leaveHome = () => {
-		//mchassig
+	const logOut = () => {
+		localStorage.removeItem("token");
+		router.load();
 	};
 
 	const actions = {
@@ -408,7 +409,7 @@ function Modal({
 		kickUser,
 		banUser,
 		deleteChannel,
-		leaveHome,
+		logOut,
 	};
 
 	const icon = iconsModal[type || "INFO"];
@@ -477,7 +478,7 @@ function Modal({
 						content="ok"
 						onClick={
 							action
-								? () => handleAction
+								? () => handleAction(winId)
 								: () => handleClose(winId)
 						}
 					/>

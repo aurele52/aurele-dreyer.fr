@@ -6,6 +6,7 @@ import { useSelector } from "react-redux";
 import { socket } from "./socket";
 import api from "./axios";
 import { useEffect } from "react";
+import { addModal, ModalType } from "./shared/utils/AddModal";
 
 function App() {
   useEffect(() => {
@@ -34,51 +35,56 @@ function App() {
 
     socket.on("connect_failed", (err) => {
       console.log("connect failed");
+      addModal(
+        ModalType.ERROR,
+        `Socket connection failed. Please try logging in again.`,
+        "logOut"
+      );
     });
 
     socket.on("disconnect", (reason) => {
       console.log("Disconnected : " + reason);
     });
 
-		return () => {
-			socket.off("connect");
-			socket.off("disconnect");
-		};
-	}, []);
-	const { displayFilter, zIndexFilter } = useSelector(
-		(state: AppState) => {
-			const modalWindow = state.windows.find(
-				(window) =>
-					window.content.type === "MODAL" ||
-					window.content.type === "MODALREQUESTED"
-			);
+    return () => {
+      socket.off("connect");
+      socket.off("disconnect");
+    };
+  }, []);
+  const { displayFilter, zIndexFilter } = useSelector(
+    (state: AppState) => {
+      const modalWindow = state.windows.find(
+        (window) =>
+          window.content.type === "MODAL" ||
+          window.content.type === "MODALREQUESTED"
+      );
 
-			if (modalWindow) {
-				return {
-					displayFilter: "block",
-					zIndexFilter: modalWindow.zindex || 0,
-				};
-			} else {
-				return {
-					displayFilter: "none",
-					zIndexFilter: 0,
-				};
-			}
-		},
-		(prev, next) =>
-			prev.displayFilter === next.displayFilter &&
-			prev.zIndexFilter === next.zIndexFilter
-	);
-	return (
-		<div className="App">
-			<div
-				className="Filter"
-				style={{ display: displayFilter, zIndex: zIndexFilter }}
-			></div>
-			<Navbar />
-			<Background />
-		</div>
-	);
+      if (modalWindow) {
+        return {
+          displayFilter: "block",
+          zIndexFilter: modalWindow.zindex || 0,
+        };
+      } else {
+        return {
+          displayFilter: "none",
+          zIndexFilter: 0,
+        };
+      }
+    },
+    (prev, next) =>
+      prev.displayFilter === next.displayFilter &&
+      prev.zIndexFilter === next.zIndexFilter
+  );
+  return (
+    <div className="App">
+      <div
+        className="Filter"
+        style={{ display: displayFilter, zIndex: zIndexFilter }}
+      ></div>
+      <Navbar />
+      <Background />
+    </div>
+  );
 }
 
 export default App;
