@@ -68,7 +68,8 @@ export class LadderService {
     const user = ladder.find((u) => u.id === id);
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      console.error(`User with ID ${id} not found`);
+      throw new NotFoundException(`User not found`);
     }
 
     return user.rank;
