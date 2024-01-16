@@ -1,5 +1,5 @@
 import axios from "axios";
-import { router } from "./router";
+import { ModalType, addModal } from "./shared/utils/AddModal";
 
 const api = axios.create({
   baseURL: "/api",
@@ -17,10 +17,22 @@ api.interceptors.response.use(
     return response;
   },
   (error) => {
+    console.log({ error });
     if (error.response.status === 401) {
-      router.navigate({ to: "/auth" });
+      addModal(
+        ModalType.ERROR,
+        `${error.response.status} - ${error.response.statusText}. You will be redirected to the sign in page.`,
+        "logOut"
+      );
+    } else {
+      addModal(
+        ModalType.ERROR,
+        error.response.data?.message
+          ? `${error.response.data.message}`
+          : `${error.response.status} - ${error.response.statusText}`
+      );
+      throw error;
     }
-    throw error;
   }
 );
 
