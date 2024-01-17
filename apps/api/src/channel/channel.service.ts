@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChanType, FriendshipStatus } from '@prisma/client';
+import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 
 @Injectable()
 export class ChannelService {
@@ -421,5 +422,40 @@ export class ChannelService {
     });
 
     return deletedChannel;
+  }
+
+  async getChannelMemberIds(channel_id: number) {
+    const members = await this.prisma.user.findMany({
+      where: {
+        userChannels: {
+          some: {
+            channel_id,
+          },
+        },
+      },
+    });
+
+    const memberIds = members.map((m) => m.id);
+
+    return memberIds;
+  }
+
+  async deleteChannelOwner(id: number) {
+    const channel_ids = (
+      await this.prisma.userChannel.findMany({
+        where: {
+          user_id: id,
+          role: UserChannelRoles.OWNER,
+        },
+      })
+    ).map((c) => c.channel_id);
+
+    return this.prisma.channel.deleteMany({
+      where: {
+        id: {
+          in: channel_ids,
+        },
+      },
+    });
   }
 }

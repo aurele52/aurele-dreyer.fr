@@ -10,7 +10,8 @@ import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { formatTime, formatDate } from "../../../shared/utils/DateUtils";
+import Countdown from "react-countdown";
+import JSConfetti from "js-confetti";
 import { socket } from "../../../socket";
 
 interface ChatSessionProps {
@@ -41,7 +42,9 @@ type MutedData = {
 };
 
 function ChatSession({ channelId }: ChatSessionProps) {
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
+
+  const jsConfetti = new JSConfetti();
 
 	const [receivedInvitation, setReceivedInvitation] = useState<{
 		username: string;
@@ -308,6 +311,13 @@ function ChatSession({ channelId }: ChatSessionProps) {
 		else return null;
 	};
 
+  const handleEndCountdown = () => {
+    queryClient.invalidateQueries({
+      queryKey: ["userChannel", channelId],
+    });
+    jsConfetti.addConfetti();
+  };
+
 	return (
 		<div className="ChatSession">
 			<div className="headerChatSession">
@@ -340,51 +350,41 @@ function ChatSession({ channelId }: ChatSessionProps) {
 								id: message.user.id,
 							});
 
-						return "";
-					}
-					return !isBlocked(message) ? (
-						<Message message={message} key={message.id} />
-					) : (
-						""
-					);
-				})}
-			</List>
-			<div className="footerChatSession">
-				{userChannel?.isMuted ? (
-					<>
-						<textarea
-							className="typeBarChatSession custom-scrollbar white-list"
-							placeholder={`You are muted until ${formatDate(
-								new Date(userChannel?.mutedUntil)
-							)} ${formatTime(
-								new Date(userChannel?.mutedUntil)
-							)}`}
-							disabled
-						></textarea>
-						<Button
-							className="btn-disabled"
-							color="purple"
-							content="send"
-						/>
-					</>
-				) : (
-					<>
-						<textarea
-							className="typeBarChatSession custom-scrollbar white-list"
-							value={valueMessage}
-							onChange={handleChange}
-							onKeyPress={handleKeyPress}
-						></textarea>
-						<Button
-							color="purple"
-							content="send"
-							onClick={handleSend}
-						/>
-					</>
-				)}
-			</div>
-		</div>
-	);
+            return "";
+          }
+          return !isBlocked(message) ? (
+            <Message message={message} key={message.id} />
+          ) : (
+            ""
+          );
+        })}
+      </List>
+      <div className="footerChatSession">
+        {userChannel?.isMuted ? (
+          <>
+            <div className="typeBarChatSession">
+              Mute expires in:{" "}
+              <Countdown
+                date={userChannel.mutedUntil}
+                onComplete={handleEndCountdown}
+              />
+            </div>
+            <Button className="btn-disabled" color="purple" content="send" />
+          </>
+        ) : (
+          <>
+            <textarea
+              className="typeBarChatSession custom-scrollbar white-list"
+              value={valueMessage}
+              onChange={handleChange}
+              onKeyPress={handleKeyPress}
+            ></textarea>
+            <Button color="purple" content="send" onClick={handleSend} />
+          </>
+        )}
+      </div>
+    </div>
+  );
 }
 
 export default ChatSession;

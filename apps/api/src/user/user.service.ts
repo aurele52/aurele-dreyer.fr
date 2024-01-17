@@ -7,6 +7,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Subject, Observable } from 'rxjs';
+import { UserEvent, UserEventType } from '../user/types/user-event.types';
 
 @Injectable()
 export class UserService {
@@ -252,5 +254,26 @@ export class UserService {
         message: 'Internal server error',
       };
     }
+  }
+
+  async getAllUserIds() {
+    const users = await this.prisma.user.findMany({});
+
+    return users.map((u) => u.id);
+  }
+
+  private userEvents = new Subject<any>();
+
+  emitUserEvent(
+    type: UserEventType,
+    recipientIds: number[],
+    userId: number,
+    channelId: number,
+  ) {
+    this.userEvents.next({ type, userId, channelId, recipientIds });
+  }
+
+  getUserEvents(): Observable<UserEvent> {
+    return this.userEvents.asObservable();
   }
 }

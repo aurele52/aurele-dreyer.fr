@@ -347,7 +347,7 @@ export function Profile({ targetId }: ProfileProps) {
   const handleDeleteAccount = async () => {
     addModal(
       ModalType.WARNING,
-      `Are you sure you want to delete your account?`,
+      `Are you sure you want to delete your account? All the channels that you own will be deleted`,
       "deleteUser"
     );
   };
