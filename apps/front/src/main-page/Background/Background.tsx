@@ -70,7 +70,7 @@ export default function Background() {
     CHAT: { width: "400px", height: "400px" },
     PROFILE: { width: "500px", height: "500px" },
     FINDCHAN: { width: "400px", height: "400px" },
-    NEWCHAN: { width: "400px", height: "400px" },
+    NEWCHAN: { width: "420px", height: "400px" },
     ABOUTCHAN: { width: "500px", height: "500px" },
     ACHIEVEMENTS: { width: "300px", height: "300px" },
     FRIENDSLIST: { width: "450px", height: "600px" },
@@ -179,7 +179,6 @@ export default function Background() {
   });
 
   useEffect(() => {
-    console.log("switch case", userEventType);
     switch (userEventType.type) {
       case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({
@@ -451,7 +450,6 @@ export default function Background() {
 
       eventSource.onmessage = ({ data }) => {
         const parsedData = JSON.parse(data);
-        console.log(parsedData);
         const type = parsedData.type;
         const targetUserId = parsedData.userId;
         const targetChannelId = parsedData.channelId;

@@ -5,7 +5,6 @@ import { AppState } from "./reducers";
 import { useSelector } from "react-redux";
 import { socket } from "./socket";
 import { useEffect } from "react";
-import 'nes.css/css/nes.min.css';
 import { addModal, ModalType } from "./shared/utils/AddModal";
 
 function App() {
