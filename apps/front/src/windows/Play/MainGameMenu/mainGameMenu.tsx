@@ -14,11 +14,11 @@ import api from "../../../axios";
 import { GameEnd } from "../GameEnd/GameEnd";
 
 interface mainGameMenuProps {
-  windowId: number;
-  privateLobby?: {
-    targetId: number;
-  };
-}
+	windowId: number;
+	privateLobby?: {
+		targetId: number;
+		isFirstPlayer: boolean;
+	};
 
 export default function MainGameMenu(props: mainGameMenuProps) {
   const [displayMainMenu, setDisplayMainMenu] = useState<boolean>(true);
@@ -55,11 +55,13 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 	const { mutateAsync: deleteGameInvitation } = useMutation({
 		mutationFn: async () => {
 			if (!privateWaitingDisplay) return;
-			return api.delete(`/message/invitation`);
+			else return api.delete(`/message/invitation`);
 		},
+		onSuccess: () => {},
 		onError: (error) => {
 			console.error(error.message);
 		},
+		retry: 0,
 	});
 
 	function onWin(data: {winner: string}) {

@@ -27,6 +27,10 @@ export interface WindowData {
 	channelId?: number;
 	zindex?: number;
 	gameInfo?: gameInfo;
+	privateLobby?: {
+		targetId: number;
+		isFirstPlayer: boolean;
+	}
 }
 
 export interface AppState {
