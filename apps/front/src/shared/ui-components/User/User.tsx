@@ -184,6 +184,8 @@ export function User({ userId, channel }: UserProps) {
 	};
 
 	const handleMatch = async () => {
+		if (store.getState().windows.some((window) => window.content.type === "PLAY"))
+			return;
 		sendGameInvitation({
 			message: "/PongInvitation",
 			targetId: userId,

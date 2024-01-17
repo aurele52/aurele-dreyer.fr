@@ -25,27 +25,19 @@ export default function CreateCustom(props: createCustomProps) {
 	const [relativeGameInfo, setRelativeGameInfo] = useState<gameInfo>({
 		...normalGameInfo,
 		numberSize: 100,
-		barLarge: (normalGameInfo.barLarge / normalGameInfo.gamexsize) * 100,
+		barLarge: 1.25,
 		menuSize:
-			(normalGameInfo.menuSize /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
+			25,
 		numberTopDist:
-			(normalGameInfo.numberTopDist /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
+			2.5,
 		numberSideDist:
-			(normalGameInfo.numberSideDist /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
+			2.5,
 		ballSize:
-			(normalGameInfo.ballSize /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
-		ballSpeed: (normalGameInfo.ballSpeed / normalGameInfo.gamexsize) * 100,
-		barSize: (normalGameInfo.barSize / normalGameInfo.gameysize) * 100,
-		barDist: (normalGameInfo.barDist / normalGameInfo.gamexsize) * 100,
-		barSpeed: (normalGameInfo.barSpeed / normalGameInfo.gamexsize) * 100,
+			2.6,
+		ballSpeed:0.5,
+		barSize: 25,
+		barDist: 2.5,
+		barSpeed: 0.25,
 	});
 	const [absoluteGameInfo, setAbsoluteGameInfo] =
 		useState<gameInfo>(normalGameInfo);
@@ -170,11 +162,6 @@ export default function CreateCustom(props: createCustomProps) {
 						content="INTERFACE"
 						onClick={InterfaceDisplayOnClick}
 					/>
-					<Button
-						color="purple"
-						content="POWERUP"
-						onClick={PowerUpDisplayOnClick}
-					/>
 				</div>
 				<div className="preview-header-createcustom">
 					<Button
@@ -259,7 +246,7 @@ export default function CreateCustom(props: createCustomProps) {
 							setValue={setValue}
 							min={0.5}
 							max={5}
-							step={0.5}
+							step={0.25}
 							label="Bar Width (%)"
 						/>
 
@@ -317,7 +304,7 @@ export default function CreateCustom(props: createCustomProps) {
 							name={"gameysize"}
 							value={relativeGameInfo.gameysize}
 							setValue={setValue}
-							min={400}
+							min={300}
 							max={1000}
 							step={50}
 							label="Game Height"
@@ -336,7 +323,7 @@ export default function CreateCustom(props: createCustomProps) {
 							value={relativeGameInfo.ballSpeed}
 							setValue={setValue}
 							min={0.25}
-							max={3}
+							max={2}
 							step={0.25}
 							label="Ball Speed"
 						/>
@@ -364,8 +351,8 @@ export default function CreateCustom(props: createCustomProps) {
 							value={relativeGameInfo.barSpeed}
 							setValue={setValue}
 							min={1}
-							max={10}
-							step={1}
+							max={5}
+							step={0.5}
 							label="Bar Speed"
 						/>
 						<RangeSlider
@@ -385,16 +372,6 @@ export default function CreateCustom(props: createCustomProps) {
 							max={8}
 							step={1}
 							label="Player Two Begin Score"
-						/>
-					</div>
-				)}
-				{PowerUpDisplay === true && (
-					<div className="custom-powerup">
-						<CheckboxComponent
-							name={"upBallSize"}
-							value={relativeGameInfo.upBallSize}
-							setValue={setValue}
-							label="Increase Ball Size"
 						/>
 					</div>
 				)}

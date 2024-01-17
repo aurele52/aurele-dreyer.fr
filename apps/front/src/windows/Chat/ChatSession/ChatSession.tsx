@@ -254,6 +254,8 @@ function ChatSession({ channelId, winId }: ChatSessionProps) {
 	};
 
 	const handleAcceptGameRequest = async () => {
+		if (store.getState().windows.some((window) => window.content.type === "PLAY"))
+			return;
 		const newWindow = {
 			WindowName: "Play",
 			id: 0,
@@ -277,6 +279,8 @@ function ChatSession({ channelId, winId }: ChatSessionProps) {
 	};
 
 	const handleMatchButton = async () => {
+		if (store.getState().windows.some((window) => window.content.type === "PLAY"))
+			return;
 		sendMessage({ message: "/PongInvitation", channel_id: channelId });
 		const newWindow = {
 			WindowName: "Play",
