@@ -53,6 +53,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 
 	const { mutateAsync: deleteGameInvitation } = useMutation({
 		mutationFn: async () => {
+			if (!privateWaitingDisplay) return;
 			return api.delete(`/message/invitation`);
 		},
 		onError: (error) => {
@@ -92,6 +93,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setPrivateWaitingDisplay(false);
 		setPongDisplay(true);
 		setDisplayMainMenu(false);
+		console.log("HERE");
 	}
 	function onPrivateMatch() {
 		setGameInfo({ ...normalGameInfo });
@@ -106,6 +108,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDefaultDisplay(false);
 		setPrivateWaitingDisplay(true);
 		setDisplayMainMenu(false);
+		console.log("HERE");
 		socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
 	}
 	function onCancelInvite() {
@@ -121,6 +124,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setJoinNormalDefaultDisplay(true);
 		setCreateCustomDefaultDisplay(true);
 		setJoinCustomDefaultDisplay(true);
+		console.log("Cancel Invite");
 	}
 	useEffect(() => {
 		if (props.privateLobby) {
@@ -131,11 +135,18 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
 		return () => {
-			socket.emit("client.closeMainWindow");
-			socket.off("server.matchStart", onMatchStart);
+			console.log(
+				"pv : ",
+				props.privateLobby,
+				"  disp : ",
+				privateWaitingDisplay
+			);
 			if (props.privateLobby) {
+				console.log("Delete Game Invit");
 				deleteGameInvitation();
 			}
+			socket.emit("client.closeMainWindow");
+			socket.off("server.matchStart", onMatchStart);
 		};
 	}, [props.privateLobby]);
 
