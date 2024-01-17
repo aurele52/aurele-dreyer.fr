@@ -13,6 +13,7 @@ import { Button } from "../../../shared/ui-components/Button/Button";
 
 interface createCustomProps {
 	onCreateLobby: () => void;
+	returnToMenu: () => void;
 }
 
 export default function CreateCustom(props: createCustomProps) {
@@ -125,7 +126,6 @@ export default function CreateCustom(props: createCustomProps) {
 		setPowerUpDisplay(false);
 		setGameDisplay(true);
 	}
-	function mainMenuOnClick() {}
 
 	useEffect(() => {
 		setAbsoluteValue();
@@ -419,7 +419,7 @@ export default function CreateCustom(props: createCustomProps) {
 				<Button
 					color="red"
 					content="GO BACK"
-					onClick={mainMenuOnClick}
+					onClick={props.returnToMenu}
 				/>
 				<div className="div-footer-createcustom">
 					<div

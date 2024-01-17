@@ -52,21 +52,10 @@ export class MessageService {
     });
   }
 
-  private messageEvents = new Subject<any>();
-
-  emitMessage(message: Message, channel_id: number) {
-    this.messageEvents.next({ message, channel_id });
-  }
-
-  getMessageEvents(): Observable<CustomMessageEvent> {
-    return this.messageEvents.asObservable();
-  }
-
-  async deleteInvitation(userId: number, channelId: number) {
+  async findSendedInvitation(userId: number) {
     try {
-      const deletedMessages = await this.prisma.message.deleteMany({
+      const message = await this.prisma.message.findFirst({
         where: {
-          channel_id: channelId,
           channel: {
             userChannels: {
               some: {
@@ -77,9 +66,26 @@ export class MessageService {
           },
           content: '/PongInvitation',
         },
+        include: {
+          channel: true,
+        },
+      });
+      if (!message) throw new NotFoundException('No Sended Invitations');
+      return message;
+    } catch (error) {
+      throw new NotFoundException('No Sended Invitations');
+    }
+  }
+
+  async deleteInvitation(id: number) {
+    try {
+      const deletedMessages = await this.prisma.message.delete({
+        where: {
+          id,
+        },
       });
 
-      if (deletedMessages.count > 0) {
+      if (deletedMessages) {
         return { success: true, message: 'Invitations deleted successfully' };
       } else {
         throw new NotFoundException('No invitations found for deletion');
@@ -91,7 +97,16 @@ export class MessageService {
         console.error('Prisma error details:', error);
       }
 
-      throw new Error('An error occurred while deleting invitations');
+      throw new NotFoundException('No invitations found for deletion');
     }
+  }
+  private messageEvents = new Subject<any>();
+
+  emitMessage(channel_id: number) {
+    this.messageEvents.next({ channel_id });
+  }
+
+  getMessageEvents(): Observable<CustomMessageEvent> {
+    return this.messageEvents.asObservable();
   }
 }
