@@ -66,17 +66,13 @@
 	margin: 0 auto;
 }
 
-.playbutton-footer-createcustom {
+.button-rainbow {
 	display: flex;
     justify-content: center;
     align-items: center;
-	width: 80px;
-	height: 35px;
-	padding: 10px 12px;
+	padding: 5px 8px;
 	cursor: pointer;
-	justify-content: center;
-	align-items: center;
-	border-radius: 12px;
+	border-radius: 8px;
 	outline: 2px solid var(--base-black, #000);
 	border: solid var(--base-white, #fff);
 	border-width: 3px 3px 0;
@@ -88,10 +84,11 @@
 	font-style: normal;
 	font-weight: 700;
 	line-height: 24px;
+	text-transform: uppercase;
 	color: var(--text-text-invert, #FFF);
 }
 
-.playbutton-footer-createcustom:hover {
+.button-rainbow:hover {
 	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
 }
 

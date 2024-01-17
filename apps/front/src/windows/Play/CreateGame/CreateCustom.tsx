@@ -383,7 +383,7 @@ export default function CreateCustom(props: createCustomProps) {
 				/>
         <div className="div-footer-createcustom">
           <div
-            className="playbutton-footer-createcustom"
+            className="button-rainbow"
             onClick={onCreateLobby}
           >
             PLAY
