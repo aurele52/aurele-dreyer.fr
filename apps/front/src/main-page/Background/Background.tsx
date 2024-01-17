@@ -74,8 +74,12 @@ export default function Background() {
 		CHANSETTINGS: { width: "500px", height: "350px" },
 		BANLIST: { width: "300px", height: "400px" },
 		CHATSESSION: { width: "350px", height: "500px" },
-		PLAY: { width: "820px", height: "540px" },
+
+		PLAY: { width: "320px", height: "340px" },
+		PONG: { width: "820px", height: "540px" },
 		PREVIEW: { width: "900px", height: "900px" },
+		CREATECUSTOM: { width: "500px", height: "350px" },
+		JOINCUSTOM: { width: "900px", height: "900px" },
 	};
 
 	const [currentTargetId, setCurrentTargetId] = useState(null);

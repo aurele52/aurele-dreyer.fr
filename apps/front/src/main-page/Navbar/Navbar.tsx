@@ -1,10 +1,10 @@
 import "./Navbar.css";
 import { addWindow } from "../../reducers";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { Button } from "../../shared/ui-components/Button/Button";
 import { router } from "../../router";
 import store from "../../store";
 import { socket } from "../../socket";
+import { IconSVG } from "../../shared/utils/svgComponent";
 
 export default function Navbar() {
 	const handlePlay = () => {
@@ -73,39 +73,26 @@ export default function Navbar() {
 		router.load();
 	};
 
-	return (
-		<div id="Navbar">
-			<div>
-				<button
-					type="button"
-					className="NavButton"
-					onClick={handlePlay}
-				>
-					PLAY
-				</button>
-				<button
-					type="button"
-					className="NavButton"
-					onClick={handleLadder}
-				>
-					LADDER
-				</button>
-				<button
-					type="button"
-					className="NavButton"
-					onClick={handleChat}
-				>
-					CHAT
-				</button>
-				<button
-					type="button"
-					className="NavButton"
-					onClick={handleProfile}
-				>
-					MY PROFILE
-				</button>
-			</div>
-			<Button icon="LogOut" color="red" onClick={handleLogOut} />
-		</div>
-	);
+
+  return (
+    <div id="Navbar">
+      <div>
+        <button type="button" className="NavButton" onClick={handlePlay}>
+          PLAY
+        </button>
+        <button type="button" className="NavButton" onClick={handleLadder}>
+          LADDER
+        </button>
+        <button type="button" className="NavButton" onClick={handleChat}>
+          CHAT
+        </button>
+        <button type="button" className="NavButton" onClick={handleProfile}>
+          MY PROFILE
+        </button>
+      </div>
+      <button type="button" className="DecoButton" onClick={handleLogOut}>
+        <div>{IconSVG['LogOut']}</div>
+      </button>
+    </div>
+  );
 }
