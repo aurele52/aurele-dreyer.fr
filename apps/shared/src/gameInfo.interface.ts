@@ -26,8 +26,8 @@ export interface gameInfo {
   ballColor: string;
   backgroundColor: string;
   borderColor: string;
-  oneNumberColor: string;
-  twoNumberColor: string;
+  oneScoreColor: string;
+  twoScoreColor: string;
   menuColor: string;
   // not in setting
   name: string;
@@ -48,4 +48,9 @@ export interface gameInfo {
   ballDirx: number;
   ballDiry: number;
   ballDeb: number;
+
+  upBallSize: boolean;
+  downBallSize: boolean;
+
+  id?: number;
 }

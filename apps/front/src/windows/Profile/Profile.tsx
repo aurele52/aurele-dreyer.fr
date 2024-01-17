@@ -590,54 +590,46 @@ export function Profile({ targetId }: ProfileProps) {
     </svg>
   );
 
-  return (
-    <div className="Profile">
-      <div className="Header">
-        {avatarDiv()}
-        <div className="Text">
-          {nameDiv()}
-          <div className="Stats">
-            <div>
-              <div className="Rank">
-                <div className="Position">
-                  <div>Rank #{profile?.rank ?? 0}</div>
-                </div>
-                <div style={{ paddingRight: "4px" }} className="Ratio">
-                  <div>
-                    W {profile?.win_count ?? 0} / L {profile?.loose_count ?? 0}
-                  </div>
-                </div>
-                <Button
-                  icon="Arrow"
-                  color="pink"
-                  style={{ display: "flex" }}
-                  onClick={handleOpenLadder}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="ProfileAchievements">
-            <div style={{ paddingRight: "4px" }}>
-              Achievements lvl. {profile?.achievement_lvl}
-            </div>
-            <Button
-              icon="Arrow"
-              color="pink"
-              style={{ display: "flex" }}
-              onClick={() => handleOpenAchievements()}
-            />
-          </div>
-          {buttons}
-        </div>
-      </div>
-      <div className="Body">
-        <div className="Historic">
-          <List>
-            <div className="Count">
-              {historic?.matchHistory.length === historic?.length
-                ? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
-                : `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
-            </div>
+	return (
+		<div className="Profile">
+			<div className="Header">
+				{avatarDiv()}
+				<div className="Text">
+					{nameDiv()}
+					<div className="Stats">
+						<div>
+							<div className="Rank" >
+								<div className="Position" onClick={handleOpenLadder}>
+									<div>Rank #{profile?.rank ?? 0}</div>
+								</div>
+								<div
+									style={{ paddingRight: "4px" }}
+									className="Ratio"
+								>
+									<div>
+										W {profile?.win_count ?? 0} / L{" "}
+										{profile?.loose_count ?? 0}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="ProfileAchievements" onClick={() => handleOpenAchievements()}>
+						<div style={{ paddingRight: "4px" }}>	
+							Achievements lvl. {profile?.achievement_lvl}	
+						</div>
+					</div>
+					{buttons}
+				</div>
+			</div>
+			<div className="Body">
+				<div className="Historic">
+					<List>
+						<div className="Count">
+							{historic?.matchHistory.length === historic?.length
+								? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
+								: `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
+						</div>
 
             {historic?.matchHistory.map((match) => {
               return (

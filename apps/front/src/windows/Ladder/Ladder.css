@@ -26,6 +26,7 @@
 
 .Ladder > div > .User {
 	display: flex;
+	height: 70px;
 	min-width: 170px;
 	padding: 5px 10px;
 	align-items: center;
@@ -49,39 +50,39 @@
 }
 
 .Ladder > div > .SelfUser {
+	transition: all 1s ease-in-out;
 	background: var(
-		--Blue-Gradient-Ladder,
+		--Ladder-Gradient,
 		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(173, 216, 230, 0.2) 91.15%
+			180deg, 
+			rgba(255, 255, 255, 0.00) 67.04%, 
+	    	rgba(240, 127, 189, 0.20) 86.54%
 		),
-		linear-gradient(261deg, #fff 8.97%, #b0e0e6 27.9%, #00bfff 72.53%)
-	);
+		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 40.55%, #FFF 49.55%,   #2BDEC9 76.04%)
+	); 
+}
+
+.Ladder > div > .SelfUser:hover {
+	background:
+	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 40.55%, #FFF 49.55%, #FFCAE7 76.04%)
 }
 
 .Ladder > div > .OtherUser {
+	transition: all 1s ease-in-out;
 	background: var(
-		--Pink-Gradient-Ladder,
+		--Ladder-Gradient,
 		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(255, 101, 190, 0.2) 91.15%
-		),
-		linear-gradient(261deg, #fff 8.97%, #f8e5f8 27.9%, #fd9ad2 72.53%)
+			180deg, 
+			rgba(255, 255, 255, 0.00) 67.04%, 
+	    	rgba(240, 127, 189, 0.20) 86.54%
+		), 
+	linear-gradient(210deg, #2BDEC9 8.97%, #FFF 40.55%, #FFF 49.55%, #FFCAE7 76.04%)
 	);
 }
 
 .Ladder > div > .OtherUser:hover {
-	background: var(
-		--Pink-Gradient-LadderReverse,
-		linear-gradient(
-			180deg,
-			rgba(0, 0, 0, 0) 75.52%,
-			rgba(255, 101, 190, 0.2) 91.15%
-		),
-		linear-gradient(261deg, #fd9ad2 22.49%, #f8e5f8 60.36%, #fff 95.52%)
-	);
+	background:
+		linear-gradient(210deg, #FFCAE7 8.97%, #FFF 40.55%, #FFF 49.55%,   #2BDEC9 76.04%); 
 }
 
 .Ladder > div > .User > .Rank {
@@ -94,7 +95,6 @@
 	min-width: 50px;
 
 	/* Heading/700 */
-	font-family: Chakra Petch;
 	font-size: 36px;
 	font-style: normal;
 	font-weight: 700;
@@ -102,31 +102,34 @@
 }
 
 .Ladder > div > .SelfUser > .Rank > div {
-	background: linear-gradient(180deg, #8a2be2 45.77%, #6a5acd 100%);
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 0.35px #000;
+	-webkit-text-stroke: 0.35px #000;
 }
 
 .Ladder > div > .OtherUser > .Rank > div {
-	background: linear-gradient(180deg, #42edd8 45.77%, #3071d2 100%);
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
 	background-clip: text;
 	-webkit-background-clip: text;
 	-webkit-text-fill-color: transparent;
+	-webkit-text-stroke: 0.35px #000;
 }
 
 .Ladder > div > .User > .Avatar {
 	display: flex;
 	width: 84px;
-	height: 85px;
+	height: 68px;
 	padding: 10px;
 	flex-direction: column;
 	align-items: flex-start;
 }
 
 .Ladder > div > .User > .Avatar > .Frame {
-	width: 64px;
-	height: 64px;
+	width: 55px;
+	height: 55px;
 	flex-shrink: 0;
 	border-radius: var(--radius-radius-rounded, 8px);
 	border: 7px solid var(--colors-grey-white, #fff);
@@ -166,7 +169,6 @@
 
 .Ladder > div > .User > .Stat > div {
 	color: var(--text-text-primary, #000);
-	font-family: Chakra Petch;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 600;

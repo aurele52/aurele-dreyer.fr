@@ -78,6 +78,7 @@ model Match {
   on_going   Boolean       @default(true)
   created_at DateTime      @default(now())
   updated_at DateTime      @updatedAt
+  type       MatchType     @default(NORMAL)
   players    MatchPlayer[]
 }
 
@@ -148,4 +149,10 @@ enum FriendshipStatus {
   FRIENDS
   PENDING
   BLOCKED
+}
+
+enum MatchType {
+  NORMAL
+  CUSTOM
+  PRIVATE
 }

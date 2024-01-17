@@ -1,7 +1,6 @@
 import "./Background.css";
-import { connect } from "react-redux";
+import { useSelector } from "react-redux";
 import { AppState, delWindow } from "../../reducers";
-import { ConnectedProps } from "react-redux";
 import Window from "../../shared/ui-components/Window/Window";
 import Chat, { ChatType } from "../../windows/Chat/Chat";
 import Ladder from "../../windows/Ladder/Ladder";
@@ -17,17 +16,21 @@ import { BlockedUsers } from "../../windows/Profile/FriendsList/BlockedUsers/Blo
 import { AddFriends } from "../../windows/Profile/FriendsList/AddFriends/AddFriends";
 import AddMembers from "../../windows/Chat/AboutChan/AddMembers/AddMembers";
 import AvatarUpload from "../../windows/Profile/AvatarUpload/AvatarUpload";
-import Play from "../../windows/Play/Play";
 import { MemberSettings } from "../../windows/Chat/AboutChan/MemberSettings/MemberSettings";
 import ChannelSettings from "../../windows/Chat/AboutChan/ChannelSettings/ChannelSettings";
 import { BanList } from "../../windows/Chat/AboutChan/BanList/BanList";
 import ChatSession from "../../windows/Chat/ChatSession/ChatSession";
 import TwoFA from "../../windows/Profile/Your2FA/Your2FA";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { useEffect, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import api from "../../axios";
 import store from "../../store";
+import Pong from "../../windows/Play/Pong/Pong";
+import CreateCustom from "../../windows/Play/CreateGame/CreateCustom";
+import JoinCustom from "../../windows/Play/JoinGame/JoinCustom";
+import MainGameMenu from "../../windows/Play/MainGameMenu/mainGameMenu";
+import Preview from "../../windows/Play/Preview/Preview";
 
 enum UserEventType {
   NOEVENT = "NOEVENT",
@@ -51,40 +54,45 @@ enum UserEventType {
   DEMOTEADMIN = "DEMOTEADMIN",
 }
 
-interface BackgroundProps extends ReduxProps {}
+export default function Background() {
+	const queryClient = useQueryClient();
 
-export function Background({ windows }: BackgroundProps) {
-  const queryClient = useQueryClient();
+	const windows = useSelector((state: AppState) => state.windows);
+	const memoizedWindows = useMemo(() => windows, [windows]);
 
-  interface WindowDimensions {
-    width: string;
-    height: string;
-  }
+	interface WindowDimensions {
+		width: string;
+		height: string;
+	}
 
-  const windowDimensions: Record<string, WindowDimensions> = {
-    PLAY: { width: "820px", height: "540px" },
-    LADDER: { width: "450px", height: "600px" },
-    CHAT: { width: "400px", height: "400px" },
-    PROFILE: { width: "500px", height: "500px" },
-    FINDCHAN: { width: "400px", height: "400px" },
-    NEWCHAN: { width: "400px", height: "400px" },
-    ABOUTCHAN: { width: "500px", height: "500px" },
-    ACHIEVEMENTS: { width: "300px", height: "300px" },
-    FRIENDSLIST: { width: "450px", height: "600px" },
-    MODAL: { width: "390px", height: "200px" },
-    MODALREQUESTED: { width: "390px", height: "250px" },
-    PENDINGREQUESTS: { width: "300px", height: "300px" },
-    BLOCKEDUSERS: { width: "300px", height: "400px" },
-    TWOFAQRCODE: { width: "300px", height: "400px" },
-    ADDFRIENDS: { width: "300px", height: "400px" },
-    ADDMEMBERS: { width: "300px", height: "400px" },
-    AVATARUPLOAD: { width: "300px", height: "250px" },
-    MEMBERSETTINGS: { width: "430px", height: "330px" },
-    CHANSETTINGS: { width: "500px", height: "350px" },
-    BANLIST: { width: "300px", height: "400px" },
-    CHATSESSION: { width: "350px", height: "500px" },
-    PREVIEW: { width: "900px", height: "900px" },
-  };
+	const windowDimensions: Record<string, WindowDimensions> = {
+		LADDER: { width: "450px", height: "600px" },
+		CHAT: { width: "400px", height: "400px" },
+		PROFILE: { width: "500px", height: "500px" },
+		FINDCHAN: { width: "400px", height: "400px" },
+		NEWCHAN: { width: "400px", height: "400px" },
+		ABOUTCHAN: { width: "500px", height: "500px" },
+		ACHIEVEMENTS: { width: "300px", height: "300px" },
+		FRIENDSLIST: { width: "450px", height: "600px" },
+		MODAL: { width: "390px", height: "200px" },
+		MODALREQUESTED: { width: "390px", height: "250px" },
+		PENDINGREQUESTS: { width: "300px", height: "300px" },
+		BLOCKEDUSERS: { width: "300px", height: "400px" },
+		TWOFAQRCODE: { width: "300px", height: "400px" },
+		ADDFRIENDS: { width: "300px", height: "400px" },
+		ADDMEMBERS: { width: "300px", height: "400px" },
+		AVATARUPLOAD: { width: "300px", height: "250px" },
+		MEMBERSETTINGS: { width: "430px", height: "330px" },
+		CHANSETTINGS: { width: "500px", height: "350px" },
+		BANLIST: { width: "300px", height: "400px" },
+		CHATSESSION: { width: "350px", height: "500px" },
+
+		PLAY: { width: "320px", height: "340px" },
+		PONG: { width: "820px", height: "540px" },
+		PREVIEW: { width: "900px", height: "900px" },
+		CREATECUSTOM: { width: "500px", height: "350px" },
+		JOINCUSTOM: { width: "900px", height: "900px" },
+	};
 
   const [currentTargetUserId, setCurrentTargetUserId] = useState(null);
 
@@ -127,21 +135,21 @@ export function Background({ windows }: BackgroundProps) {
     },
   });
 
-  const invalidateMessagesQueries = () => {
-    commonChannels?.forEach((c) => {
-      queryClient.invalidateQueries({
-        queryKey: ["messages", c.id],
-      });
-    });
-  };
+	const invalidateMessagesQueries = () => {
+		commonChannels?.forEach((c) => {
+			queryClient.invalidateQueries({
+				queryKey: ["messages", c.id],
+			});
+		});
+	};
 
-  const invalidateAddChannelQueries = () => {
-    currUserOnlyChannels?.forEach((c) => {
-      queryClient.invalidateQueries({
-        queryKey: ["addChannel", c.id],
-      });
-    });
-  };
+	const invalidateAddChannelQueries = () => {
+		currUserOnlyChannels?.forEach((c) => {
+			queryClient.invalidateQueries({
+				queryKey: ["addChannel", c.id],
+			});
+		});
+	};
 
   const closeDMWindow = () => {
     let windows = store.getState().windows;
@@ -453,9 +461,9 @@ export function Background({ windows }: BackgroundProps) {
         setUserEventType({ type });
       };
 
-      eventSource.onerror = (error) => {
-        console.error("EventSource failed:", error);
-      };
+			eventSource.onerror = (error) => {
+				console.error("EventSource failed:", error);
+			};
 
       return () => {
         eventSource.close();
@@ -464,102 +472,119 @@ export function Background({ windows }: BackgroundProps) {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [queryClient, setCurrentTargetUserId, setCurrentTargetChannelId]);
 
-  return (
-    <div id="Background">
-      {Array.isArray(windows) &&
-        windows.map((window) => {
-          const dimensions = windowDimensions[window.content.type] || {
-            width: "500px",
-            height: "600px",
-          };
-          const { width, height } = dimensions;
-          return (
-            <Window
-              key={window.id}
-              WindowName={window.WindowName}
-              width={width}
-              height={height}
-              id={window.id}
-              handleBarButton={window.handleBarButton}
-              color={window.color}
-              zindex={window.zindex || 0}
-              isModal={window.content.type === "MODAL"}
-            >
-              {window.content.type === "PLAY" && (
-                <Play
-                  windowId={window.id}
-                  privateLobby={
-                    window.targetId ? { targetId: window.targetId } : undefined
-                  }
-                />
-              )}
-              {window.content.type === "LADDER" && (
-                <Ladder targetId={window.targetId} />
-              )}
-              {window.content.type === "CHAT" && <Chat />}
-              {window.content.type === "PROFILE" && (
-                <Profile targetId={window.content.id || undefined} />
-              )}
-              {window.content.type === "FINDCHAN" && <FindChan />}
-              {window.content.type === "NEWCHAN" && (
-                <NewChan winId={window.id} />
-              )}
-              {window.content.type === "ABOUTCHAN" && (
-                <AboutChan chanId={window.content.id || undefined} />
-              )}
-              {window.content.type === "ACHIEVEMENTS" && (
-                <Achievements targetId={window.targetId} />
-              )}
-              {window.content.type === "FRIENDSLIST" && <FriendsList />}
-              {(window.content.type === "MODAL" ||
-                window.content.type === "MODALREQUESTED") && (
-                <Modal
-                  content={window.modal?.content}
-                  type={window.modal?.type}
-                  winId={window.id}
-                  action={window.modal?.action}
-                  targetId={window.modal?.targetId}
-                  channelId={window.modal?.channelId}
-                />
-              )}
-              {window.content.type === "PENDINGREQUESTS" && <PendingRequests />}
-              {window.content.type === "BLOCKEDUSERS" && <BlockedUsers />}
-              {window.content.type === "TWOFAQRCODE" && <TwoFA />}
-              {window.content.type === "ADDFRIENDS" && <AddFriends />}
-              {window.content.type === "AVATARUPLOAD" && (
-                <AvatarUpload winId={window.id} />
-              )}
-              {window.content.type === "ADDMEMBERS" && (
-                <AddMembers channelId={window.content.id} />
-              )}
-              {window.content.type === "MEMBERSETTINGS" && (
-                <MemberSettings
-                  targetId={window.targetId ? window.targetId : 0}
-                  channelId={window.channelId ? window.channelId : 0}
-                />
-              )}
-              {window.content.type === "CHANSETTINGS" && (
-                <ChannelSettings channelId={window.content.id} />
-              )}
-              {window.content.type === "BANLIST" && (
-                <BanList channelId={window.channelId ? window.channelId : 0} />
-              )}
-              {window.content.type === "CHATSESSION" && (
-                <ChatSession channelId={window.content.id} />
-              )}
-            </Window>
-          );
-        })}
-    </div>
-  );
+	return (
+		<div id="Background">
+			{Array.isArray(memoizedWindows) &&
+				memoizedWindows.map((window) => {
+					const dimensions = windowDimensions[
+						window.content.type
+					] || {
+						width: "500px",
+						height: "600px",
+					};
+					const { width, height } = dimensions;
+					return (
+						<Window
+							key={window.id}
+							WindowName={window.WindowName}
+							width={width}
+							height={height}
+							id={window.id}
+							handleBarButton={window.handleBarButton}
+							color={window.color}
+							zindex={window.zindex || 0}
+							isModal={window.content.type === "MODAL"}
+						>
+							{window.content.type === "LADDER" && (
+								<Ladder targetId={window.targetId} />
+							)}
+							{window.content.type === "CHAT" && <Chat />}
+							{window.content.type === "PROFILE" && (
+								<Profile
+									targetId={window.content.id || undefined}
+								/>
+							)}
+							{window.content.type === "FINDCHAN" && <FindChan />}
+							{window.content.type === "NEWCHAN" && (
+								<NewChan winId={window.id} />
+							)}
+							{window.content.type === "ABOUTCHAN" && (
+								<AboutChan
+									chanId={window.content.id || undefined}
+								/>
+							)}
+							{window.content.type === "ACHIEVEMENTS" && (
+								<Achievements targetId={window.targetId} />
+							)}
+							{window.content.type === "FRIENDSLIST" && (
+								<FriendsList />
+							)}
+							{(window.content.type === "MODAL" ||
+								window.content.type === "MODALREQUESTED") && (
+								<Modal
+									content={window.modal?.content}
+									type={window.modal?.type}
+									winId={window.id}
+									action={window.modal?.action}
+									targetId={window.modal?.targetId}
+									channelId={window.modal?.channelId}
+								/>
+							)}
+							{window.content.type === "PENDINGREQUESTS" && (
+								<PendingRequests />
+							)}
+							{window.content.type === "BLOCKEDUSERS" && (
+								<BlockedUsers />
+							)}
+							{window.content.type === "TWOFAQRCODE" && <TwoFA />}
+							{window.content.type === "ADDFRIENDS" && (
+								<AddFriends />
+							)}
+							{window.content.type === "AVATARUPLOAD" && (
+								<AvatarUpload winId={window.id} />
+							)}
+							{window.content.type === "ADDMEMBERS" && (
+								<AddMembers channelId={window.content.id} />
+							)}
+							{window.content.type === "MEMBERSETTINGS" && (
+								<MemberSettings
+									targetId={
+										window.targetId ? window.targetId : 0
+									}
+									channelId={
+										window.channelId ? window.channelId : 0
+									}
+								/>
+							)}
+							{window.content.type === "CHANSETTINGS" && (
+								<ChannelSettings
+									channelId={window.content.id}
+								/>
+							)}
+							{window.content.type === "BANLIST" && (
+								<BanList
+									channelId={
+										window.channelId ? window.channelId : 0
+									}
+								/>
+							)}
+							{window.content.type === "CHATSESSION" && (
+								<ChatSession channelId={window.content.id} />
+							)}
+							{window.content.type === "PREVIEW" && <Preview />}
+							{window.content.type === "PLAY" && (
+								<MainGameMenu
+									windowId={window.id}
+									privateLobby={
+										window.targetId
+											? { targetId: window.targetId }
+											: undefined
+									}
+								/>
+							)}
+						</Window>
+					);
+				})}
+		</div>
+	);
 }
-
-const mapStateToProps = (state: AppState) => ({
-  windows: state.windows,
-});
-
-const connector = connect(mapStateToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedBackground = connector(Background);
-export default ConnectedBackground;

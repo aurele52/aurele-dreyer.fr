@@ -1,24 +1,59 @@
 #Navbar {
+  min-height: 55px;
   display: flex;
-  padding: 0.5em 3vw;
+  padding: 5px 20px;
   justify-content: space-between;
   align-self: stretch;
-  border-bottom: 0.15em solid var(--base-black, #000);
+  border-bottom: 1px solid var(--base-black, #000);
   background: linear-gradient(180deg, #6d559c 66.15%, #4c3778 86.98%);
-  font-size:2vw;
+  font-size:9px;
+  align-items: center;
 }
 
 #Navbar > div {
   display: flex;
   align-items: center;
-  gap: 2vw;
+  gap: 1.5vw ;
   flex: 1 0 0;
+  min-width: 200px;
+
+}
+
+.DecoButton {
+  width: 39px;
+  height: 39px;
+  cursor: pointer;
+  padding: 0;
+  background: var(--Pink-Gradient-400, linear-gradient(180deg, #F06E8D 75%, #E9436B 92.19%));
+  border-radius: 10px;
+  border: solid var(--base-white, #fff);
+  border-width: 3px 2px 0;
+  outline: 4px solid var(--base-black, #000);
+  display: flex;
+  justify-content: center;
+  align-items: center; 
+  position: absolute;
+  right: 20px
+}
+
+.DecoButton:hover {
+  background: var(--Pink-Gradient-400, #F06E8D);
+  border-color: var(--Pink-Gradient-400, #F06E8D);
+}
+
+@media screen and (max-width: 490px) {
+  #Navbar > div {
+    display: none; 
+  }
+  #DecoButton {
+    justify-content: flex-end;
+  }
 }
 
 .NavButton {
   cursor: pointer;
   padding: 0.2em 0.3em;
-  /* width: 2em; */
+  /* width: 20px; */
   /* Style */
   background: var(
     --PinkPurpleMix-Gradient-Main,
@@ -30,13 +65,14 @@
   outline: 0.2em solid var(--base-black, #000);
   /* Font */
   font-family: Chakra Petch;
-  font-size: 2vw;
+  font-size: 2.3em;
   font-weight: 700;
+  margin-right: 3px;
 }
 
 .NavButton:hover {
-  background: var(--PinkPurpleMix-Main, #ede6f9);
-  border-color: var(--PinkPurpleMix-Main, #ede6f9);
+	background: var(--PinkPurpleMix-Main, #ede6f9);
+	border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }
 
 /* @media only screen and (max-width: 768px) {

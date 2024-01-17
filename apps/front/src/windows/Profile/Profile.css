@@ -65,8 +65,6 @@
 
 .HoverSVG {
 	position: absolute;
-	/* 		top: 50%;
-	left: 50%;*/
 	transform: translate(40%, 40%);
 	opacity: 0;
 	transition: opacity 0.3s ease;
@@ -97,7 +95,6 @@
 	align-self: stretch;
 	color: var(--Base-Black, #000);
 	/* Heading/600 */
-	font-family: Chakra Petch;
 	font-size: 24px;
 	font-style: normal;
 	font-weight: 700;
@@ -163,6 +160,7 @@
 }
 
 .Profile > .Header > .Text > .Stats > div > .Rank > .Position {
+	cursor: pointer;
 	display: flex;
 	width: 84px;
 	align-items: center;
@@ -174,7 +172,6 @@
 	color: var(--Base-Black, #000);
 
 	/* Heading/500 */
-	font-family: Chakra Petch;
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 700;
@@ -208,9 +205,9 @@
 
 .Profile > .Header > .Text > .ProfileAchievements > div {
 	color: var(--Base-Black, #000);
+	cursor: pointer;
 
 	/* Text/400/Regular */
-	font-family: Chakra Petch;
 	font-size: 16px;
 	font-style: normal;
 	font-weight: 400;
@@ -393,7 +390,6 @@
 	text-align: center;
 
 	/* Heading/600 */
-	font-family: Chakra Petch;
 	font-size: 24px;
 	font-style: normal;
 	font-weight: 700;

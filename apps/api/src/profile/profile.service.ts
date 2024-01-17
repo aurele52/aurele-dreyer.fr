@@ -17,7 +17,16 @@ export class ProfileService {
     private readonly frienship: FriendshipService,
   ) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async profile(id: number, self_id: number) {
+    if (!id) {
+      this.logAndThrowNotFound(id, 'User');
+    }
+
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
@@ -25,13 +34,16 @@ export class ProfileService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const winCount = await this.prisma.matchPlayer.count({
       where: {
         user_id: id,
         winner: true,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -39,6 +51,9 @@ export class ProfileService {
       where: {
         user_id: id,
         winner: false,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -61,6 +76,7 @@ export class ProfileService {
         is2FaEnabled: user.is_enable_2fa,
       };
     }
+
     const friendship = await this.frienship.userFriendship(self_id, id);
 
     if (friendship) {
@@ -91,9 +107,15 @@ export class ProfileService {
   }
 
   async historic(id: number) {
+    if (!id) {
+      this.logAndThrowNotFound(id, 'User');
+    }
     const matches = await this.prisma.matchPlayer.findMany({
       where: {
         user_id: id,
+        match: {
+          type: 'NORMAL',
+        },
       },
       include: {
         match: {

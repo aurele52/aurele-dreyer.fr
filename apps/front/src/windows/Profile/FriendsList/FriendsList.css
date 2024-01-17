@@ -150,7 +150,6 @@
 	text-overflow: ellipsis;
 
 	/* Heading/500 */
-	font-family: Chakra Petch;
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 700;
@@ -175,7 +174,7 @@
 }
 
 .FriendsListUser > .User > .Frame > .Player > .Status > .Offline {
-	fill: #fe0000;
+	fill: #e9436b;
 	stroke-width: 1px;
 	stroke: var(--Base-Black, #000);
 }
@@ -184,7 +183,6 @@
 	color: var(--Base-Black, #000);
 
 	/* Text/300/Regular */
-	font-family: Chakra Petch;
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 400;

@@ -1,21 +1,20 @@
 .signin-btn {
-  cursor: pointer;
-  /* Style */
-  background: var(
-    --PinkPurpleMix-Gradient-Main,
-    linear-gradient(180deg, #ece5f8 66.15%, #ebb9f8 86.98%)
-  );
-  border-radius: 0.7rem;
-  border: solid var(--base-white, #fff);
-  border-width: 0.3rem 0.2rem 0;
-  outline: 0.3rem solid var(--base-black, #000);
-  /* Font */
-  font-family: Chakra Petch;
-  font-size: 30px;
-  font-weight: 700;
-  text-transform: uppercase;
+	cursor: pointer;
+	/* Style */
+	background: var(
+		--PinkPurpleMix-Gradient-Main,
+		linear-gradient(180deg, #ece5f8 66.15%, #ebb9f8 86.98%)
+	);
+	border-radius: 0.7rem;
+	border: solid var(--base-white, #fff);
+	border-width: 0.3rem 0.2rem 0;
+	outline: 0.3rem solid var(--base-black, #000);
+	/* Font */
+	font-size: 30px;
+	font-weight: 700;
+	text-transform: uppercase;
 }
 .signin-btn:hover {
-  background: var(--PinkPurpleMix-Main, #ede6f9);
-  border-color: var(--PinkPurpleMix-Main, #ede6f9);
+	background: var(--PinkPurpleMix-Main, #ede6f9);
+	border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }

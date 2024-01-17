@@ -1,27 +1,50 @@
 import { lobby } from './lobby';
-import { clientInfoDto } from '../dto-interface/clientInfo.dto';
+import { clientInfo } from '../dto-interface/clientInfo.interface';
+import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
+import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 
 export class lobbyManager {
-  private normalLobbies: lobby[] = [];
   private customLobbies: lobby[] = [];
-  private normalQueue: clientInfoDto[] = [];
-  private inJoinTab: clientInfoDto[] = [];
+  private inJoinTab: clientInfo[] = [];
+  private nextGameId: number = 1;
 
-  public createCustomLobby(client: clientInfoDto) {
+  public createCustomLobby(client: clientInfo, gameInfo: gameInfo) {
+    client.mode = 'custom';
+    client.status = 'waiting create custom';
+    client.matchInfo = {
+      ...normalGameInfo,
+      ...gameInfo,
+      gamey: gameInfo.borderSize * 2 + gameInfo.menuSize,
+      gamexsize: gameInfo.xsize - 2 * gameInfo.borderSize,
+      gameysize: gameInfo.ysize - 3 * gameInfo.borderSize - gameInfo.menuSize,
+      ballx: gameInfo.gamexsize / 2 - 10,
+      bally: gameInfo.gameysize / 2,
+      id: this.nextGameId,
+    };
+    this.nextGameId++;
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
-    client.status = 'waiting another player';
+    client.status = 'waiting create custom';
     newLobby.addClient(client);
     this.customLobbies.push(newLobby);
-    this.inJoinTab.forEach((value) => {value.socket.emit('server.lobbyCustom', client.matchInfo);});
+    this.inJoinTab.forEach((value) => {
+      value.socket.emit('server.lobbyCustom', client.matchInfo);
+    });
   }
-  public removeMatch(matchName: string) {
-    this.customLobbies.filter((lobby) => lobby.getMatchInfo().name === matchName);
+
+  public removeMatch(matchId: number) {
+    this.customLobbies.filter((lobby) => lobby.getMatchInfo().id === matchId);
   }
-  public addInJoinTab(client: clientInfoDto) {
+  public addInJoinTab(client: clientInfo) {
+    client.status = 'inJoinTab';
+    this.cleanLobbies();
+    this.customLobbies.forEach((value) => {
+      if (value.getPlayer()[0].status != 'inGame')
+        client.socket.emit('server.lobbyCustom', value.getMatchInfo());
+    });
     this.inJoinTab.push(client);
   }
-  public removeInJoinTab(client: clientInfoDto) {
+  public removeInJoinTab(client: clientInfo) {
     const index = this.inJoinTab.findIndex((value) => {
       return value === client;
     });
@@ -29,43 +52,49 @@ export class lobbyManager {
       this.inJoinTab.splice(index, 1);
     }
   }
-  public addToNormalQueue(client: clientInfoDto) {
-    this.normalQueue.push(client);
-    client.status = 'waiting another player';
-    this.MATCH();
+
+  public removeToCustomQueue(client: clientInfo) {
+    if (client.lobby) {
+      const index = this.customLobbies.findIndex((value) => {
+        return value === client.lobby;
+      });
+      if (index !== -1) {
+        this.inJoinTab.forEach((value) => {
+          value.socket.emit(
+            'server.lobbyCustomDelete',
+            client.lobby.getMatchInfo(),
+          );
+        });
+        this.customLobbies.splice(index, 1);
+      }
+    }
+    client.status = 'connected';
   }
+
   public cleanLobbies() {
-    this.normalLobbies.filter((lobby) => lobby.isEmpty() === true);
     this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
   }
   public getCustomLobbies() {
     return this.customLobbies;
   }
-  public addPlayerToMatch(client: clientInfoDto, matchInfo: string) {
+
+  public addPlayerToMatch(client: clientInfo, matchId: number) {
+    client.status = 'inGame';
+    this.removeInJoinTab(client);
+    this.removeMatch(matchId);
     const index = this.customLobbies.findIndex((value) => {
-      return value.getMatchInfo().name === matchInfo;
+      return value.getMatchInfo().id === matchId;
     });
     if (index !== -1) {
+      this.inJoinTab.forEach((value) => {
+        value.socket.emit('server.lobbyCustomDelete', client.matchInfo);
+      });
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.matchInfo = this.customLobbies[index].getMatchInfo();
+      client.lobby = this.customLobbies[index];
       this.customLobbies[index].addClient(client);
       this.customLobbies[index].start();
-    }
-  }
-  private MATCH() {
-    if (this.normalQueue.length >= 2) {
-      const playerOne = this.normalQueue.shift();
-      const playerTwo = this.normalQueue.shift();
-      const newLobby = new lobby('normal', null);
-      playerOne.lobby = newLobby;
-      playerTwo.lobby = newLobby;
-      playerOne.status = 'inGame';
-      playerTwo.status = 'inGame';
-      newLobby.addClient(playerOne);
-      newLobby.addClient(playerTwo);
-      this.normalLobbies.push(newLobby);
-      newLobby.start();
     }
   }
 }

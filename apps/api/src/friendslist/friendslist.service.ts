@@ -6,6 +6,10 @@ export class FriendslistService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getList(id: number) {
+    if (!id) {
+      console.error(`User with ID ${id} not found`);
+      throw new NotFoundException(`User not found`);
+    }
     const friends = await this.prisma.friendship.findMany({
       where: {
         OR: [
@@ -94,6 +98,10 @@ export class FriendslistService {
   }
 
   async getPotentialFriends(selfId: number) {
+    if (!selfId) {
+      console.error(`User with ID ${selfId} not found`);
+      throw new NotFoundException(`User not found`);
+    }
     try {
       const potentialFriends = await this.prisma.user.findMany({
         where: {
