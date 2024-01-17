@@ -1,4 +1,4 @@
-.title {
+.title-game-end {
   width: 100%;
   display: flex;
   padding: 10px 0px;
@@ -9,7 +9,7 @@
   align-self: stretch;
 }
 
-.title > div {
+.title-game-end > div {
   font-size: 50px;
   font-style: normal;
   font-weight: 700;
@@ -21,9 +21,16 @@
   -webkit-text-fill-color: transparent;
 }
 
-.victory {
+.label-victory {
   background: var(
     --Turquoise-Gradient-300,
     linear-gradient(180deg, #2bdec9 66.15%, #0ba 86.98%)
+  );
+}
+
+.label-defeat {
+  background: var(
+    --Pink-Gradient-300,
+    linear-gradient(180deg, #f3acd4 69.79%, #f37ec1 90.62%)
   );
 }
