@@ -1,9 +1,9 @@
-import { router } from "../../router.ts";
-import { Button } from "../../shared/ui-components/Button/Button.tsx";
+import { router } from "../../router";
+import { Button } from "../../shared/ui-components/Button/Button";
 import "./SignUp.css";
 import { useMutation } from "@tanstack/react-query";
-import api from "../../axios.ts";
-import { Input } from "../../shared/ui-components/Input/Input.tsx";
+import api from "../../axios";
+import { Input } from "../../shared/ui-components/Input/Input";
 import { AxiosError } from "axios";
 import { FormEvent } from "react";
 

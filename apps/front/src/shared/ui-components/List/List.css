@@ -15,6 +15,15 @@
 	align-self: stretch;
 }
 
+.List.lilac-list {
+	border-radius: 10px;
+	border-top: 3px solid var(--purple-300, #bba0e9);
+	border-right: 2px solid var(--purple-300, #bba0e9);
+	border-bottom: 1px solid var(--purple-300, #bba0e9);
+	border-left: 2px solid var(--purple-300, #bba0e9);
+	background: var(--purple-100, #f5f1fc);
+}
+
 .List.dark-list {
 	border-radius: 10px;
 	border-top: 3px solid var(--base-black, #000);
@@ -25,13 +34,11 @@
 }
 
 .custom-scrollbar {
-	padding-right: 10px;
-	--bg-scroll-color: var(--purple-100, #f5f1fc);
-	--scroll-color: rgba(187, 161, 242, 0.5);
-	--scroll-color-hover: rgba(187, 161, 242, 0.65);
+	padding-right: 3px;
 }
 
-.custom-scrollbar.white-list {
+
+ .custom-scrollbar.white-list {
 	--bg-scroll-color: white;
 }
 
@@ -42,9 +49,9 @@
 }
 
 .custom-scrollbar.lilac-list {
-	--bg-scroll-color: var(--purple-250, #decdff);
-	--scroll-color: rgba(56, 34, 101, 0.5);
-	--scroll-color-hover: rgba(56, 34, 101, 0.65);
+	--bg-scroll-color: var(--purple-100, #f5f1fc);
+	--scroll-color: rgba(187, 161, 242, 0.5);
+	--scroll-color-hover: rgba(187, 161, 242, 0.65); 
 }
 
 .custom-scrollbar::-webkit-scrollbar {

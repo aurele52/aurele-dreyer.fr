@@ -1,11 +1,12 @@
 import { lobby } from './lobby';
 import { clientInfo } from '../dto-interface/clientInfo.interface';
-import { gameInfo } from '../dto-interface/shared';
+import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
 import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 
 export class lobbyManager {
   private customLobbies: lobby[] = [];
   private inJoinTab: clientInfo[] = [];
+  private nextGameId: number = 1;
 
   public createCustomLobby(client: clientInfo, gameInfo: gameInfo) {
     client.mode = 'custom';
@@ -18,7 +19,9 @@ export class lobbyManager {
       gameysize: gameInfo.ysize - 3 * gameInfo.borderSize - gameInfo.menuSize,
       ballx: gameInfo.gamexsize / 2 - 10,
       bally: gameInfo.gameysize / 2,
+      id: this.nextGameId,
     };
+    this.nextGameId++;
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;
     client.status = 'waiting create custom';
@@ -26,7 +29,6 @@ export class lobbyManager {
     this.customLobbies.push(newLobby);
     this.inJoinTab.forEach((value) => {
       value.socket.emit('server.lobbyCustom', client.matchInfo);
-      console.log('yes');
     });
   }
 
@@ -35,6 +37,7 @@ export class lobbyManager {
   }
   public addInJoinTab(client: clientInfo) {
     client.status = 'inJoinTab';
+    this.cleanLobbies();
     this.customLobbies.forEach((value) => {
       if (value.getPlayer()[0].status != 'inGame')
         client.socket.emit('server.lobbyCustom', value.getMatchInfo());
@@ -85,7 +88,6 @@ export class lobbyManager {
     if (index !== -1) {
       this.inJoinTab.forEach((value) => {
         value.socket.emit('server.lobbyCustomDelete', client.matchInfo);
-        console.log('yes');
       });
       this.customLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
