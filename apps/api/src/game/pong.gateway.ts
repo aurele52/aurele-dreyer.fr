@@ -95,11 +95,9 @@ export class PongGateway {
     if (index !== -1) {
       this.normalLobbyManager.addToNormalQueue(this.connectedClient[index]);
     }
-    console.log('arg');
     this.connectedClient.forEach((value) => {
       console.log(value.user);
     });
-    console.log('arg2');
   }
 
   @SubscribeMessage('client.joinNormalAbort')
@@ -124,7 +122,6 @@ export class PongGateway {
 
   @SubscribeMessage('client.previewUpdate')
   handlePreview(client: Socket, data: gameInfoDto) {
-    console.log('asdaaaaaaaaaaaaaaaaaaaaaaaa');
     client.emit('server.previewUpdate', data);
   }
 
@@ -191,6 +188,23 @@ export class PongGateway {
     }
   }
 
+  @SubscribeMessage('client.privateAbort')
+  handlePrivateMatchmakingAbort(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      const index2 = this.connectedClient.findIndex((value) => {
+        return value.user.id === this.connectedClient[index].lobby.getMatchInfo().userId;
+      });
+      if (index2 !== -1) {
+        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], this.connectedClient[index2]);
+      } else {
+        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], null);
+      }
+    }
+  }
+
   @SubscribeMessage('client.input')
   handleInput(client: Socket, inputData: input) {
     const index = this.connectedClient.findIndex((value) => {
@@ -204,7 +218,6 @@ export class PongGateway {
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
-      console.log({ value }, { data });
       return value.user.username === data.user;
     });
     if (index !== -1) {

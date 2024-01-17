@@ -71,19 +71,6 @@ class BarSpeedConstraint implements ValidatorConstraintInterface {
   }
 }
 
-@ValidatorConstraint({ name: 'itemSize', async: false })
-class ItemSizeConstraint implements ValidatorConstraintInterface {
-  validate(itemSize: number, args: ValidationArguments) {
-    const gamexsize = (args.object as any).gamexsize;
-    const gameysize = (args.object as any).gameysize;
-    const mindim = Math.min(gamexsize, gameysize);
-    return itemSize >= 0.01 * mindim && itemSize <= 0.2 * mindim;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `invalid itemSize`;
-  }
-}
 
 export class gameInfoDto {
   @IsOptional()
@@ -112,10 +99,6 @@ export class gameInfoDto {
   @Validate(BallSizeConstraint)
   ballSize?: number = 10;
 
-  @IsOptional()
-  @IsInt()
-  @Validate(ItemSizeConstraint)
-  itemSize?: number = 10;
 
   @IsOptional()
   @IsInt()
@@ -203,13 +186,6 @@ export class gameInfoDto {
   @Max(1000)
   @Min(400)
   gameysize?: number = 380;
-
-  @IsOptional()
-  @IsInt()
-  itemx?: number = 40;
-  @IsOptional()
-  @IsInt()
-  itemy?: number = 40;
 
   @IsOptional()
   @IsInt()
