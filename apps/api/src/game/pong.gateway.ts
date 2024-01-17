@@ -25,8 +25,7 @@ export class PongGateway {
     private readonly userService: UserService,
   ) {}
 
-  afterInit() {
-  }
+  afterInit() {}
 
   async handleConnection(client: any) {
     try {
@@ -93,9 +92,6 @@ export class PongGateway {
     if (index !== -1) {
       this.normalLobbyManager.addToNormalQueue(this.connectedClient[index]);
     }
-    this.connectedClient.forEach((value) => {
-      console.log(value.user);
-    });
   }
 
   @SubscribeMessage('client.joinNormalAbort')
@@ -162,7 +158,7 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.privateLobbyManager.createPrivate( this.connectedClient[index], id);
+      this.privateLobbyManager.createPrivate(this.connectedClient[index], id);
     }
   }
 
@@ -200,12 +196,21 @@ export class PongGateway {
     });
     if (index !== -1) {
       const index2 = this.connectedClient.findIndex((value) => {
-        return value.user.id === this.connectedClient[index].lobby.getMatchInfo().userId;
+        return (
+          value.user.id ===
+          this.connectedClient[index].lobby.getMatchInfo().userId
+        );
       });
       if (index2 !== -1) {
-        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], this.connectedClient[index2]);
+        this.privateLobbyManager.removeToPrivateQueue(
+          this.connectedClient[index],
+          this.connectedClient[index2],
+        );
       } else {
-        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], null);
+        this.privateLobbyManager.removeToPrivateQueue(
+          this.connectedClient[index],
+          null,
+        );
       }
     }
   }
