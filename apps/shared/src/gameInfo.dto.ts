@@ -28,7 +28,7 @@ class BallSizeConstraint implements ValidatorConstraintInterface {
 class BallSpeedConstraint implements ValidatorConstraintInterface {
   validate(ballSpeed: number, args: ValidationArguments) {
     const gamexsize = (args.object as any).gamexsize;
-    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.03 * gamexsize;
+    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.02 * gamexsize;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -64,7 +64,7 @@ class BarDistConstraint implements ValidatorConstraintInterface {
 class BarSpeedConstraint implements ValidatorConstraintInterface {
   validate(barSpeed: number, args: ValidationArguments) {
     const gameysize = (args.object as any).gameysize;
-    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.1 * gameysize;
+    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.05 * gameysize;
   }
 
   defaultMessage(args: ValidationArguments) {
