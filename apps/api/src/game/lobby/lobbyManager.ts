@@ -33,8 +33,11 @@ export class lobbyManager {
   }
 
   public removeMatch(matchId: number) {
-    this.customLobbies.filter((lobby) => lobby.getMatchInfo().id === matchId);
+    this.customLobbies = this.customLobbies.filter(
+      (lobby) => lobby.getMatchInfo().id !== matchId,
+    );
   }
+
   public addInJoinTab(client: clientInfo) {
     client.status = 'inJoinTab';
     this.cleanLobbies();
@@ -44,6 +47,7 @@ export class lobbyManager {
     });
     this.inJoinTab.push(client);
   }
+
   public removeInJoinTab(client: clientInfo) {
     const index = this.inJoinTab.findIndex((value) => {
       return value === client;
@@ -74,6 +78,7 @@ export class lobbyManager {
   public cleanLobbies() {
     this.customLobbies.filter((lobby) => lobby.isEmpty() === true);
   }
+
   public getCustomLobbies() {
     return this.customLobbies;
   }
@@ -81,7 +86,6 @@ export class lobbyManager {
   public addPlayerToMatch(client: clientInfo, matchId: number) {
     client.status = 'inGame';
     this.removeInJoinTab(client);
-    this.removeMatch(matchId);
     const index = this.customLobbies.findIndex((value) => {
       return value.getMatchInfo().id === matchId;
     });
@@ -95,6 +99,7 @@ export class lobbyManager {
       client.lobby = this.customLobbies[index];
       this.customLobbies[index].addClient(client);
       this.customLobbies[index].start();
+      this.removeMatch(matchId);
     }
   }
 }
