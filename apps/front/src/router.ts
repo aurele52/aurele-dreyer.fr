@@ -1,11 +1,27 @@
-import { RootRoute, Route, Router, redirect } from "@tanstack/react-router";
+import { NotFoundRoute, RootRoute, Route, Router, redirect } from "@tanstack/react-router";
 import App from "./App";
 import Auth from "./auth-pages/Auth";
 import Auth2FA from "./auth-pages/Auth2FA/Auth2FA";
 import SignUp from "./auth-pages/SignUp/SignUp";
 import SignIn from "./auth-pages/SignIn/SignIn";
+import PageNotFound from "./PageNotFound";
 
 const rootRoute = new RootRoute();
+const indexRoute = new Route({
+  getParentRoute: () => rootRoute,
+  path: "/",
+  beforeLoad: async () => {
+    if (!localStorage.getItem("token")) {
+      throw redirect({
+        to: "/auth",
+      });
+    } else {
+      throw redirect({
+        to: "/home",
+      });
+    }
+  },
+})
 
 const appRoute = new Route({
   getParentRoute: () => rootRoute,
@@ -19,12 +35,13 @@ const appRoute = new Route({
     }
   },
 });
+
 const authRoute = new Route({
   getParentRoute: () => rootRoute,
   path: "/auth",
   component: Auth,
 });
-const authSignInRoute = new Route({
+const authIndexRoute = new Route({
   getParentRoute: () => authRoute,
   path: "/",
   component: SignIn,
@@ -52,13 +69,19 @@ const authRedirectRoute = new Route({
   },
 });
 
+const notFoundRoute = new NotFoundRoute({
+  getParentRoute: () => rootRoute,
+  component: PageNotFound,
+})
+
 const routeTree = rootRoute.addChildren([
+  indexRoute,
   appRoute,
-  authRoute.addChildren([authSignInRoute, authTwoFARoute, authSignUpRoute]),
+  authRoute.addChildren([authIndexRoute, authTwoFARoute, authSignUpRoute]),
   authRedirectRoute,
 ]);
 
-export const router = new Router({ routeTree });
+export const router = new Router({ routeTree, notFoundRoute });
 
 declare module "@tanstack/react-router" {
   interface Register {

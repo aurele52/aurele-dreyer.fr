@@ -41,14 +41,13 @@ export class lobby {
     console.log('test 1');
     try {
       if (winner.socket.connected) winner.socket.emit('server.win');
-    console.log('test 2');
 
       const winnerUser = await this.prisma.user.findUnique({
-        where: { username: winner.user },
+        where: { username: winner.user.username },
       });
 
       const loserUser = await this.prisma.user.findUnique({
-        where: { username: loser.user },
+        where: { username: loser.user.username },
       });
 
       if (!winnerUser || !loserUser) {
@@ -64,7 +63,6 @@ export class lobby {
           : winner.mode === 'custom'
             ? 'CUSTOM'
             : 'PRIVATE';
-    console.log('test 3');
       const match = await this.prisma.match.create({
         data: {
           on_going: false,
@@ -96,14 +94,11 @@ export class lobby {
       this.achievements.updateAchievements(winnerUser.id);
       this.achievements.updateAchievements(loserUser.id);
 
-    console.log('test 4');
       return match;
     } catch (error) {
       console.error('Error in win function:', error);
-    console.log('test 5');
       throw error;
     }
-    console.log('test 6');
   }
 
   lose(user: clientInfo) {

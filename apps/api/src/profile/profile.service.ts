@@ -17,9 +17,14 @@ export class ProfileService {
     private readonly frienship: FriendshipService,
   ) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async profile(id: number, self_id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const user = await this.prisma.user.findUnique({
@@ -29,7 +34,7 @@ export class ProfileService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const winCount = await this.prisma.matchPlayer.count({
@@ -103,7 +108,7 @@ export class ProfileService {
 
   async historic(id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     const matches = await this.prisma.matchPlayer.findMany({
       where: {

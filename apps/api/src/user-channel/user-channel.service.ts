@@ -16,12 +16,17 @@ export class UserChannelService {
     private readonly friendshipService: FriendshipService,
   ) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async containBlockedUser(channel_id: number, user_id: number) {
     if (!channel_id) {
-      throw new NotFoundException(`User with ID ${channel_id} not found`);
+      this.logAndThrowNotFound(channel_id, 'Channel');
     }
     if (!user_id) {
-      throw new NotFoundException(`User with ID ${user_id} not found`);
+      this.logAndThrowNotFound(user_id, 'User');
     }
 
     const userChannels = await this.prisma.userChannel.findMany({
@@ -52,10 +57,10 @@ export class UserChannelService {
     role: UserChannelRoles;
   }) {
     if (!params.channelId) {
-      throw new NotFoundException(`User with ID ${params.channelId} not found`);
+      this.logAndThrowNotFound(params.channelId, 'Channel');
     }
     if (!params.userId) {
-      throw new NotFoundException(`User with ID ${params.userId} not found`);
+      this.logAndThrowNotFound(params.userId, 'User');
     }
 
     const { userId, channelId, role } = params;
@@ -71,7 +76,7 @@ export class UserChannelService {
     });
 
     if (!channel) {
-      throw new NotFoundException(`Channel with ID ${channelId} not found`);
+      this.logAndThrowNotFound(channelId, 'Channel');
     }
 
     if (channel && channel.banList.some((user) => user.id === userId)) {
@@ -103,7 +108,7 @@ export class UserChannelService {
   }
 
   async deleteUserChannel(id: number) {
-    if (!id) throw new NotFoundException(`UserChannel with id ${id} not found`);
+    if (!id) this.logAndThrowNotFound(id, 'UserChannel');
     return await this.prisma.userChannel.delete({
       where: {
         id,
@@ -113,10 +118,10 @@ export class UserChannelService {
 
   async currUser(user_id: number, channel_id: number) {
     if (!channel_id) {
-      throw new NotFoundException(`User with ID ${channel_id} not found`);
+      this.logAndThrowNotFound(channel_id, 'Channel');
     }
     if (!user_id) {
-      throw new NotFoundException(`User with ID ${user_id} not found`);
+      this.logAndThrowNotFound(user_id, 'User');
     }
     const userChan = await this.prisma.userChannel.findUnique({
       where: {
@@ -152,10 +157,10 @@ export class UserChannelService {
 
   async updateReadUntil(user_id: number, channel_id: number) {
     if (!channel_id) {
-      throw new NotFoundException(`User with ID ${channel_id} not found`);
+      this.logAndThrowNotFound(channel_id, 'Channel');
     }
     if (!user_id) {
-      throw new NotFoundException(`User with ID ${user_id} not found`);
+      this.logAndThrowNotFound(user_id, 'User');
     }
     return await this.prisma.userChannel.update({
       where: {

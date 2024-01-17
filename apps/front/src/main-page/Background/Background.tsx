@@ -418,6 +418,7 @@ export default function Background() {
 							{window.content.type === "CHATSESSION" && (
 								<ChatSession channelId={window.content.id} />
 							)}
+							{window.content.type === "PREVIEW" && <Preview />}
 							{window.content.type === "PLAY" && (
 								<MainGameMenu
 									windowId={window.id}
@@ -427,16 +428,6 @@ export default function Background() {
 											: undefined
 									}
 								/>
-							)}
-							{window.content.type === "PONG" && (
-								<Pong gameInfo={window.gameInfo} />
-							)}
-							{window.content.type === "PREVIEW" && <Preview />}
-							{window.content.type === "CREATECUSTOM" && (
-								<CreateCustom />
-							)}
-							{window.content.type === "JOINCUSTOM" && (
-								<JoinCustom />
 							)}
 						</Window>
 					);
