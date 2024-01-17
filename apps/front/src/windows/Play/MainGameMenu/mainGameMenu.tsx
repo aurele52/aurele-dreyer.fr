@@ -54,11 +54,13 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 	const { mutateAsync: deleteGameInvitation } = useMutation({
 		mutationFn: async () => {
 			if (!privateWaitingDisplay) return;
-			return api.delete(`/message/invitation`);
+			else return api.delete(`/message/invitation`);
 		},
+		onSuccess: () => {},
 		onError: (error) => {
 			console.error(error.message);
 		},
+		retry: 0,
 	});
 
 	function onWin() {
