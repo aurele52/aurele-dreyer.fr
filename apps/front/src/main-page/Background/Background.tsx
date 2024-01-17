@@ -389,6 +389,7 @@ export default function Background() {
         });
         break;
       case UserEventType.USERDELETED:
+        closeDMWindow();
         queryClient.invalidateQueries();
         break;
       case UserEventType.ADMINMADE:
