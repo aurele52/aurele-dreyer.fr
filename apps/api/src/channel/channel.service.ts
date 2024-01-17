@@ -12,6 +12,7 @@ import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChanType, FriendshipStatus } from '@prisma/client';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 import * as bcrypt from 'bcrypt';
+import { ChannelTypes } from './types/channel.types';
 
 @Injectable()
 export class ChannelService {
@@ -25,7 +26,11 @@ export class ChannelService {
     try {
       { }
       const { password, ...channelDataOther } = channelData;
-      const hash = await this.hashPassword(channelData.password);
+      let hash = password;
+      if (channelData.type === ChannelTypes.PROTECTED) {
+        hash = await this.hashPassword(channelData.password);
+      }
+  
       return this.prisma.channel.create({
         data: {
           ...channelDataOther,
@@ -405,7 +410,10 @@ export class ChannelService {
   ) {
     try {
       const { password, ...channelDataOther } = channelData;
+      let hash = password;
+      if (channelData.type === ChannelTypes.PROTECTED) {
       const hash = await this.hashPassword(channelData.password);
+      }
       return await this.prisma.channel.update({
         where: {
           id,
