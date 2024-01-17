@@ -34,7 +34,6 @@ function App() {
 		socket.on("connect", () => {});
 
 		socket.on("connect_failed", () => {
-			console.log("connect failed");
 			addModal(
 				ModalType.ERROR,
 				`Socket connection failed. Please try logging in again.`,
