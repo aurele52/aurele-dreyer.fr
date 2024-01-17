@@ -191,8 +191,7 @@ export default function CreateCustom(props: createCustomProps) {
 						color="pink"
 						content="PREVIEW"
 	 					onClick={PreviewOnClick}
-						/>
-		
+						/>	
 				</div>
 				</div>
 				{interfaceDisplay === true && (
@@ -201,49 +200,49 @@ export default function CreateCustom(props: createCustomProps) {
 							name={"oneBarColor"}
 							value={relativeGameInfo.oneBarColor}
 							setValue={setValue}
-							label="P1 BAR"
+							label="P1 Bar"
 						/>
 						<ColorSelector
 							name={"twoBarColor"}
 							value={relativeGameInfo.twoBarColor}
 							setValue={setValue}
-							label="P2 BAR"
+							label="P2 Bar"
 						/>
 						<ColorSelector
 							name={"borderColor"}
 							value={relativeGameInfo.borderColor}
 							setValue={setValue}
-							label="BORDER"
+							label="Border"
 						/>
 						<ColorSelector
 							name={"oneScoreColor"}
 							value={relativeGameInfo.oneScoreColor}
 							setValue={setValue}
-							label="P1 SCORE"
+							label="P1 Score"
 						/>
 						<ColorSelector
 							name={"twoScoreColor"}
 							value={relativeGameInfo.twoScoreColor}
 							setValue={setValue}
-							label="P2 SCORE"
+							label="P2 Score"
 						/>
 						<ColorSelector
 							name={"ballColor"}
 							value={relativeGameInfo.ballColor}
 							setValue={setValue}
-							label="BALL"
+							label="Ball"
 						/>
 						<ColorSelector
 							name={"backgroundColor"}
 							value={relativeGameInfo.backgroundColor}
 							setValue={setValue}
-							label="BACKGROUND"
+							label="Background"
 						/>
 						<ColorSelector
 							name={"menuColor"}
 							value={relativeGameInfo.menuColor}
 							setValue={setValue}
-							label="MENU"
+							label="Menu"
 						/>
 						<RangeSlider
 							name={"borderSize"}
@@ -252,7 +251,7 @@ export default function CreateCustom(props: createCustomProps) {
 							min={5}
 							max={100}
 							step={5}
-							label="BORDER SIZE"
+							label="Border Size"
 						/>
 						<RangeSlider
 							name={"numberSize"}
@@ -261,7 +260,7 @@ export default function CreateCustom(props: createCustomProps) {
 							min={50}
 							max={100}
 							step={5}
-							label="SCORE SIZE (%)"
+							label="Score Size (%)"
 						/>
 
 						<RangeSlider
@@ -271,7 +270,7 @@ export default function CreateCustom(props: createCustomProps) {
 							min={0.5}
 							max={5}
 							step={0.5}
-							label="BAR WIDTH(%)"
+							label="Bar Width (%)"
 						/>
 
 						<RangeSlider
@@ -281,7 +280,7 @@ export default function CreateCustom(props: createCustomProps) {
 							min={10}
 							max={40}
 							step={5}
-							label="MENU SIZE (%)"
+							label="Menu Size (%)"
 						/>
 
 						<RangeSlider
@@ -291,7 +290,7 @@ export default function CreateCustom(props: createCustomProps) {
 							min={0.5}
 							max={5}
 							step={0.5}
-							label="SCORE TOP DIST (%)"
+							label="Score Top Dist (%)"
 						/>
 
 						<RangeSlider
@@ -301,17 +300,20 @@ export default function CreateCustom(props: createCustomProps) {
 							min={0.5}
 							max={5}
 							step={0.5}
-							label="SCORE SIDE DIST (%)"
+							label="SCcore Side Dist (%)"
 						/>
 					</div>
 				)}
 				{gameDisplay === true && (
 					<div className="custom-game">
-						<label>Name: </label>
-						<input
-							value={relativeGameInfo.name}
-							onChange={(e) => setValue("name", e.target.value)}
-						/>
+						<div className= "frame-name">
+							<div className = "label-name"> Name </div>
+							<input
+								className="placeholder-name"
+								value={relativeGameInfo.name}
+								onChange={(e) => setValue("name", e.target.value)}
+							/>
+						</div>
 						<RangeSlider
 							name={"gamexsize"}
 							value={relativeGameInfo.gamexsize}
@@ -406,7 +408,7 @@ export default function CreateCustom(props: createCustomProps) {
 					</div>
 				)}
 				{PowerUpDisplay === true && (
-					<div className="customPowerUp">
+					<div className="custom-powerup">
 						<CheckboxComponent
 							name={"upBallSize"}
 							value={relativeGameInfo.upBallSize}
@@ -419,7 +421,7 @@ export default function CreateCustom(props: createCustomProps) {
 				<Button 
 						color="red"
 						content="GO BACK"
-	 					onClick={PreviewOnClick}
+	 				/*	onClick={} */
 					/>
 					<div className= "div-footer-createcustom">
 						<div className = "playbutton-footer-createcustom" onClick={onCreateLobby}>

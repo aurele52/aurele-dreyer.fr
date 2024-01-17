@@ -1,4 +1,5 @@
 import * as React from 'react';
+import './CheckboxComponent.css'
 
 interface checkboxProps{
 	name: string,
@@ -14,8 +15,8 @@ export default function CheckboxComponent(props: checkboxProps) {
   };
 
 	return (
-		<div> 
-			<div>{props.label}</div>
+		<div className="frame-checkbox">  
+			<div className= "label-checkbox" >{props.label}</div>
 			<input type='checkbox' onChange={handleChange}></input>
 		</div>
 
