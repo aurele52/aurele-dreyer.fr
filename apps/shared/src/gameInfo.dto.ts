@@ -137,25 +137,25 @@ export class gameInfoDto {
 
   @IsOptional()
   @IsString()
-  oneBarColor?: string = '#FFFFFF';
+  oneBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoBarColor?: string = '#FFFFFF';
+  twoBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  ballColor?: string = '#FFFFFF';
+  ballColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
   backgroundColor?: string = '#000000';
   @IsOptional()
   @IsString()
-  borderColor?: string = '#FFFFFF';
+  borderColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  oneScoreColor?: string = '#FFFFFF';
+  oneScoreColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoScoreColor?: string = '#FFFFFF';
+  twoScoreColor?: string = '#ffffff';
   @IsOptional()
   @IsHexColor()
   menuColor?: string = '#000000';
