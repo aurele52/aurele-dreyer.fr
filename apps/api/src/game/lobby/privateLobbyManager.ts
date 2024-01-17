@@ -8,7 +8,6 @@ export class privateLobbyManager {
 
   public addToPrivateQueue(client: clientInfo, id: number) {
     console.log('SIZE: ', this.privateLobbies.length);
-    console.log('user1: ', client.user'taraget: ', id, this.privateLobbies.length);
     client.status = 'waiting join private';
     client.mode = 'private';
     const index = this.privateLobbies.findIndex((value) => {
