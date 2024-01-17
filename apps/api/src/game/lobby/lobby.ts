@@ -40,7 +40,7 @@ export class lobby {
   async win(winner: clientInfo, loser: clientInfo) {
     console.log('test 1');
     try {
-      if (winner.socket.connected) winner.socket.emit('server.win');
+      if (winner.socket.connected) winner.socket.emit('server.win', {winner: winner.user.username});
 
       const winnerUser = await this.prisma.user.findUnique({
         where: { username: winner.user.username },
@@ -265,32 +265,6 @@ export class lobby {
       )
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
   }
-  itemPick() {
-    let tempx = 0;
-    let tempy = 0;
-    while (tempy < this.gameInfo.ballSize) {
-      while (tempx < this.gameInfo.ballSize) {
-        if (
-          this.gameInfo.bally + tempy <=
-            this.gameInfo.itemy + this.gameInfo.itemSize &&
-          this.gameInfo.bally + tempy >= this.gameInfo.itemSize
-        ) {
-          if (
-            this.gameInfo.ballx + tempx <=
-              this.gameInfo.itemx + this.gameInfo.itemSize &&
-            this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
-          ) {
-            this.gameInfo.itemSize = 0;
-            this.gameInfo.ballSize = 100;
-            return;
-          }
-        }
-        tempx++;
-      }
-      tempx = 0;
-      tempy++;
-    }
-  }
   update() {
     this.move();
     this.score();
@@ -298,7 +272,6 @@ export class lobby {
     while (i > 0) {
       this.ballWallRedir();
       this.ballBarRedir();
-      if (this.gameInfo.itemSize > 0) this.itemPick();
       this.gameInfo.ballx = this.gameInfo.ballx + this.gameInfo.ballDirx;
       this.gameInfo.bally = this.gameInfo.bally + this.gameInfo.ballDiry;
       i--;

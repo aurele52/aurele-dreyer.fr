@@ -9,6 +9,8 @@ import Pong from "../Pong/Pong";
 import Win from "../Win/Win";
 import Lose from "../Lose/Lose";
 import PrivateWaiting from "../PrivateWaiting/PrivateWaiting";
+import store from "../../../store";
+import { delWindow } from "../../../reducers";
 
 
 interface mainGameMenuProps {
@@ -36,7 +38,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
 	const [privateWaitingDisplay, setPrivateWaitingDisplay] = useState<boolean>(false);
 
-	function onWin() {
+	function onWin(data: {winner: string}) {
 		setPongDisplay(false);
 		setWinDisplay(true);
 	}
@@ -81,6 +83,15 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDefaultDisplay(false);
 		setPrivateWaitingDisplay(true);
 		socket.emit('client.privateMatchmaking', props.privateLobby.targetId);
+	}
+	function onPrivateAbort() {
+		socket.emit('client.privateAbort');
+		const memberSettingsWindow = store
+			.getState()
+			.windows.find((window) => window.content.type === "PLAY");
+		if (memberSettingsWindow) {
+			store.dispatch(delWindow(memberSettingsWindow.id));
+		}
 	}
 	useEffect(() => {
 		if (props.privateLobby) {
@@ -168,7 +179,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 			{pongDisplay === true && <Pong gameInfo={gameInfo}/>}
 			{loseDisplay === true && <Lose />}
 			{winDisplay === true && <Win />}
-			{privateWaitingDisplay === true && <PrivateWaiting />}
+			{privateWaitingDisplay === true && <PrivateWaiting onPrivateAbort={onPrivateAbort}/>}
 			</>
 	);
 }

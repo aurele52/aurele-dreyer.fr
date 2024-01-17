@@ -43,10 +43,6 @@ export default function CreateCustom(props: createCustomProps) {
 		barSize: (normalGameInfo.barSize / normalGameInfo.gameysize) * 100,
 		barDist: (normalGameInfo.barDist / normalGameInfo.gamexsize) * 100,
 		barSpeed: (normalGameInfo.barSpeed / normalGameInfo.gamexsize) * 100,
-		itemSize:
-			(normalGameInfo.itemSize /
-				Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-			100,
 	});
 	const [absoluteGameInfo, setAbsoluteGameInfo] =
 		useState<gameInfo>(normalGameInfo);
@@ -98,13 +94,6 @@ export default function CreateCustom(props: createCustomProps) {
 				(relativeGameInfo.barDist * relativeGameInfo.gamexsize) / 100,
 			barSpeed:
 				(relativeGameInfo.barSpeed * relativeGameInfo.gamexsize) / 100,
-			itemSize:
-				(relativeGameInfo.itemSize *
-					Math.min(
-						relativeGameInfo.gamexsize,
-						relativeGameInfo.gameysize
-					)) /
-				100,
 		}));
 	};
 
@@ -372,15 +361,6 @@ export default function CreateCustom(props: createCustomProps) {
 							max={8}
 							step={1}
 							label="Player Two Begin Score"
-						/>
-						<RangeComponent
-							name={"itemSize"}
-							value={relativeGameInfo.itemSize}
-							setValue={setValue}
-							min={1}
-							max={20}
-							step={1}
-							label="Item Size"
 						/>
 					</div>
 				)}

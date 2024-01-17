@@ -9,8 +9,6 @@ interface scaleInfo {
 		xborderSize: number,
 		ynumberSize: number,
 		xnumberSize: number,
-		yitemSize: number,
-		xitemSize: number,
 		xballSize: number,
 		yballSize: number,
 }
@@ -32,8 +30,6 @@ export default function Pong(props: pongProps) {
 		xborderSize: gameInfo.borderSize,
 		ynumberSize: gameInfo.numberSize,
 		xnumberSize: gameInfo.numberSize,
-		yitemSize: gameInfo.itemSize,
-		xitemSize: gameInfo.itemSize,
 		xballSize: gameInfo.ballSize,
 		yballSize: gameInfo.ballSize,
 	};
@@ -323,11 +319,6 @@ function drawBall(p: p5) {
 	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, scaleInfo.xballSize, scaleInfo.yballSize);
 }
 
-function drawItem(p: p5) {
-	p.fill('red');
-	p.rect(gameInfo.itemx + gameInfo.gamex, gameInfo.itemy + gameInfo.gamey, gameInfo.itemSize, gameInfo.itemSize);
-}
-
 let input = 0;
 
 function move(p: p5) {
@@ -416,8 +407,6 @@ function loop(p: p5) {
 			drawBar(p);
 			drawBall(p);
 			drawBoardMidline(p);
-			if (gameInfo.itemSize > 0)
-				drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
 }
@@ -427,8 +416,6 @@ interface sendInfo {
 	bally: number;
 	oneBary: number;
 	twoBary: number;
-	itemx: number;
-	itemy: number;
 
   barDist: number;
   barLarge: number;
@@ -436,7 +423,6 @@ interface sendInfo {
 
   ballSize: number;
 
-  itemSize: number;
 
   oneScore: number;
   twoScore: number;
@@ -475,8 +461,6 @@ function onSizeChange(p:p5) {
 				scaleInfo.yborderSize = defaultGameInfo.borderSize / yratio;
 				scaleInfo.xballSize = defaultGameInfo.ballSize / xratio;
 				scaleInfo.yballSize = defaultGameInfo.ballSize / yratio;
-				scaleInfo.xitemSize = defaultGameInfo.itemSize / xratio;
-				scaleInfo.yitemSize = defaultGameInfo.itemSize / yratio;
 				scaleInfo.xnumberSize = defaultGameInfo.numberSize / xratio;
 				scaleInfo.ynumberSize = defaultGameInfo.numberSize / yratio;
 
@@ -506,14 +490,10 @@ function onSizeChange(p:p5) {
 			gameInfo.bally = gameUpdate.bally / yratio;
 			gameInfo.oneBary = gameUpdate.oneBary / yratio;
 			gameInfo.twoBary = gameUpdate.twoBary / yratio;
-			gameInfo.itemx = gameUpdate.itemx / xratio;
-			gameInfo.itemy = gameUpdate.itemy / yratio;
 			gameInfo.oneScore = gameUpdate.oneScore;
 			gameInfo.twoScore = gameUpdate.twoScore;
 			scaleInfo.xballSize = gameUpdate.ballSize / xratio;
 			scaleInfo.yballSize = gameUpdate.ballSize / yratio;
-			scaleInfo.xitemSize = gameUpdate.itemSize / xratio;
-			scaleInfo.yitemSize = gameUpdate.itemSize / yratio;
 		}
 	}, []);
 

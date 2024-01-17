@@ -1,5 +1,6 @@
 import { lobby } from './lobby';
 import { clientInfo } from '../dto-interface/clientInfo.interface';
+import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 
 export class privateLobbyManager {
   private privateLobbies: lobby[] = [];
@@ -12,22 +13,20 @@ export class privateLobbyManager {
       return value.getPlayer()[0].user.id === id;
     });
     if (index !== -1) {
-      console.log('one');
       this.privateLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.lobby = this.privateLobbies[index];
       this.privateLobbies[index].addClient(client);
       this.privateLobbies[index].start();
     } else {
-      console.log('two');
-      const newLobby = new lobby('private', null);
+      const newLobby = new lobby('private', {...normalGameInfo, userId: id});
       client.lobby = newLobby;
       newLobby.addClient(client);
       this.privateLobbies.push(newLobby);
     }
   }
 
-  public removeToPrivateQueue(client: clientInfo) {
+  public removeToPrivateQueue(client: clientInfo, playerInvited: clientInfo | null) {
     client.status === 'connected';
     const index = this.privateQueue.findIndex((value) => {
       return value === client;
@@ -35,6 +34,8 @@ export class privateLobbyManager {
     if (index !== -1) {
       if (client.status === 'waiting join private')
         this.privateQueue.splice(index, 1);
+      if (playerInvited)
+        playerInvited.socket.emit('server.cancelInvite');
     }
   }
 
