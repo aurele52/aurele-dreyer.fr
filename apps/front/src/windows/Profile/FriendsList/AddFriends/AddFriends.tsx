@@ -19,7 +19,6 @@ export function AddFriends() {
 		queryKey: ["addFriendsList"],
 		queryFn: async () => {
 			try {
-				console.log("Update users");
 				const response = await api.get("/friendslist/potentialFriends");
 				return response.data;
 			} catch (error) {
