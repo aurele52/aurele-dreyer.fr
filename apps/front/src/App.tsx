@@ -29,27 +29,10 @@ function App() {
   useDetectBackNavigation("/auth");
 
   useEffect(() => {
-    // const fetchData = async () => {
-    //   try {
-    //     const response = await api.get(`/user`);
-    //     const userData = response.data;
-
-    //     if (userData && userData.username) {
-    //       socket.emit("client.authentification", {
-    //         user: userData.username,
-    //         token: window.localStorage.getItem("token"),
-    //       });
-    //     }
-    //   } catch (error) {
-    //     console.error("Error fetching user:", error);
-    //   }
-    // };
-
     socket.auth = { token: localStorage.getItem("token") };
     socket.connect();
 
     socket.on("connect", () => {
-      // fetchData();
     });
 
     socket.on("connect_failed", () => {
