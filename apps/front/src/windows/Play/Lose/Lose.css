@@ -1,0 +1,6 @@
+.defeat {
+  background: var(
+    --Pink-Gradient-300,
+    linear-gradient(180deg, #f3acd4 69.79%, #f37ec1 90.62%)
+  );
+}

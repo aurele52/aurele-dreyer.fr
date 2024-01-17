@@ -1,6 +1,10 @@
+import "./Lose.css"
+
 export default function Lose()
 {
 	return(
-		<div className="Lose">You lose</div>
-	)
+		<div className="title">
+		<div className="defeat">You Lost</div>
+	  </div>
+	  )
 }
