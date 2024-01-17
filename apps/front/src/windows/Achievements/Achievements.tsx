@@ -3,12 +3,15 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
+import { delWindow } from "../../reducers";
+import store from "../../store";
 
 interface AchievementsProps {
 	targetId?: number;
+	winId: number;
 }
 
-export function Achievements({ targetId }: AchievementsProps) {
+export function Achievements({ targetId, winId }: AchievementsProps) {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -23,10 +26,10 @@ export function Achievements({ targetId }: AchievementsProps) {
 				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
+		
 	});
 
 	const {
@@ -45,8 +48,7 @@ export function Achievements({ targetId }: AchievementsProps) {
 				const response = await api.get(`/achievements/list/${userId}`);
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching achievements:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 		enabled: !!userId,

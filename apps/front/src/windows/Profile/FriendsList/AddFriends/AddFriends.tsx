@@ -6,11 +6,17 @@ import { ReducedUser } from "../../../../shared/ui-components/User/User";
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { SearchBar } from "../../../../shared/ui-components/SearchBar/SearchBar";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
-export function AddFriends() {
+interface AddFriendsProps {
+	winId: number;
+}
+
+export function AddFriends({winId}: AddFriendsProps) {
 	const [placeholderValue, setPlaceholderValue] = useState<string>("");
 
-	const { data: users, error: addFriendsListError } = useQuery<
+	const { data: users } = useQuery<
 		{
 			id: number;
 			username: string;
@@ -22,15 +28,10 @@ export function AddFriends() {
 				const response = await api.get("/friendslist/potentialFriends");
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching Users list:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
-
-	if (addFriendsListError) {
-		return <div>Error loading users: {addFriendsListError.message}</div>;
-	}
 
 	return (
 		<div className="AddFriendsModule">

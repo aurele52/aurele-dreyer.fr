@@ -70,7 +70,7 @@ export default function Background() {
     CHAT: { width: "400px", height: "400px" },
     PROFILE: { width: "500px", height: "500px" },
     FINDCHAN: { width: "400px", height: "400px" },
-    NEWCHAN: { width: "400px", height: "400px" },
+    NEWCHAN: { width: "420px", height: "400px" },
     ABOUTCHAN: { width: "500px", height: "500px" },
     ACHIEVEMENTS: { width: "300px", height: "300px" },
     FRIENDSLIST: { width: "450px", height: "600px" },
@@ -179,7 +179,6 @@ export default function Background() {
   });
 
   useEffect(() => {
-    console.log("switch case", userEventType);
     switch (userEventType.type) {
       case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({
@@ -390,6 +389,7 @@ export default function Background() {
         });
         break;
       case UserEventType.USERDELETED:
+        closeDMWindow();
         queryClient.invalidateQueries();
         break;
       case UserEventType.ADMINMADE:
@@ -451,7 +451,6 @@ export default function Background() {
 
       eventSource.onmessage = ({ data }) => {
         const parsedData = JSON.parse(data);
-        console.log(parsedData);
         const type = parsedData.type;
         const targetUserId = parsedData.userId;
         const targetChannelId = parsedData.channelId;
@@ -495,28 +494,28 @@ export default function Background() {
 							isModal={window.content.type === "MODAL"}
 						>
 							{window.content.type === "LADDER" && (
-								<Ladder targetId={window.targetId} />
+								<Ladder winId={window.id} targetId={window.targetId} />
 							)}
-							{window.content.type === "CHAT" && <Chat />}
+							{window.content.type === "CHAT" && <Chat winId={window.id} />}
 							{window.content.type === "PROFILE" && (
-								<Profile
+								<Profile winId={window.id}
 									targetId={window.content.id || undefined}
 								/>
 							)}
-							{window.content.type === "FINDCHAN" && <FindChan />}
+							{window.content.type === "FINDCHAN" && <FindChan winId={window.id} />}
 							{window.content.type === "NEWCHAN" && (
 								<NewChan winId={window.id} />
 							)}
 							{window.content.type === "ABOUTCHAN" && (
-								<AboutChan
+								<AboutChan winId={window.id}
 									chanId={window.content.id || undefined}
 								/>
 							)}
 							{window.content.type === "ACHIEVEMENTS" && (
-								<Achievements targetId={window.targetId} />
+								<Achievements winId={window.id} targetId={window.targetId} />
 							)}
 							{window.content.type === "FRIENDSLIST" && (
-								<FriendsList />
+								<FriendsList winId={window.id} />
 							)}
 							{(window.content.type === "MODAL" ||
 								window.content.type === "MODALREQUESTED") && (
@@ -530,20 +529,20 @@ export default function Background() {
 								/>
 							)}
 							{window.content.type === "PENDINGREQUESTS" && (
-								<PendingRequests />
+								<PendingRequests winId={window.id} />
 							)}
 							{window.content.type === "BLOCKEDUSERS" && (
-								<BlockedUsers />
+								<BlockedUsers winId={window.id} />
 							)}
-							{window.content.type === "TWOFAQRCODE" && <TwoFA />}
+							{window.content.type === "TWOFAQRCODE" && <TwoFA winId={window.id} />}
 							{window.content.type === "ADDFRIENDS" && (
-								<AddFriends />
+								<AddFriends winId={window.id} />
 							)}
 							{window.content.type === "AVATARUPLOAD" && (
 								<AvatarUpload winId={window.id} />
 							)}
 							{window.content.type === "ADDMEMBERS" && (
-								<AddMembers channelId={window.content.id} />
+								<AddMembers channelId={window.content.id} winId={window.id} />
 							)}
 							{window.content.type === "MEMBERSETTINGS" && (
 								<MemberSettings
@@ -553,11 +552,13 @@ export default function Background() {
 									channelId={
 										window.channelId ? window.channelId : 0
 									}
+                  winId={window.id}
 								/>
 							)}
 							{window.content.type === "CHANSETTINGS" && (
 								<ChannelSettings
 									channelId={window.content.id}
+                  winId={window.id}
 								/>
 							)}
 							{window.content.type === "BANLIST" && (
@@ -565,10 +566,11 @@ export default function Background() {
 									channelId={
 										window.channelId ? window.channelId : 0
 									}
+                  winId={window.id}
 								/>
 							)}
 							{window.content.type === "CHATSESSION" && (
-								<ChatSession channelId={window.content.id} />
+								<ChatSession channelId={window.content.id} winId={window.id} />
 							)}
 							{window.content.type === "PREVIEW" && <Preview />}
 							{window.content.type === "PLAY" && (

@@ -4,9 +4,15 @@ import api from "../../../../axios";
 import List from "../../../../shared/ui-components/List/List";
 import { PendingButton } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
-export function PendingRequests() {
-  const { data: pendingRequests, error: pendingRequestsError } = useQuery<
+interface PendingRequestsProps {
+  winId: number;
+}
+
+export function PendingRequests({winId}: PendingRequestsProps) {
+  const { data: pendingRequests } = useQuery<
     | {
         id: number;
         username: string;
@@ -29,17 +35,10 @@ export function PendingRequests() {
         if (!Array.isArray(response.data)) return null;
         return response.data;
       } catch (error) {
-        console.error("Error fetching PendingRequests:", error);
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
-
-  if (pendingRequestsError) {
-    return (
-      <div>Error loading Requests: {pendingRequestsError.message}</div> //How to handle this
-    );
-  }
 
   if (!Array.isArray(pendingRequests)) {
     return (
