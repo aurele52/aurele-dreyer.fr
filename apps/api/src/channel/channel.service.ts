@@ -645,8 +645,8 @@ export class ChannelService {
 
   async hashPassword(password: string){
 		try {
-			const saltOrRounds = 10;
-			const hash = await bcrypt.hash(password, saltOrRounds);
+			const salt = await bcrypt.genSalt();;
+			const hash = await bcrypt.hash(password, salt);
 			return hash;
 		} catch (err) {
 			const err_message = "Failed to hash password";
