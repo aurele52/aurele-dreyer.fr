@@ -19,6 +19,7 @@ interface mainGameMenuProps {
 		targetId: number;
 		isFirstPlayer: boolean;
 	};
+}
 
 export default function MainGameMenu(props: mainGameMenuProps) {
   const [displayMainMenu, setDisplayMainMenu] = useState<boolean>(true);
@@ -112,7 +113,10 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setPrivateWaitingDisplay(true);
 		setDisplayMainMenu(false);
 		console.log("HERE");
-		socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
+		if (props.privateLobby.isFirstPlayer)
+		socket.emit("client.createPrivate", props.privateLobby.targetId);
+		else
+		socket.emit("client.joinPrivate");
 	}
 	function onCancelInvite() {
 		setJoinNormalDesactivateDisplay(false);
