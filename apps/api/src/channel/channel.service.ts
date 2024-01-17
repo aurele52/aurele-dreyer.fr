@@ -4,24 +4,32 @@ import {
   HttpException,
   HttpStatus,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChanType, FriendshipStatus } from '@prisma/client';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class ChannelService {
-  constructor(private readonly prisma: PrismaService) {}
+  constructor(
+    private readonly prisma: PrismaService,
+  ) {}
 
   async createChannel(
     channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
   ) {
     try {
+      { }
+      const { password, ...channelDataOther } = channelData;
+      const hash = await this.hashPassword(channelData.password);
       return this.prisma.channel.create({
         data: {
-          ...channelData,
+          ...channelDataOther,
+          password: hash,
         },
       });
     } catch (error) {
@@ -396,12 +404,15 @@ export class ChannelService {
     channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
   ) {
     try {
+      const { password, ...channelDataOther } = channelData;
+      const hash = await this.hashPassword(channelData.password);
       return await this.prisma.channel.update({
         where: {
           id,
         },
         data: {
           ...channelData,
+          password: hash,
         },
       });
     } catch (error) {
@@ -513,7 +524,7 @@ export class ChannelService {
       },
     });
     if (channel === null) return false;
-    return password === channel.password;
+    return this.comparePassword(password, channel.password);
   }
 
   async deleteChannel(userId: number, channelId: number) {
@@ -631,4 +642,27 @@ export class ChannelService {
 
     return dm !== undefined ? dm.id : undefined;
   }
+
+  async hashPassword(password: string){
+		try {
+			const saltOrRounds = 10;
+			const hash = await bcrypt.hash(password, saltOrRounds);
+			return hash;
+		} catch (err) {
+			const err_message = "Failed to hash password";
+			console.log("500 EXCEPTION THROWN: ", err_message);
+			throw new InternalServerErrorException(err_message);
+		}
+	}
+
+	async comparePassword(password:string, hash:string){
+		try {
+			return await bcrypt.compare(password, hash)
+		} catch (err) {
+			const err_message = "Failed in hashed password comparison";
+			console.log("500 EXCEPTION THROWN: ", err_message);
+			throw new InternalServerErrorException(err_message);
+		}
+	}
+
 }
