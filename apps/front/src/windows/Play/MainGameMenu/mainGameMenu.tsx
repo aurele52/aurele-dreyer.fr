@@ -9,6 +9,8 @@ import Pong from "../Pong/Pong";
 import Win from "../Win/Win";
 import Lose from "../Lose/Lose";
 import PrivateWaiting from "../PrivateWaiting/PrivateWaiting";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../../axios";
 
 interface mainGameMenuProps {
 	windowId: number;
@@ -46,6 +48,17 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
 	const [privateWaitingDisplay, setPrivateWaitingDisplay] =
 		useState<boolean>(false);
+
+	const queryClient = useQueryClient();
+
+	const { mutateAsync: deleteGameInvitation } = useMutation({
+		mutationFn: async () => {
+			return api.delete(`/message/invitation`);
+		},
+		onError: (error) => {
+			console.error(error.message);
+		},
+	});
 
 	function onWin() {
 		setPongDisplay(false);
@@ -95,16 +108,34 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setDisplayMainMenu(false);
 		socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
 	}
+	function onCancelInvite() {
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setPrivateWaitingDisplay(false);
+		setPongDisplay(false);
+		setDisplayMainMenu(true);
+		setJoinNormalDefaultDisplay(true);
+		setCreateCustomDefaultDisplay(true);
+		setJoinCustomDefaultDisplay(true);
+	}
 	useEffect(() => {
 		if (props.privateLobby) {
 			onPrivateMatch();
 		}
 		socket.on("server.matchStart", onMatchStart);
+		socket.on("server.cancelInvite", onCancelInvite);
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
 		return () => {
 			socket.emit("client.closeMainWindow");
 			socket.off("server.matchStart", onMatchStart);
+			if (props.privateLobby) {
+				deleteGameInvitation();
+			}
 		};
 	}, [props.privateLobby]);
 
@@ -157,6 +188,12 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDesactivateDisplay(false);
 		setCreateCustomDefaultDisplay(true);
 		socket.emit("client.joinCustomAbort");
+	}
+	function returnToMenu() {
+		setJoinNormalDefaultDisplay(true);
+		setJoinCustomDefaultDisplay(true);
+		setCreateCustomDefaultDisplay(true);
+		setCreateCustomDisplay(false);
 	}
 	function joinNormalDesactivateOnClick() {}
 	function createCustomDesactivateOnClick() {}
@@ -243,7 +280,10 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		<>
 			{displayMainMenu === true && mainMenu}
 			{createCustomDisplay === true && (
-				<CreateCustom onCreateLobby={onCreateLobby} />
+				<CreateCustom
+					onCreateLobby={onCreateLobby}
+					returnToMenu={returnToMenu}
+				/>
 			)}
 			{joinCustomDisplay === true && (
 				<JoinCustom onJoinCustom={onJoinLobby} />

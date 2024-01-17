@@ -174,6 +174,23 @@ export class PongGateway {
     }
   }
 
+  @SubscribeMessage('client.invitationDecline')
+  async handleInvitationDecline(client: Socket, id: number) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      try {
+        this.privateLobbyManager.cancelPrivateInvitation(
+          this.connectedClient[index],
+          id,
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
   @SubscribeMessage('client.input')
   handleInput(client: Socket, inputData: input) {
     const index = this.connectedClient.findIndex((value) => {

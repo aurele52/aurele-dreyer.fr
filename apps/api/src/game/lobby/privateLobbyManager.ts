@@ -38,6 +38,19 @@ export class privateLobbyManager {
     }
   }
 
+  public cancelPrivateInvitation(client: clientInfo, id: number) {
+    const index = this.privateLobbies.findIndex((value) => {
+      return value.getPlayer()[0].user.id === id;
+    });
+
+    if (index !== -1) {
+      const otherPlayer: clientInfo = this.privateLobbies[index].getPlayer()[0];
+      otherPlayer.status = 'connected';
+      this.privateQueue.splice(index, 1);
+      otherPlayer.socket.emit('server.cancelInvite');
+    }
+  }
+
   public cleanLobbies() {
     this.privateLobbies.filter((lobby) => lobby.isEmpty() === true);
   }
