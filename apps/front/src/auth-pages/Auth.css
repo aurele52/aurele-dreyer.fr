@@ -12,7 +12,7 @@
   }
 
   .bg-image {
-    background-image: url("../../images/first-page.png");
+    background-image: url("/images/first-page.png");
   }
   .purple-container {
 	padding: 4rem 6rem;
