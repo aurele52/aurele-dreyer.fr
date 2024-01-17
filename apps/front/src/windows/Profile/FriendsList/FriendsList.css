@@ -28,8 +28,6 @@
 	display: flex;
 	padding: 5px;
 	flex-direction: column;
-	justify-content: flex-end;
-	align-items: flex-end;
 	gap: 12px;
 	align-self: stretch;
 }
@@ -152,7 +150,6 @@
 	text-overflow: ellipsis;
 
 	/* Heading/500 */
-	font-family: Chakra Petch;
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 700;
@@ -186,7 +183,6 @@
 	color: var(--Base-Black, #000);
 
 	/* Text/300/Regular */
-	font-family: Chakra Petch;
 	font-size: 12px;
 	font-style: normal;
 	font-weight: 400;

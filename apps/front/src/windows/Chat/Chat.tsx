@@ -1,5 +1,5 @@
 import "./Chat.css";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
@@ -9,23 +9,20 @@ import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import store from "../../store";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { AppState } from "../../reducers";
-import { createSelector } from "reselect";
-import { useSelector } from "react-redux";
+import { SearchBar } from "../../shared/ui-components/SearchBar/SearchBar";
 
 export type ChatType = {
   id: number;
   name: string;
   type: string;
   interlocutor: { avatar_url: string; username: string; id: number };
-};
-
-type NotifCounts = {
-  [key: number]: number;
+  notif: number;
 };
 
 export function Chat() {
   const queryClient = useQueryClient();
+
+  const [searchBarValue, setSearchBarValue] = useState("");
 
   const { data: selfId } = useQuery<number>({
     queryKey: ["selfId"],
@@ -47,20 +44,16 @@ export function Chat() {
     },
   });
 
-  const getWindowState = (state: AppState) => state.windows;
-
-  const openChatWindowsSelector = createSelector(
-    [getWindowState],
-    (windows): string[] => {
-      return windows
-        .filter((window) => window.content.type === "CHATSESSION")
-        .map((window) => window.WindowName);
-    }
-  );
-
-  const [notifCounts, setNotifCounts] = useState<NotifCounts>({});
-
-  const openChatWindows = useSelector(openChatWindowsSelector);
+  const { mutateAsync: updateReadUntil } = useMutation({
+    mutationFn: async (channel_id: number) => {
+      return api.patch("/user-channel/" + channel_id + "/readuntil");
+    },
+    onSuccess: () => {
+      queryClient.invalidateQueries({
+        queryKey: ["chats"],
+      });
+    },
+  });
 
   useEffect(() => {
     if (localStorage.getItem("token")) {
@@ -70,24 +63,7 @@ export function Chat() {
         },
       });
 
-      eventSource.onmessage = ({ data }) => {
-        const message = JSON.parse(data);
-        const chat = chats?.find(
-          (chat) => chat.id === message.channel_id && selfId !== message.user_id
-        );
-        if (chat) {
-          const chatName =
-            chat.type === "DM" ? chat.interlocutor.username : chat.name;
-
-          const isWindowOpen = openChatWindows.includes(chatName);
-
-          if (!isWindowOpen) {
-            setNotifCounts((prevCounts) => ({
-              ...prevCounts,
-              [chat.id]: (prevCounts[chat.id] || 0) + 1,
-            }));
-          }
-        }
+      eventSource.onmessage = () => {
         queryClient.invalidateQueries({ queryKey: ["chats"] });
       };
 
@@ -99,7 +75,7 @@ export function Chat() {
         eventSource.close();
       };
     }
-  }, [chats, openChatWindows, queryClient, selfId]);
+  }, [chats, queryClient, selfId]);
 
   const handleFindChannel = () => {
     const newWindow = {
@@ -133,6 +109,7 @@ export function Chat() {
         id: 0,
         content: { type: "ABOUTCHAN", id: id },
         toggle: false,
+        channelId: id,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };
@@ -142,6 +119,7 @@ export function Chat() {
         id: 0,
         content: { type: "PROFILE", id: id },
         toggle: false,
+        channelId: id,
         handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
         color: WinColor.PURPLE,
       };
@@ -162,21 +140,30 @@ export function Chat() {
       WindowName: chatName,
       id: 0,
       content: { type: "CHATSESSION", id: chatId },
+      channelId: chatId,
       toggle: false,
       handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
       color: WinColor.PURPLE,
     };
-
     store.dispatch(addWindow(newWindow));
   };
 
   return (
     <div className="Chat">
+      <SearchBar
+        action={setSearchBarValue}
+        button={{ color: "purple", icon: "Lens" }}
+      />
       <List>
         {chats?.map((chat) => {
           const name =
             chat.type === "DM" ? chat.interlocutor.username : chat.name;
-          const notifCount = notifCounts[chat.id] || 0;
+          if (
+            searchBarValue.length > 0 &&
+            !name.toLowerCase().includes(searchBarValue.toLowerCase())
+          ) {
+            return null;
+          }
           return (
             <div className="chatRow" key={chat.id}>
               <Button
@@ -193,13 +180,10 @@ export function Chat() {
                 }
                 clickable={true}
                 onClick={() => {
+                  updateReadUntil(chat.id);
                   handleChatOpening(chat.id, name);
-                  setNotifCounts((prevCounts) => ({
-                    ...prevCounts,
-                    [chat.id]: 0,
-                  }));
                 }}
-                notif={notifCount}
+                notif={chat.notif}
               />
             </div>
           );

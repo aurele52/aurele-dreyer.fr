@@ -6,6 +6,8 @@ WORKDIR /app
 
 COPY apps/ .
 
+RUN cd api/ && npx prisma generate
+
 RUN npm install
 
 RUN npm run build

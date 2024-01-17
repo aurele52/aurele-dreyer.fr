@@ -1,4 +1,9 @@
-import { HttpStatus, Injectable, NotFoundException } from '@nestjs/common';
+import {
+  HttpStatus,
+  ImATeapotException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { LadderService } from 'src/ladder/ladder.service';
 import { FriendshipService } from 'src/friendship/friendship.service';
@@ -12,7 +17,16 @@ export class ProfileService {
     private readonly frienship: FriendshipService,
   ) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async profile(id: number, self_id: number) {
+    if (!id) {
+      this.logAndThrowNotFound(id, 'User');
+    }
+
     const user = await this.prisma.user.findUnique({
       where: {
         id: id,
@@ -20,13 +34,16 @@ export class ProfileService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const winCount = await this.prisma.matchPlayer.count({
       where: {
         user_id: id,
         winner: true,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -34,6 +51,9 @@ export class ProfileService {
       where: {
         user_id: id,
         winner: false,
+        match: {
+          type: 'NORMAL',
+        },
       },
     });
 
@@ -56,6 +76,7 @@ export class ProfileService {
         is2FaEnabled: user.is_enable_2fa,
       };
     }
+
     const friendship = await this.frienship.userFriendship(self_id, id);
 
     if (friendship) {
@@ -86,9 +107,15 @@ export class ProfileService {
   }
 
   async historic(id: number) {
+    if (!id) {
+      this.logAndThrowNotFound(id, 'User');
+    }
     const matches = await this.prisma.matchPlayer.findMany({
       where: {
         user_id: id,
+        match: {
+          type: 'NORMAL',
+        },
       },
       include: {
         match: {
@@ -128,8 +155,14 @@ export class ProfileService {
 
       const player1_avatar = user1.avatar_url;
       const player2_avatar = user2.avatar_url;
-      const score1 = match.players[0].score;
-      const score2 = match.players[1].score;
+      const score1 =
+        match.players[0].user.id === id
+          ? match.players[0].score
+          : match.players[1].score;
+      const score2 =
+        match.players[0].user.id === id
+          ? match.players[1].score
+          : match.players[0].score;
 
       return {
         id: match.id,

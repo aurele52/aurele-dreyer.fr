@@ -2054,21 +2054,24 @@ export enum ModalType {
 
 export function addModal(
 	type: ModalType,
-	content: ReactNode,
+	content?: ReactNode,
 	action?: ActionKey,
 	userId?: number,
 	channelId?: number
 ) {
 	let color;
-	if (type === ModalType.WARNING || ModalType.ERROR) color = WinColor.RED;
+	if (type === ModalType.WARNING || type === ModalType.ERROR) color = WinColor.RED;
 	else color = WinColor.PURPLE;
-
+	let height = 199;
+	if (type === ModalType.REQUESTED) height = 250;
+	let contentType = "MODAL";
+	if (type === ModalType.REQUESTED) contentType = "MODALREQUESTED"
 	const newWindow = {
 		WindowName: type,
 		width: "390",
-		height: "199",
+		height: height,
 		id: 0,
-		content: { type: "MODAL" },
+		content: { type: contentType },
 		toggle: false,
 		modal: {
 			type,

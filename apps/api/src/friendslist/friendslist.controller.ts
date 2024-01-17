@@ -1,4 +1,4 @@
-import { Controller, Get, Param, Post, Body, Query } from '@nestjs/common';
+import { Controller, Get, Post, Body, Query } from '@nestjs/common';
 import { FriendslistService } from './friendslist.service';
 import { CurrentUser } from 'src/decorators/user.decorator';
 
@@ -21,13 +21,7 @@ export class FriendslistController {
   }
 
   @Get('/potentialFriends')
-  async getPotentialFriends(
-    @CurrentUser() user,
-    @Query('placeholderValue') placeholderValue: string,
-  ) {
-    return this.friendslistService.getPotentialFriends(
-      placeholderValue,
-      user.id,
-    );
+  async getPotentialFriends(@CurrentUser() user) {
+    return this.friendslistService.getPotentialFriends(user.id);
   }
 }

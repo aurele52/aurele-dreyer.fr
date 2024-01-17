@@ -92,8 +92,23 @@ function AboutChan({ chanId }: AboutChanProps) {
 			queryClient.invalidateQueries({ queryKey: ["chanAbout", chanId] });
 		},
 	});
-	const handleJoin = async (channelId: number | undefined) => {
-		if (channelId) await createUserChannel({ channelId });
+	const handleJoin = async (
+		channelId: number | undefined,
+		channelType: string | undefined
+	) => {
+		if (channelId && channelType) {
+			if (channelType === "PROTECTED") {
+				addModal(
+					ModalType.REQUESTED,
+					undefined,
+					undefined,
+					undefined,
+					channelId
+				);
+				return;
+			}
+			await createUserChannel({ channelId });
+		}
 	};
 
 	const handleLeave = async (channel: ChannelData | undefined) => {
@@ -120,6 +135,7 @@ function AboutChan({ chanId }: AboutChanProps) {
 			id: 0,
 			content: { type: "ADDMEMBERS", id: channel?.id },
 			toggle: false,
+			channelId: channel?.id,
 			handleBarButton: HBButton.Close,
 			color: WinColor.LILAC,
 		};
@@ -132,6 +148,7 @@ function AboutChan({ chanId }: AboutChanProps) {
 			id: 0,
 			content: { type: "CHANSETTINGS", id: channel?.id },
 			toggle: false,
+			channelId: channel?.id,
 			handleBarButton: HBButton.Close,
 			color: WinColor.LILAC,
 		};
@@ -172,7 +189,9 @@ function AboutChan({ chanId }: AboutChanProps) {
 						<Button
 							color="purple"
 							content="join"
-							onClick={() => handleJoin(channel?.id)}
+							onClick={() =>
+								handleJoin(channel?.id, channel?.type)
+							}
 						/>
 					</div>
 				) : (

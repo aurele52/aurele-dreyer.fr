@@ -6,6 +6,10 @@ export class FriendslistService {
   constructor(private readonly prisma: PrismaService) {}
 
   async getList(id: number) {
+    if (!id) {
+      console.error(`User with ID ${id} not found`);
+      throw new NotFoundException(`User not found`);
+    }
     const friends = await this.prisma.friendship.findMany({
       where: {
         OR: [
@@ -93,16 +97,15 @@ export class FriendslistService {
     return newFriendship;
   }
 
-  async getPotentialFriends(placeholderValue: string, selfId: number) {
+  async getPotentialFriends(selfId: number) {
+    if (!selfId) {
+      console.error(`User with ID ${selfId} not found`);
+      throw new NotFoundException(`User not found`);
+    }
     try {
-      const normalizedPlaceholder = placeholderValue.toLowerCase();
-
       const potentialFriends = await this.prisma.user.findMany({
         where: {
-          username: {
-            contains: normalizedPlaceholder,
-            mode: 'insensitive',
-          },
+          isDeleted: false,
           AND: {
             AND: [
               {
@@ -123,10 +126,7 @@ export class FriendslistService {
               {
                 friendship_user2: {
                   none: {
-                    OR: [
-                      { status: { equals: 'FRIENDS' }, user1_id: selfId },
-                      { status: { equals: 'BLOCKED' }, user1_id: selfId },
-                    ],
+                    user1_id: selfId,
                   },
                 },
               },

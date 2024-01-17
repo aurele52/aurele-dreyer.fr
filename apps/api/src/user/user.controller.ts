@@ -1,5 +1,4 @@
 import {
-  Body,
   Controller,
   Delete,
   Get,
@@ -69,7 +68,7 @@ export class UserController {
 
       fs.writeFileSync(filePath, file.buffer);
 
-      const new_link = 'http://localhost:5173/api/user/avatar/' + fileName;
+      const new_link = `${process.env.DOMAIN_NAME_FRONT}/api/user/avatar/${fileName}`;
 
       return await this.userService.postAvatar(id, new_link);
     } catch (error) {

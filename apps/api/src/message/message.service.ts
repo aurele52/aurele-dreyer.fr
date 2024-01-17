@@ -1,7 +1,9 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Subject, Observable } from 'rxjs';
 import { Message } from './interfaces/message.interface';
+import { CustomMessageEvent } from './event/message-event.type';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class MessageService {
@@ -52,11 +54,44 @@ export class MessageService {
 
   private messageEvents = new Subject<any>();
 
-  emitMessage(message: Message) {
-    this.messageEvents.next(message);
+  emitMessage(message: Message, channel_id: number) {
+    this.messageEvents.next({ message, channel_id });
   }
 
-  getMessageEvents(): Observable<MessageEvent> {
+  getMessageEvents(): Observable<CustomMessageEvent> {
     return this.messageEvents.asObservable();
+  }
+
+  async deleteInvitation(userId: number, channelId: number) {
+    try {
+      const deletedMessages = await this.prisma.message.deleteMany({
+        where: {
+          channel_id: channelId,
+          channel: {
+            userChannels: {
+              some: {
+                user_id: userId,
+              },
+            },
+            type: 'DM',
+          },
+          content: '/PongInvitation',
+        },
+      });
+
+      if (deletedMessages.count > 0) {
+        return { success: true, message: 'Invitations deleted successfully' };
+      } else {
+        throw new NotFoundException('No invitations found for deletion');
+      }
+    } catch (error) {
+      console.error('Error deleting invitations:', error);
+
+      if (error instanceof Prisma.PrismaClientKnownRequestError) {
+        console.error('Prisma error details:', error);
+      }
+
+      throw new Error('An error occurred while deleting invitations');
+    }
   }
 }

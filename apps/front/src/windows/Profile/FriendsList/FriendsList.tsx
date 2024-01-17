@@ -8,8 +8,12 @@ import { addWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import { User } from "../../../shared/ui-components/User/User";
 import store from "../../../store";
+import { useState } from "react";
+import { SearchBar } from "../../../shared/ui-components/SearchBar/SearchBar";
 
 export function FriendsList() {
+	const [searchBarValue, setSearchBarValue] = useState("");
+
 	const {
 		data: friendsList,
 		isLoading: friendsListLoading,
@@ -17,6 +21,7 @@ export function FriendsList() {
 	} = useQuery<
 		{
 			userid: number;
+			username: string;
 		}[]
 	>({
 		queryKey: ["friendsList"],
@@ -93,14 +98,22 @@ export function FriendsList() {
 	return (
 		<div className="FriendsList">
 			<div className="Header">
-				<div className="SearchBar">
-					<input type="text" className="TypeBar" />
-					<Button icon="Lens" color="purple" />
-				</div>
+				<SearchBar
+					action={setSearchBarValue}
+					button={{ color: "purple", icon: "Lens" }}
+				/>
 			</div>
 			<div className="Body">
 				<List>
 					{friendsList?.map((friend, index) => {
+						if (
+							searchBarValue.length > 0 &&
+							!friend.username
+								.toLowerCase()
+								.includes(searchBarValue.toLowerCase())
+						) {
+							return null;
+						}
 						return <User key={index} userId={friend.userid} />;
 					})}
 				</List>

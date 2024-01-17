@@ -32,6 +32,7 @@ model UserChannel {
   channel_id Int
   role       Role
   mute       DateTime?
+  read_until DateTime  @default(now())
   created_at DateTime  @default(now())
   updated_at DateTime  @updatedAt
   User       User      @relation(fields: [user_id], references: [id])
@@ -58,6 +59,7 @@ model User {
   friendship_user2 Friendship[]      @relation("user2_friendship")
   bannedChannels   Channel[]         @relation("BannedChannels")
   messages         Message[]         @relation()
+  isDeleted        Boolean           @default(false)
 }
 
 model Message {
@@ -76,6 +78,7 @@ model Match {
   on_going   Boolean       @default(true)
   created_at DateTime      @default(now())
   updated_at DateTime      @updatedAt
+  type       MatchType     @default(NORMAL)
   players    MatchPlayer[]
 }
 
@@ -146,4 +149,10 @@ enum FriendshipStatus {
   FRIENDS
   PENDING
   BLOCKED
+}
+
+enum MatchType {
+  NORMAL
+  CUSTOM
+  PRIVATE
 }

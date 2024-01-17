@@ -3,6 +3,7 @@ import { WinColor } from "./shared/utils/WindowTypes";
 import { ReactNode } from "react";
 import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
+import { gameInfo } from "shared/src/gameInfo.interface";
 
 interface WindowData {
 	WindowName: string;
@@ -25,6 +26,7 @@ interface WindowData {
 	targetId?: number;
 	channelId?: number;
 	zindex?: number;
+	gameInfo?: gameInfo;
 }
 
 export interface AppState {
@@ -67,6 +69,8 @@ const windowsSlice = createSlice({
 				"MEMBERSETTINGS",
 				"BANLIST",
 				"TWOFAQRCODE",
+				"FRIENDSLIST",
+				"PLAY",
 			];
 
 			if (
@@ -83,7 +87,17 @@ const windowsSlice = createSlice({
 						window.WindowName === action.payload.WindowName
 				);
 				if (state.windows[windowIndex].toggle) {
-					state.windows.splice(windowIndex, 1);
+					state.windows.forEach((window) => {
+						if (
+							window.zindex &&
+							window.zindex > state.windows[windowIndex].zindex
+						) {
+							window.zindex -= 1;
+						}
+					});
+
+					state.windows[windowIndex].zindex =
+						state.windows.length - 1;
 				}
 				return;
 			}
@@ -96,22 +110,40 @@ const windowsSlice = createSlice({
 			state.id++;
 		},
 		delWindow: (state, action: PayloadAction<number>) => {
+			const deleteWindow = (toDel: number) => {
+				if (toDel !== -1) {
+					const toDelZindex = state.windows[toDel].zindex || 1000;
+
+					state.windows.splice(toDel, 1);
+
+					state.windows.forEach((window) => {
+						if (window.zindex && window.zindex > toDelZindex) {
+							window.zindex -= 1;
+						}
+					});
+				}
+			};
+
+			//audreyer start
+			if (
+				state.windows.find((window) => window.id === action.payload)
+					.content.type === "PLAY"
+			) {
+				{
+					const createCustomIndex = state.windows.findIndex(
+						(window) => window.content.type === "CREATECUSTOM"
+					);
+					deleteWindow(createCustomIndex);
+				}
+				//etc....
+				//socket.emit()
+			}
+			//end
+
 			const deletedWindowIndex = state.windows.findIndex(
 				(window) => window.id === action.payload
 			);
-
-			if (deletedWindowIndex !== -1) {
-				const deletedWindowZIndex =
-					state.windows[deletedWindowIndex].zindex || 1000;
-
-				state.windows.splice(deletedWindowIndex, 1);
-
-				state.windows.forEach((window) => {
-					if (window.zindex && window.zindex > deletedWindowZIndex) {
-						window.zindex -= 1;
-					}
-				});
-			}
+			deleteWindow(deletedWindowIndex);
 		},
 		bringToFront: (state, action: PayloadAction<number>) => {
 			const windowToBringToFrontIndex = state.windows.findIndex(

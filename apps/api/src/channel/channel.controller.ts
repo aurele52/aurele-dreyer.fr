@@ -1,18 +1,27 @@
-import { Controller, Get, Post, Body, Param, Put } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Post,
+  Body,
+  Param,
+  Put,
+  BadRequestException,
+  Delete,
+} from '@nestjs/common';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChannelService } from './channel.service';
 import { CurrentUser, CurrentUserID } from 'src/decorators/user.decorator';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
-import { MessageService } from 'src/message/message.service';
 import { ChannelTypes } from './types/channel.types';
+import { FriendshipService } from 'src/friendship/friendship.service';
 
 @Controller()
 export class ChannelController {
   constructor(
     private readonly channelService: ChannelService,
     private readonly userChannelService: UserChannelService,
-    private readonly messageService: MessageService,
+    private readonly friendshipService: FriendshipService,
   ) {}
 
   @Get('/chats')
@@ -31,6 +40,22 @@ export class ChannelController {
   @Get('/channels')
   async findOtherChannels(@CurrentUser() user) {
     return this.channelService.otherChannels({ currUserId: user.id });
+  }
+
+  @Get('/channels/common/:userid')
+  async findCommonChat(
+    @CurrentUserID() user1_id,
+    @Param('userid') user2_id: number,
+  ) {
+    return this.channelService.getCommonChats(user1_id, user2_id);
+  }
+
+  @Get('/channels/excluded/:userid')
+  async findExcludedChat(
+    @CurrentUserID() user1_id,
+    @Param('userid') user2_id: number,
+  ) {
+    return this.channelService.getExcludedChats(user1_id, user2_id);
   }
 
   @Post('/channel')
@@ -62,8 +87,11 @@ export class ChannelController {
   }
 
   @Get('/channel/:id/nonmembers')
-  async findNonMembers(@Param('id') channel_id: number) {
-    return this.channelService.getNonMembers(channel_id);
+  async findNonMembers(
+    @Param('id') channel_id: number,
+    @CurrentUserID() user_id: number,
+  ) {
+    return this.channelService.getNonMembers(channel_id, user_id);
   }
 
   @Put('/channel/:id')
@@ -98,6 +126,14 @@ export class ChannelController {
     @CurrentUserID() user1_id: number,
     @Body('userId') user2_id: number,
   ) {
+    const isBlocked = await this.friendshipService.isBlockedRelationship(
+      user1_id,
+      user2_id,
+    );
+    if (isBlocked) {
+      throw new BadRequestException('Cannot create a dm with a blocked user');
+    }
+
     const channel = await this.channelService.createChannel({
       name: '',
       topic: '',
@@ -105,17 +141,38 @@ export class ChannelController {
       password: undefined,
     });
 
-    await this.userChannelService.createUserChannel({
-      userId: user1_id,
-      channelId: channel.id,
-      role: UserChannelRoles.MEMBER,
-    });
+    if (channel) {
+      await this.userChannelService.createUserChannel({
+        userId: user1_id,
+        channelId: channel.id,
+        role: UserChannelRoles.MEMBER,
+      });
 
-    await this.userChannelService.createUserChannel({
-      userId: user2_id,
-      channelId: channel.id,
-      role: UserChannelRoles.MEMBER,
-    });
-    return channel.id;
+      await this.userChannelService.createUserChannel({
+        userId: user2_id,
+        channelId: channel.id,
+        role: UserChannelRoles.MEMBER,
+      });
+
+      return channel.id;
+    }
+    throw new Error('An error occured while creating the channel');
+  }
+
+  @Post('/channel/:channelid/checkpwd')
+  async checkPwd(
+    @Param('channelid') channelId: number,
+    @Body('password') password: string,
+  ) {
+    return await this.channelService.checkPwd(channelId, password);
+  }
+
+  @Delete('/channel/:channelid')
+  async deleteChannel(
+    @Param('channelid') channelId: number,
+    @CurrentUserID() userId,
+  ) {
+    console.log('Delete Channel');
+    return await this.channelService.deleteChannel(userId, channelId);
   }
 }

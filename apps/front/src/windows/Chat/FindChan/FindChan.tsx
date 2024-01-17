@@ -7,81 +7,111 @@ import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { addWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
+import { ModalType, addModal } from "../../../shared/utils/AddModal";
+import { useState } from "react";
+import { SearchBar } from "../../../shared/ui-components/SearchBar/SearchBar";
 
 interface FindChanProps extends ReduxProps {}
 
 function FindChan({ dispatch }: FindChanProps) {
-  const queryClient = useQueryClient();
+	const queryClient = useQueryClient();
 
-  const { data: channels } = useQuery<
-    {
-      id: number;
-      name: string;
-      type: string;
-    }[]
-  >({
-    queryKey: ["channels"],
-    queryFn: async () => {
-      return api.get("/channels").then((response) => response.data);
-    },
-  });
+	const [searchBarValue, setSearchBarValue] = useState("");
 
-  const { mutateAsync: createUserChannel } = useMutation({
-    mutationFn: async (param: { channelId: number }) => {
-      return api.post("/user-channel", param);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["channels"] });
-      queryClient.invalidateQueries({ queryKey: ["chats"] });
-    },
-  });
+	const { data: channels } = useQuery<
+		{
+			id: number;
+			name: string;
+			type: string;
+		}[]
+	>({
+		queryKey: ["channels"],
+		queryFn: async () => {
+			return api.get("/channels").then((response) => response.data);
+		},
+	});
 
-  const handleAddChannel = async (channelId: number) => {
+	const { mutateAsync: createUserChannel } = useMutation({
+		mutationFn: async (param: { channelId: number }) => {
+			return api.post("/user-channel", param);
+		},
+		onSuccess: () => {
+			queryClient.invalidateQueries({ queryKey: ["channels"] });
+			queryClient.invalidateQueries({ queryKey: ["chats"] });
+		},
+	});
+
+  const handleAddChannel = async (channelId: number, channelType: string) => {
+    if (channelType === "PROTECTED") {
+      addModal(ModalType.REQUESTED, undefined, undefined, undefined, channelId);
+      return ;
+    }
     await createUserChannel({ channelId });
   };
+	const handleDetailsChan = (name: string, id: number) => {
+		const newWindow = {
+			WindowName: "About" + name,
+			width: "453",
+			height: "527",
+			id: 0,
+			content: { type: "ABOUTCHAN", id: id },
+			toggle: false,
+			handleBarButton:
+				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
+			color: WinColor.PURPLE,
+		};
+		dispatch(addWindow(newWindow));
+	};
 
-  const handleDetailsChan = (name: string, id: number) => {
-    const newWindow = {
-      WindowName: "About" + name,
-      width: "453",
-      height: "527",
-      id: 0,
-      content: { type: "ABOUTCHAN", id: id },
-      toggle: false,
-      handleBarButton: HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-      color: WinColor.PURPLE,
-    };
-    dispatch(addWindow(newWindow));
-  };
-
-  return (
-    <div className="FindChan">
-      <List dark={false}>
-        {channels?.map((channel) => {
-          return (
-            <div key={channel.id} className="wrapChannelFindChan">
-              <Channel name={channel.name} clickable={false}>
-                <div className="ButtonFindChan">
-                  <Button
-                    icon="TripleDot"
-                    color="pink"
-                    onClick={() => handleDetailsChan(channel.name, channel.id)}
-                  />
-                  <Button
-                    icon="Plus"
-                    color="pink"
-                    onClick={() => {
-                      handleAddChannel(channel.id);
-                    }}
-                  />
-                </div>
-              </Channel>
-            </div>
-          );
-        })}
-      </List>
-    </div>
-  );
+	return (
+		<div className="FindChan">
+			<SearchBar
+				action={setSearchBarValue}
+				button={{ color: "purple", icon: "Lens" }}
+			/>
+			<List dark={false}>
+				{channels?.map((channel) => {
+					if (
+						searchBarValue.length > 0 &&
+						!channel.name
+							.toLowerCase()
+							.includes(searchBarValue.toLowerCase())
+					) {
+						return null;
+					}
+					return (
+						<div key={channel.id} className="wrapChannelFindChan">
+							<Channel
+								name={channel.name}
+								clickable={false}
+								notif={0}
+							>
+								<div className="ButtonFindChan">
+									<Button
+										icon="TripleDot"
+										color="pink"
+										onClick={() =>
+											handleDetailsChan(
+												channel.name,
+												channel.id
+											)
+										}
+									/>
+									<Button
+										icon="Plus"
+										color="pink"
+										onClick={() => {
+											handleAddChannel(channel.id, channel.type);
+										}}
+									/>
+								</div>
+							</Channel>
+						</div>
+					);
+				})}
+			</List>
+		</div>
+	);
 }
 
 const mapDispatchToProps = null;

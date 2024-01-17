@@ -5,8 +5,6 @@ import { ConnectedProps, connect } from "react-redux";
 import { delWindow, bringToFront } from "../../../reducers";
 import { Button } from "../Button/Button";
 import { HBButton, WinColor } from "../../utils/WindowTypes";
-import { ModalType } from "../../utils/AddModal";
-import { ActionKey } from "../Modal/Modal";
 
 interface WindowProps extends ReduxProps {
 	WindowName: string;
@@ -16,12 +14,7 @@ interface WindowProps extends ReduxProps {
 	children: ReactNode;
 	handleBarButton: number;
 	color: WinColor;
-	modal?: {
-		type: ModalType;
-		content: ReactNode;
-		action?: ActionKey;
-		targetId?: number;
-	};
+	isModal?: boolean;
 	zindex: number;
 }
 
@@ -35,6 +28,7 @@ export function Window({
 	handleBarButton,
 	color,
 	zindex,
+	isModal,
 }: WindowProps) {
 	const [state, setState] = useState({
 		width,
@@ -46,6 +40,19 @@ export function Window({
 		windowResizeLock: false,
 		clickStartTime: 0,
 	});
+
+	const parentDivWidth =
+		document.getElementById("Background")?.offsetWidth || 0;
+	const parentDivHeight =
+		document.getElementById("Background")?.offsetHeight || 0;
+	const rndWidth = parseInt(state.width, 10) || 0;
+	const rndHeight = parseInt(state.height, 10) || 0;
+	const centerX = (parentDivWidth - rndWidth) / 2;
+	const centerY = (parentDivHeight - rndHeight) / 2;
+
+	const initialPosition = isModal
+		? { x: centerX, y: centerY }
+		: { x: state.posX, y: state.posY };
 
 	const rndRef = useRef<Rnd>(null);
 
@@ -68,29 +75,43 @@ export function Window({
 			setState({
 				...state,
 				isReduced: false,
-				clickStartTime: 0,
-				windowMoveLock: false,
+				clickStartTime: 220,
 				windowResizeLock: false,
+				windowMoveLock: false,
 			});
 			rndRef.current?.updateSize({
 				height: state.height,
-				width: "",
+				width: state.width,
 			});
 		}
 	};
 
 	const handleReduce = () => {
-		setState({
-			...state,
-			isReduced: !state.isReduced,
-			clickStartTime: 0,
-			windowResizeLock: !state.isReduced,
-			windowMoveLock: false,
-		});
-		rndRef.current?.updateSize({
-			height: "100",
-			width: "",
-		});
+		if (state.isReduced) {
+			setState({
+				...state,
+				isReduced: false,
+				clickStartTime: 220,
+				windowResizeLock: false,
+				windowMoveLock: false,
+			});
+			rndRef.current?.updateSize({
+				height: state.height,
+				width: state.width,
+			});
+		} else {
+			setState({
+				...state,
+				isReduced: true,
+				clickStartTime: 0,
+				windowResizeLock: true,
+				windowMoveLock: false,
+			});
+			rndRef.current?.updateSize({
+				height: "40px",
+				width: "250px",
+			});
+		}
 	};
 
 	const handleEnlarge = () => {
@@ -117,8 +138,8 @@ export function Window({
 				width: state.width,
 			});
 			rndRef.current?.updatePosition({
-				x: state.posX,
-				y: state.posY,
+				x: initialPosition.x,
+				y: initialPosition.y,
 			});
 		}
 	}, [state.windowMoveLock]);
@@ -130,27 +151,41 @@ export function Window({
 	return (
 		<Rnd
 			default={{
-				x: state.posX,
-				y: state.posY,
+				x: initialPosition.x,
+				y: initialPosition.y,
 				width: state.width,
 				height: state.height,
 			}}
+			minHeight={"70px"}
+			minWidth={"285px"}
 			bounds="#Background"
 			dragHandleClassName="handleBar"
 			enableResizing={!state.windowResizeLock}
 			disableDragging={state.windowMoveLock}
 			ref={rndRef}
-			style={{ zIndex: zindex }}
+			style={{ zIndex: zindex, position: "fixed" }}
+			onResizeStop={(e, direction, ref, delta, position) => {
+				setState({
+					...state,
+					width: ref.style.width,
+					height: ref.style.height,
+				});
+			}}
 		>
 			<div
 				className={state.isReduced ? "reducedWindow" : "Window"}
-				onMouseDown={
-					state.isReduced ? handleMouseDown : handleUpdateZindex
-				}
-				onMouseUp={state.isReduced ? handleMouseUp : undefined}
+				onMouseDown={handleUpdateZindex}
 			>
 				<div className={`handleBar ${color}`}>
-					<div className="WindowName heading-500">{WindowName}</div>
+					<div
+						className="WindowName heading-500"
+						onMouseDown={
+							state.isReduced ? handleMouseDown : undefined
+						}
+						onMouseUp={state.isReduced ? handleMouseUp : undefined}
+					>
+						{WindowName}
+					</div>
 					{!!(handleBarButton & HBButton.Reduce) && (
 						<Button
 							icon="Reduce"

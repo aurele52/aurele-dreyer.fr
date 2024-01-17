@@ -1,0 +1,44 @@
+.element-form {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+}
+
+.label-form {
+  color: white;
+  font-size: 18px;
+  font-style: normal;
+  font-weight: 600;
+  line-height: normal;
+  text-transform: uppercase;
+  align-self: flex-start;
+}
+
+.element-form > div {
+  display: flex;
+  flex-direction: column;
+  flex-grow: 1;
+}
+
+.input-form {
+  flex-grow: 1;
+  border-radius: var(--radius-radius-full, 360px);
+  padding: 5px 10px;
+  margin-left: 10px;
+}
+
+.input-form:focus {
+  outline: none;
+}
+
+.error-border {
+  border: 2px solid #f06e8d;
+}
+
+.error-form {
+  margin: 0;
+  font-size: 12px;
+  padding-left: 10px;
+  color: #f06e8d;
+  text-transform: lowercase;
+}

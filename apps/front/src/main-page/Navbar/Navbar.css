@@ -1,42 +1,41 @@
 #Navbar {
-  display: flex;
-  padding: 0.5em 3vw;
-  justify-content: space-between;
-  align-self: stretch;
-  border-bottom: 0.15em solid var(--base-black, #000);
-  background: linear-gradient(180deg, #6d559c 66.15%, #4c3778 86.98%);
-  font-size:2vw;
+	display: flex;
+	padding: 0.5em 3vw;
+	justify-content: space-between;
+	align-self: stretch;
+	border-bottom: 0.15em solid var(--base-black, #000);
+	background: linear-gradient(180deg, #6d559c 66.15%, #4c3778 86.98%);
+	font-size: 2vw;
 }
 
 #Navbar > div {
-  display: flex;
-  align-items: center;
-  gap: 2vw;
-  flex: 1 0 0;
+	display: flex;
+	align-items: center;
+	gap: 2vw;
+	flex: 1 0 0;
 }
 
 .NavButton {
-  cursor: pointer;
-  padding: 0.2em 0.3em;
-  /* width: 2em; */
-  /* Style */
-  background: var(
-    --PinkPurpleMix-Gradient-Main,
-    linear-gradient(180deg, #ece5f8 66.15%, #ebb9f8 86.98%)
-  );
-  border-radius: 0.4em;
-  border: solid var(--base-white, #fff);
-  border-width: 0.2em 0.1em 0;
-  outline: 0.2em solid var(--base-black, #000);
-  /* Font */
-  font-family: Chakra Petch;
-  font-size: 2vw;
-  font-weight: 700;
+	cursor: pointer;
+	padding: 0.2em 0.3em;
+	/* width: 2em; */
+	/* Style */
+	background: var(
+		--PinkPurpleMix-Gradient-Main,
+		linear-gradient(180deg, #ece5f8 66.15%, #ebb9f8 86.98%)
+	);
+	border-radius: 0.4em;
+	border: solid var(--base-white, #fff);
+	border-width: 0.2em 0.1em 0;
+	outline: 0.2em solid var(--base-black, #000);
+	/* Font */
+	font-size: 2vw;
+	font-weight: 700;
 }
 
 .NavButton:hover {
-  background: var(--PinkPurpleMix-Main, #ede6f9);
-  border-color: var(--PinkPurpleMix-Main, #ede6f9);
+	background: var(--PinkPurpleMix-Main, #ede6f9);
+	border-color: var(--PinkPurpleMix-Main, #ede6f9);
 }
 
 /* @media only screen and (max-width: 768px) {

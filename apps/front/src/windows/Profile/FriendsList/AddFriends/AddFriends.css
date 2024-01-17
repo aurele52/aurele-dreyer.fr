@@ -15,7 +15,6 @@
 	padding: 5px;
 	flex-direction: column;
 	justify-content: flex-end;
-	align-items: flex-end;
 	gap: 12px;
 	align-self: stretch;
 }
@@ -46,7 +45,6 @@
 	color: var(--text-text-primary, #000);
 
 	/* Text/400/Regular */
-	font-family: Chakra Petch;
 	font-size: 14px;
 	font-style: normal;
 	font-weight: 400;
@@ -61,5 +59,6 @@
 	justify-content: center;
 	align-items: flex-start;
 	flex: 1 0 0;
+	flex-direction: column;
 	align-self: stretch;
 }

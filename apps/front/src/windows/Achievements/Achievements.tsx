@@ -1,5 +1,4 @@
 import "./Achievements.css";
-import { connect, ConnectedProps } from "react-redux";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
