@@ -315,8 +315,10 @@ function scoreTwo(p: p5, nb: number) {
 }
 
 function drawBall(p: p5) {
-	p.fill(gameInfo.ballColor);
-	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, scaleInfo.xballSize, scaleInfo.yballSize);
+	if (gameInfo.ballx > 0 && gameInfo.ballx < gameInfo.gamexsize - gameInfo.ballSize) {
+		p.fill(gameInfo.ballColor);
+		p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, scaleInfo.xballSize, scaleInfo.yballSize);
+	}
 }
 
 let input = 0;
@@ -404,9 +406,9 @@ function clearBoard(p: p5) {
 function loop(p: p5) {
 			move(p);
 			clearBoard(p);
+			drawBoardMidline(p);
 			drawBar(p);
 			drawBall(p);
-			drawBoardMidline(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
 }
@@ -517,15 +519,15 @@ function onSizeChange(p:p5) {
 			if (ms < 1000) {
 				compteur(p, 3);
 			}
-			// else if (ms < 2000) {
-			// 	compteur(p, 2);
-			// }
-			// else if (ms < 3000) {
-			// 	compteur(p, 1);
-			// }
-			// else if (ms < 3200) {
-			// 	compteur(p, 0);
-			// }
+			else if (ms < 2000) {
+				compteur(p, 2);
+			}
+			else if (ms < 3000) {
+				compteur(p, 1);
+			}
+			else if (ms < 3200) {
+				compteur(p, 0);
+			}
 			else {
 				loop(p);
 			}

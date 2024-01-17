@@ -250,50 +250,32 @@ export class lobby {
   private defaultGameInfo: gameInfo = { ...normalGameInfo };
   private gameInfo: gameInfo = { ...this.defaultGameInfo };
   move() {
-    if (this.clients[0].input.direction == 'up') {
-      if (this.gameInfo.oneBary > 0) {
-        let i = this.gameInfo.barSpeed;
-        while (i > 0) {
-          if (this.gameInfo.oneBary > 0) {
-            this.gameInfo.oneBary = this.gameInfo.oneBary - 1;
-            i--;
-          }
-        }
-      }
-    }
-    if (this.clients[0].input.direction == 'down') {
-      if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
-        let i = this.gameInfo.barSpeed;
-        while (i > 0) {
-          if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
-            this.gameInfo.oneBary = this.gameInfo.oneBary + 1;
-            i--;
-          }
-        }
-      }
-    }
-    if (this.clients[1].input.direction == 'up') {
-      if (this.gameInfo.twoBary > 0) {
-        let i = this.gameInfo.barSpeed;
-        while (i > 0) {
-          if (this.gameInfo.twoBary > 0) {
-            this.gameInfo.twoBary = this.gameInfo.twoBary - 1;
-            i--;
-          }
-        }
-      }
-    }
-    if (this.clients[1].input.direction == 'down') {
-      if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
-        let i = this.gameInfo.barSpeed;
-        while (i > 0) {
-          if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
-            this.gameInfo.twoBary = this.gameInfo.twoBary + 1;
-            i--;
-          }
-        }
-      }
-    }
+    if (this.clients[0].input.direction == 'up')
+      if (this.gameInfo.oneBary > 0)
+        this.gameInfo.oneBary = this.gameInfo.oneBary - this.gameInfo.barSpeed;
+    if (this.clients[0].input.direction == 'down')
+      if (
+        this.gameInfo.oneBary + this.gameInfo.barSize <
+        this.gameInfo.gameysize
+      )
+        this.gameInfo.oneBary = this.gameInfo.oneBary + this.gameInfo.barSpeed;
+    if (this.clients[1].input.direction == 'up')
+      if (this.gameInfo.twoBary > 0)
+        this.gameInfo.twoBary = this.gameInfo.twoBary - this.gameInfo.barSpeed;
+    if (this.clients[1].input.direction == 'down')
+      if (
+        this.gameInfo.twoBary + this.gameInfo.barSize <
+        this.gameInfo.gameysize
+      )
+        this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
+    if (this.gameInfo.oneBary + this.gameInfo.barSize > this.gameInfo.gameysize)
+      this.gameInfo.oneBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+    if (this.gameInfo.twoBary + this.gameInfo.barSize > this.gameInfo.gameysize)
+      this.gameInfo.twoBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+    if (this.gameInfo.oneBary < 0)
+      this.gameInfo.oneBary = 1;
+    if (this.gameInfo.twoBary < 0)
+      this.gameInfo.twoBary = 1;
   }
   update() {
     this.move();
