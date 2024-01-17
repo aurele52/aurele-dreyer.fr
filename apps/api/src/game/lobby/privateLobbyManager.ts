@@ -7,6 +7,8 @@ export class privateLobbyManager {
   private privateQueue: clientInfo[] = [];
 
   public addToPrivateQueue(client: clientInfo, id: number) {
+    console.log('SIZE: ', this.privateLobbies.length);
+    console.log('user1: ', client.user'taraget: ', id, this.privateLobbies.length);
     client.status = 'waiting join private';
     client.mode = 'private';
     const index = this.privateLobbies.findIndex((value) => {
@@ -18,6 +20,7 @@ export class privateLobbyManager {
       client.lobby = this.privateLobbies[index];
       this.privateLobbies[index].addClient(client);
       this.privateLobbies[index].start();
+      this.privateLobbies.splice(index, 1);
     } else {
       const newLobby = new lobby('private', {...normalGameInfo, userId: id});
       client.lobby = newLobby;
@@ -34,12 +37,29 @@ export class privateLobbyManager {
     if (index !== -1) {
       if (client.status === 'waiting join private')
         this.privateQueue.splice(index, 1);
-      if (playerInvited)
+      if (playerInvited) {
+        console.log('ffffffffffffffffffffffffff');
         playerInvited.socket.emit('server.cancelInvite');
+      }
+    }
+  }
+
+  public cancelPrivateInvitation(client: clientInfo, id: number) {
+    const index = this.privateLobbies.findIndex((value) => {
+      return value.getPlayer()[0].user.id === id;
+    });
+
+    if (index !== -1) {
+      const otherPlayer: clientInfo = this.privateLobbies[index].getPlayer()[0];
+      otherPlayer.status = 'connected';
+      this.privateQueue.splice(index, 1);
+      otherPlayer.socket.emit('server.cancelInvite');
     }
   }
 
   public cleanLobbies() {
-    this.privateLobbies.filter((lobby) => lobby.isEmpty() === true);
+    this.privateLobbies = this.privateLobbies.filter(
+      (lobby) => lobby.isEmpty() === false,
+    );
   }
 }

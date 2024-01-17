@@ -1,13 +1,27 @@
 import * as React from 'react';
-import { styled } from '@mui/material/styles';
 import Box from '@mui/material/Box';
 import Grid from '@mui/material/Grid';
 import Slider from '@mui/material/Slider';
-import MuiInput from '@mui/material/Input';
+import './RangeSlider.css';
 
-const Input = styled(MuiInput)`
-  width: 42px;
-`;
+const CustomSlider = {
+    '& .MuiSlider-thumb': {
+        color: "#F3ACD4"
+    },
+    '& .MuiSlider-track': {
+        color: "#49317B"
+    },
+    '& .MuiSlider-rail': {
+        color: "#49317B"
+    },
+    '& .MuiSlider-active': {
+        color: "#49317B"
+    }
+	,
+    '& .MuiSlider-mark': {
+        color: "#49317B"
+    }
+};
 
 interface rangeProps{
 	name: string,
@@ -39,15 +53,17 @@ export default function RangeComponent(props: rangeProps) {
   };
 
 	return (
-		<div> 
-			<div>{props.label}</div>
-			<Box sx={{ width: 250 }}>
+		<div className="frame-rangeslider">  
+			<div className= "label-rangeslider" >{props.label}</div>
+			<Box>
 			<Grid container spacing={2} alignItems="center">
 				<Grid item xs>
 					<Slider
+						sx={CustomSlider}
+						className="rangeslider"
 						value={typeof props.value === 'number' ? props.value : 0}
 						onChange={handleSliderChange}
-						marks
+						marks	
 						step={props.step}
 						min={props.min}
 						max={props.max}
@@ -55,18 +71,17 @@ export default function RangeComponent(props: rangeProps) {
 					/>
 				</Grid>
 				<Grid item>
-					<Input
+					<input
+						className="box-rangeslider"
 						value={props.value}
-						size="small"
 						onChange={handleInputChange}
 						onBlur={handleBlur}
-						inputProps={{
-							step: props.step,
-							min: props.min,
-							max: props.max,
-							type: 'number',
-							'aria-labelledby': 'input-slider',
-						}}
+						type="number"
+						aria-labelledby="input-slider"
+						step={props.step}
+						min={props.min}
+						max={props.max}
+						inputMode="numeric"
 					/>
 				</Grid>
 			</Grid>

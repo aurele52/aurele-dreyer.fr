@@ -4,6 +4,9 @@ import { UserChannelService } from './user-channel.service';
 import { PrismaService } from 'src/prisma.service';
 import { UserChannelModerateService } from './user-channel.moderate.service';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { MessageService } from 'src/message/message.service';
+import { UserModule } from 'src/user/user.module';
+import { ChannelService } from 'src/channel/channel.service';
 
 @Module({
   controllers: [UserChannelController],
@@ -12,6 +15,9 @@ import { FriendshipService } from 'src/friendship/friendship.service';
     UserChannelModerateService,
     PrismaService,
     FriendshipService,
+    MessageService,
+    ChannelService,
   ],
+  imports: [UserModule],
 })
 export class UserChannelModule {}
