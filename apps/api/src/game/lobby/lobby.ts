@@ -108,7 +108,7 @@ export class lobby {
   score() {
     if (
       this.gameInfo.ballx + this.gameInfo.ballSize >=
-      this.gameInfo.gamexsize - this.gameInfo.barDist
+      this.gameInfo.gamexsize - 10
     ) {
       this.gameInfo.oneScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 + this.gameInfo.ballDeb;
@@ -116,7 +116,7 @@ export class lobby {
       this.gameInfo.ballDirx = -1;
       this.gameInfo.ballDiry = 1;
     }
-    if (this.gameInfo.ballx <= this.gameInfo.barDist) {
+    if (this.gameInfo.ballx <= 10) {
       this.gameInfo.twoScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 - this.gameInfo.ballDeb;
       this.gameInfo.bally = this.gameInfo.gameysize / 2;
@@ -250,24 +250,50 @@ export class lobby {
   private defaultGameInfo: gameInfo = { ...normalGameInfo };
   private gameInfo: gameInfo = { ...this.defaultGameInfo };
   move() {
-    if (this.clients[0].input.direction == 'up')
-      if (this.gameInfo.oneBary > 0)
-        this.gameInfo.oneBary = this.gameInfo.oneBary - this.gameInfo.barSpeed;
-    if (this.clients[0].input.direction == 'down')
-      if (
-        this.gameInfo.oneBary + this.gameInfo.barSize <
-        this.gameInfo.gameysize
-      )
-        this.gameInfo.oneBary = this.gameInfo.oneBary + this.gameInfo.barSpeed;
-    if (this.clients[1].input.direction == 'up')
-      if (this.gameInfo.twoBary > 0)
-        this.gameInfo.twoBary = this.gameInfo.twoBary - this.gameInfo.barSpeed;
-    if (this.clients[1].input.direction == 'down')
-      if (
-        this.gameInfo.twoBary + this.gameInfo.barSize <
-        this.gameInfo.gameysize
-      )
-        this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
+    if (this.clients[0].input.direction == 'up') {
+      if (this.gameInfo.oneBary > 0) {
+        let i = this.gameInfo.barSpeed;
+        while (i > 0) {
+          if (this.gameInfo.oneBary > 0) {
+            this.gameInfo.oneBary = this.gameInfo.oneBary - 1;
+            i--;
+          }
+        }
+      }
+    }
+    if (this.clients[0].input.direction == 'down') {
+      if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
+        let i = this.gameInfo.barSpeed;
+        while (i > 0) {
+          if (this.gameInfo.oneBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
+            this.gameInfo.oneBary = this.gameInfo.oneBary + 1;
+            i--;
+          }
+        }
+      }
+    }
+    if (this.clients[1].input.direction == 'up') {
+      if (this.gameInfo.twoBary > 0) {
+        let i = this.gameInfo.barSpeed;
+        while (i > 0) {
+          if (this.gameInfo.twoBary > 0) {
+            this.gameInfo.twoBary = this.gameInfo.twoBary - 1;
+            i--;
+          }
+        }
+      }
+    }
+    if (this.clients[1].input.direction == 'down') {
+      if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
+        let i = this.gameInfo.barSpeed;
+        while (i > 0) {
+          if (this.gameInfo.twoBary + this.gameInfo.barSize < this.gameInfo.gameysize) {
+            this.gameInfo.twoBary = this.gameInfo.twoBary + 1;
+            i--;
+          }
+        }
+      }
+    }
   }
   update() {
     this.move();

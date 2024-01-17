@@ -293,10 +293,10 @@ function drawNumber(p: p5, nb: number, x: number, y: number) {
 function scoreOne(p: p5, nb: number) {
 	p.fill(gameInfo.menuColor);
 	p.rect(
-		scaleInfo.xborderSize + gameInfo.numberSideDist,
-		scaleInfo.yborderSize + gameInfo.numberTopDist,
-		4 * scaleInfo.xnumberSize,
-		7 * scaleInfo.ynumberSize
+		scaleInfo.xborderSize + gameInfo.numberSideDist - 1,
+		scaleInfo.yborderSize + gameInfo.numberTopDist - 1,
+		4 * scaleInfo.xnumberSize + 2,
+		7 * scaleInfo.ynumberSize + 2
 	);
 	p.fill(gameInfo.oneScoreColor);
 	drawNumber(p, nb, gameInfo.numberSideDist + scaleInfo.xborderSize, gameInfo.numberTopDist + scaleInfo.yborderSize);
@@ -305,10 +305,10 @@ function scoreOne(p: p5, nb: number) {
 function scoreTwo(p: p5, nb: number) {
 	p.fill(gameInfo.menuColor);
 	p.rect(
-		gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize,
-		scaleInfo.yborderSize + gameInfo.numberTopDist,
-		4 * scaleInfo.xnumberSize,
-		7 * scaleInfo.ynumberSize
+		gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize - 1,
+		scaleInfo.yborderSize + gameInfo.numberTopDist - 1,
+		4 * scaleInfo.xnumberSize + 2,
+		7 * scaleInfo.ynumberSize + 2
 	);
 	p.fill(gameInfo.twoScoreColor);
 	drawNumber(p, nb, gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize, gameInfo.numberTopDist + scaleInfo.yborderSize);
@@ -501,7 +501,7 @@ function onSizeChange(p:p5) {
 		p.setup = () => {
 			width = document.getElementById('canva')?.getBoundingClientRect().width;
 			height = document.getElementById('canva')?.getBoundingClientRect().height;
-			p.createCanvas(defaultGameInfo.xsize, defaultGameInfo.ysize); //margot
+			p.createCanvas(height, width);
 			p.frameRate(30);
 			p.noStroke();
 			drawEmpty(p);

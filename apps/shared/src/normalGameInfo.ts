@@ -22,7 +22,7 @@ import { gameInfo } from "./gameInfo.interface";
     barLarge: 10,
     oneScore: 0,
     twoScore: 0,
-    ballDeb: 150,
+    ballDeb: 10,
     ballSize: 10,
     barSize: 100,
     numberSize: 10,

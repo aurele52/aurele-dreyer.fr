@@ -1,4 +1,5 @@
 import {
+    IsHexColor,
   IsInt,
   IsOptional,
   IsString,
@@ -136,28 +137,28 @@ export class gameInfoDto {
 
   @IsOptional()
   @IsString()
-  oneBarColor?: string = 'white';
+  oneBarColor?: string = '#FFFFFF';
   @IsOptional()
   @IsString()
-  twoBarColor?: string = 'white';
+  twoBarColor?: string = '#FFFFFF';
   @IsOptional()
   @IsString()
-  ballColor?: string = 'white';
+  ballColor?: string = '#FFFFFF';
   @IsOptional()
   @IsString()
-  backgroundColor?: string = 'black';
+  backgroundColor?: string = '#000000';
   @IsOptional()
   @IsString()
-  borderColor?: string = 'white';
+  borderColor?: string = '#FFFFFF';
   @IsOptional()
   @IsString()
-  oneScoreColor?: string = 'white';
+  oneScoreColor?: string = '#FFFFFF';
   @IsOptional()
   @IsString()
-  twoScoreColor?: string = 'white';
+  twoScoreColor?: string = '#FFFFFF';
   @IsOptional()
-  @IsString()
-  menuColor?: string = 'black';
+  @IsHexColor()
+  menuColor?: string = '#000000';
   // not in setting
   @IsOptional()
   @IsString()
@@ -201,7 +202,7 @@ export class gameInfoDto {
   bally?: number = 100;
   @IsOptional()
   @IsInt()
-  ballDeb?: number = 150;
+  ballDeb?: number = 10;
 
   @IsOptional()
   upBallSize: boolean = false;
