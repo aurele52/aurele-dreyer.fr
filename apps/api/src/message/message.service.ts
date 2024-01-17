@@ -5,7 +5,6 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Subject, Observable } from 'rxjs';
-import { Message } from './interfaces/message.interface';
 import { CustomMessageEvent } from './event/message-event.type';
 import { Prisma } from '@prisma/client';
 
@@ -72,7 +71,7 @@ export class MessageService {
         },
       });
     } catch (error) {
-      console.error('Error during user creation:', error);
+      console.error('Error during message creation:', error);
       throw error;
     }
   }
