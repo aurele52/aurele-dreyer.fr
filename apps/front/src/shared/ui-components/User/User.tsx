@@ -110,8 +110,11 @@ export function User({ userId, channel }: UserProps) {
 				content: { type: "PLAY" },
 				handleBarButton:
 					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-				targetId: userId,
 				color: WinColor.PURPLE,
+				privateLobby: {
+					targetId: userId,
+					isFirstPlayer: true,
+				}
 			};
 			store.dispatch(addWindow(newWindow));
 			queryClient.invalidateQueries({ queryKey: ["chats"] });

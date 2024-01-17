@@ -261,7 +261,10 @@ function ChatSession({ channelId }: ChatSessionProps) {
 			content: { type: "PLAY" },
 			handleBarButton:
 				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-			targetId: receivedInvitation?.id,
+				privateLobby: {
+					targetId: receivedInvitation?.id,
+					isFirstPlayer: false,
+				},
 			color: WinColor.PURPLE,
 		};
 		store.dispatch(addWindow(newWindow));
@@ -282,7 +285,10 @@ function ChatSession({ channelId }: ChatSessionProps) {
 			content: { type: "PLAY" },
 			handleBarButton:
 				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-			targetId: chat?.interlocutor.id,
+				privateLobby: {
+					targetId: chat?.interlocutor.id,
+					isFirstPlayer: true,
+				},
 			color: WinColor.PURPLE,
 		};
 		store.dispatch(addWindow(newWindow));
