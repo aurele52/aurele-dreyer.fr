@@ -137,6 +137,14 @@ export class ChannelController {
       throw new BadRequestException('Cannot create a dm with a blocked user');
     }
 
+    const dmAlreadyExists = await this.channelService.dmAlreadyExists(
+      user1_id,
+      user2_id,
+    );
+    if (dmAlreadyExists !== undefined) {
+      return dmAlreadyExists;
+    }
+
     const channel = await this.channelService.createChannel({
       name: '',
       topic: '',

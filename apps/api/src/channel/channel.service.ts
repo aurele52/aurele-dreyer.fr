@@ -595,4 +595,40 @@ export class ChannelService {
       throw error;
     }
   }
+
+  async dmAlreadyExists(user1_id: number, user2_id: number) {
+    if (!user1_id || !user2_id) {
+      console.error(
+        `Error with params User1 ID ${user1_id} and User2 ID ${user2_id}`,
+      );
+      throw new BadRequestException(`User1 ID or User2 ID is missing`);
+    }
+    const user1Channels = await this.prisma.channel.findMany({
+      where: {
+        type: ChanType.DM,
+        userChannels: {
+          some: {
+            user_id: user1_id,
+          },
+        },
+      },
+    });
+
+    const user2Channels = await this.prisma.channel.findMany({
+      where: {
+        type: ChanType.DM,
+        userChannels: {
+          some: {
+            user_id: user2_id,
+          },
+        },
+      },
+    });
+
+    const dm = user1Channels.find((channel1) =>
+      user2Channels.some((channel2) => channel2.id === channel1.id),
+    );
+
+    return dm !== undefined ? dm.id : undefined;
+  }
 }
