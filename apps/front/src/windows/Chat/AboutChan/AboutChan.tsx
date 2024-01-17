@@ -14,6 +14,7 @@ import { delWindow } from "../../../reducers";
 
 interface AboutChanProps {
   chanId: number | undefined;
+  winId: number;
 }
 
 export type ChannelData = {
@@ -33,7 +34,7 @@ export type ChannelData = {
   }[];
 };
 
-function AboutChan({ chanId }: AboutChanProps) {
+function AboutChan({ chanId, winId }: AboutChanProps) {
   const queryClient = useQueryClient();
 
   const chanApiUrl = "/channel/" + chanId;
@@ -41,8 +42,11 @@ function AboutChan({ chanId }: AboutChanProps) {
   const { data: channel } = useQuery<ChannelData>({
     queryKey: ["chanAbout", chanId],
     queryFn: async () => {
-      const data = api.get(chanApiUrl).then((response) => response.data);
+      try {const data = api.get(chanApiUrl).then((response) => response.data);
       return data;
+      } catch {
+        store.dispatch(delWindow(winId));
+      }
     },
   });
 
@@ -55,8 +59,7 @@ function AboutChan({ chanId }: AboutChanProps) {
         );
         return response.data;
       } catch (error) {
-        console.error("Error fetching self:", error);
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -64,7 +67,10 @@ function AboutChan({ chanId }: AboutChanProps) {
   const { data: isMember } = useQuery<boolean>({
     queryKey: ["isMember", chanId],
     queryFn: async () => {
-      return api.get(chanApiUrl + "/me").then((response) => response.data);
+      try {return api.get(chanApiUrl + "/me").then((response) => response.data);}
+      catch {
+        store.dispatch(delWindow(winId))
+      }
     },
   });
 

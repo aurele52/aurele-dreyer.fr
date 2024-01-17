@@ -6,12 +6,15 @@ import List from "../../../../shared/ui-components/List/List";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
 import { useState } from "react";
 import { SearchBar } from "../../../../shared/ui-components/SearchBar/SearchBar";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
 interface AddMembersProps {
   channelId?: number;
+  winId: number;
 }
 
-function AddMembers({ channelId }: AddMembersProps) {
+function AddMembers({ channelId, winId }: AddMembersProps) {
   const queryClient = useQueryClient();
 
   const [searchBarValue, setSearchBarValue] = useState("");
@@ -19,9 +22,12 @@ function AddMembers({ channelId }: AddMembersProps) {
   const { data: users } = useQuery<{ id: number; username: string }[]>({
     queryKey: ["addChannel", channelId],
     queryFn: async () => {
-      return api
+      try {return api
         .get("/channel/" + channelId + "/nonmembers")
         .then((response) => response.data);
+      } catch {
+        store.dispatch(delWindow(winId))
+      }
     },
   });
 

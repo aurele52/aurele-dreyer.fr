@@ -6,6 +6,8 @@ import api from "../../../../axios";
 import { Button } from "../../../../shared/ui-components/Button/Button";
 import { UserRole } from "../../../../shared/utils/User";
 import { ModalType, addModal } from "../../../../shared/utils/AddModal";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
 interface ValidationErrorResponse {
 	[key: string]: string[];
@@ -13,6 +15,7 @@ interface ValidationErrorResponse {
 
 interface ChannelSettingsProps {
 	channelId?: number;
+	winId: number;
 }
 
 type ChannelData = {
@@ -23,7 +26,7 @@ type ChannelData = {
 	password: string;
 };
 
-function ChannelSettings({ channelId }: ChannelSettingsProps) {
+function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
 	const queryClient = useQueryClient();
 
 	const { data: self } = useQuery<{ userId: number; role: UserRole }>({
@@ -35,8 +38,7 @@ function ChannelSettings({ channelId }: ChannelSettingsProps) {
 				);
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching self:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
@@ -44,9 +46,13 @@ function ChannelSettings({ channelId }: ChannelSettingsProps) {
 	const { data: channel } = useQuery<ChannelData>({
 		queryKey: ["channelSettings", channelId],
 		queryFn: async () => {
+			try{
 			return api
 				.get("/channel/" + channelId)
 				.then((response) => response.data);
+			} catch {
+				store.dispatch(delWindow(winId))
+			}
 		},
 	});
 

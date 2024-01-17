@@ -5,13 +5,16 @@ import { FaSpinner } from "react-icons/fa";
 import { MemberSettingsBody } from "./MemberSettingsBody";
 import { MemberSettingsHeader } from "./MemberSettingsHeader";
 import { IconSVG } from "../../../../shared/utils/svgComponent";
+import { delWindow } from "../../../../reducers";
+import store from "../../../../store";
 
 interface MemberSettingsProps {
 	targetId: number;
 	channelId: number;
+	winId: number;
 }
 
-export function MemberSettings({ targetId, channelId }: MemberSettingsProps) {
+export function MemberSettings({ targetId, channelId, winId }: MemberSettingsProps) {
 	const {
 		data: data,
 		isLoading: dataLoading,
@@ -47,8 +50,7 @@ export function MemberSettings({ targetId, channelId }: MemberSettingsProps) {
 					selfMember: responseSelfMember.data,
 				};
 			} catch (error) {
-				console.error("Error fetching user:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});

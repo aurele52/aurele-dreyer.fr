@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import { addWindow, delWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
@@ -14,9 +14,10 @@ import { AxiosError } from "axios";
 
 interface ProfileProps {
   targetId?: number;
+  winId: number;
 }
 
-export function Profile({ targetId }: ProfileProps) {
+export function Profile({ targetId, winId }: ProfileProps) {
   const queryClient = useQueryClient();
   const [changingName, setChangingName] = useState<boolean>(false);
   const [placeholderValue, setPlaceholderValue] = useState<string>("");
@@ -26,7 +27,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: profile,
     isLoading: profileLoading,
-    error: profileError,
   } = useQuery<{
     id: number;
     username: string;
@@ -50,8 +50,7 @@ export function Profile({ targetId }: ProfileProps) {
           : await api.get(`/profile/user`);
         return response.data;
       } catch (error) {
-        console.error("Error fetching user:", error);
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -59,7 +58,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: pendingRequests,
     isLoading: pendingRequestsLoading,
-    error: pendingRequestsError,
   } = useQuery<number>({
     queryKey: ["pendingRequests", "Profile"],
     queryFn: async () => {
@@ -71,8 +69,7 @@ export function Profile({ targetId }: ProfileProps) {
             content.type === "received"
         ).length;
       } catch {
-        console.error("Error pending invitations user:", pendingRequestsError);
-        throw pendingRequestsError;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -80,7 +77,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: historic,
     isLoading: historicLoading,
-    error: historicError,
   } = useQuery<{
     matchHistory: {
       id: number;
@@ -107,16 +103,7 @@ export function Profile({ targetId }: ProfileProps) {
             });
         return response.data;
       } catch (error: unknown) {
-        const e = error as AxiosError;
-        //console.error("Error fetching historic:", error);
-        if (e.response) {
-          // Handle error response from the server
-          console.error("Server responded with:", e.response.data);
-        } else {
-          // Handle network or other errors
-          console.error("Network error or other issue:", e.message);
-        }
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -182,14 +169,6 @@ export function Profile({ targetId }: ProfileProps) {
         <FaSpinner className="loadingSpinner" />
       </div>
     );
-  }
-
-  if (profileError) {
-    return <div>Error loading users: {profileError.message}</div>;
-  }
-
-  if (historicError) {
-    return <div>Error loading users: {historicError.message}</div>;
   }
 
   const handleOpenLadder = () => {
