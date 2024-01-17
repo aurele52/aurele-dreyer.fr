@@ -5,15 +5,18 @@ import List from "../../../shared/ui-components/List/List";
 import Channel from "../../../shared/ui-components/Channel/Channel";
 import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
-import { addWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { connect, ConnectedProps } from "react-redux";
 import { ModalType, addModal } from "../../../shared/utils/AddModal";
 import { useState } from "react";
 import { SearchBar } from "../../../shared/ui-components/SearchBar/SearchBar";
+import store from "../../../store";
 
-interface FindChanProps extends ReduxProps {}
+interface FindChanProps {
+	winId: number
+}
 
-function FindChan({ dispatch }: FindChanProps) {
+export default function FindChan({ winId }: FindChanProps) {
 	const queryClient = useQueryClient();
 
 	const [searchBarValue, setSearchBarValue] = useState("");
@@ -27,7 +30,10 @@ function FindChan({ dispatch }: FindChanProps) {
 	>({
 		queryKey: ["channels"],
 		queryFn: async () => {
-			return api.get("/channels").then((response) => response.data);
+			try {return api.get("/channels").then((response) => response.data);}
+			catch {
+				store.dispatch(delWindow(winId))
+			}
 		},
 	});
 
@@ -60,7 +66,7 @@ function FindChan({ dispatch }: FindChanProps) {
 				HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
 			color: WinColor.PURPLE,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	return (
@@ -113,11 +119,3 @@ function FindChan({ dispatch }: FindChanProps) {
 		</div>
 	);
 }
-
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedFindChat = connector(FindChan);
-export default ConnectedFindChat;

@@ -4,7 +4,7 @@ import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import Channel from "../../shared/ui-components/Channel/Channel";
 import { Button } from "../../shared/ui-components/Button/Button";
-import { addWindow } from "../../reducers";
+import { addWindow, delWindow } from "../../reducers";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
 import store from "../../store";
 import { useEffect, useState } from "react";
@@ -19,7 +19,11 @@ export type ChatType = {
   notif: number;
 };
 
-export function Chat() {
+interface ChatProps {
+  winId: number;
+}
+
+export function Chat({winId}: ChatProps) {
   const queryClient = useQueryClient();
 
   const [searchBarValue, setSearchBarValue] = useState("");
@@ -31,8 +35,7 @@ export function Chat() {
         const response = await api.get("/id");
         return response.data;
       } catch (error) {
-        console.error("Error fetching selfId:", error);
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -40,7 +43,12 @@ export function Chat() {
   const { data: chats } = useQuery<ChatType[]>({
     queryKey: ["chats"],
     queryFn: async () => {
-      return api.get("/chats").then((response) => response.data);
+      try
+      {return api.get("/chats").then((response) => response.data);}
+      catch
+      {
+        store.dispatch(delWindow(winId));
+      }
     },
   });
 
