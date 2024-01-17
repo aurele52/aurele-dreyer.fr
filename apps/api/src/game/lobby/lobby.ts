@@ -136,18 +136,18 @@ export class lobby {
     const absinAlpha = inAlpha > 0 ? inAlpha : 2 * Math.PI + inAlpha;
     let absoutAlpha = outAlpha > 0 ? outAlpha : 2 * Math.PI + outAlpha;
     if (absinAlpha > Math.PI / 2 && absinAlpha < (3 * Math.PI) / 2) {
-      if (absoutAlpha < Math.PI / 2 + Math.PI / 9)
-        absoutAlpha = Math.PI / 2 + Math.PI / 9;
-      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 9)
-        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 9;
+      if (absoutAlpha < Math.PI / 2 + Math.PI / 5)
+        absoutAlpha = Math.PI / 2 + Math.PI / 5;
+      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 5)
+        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 5;
     } else {
-      if (absoutAlpha > Math.PI / 2 - Math.PI / 9 && absoutAlpha < Math.PI)
-        absoutAlpha = Math.PI / 2 - Math.PI / 9;
+      if (absoutAlpha > Math.PI / 2 - Math.PI / 5 && absoutAlpha < Math.PI)
+        absoutAlpha = Math.PI / 2 - Math.PI / 5;
       else if (
-        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 9 &&
+        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 5 &&
         absoutAlpha > Math.PI
       )
-        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 9;
+        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 5;
     }
     outAlpha = absoutAlpha > 180 ? absoutAlpha - 2 * Math.PI : absoutAlpha;
     return [1 * speed * Math.cos(outAlpha), speed * Math.sin(outAlpha)];
@@ -225,7 +225,10 @@ export class lobby {
   ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
-    this.defaultGameInfo = {...normalGameInfo, userId: matchInfo.userId};
+    if (this.isCustom == 'private')
+    {
+      this.defaultGameInfo = {...normalGameInfo, userId: matchInfo.userId};
+    }
     if (this.isCustom == 'custom') {
       this.defaultGameInfo = matchInfo;
       this.gameInfo = { ...matchInfo };

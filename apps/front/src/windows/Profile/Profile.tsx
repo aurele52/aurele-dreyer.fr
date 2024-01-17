@@ -119,6 +119,9 @@ export function Profile({ targetId, winId }: ProfileProps) {
       queryClient.invalidateQueries({
         queryKey: ["user", targetId],
       });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
     },
   });
 
