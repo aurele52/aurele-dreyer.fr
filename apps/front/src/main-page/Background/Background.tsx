@@ -574,11 +574,7 @@ export default function Background() {
 							{window.content.type === "PLAY" && (
 								<MainGameMenu
 									windowId={window.id}
-									privateLobby={
-										window.targetId
-											? { targetId: window.targetId }
-											: undefined
-									}
+									privateLobby={window.privateLobby}
 								/>
 							)}
 						</Window>
