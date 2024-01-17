@@ -123,7 +123,7 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 
 	return (
 		<div className="Ladder">
-			<List>
+			<List dark={false} lilac = {true}>
 				{users?.map((user) => {
 					const isSelfUser = user.id === userId;
 					const divClass = isSelfUser ? "SelfUser" : "OtherUser";

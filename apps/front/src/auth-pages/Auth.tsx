@@ -3,7 +3,7 @@ import "./Auth.css";
 
 function Auth() {
   return (
-    <div className="bg-container">
+    <div className="bg-container bg-image">
       <div className="purple-container">
         <Outlet/>
       </div>
