@@ -303,7 +303,7 @@ function ChatSession({ channelId, winId }: ChatSessionProps) {
 			return (
 				<div className="PendingGameRequest">
 					<div className="Text">
-						{receivedInvitation.username} send you a game request
+						{receivedInvitation.username} sent you a game request
 					</div>
 					<Button
 						color="pink"
