@@ -33,7 +33,6 @@ export function UserStatus({ targetId, displayText }: ButtonProps) {
 					});
 
 					socket.on("server.getStatusUser", (res) => {
-						console.log({ user: userData.data.username, res });
 						if (res.data.username === userData.data.username)
 							setStatus(res.data.status);
 					});

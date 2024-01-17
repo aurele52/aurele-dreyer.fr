@@ -33,7 +33,7 @@ export function MemberSettings({ targetId, channelId }: MemberSettingsProps) {
 			role: "OWNER" | "ADMIN" | "MEMBER";
 		};
 	}>({
-		queryKey: ["memberSettings", targetId, channelId],
+		queryKey: ["memberSettings", channelId, targetId],
 		queryFn: async () => {
 			try {
 				const responseMember = await api.get(

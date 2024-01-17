@@ -4,8 +4,8 @@ import Background from "./main-page/Background/Background";
 import { AppState } from "./reducers";
 import { useSelector } from "react-redux";
 import { socket } from "./socket";
-import api from "./axios";
 import { useEffect } from "react";
+import 'nes.css/css/nes.min.css';
 import { addModal, ModalType } from "./shared/utils/AddModal";
 
 function App() {
@@ -33,7 +33,7 @@ function App() {
       // fetchData();
     });
 
-    socket.on("connect_failed", (err) => {
+    socket.on("connect_failed", () => {
       console.log("connect failed");
       addModal(
         ModalType.ERROR,

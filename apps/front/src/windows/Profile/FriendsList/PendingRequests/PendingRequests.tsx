@@ -25,7 +25,6 @@ export function PendingRequests() {
     > => {
       try {
         const response = await api.get(`/friendships/pendingList`);
-        console.log("Response : ", response.data);
         if (response.status === 404 || response.data === undefined) return [];
         if (!Array.isArray(response.data)) return null;
         return response.data;

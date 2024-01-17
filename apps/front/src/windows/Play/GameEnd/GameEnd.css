@@ -1,0 +1,36 @@
+.title-game-end {
+  width: 100%;
+  display: flex;
+  padding: 10px 0px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+}
+
+.title-game-end > div {
+  font-size: 50px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 48px;
+  letter-spacing: 4px;
+
+  background-clip: text;
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+}
+
+.label-victory {
+  background: var(
+    --Turquoise-Gradient-300,
+    linear-gradient(180deg, #2bdec9 66.15%, #0ba 86.98%)
+  );
+}
+
+.label-defeat {
+  background: var(
+    --Pink-Gradient-300,
+    linear-gradient(180deg, #f3acd4 69.79%, #f37ec1 90.62%)
+  );
+}

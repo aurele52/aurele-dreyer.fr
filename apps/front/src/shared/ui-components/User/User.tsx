@@ -31,7 +31,7 @@ export function User({ userId, channel }: UserProps) {
 		isLoading: selfLoading,
 		error: selfError,
 	} = useQuery<{ userId: number; role: UserRole }>({
-		queryKey: ["self"],
+		queryKey: ["self", channel?.channelId, userId],
 		queryFn: async () => {
 			try {
 				const response = await api.get(
