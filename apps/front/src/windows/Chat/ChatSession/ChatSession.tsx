@@ -5,7 +5,7 @@ import api from "../../../axios";
 import { Button } from "../../../shared/ui-components/Button/Button";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
-import { addWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
@@ -16,6 +16,7 @@ import { socket } from "../../../socket";
 
 interface ChatSessionProps {
 	channelId?: number;
+	winId: number;
 }
 
 export type MessageData = {
@@ -41,7 +42,7 @@ type MutedData = {
 	mutedUntil: Date;
 };
 
-function ChatSession({ channelId }: ChatSessionProps) {
+function ChatSession({ channelId, winId }: ChatSessionProps) {
 	const queryClient = useQueryClient();
 
 	const jsConfetti = new JSConfetti();
@@ -58,8 +59,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
 				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching selfId:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
