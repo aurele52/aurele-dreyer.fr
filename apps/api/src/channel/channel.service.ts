@@ -8,6 +8,7 @@ import {
 import { PrismaService } from '../prisma.service';
 import { CreateChannelDto } from './dto/create-channel.dto';
 import { ChanType, FriendshipStatus } from '@prisma/client';
+import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 
 @Injectable()
 export class ChannelService {
@@ -98,23 +99,11 @@ export class ChannelService {
       }))
       .sort((a, b) => {
         const dateA = Math.max(
-          a.userChannels
-            .reduce((latest, current) => {
-              const latestDate = new Date(latest.created_at);
-              const currentDate = new Date(current.created_at);
-              return latestDate > currentDate ? latest : current;
-            })
-            .created_at.getTime() ?? 0,
+          a.myUserChannel.created_at.getTime() ?? 0,
           a.messages[0]?.created_at.getTime() ?? 0,
         );
         const dateB = Math.max(
-          b.userChannels
-            .reduce((latest, current) => {
-              const latestDate = new Date(latest.created_at);
-              const currentDate = new Date(current.created_at);
-              return latestDate > currentDate ? latest : current;
-            })
-            .created_at.getTime() ?? 0,
+          b.myUserChannel.created_at.getTime() ?? 0,
           b.messages[0]?.created_at.getTime() ?? 0,
         );
         return dateB - dateA;
@@ -433,5 +422,40 @@ export class ChannelService {
     });
 
     return deletedChannel;
+  }
+
+  async getChannelMemberIds(channel_id: number) {
+    const members = await this.prisma.user.findMany({
+      where: {
+        userChannels: {
+          some: {
+            channel_id,
+          },
+        },
+      },
+    });
+
+    const memberIds = members.map((m) => m.id);
+
+    return memberIds;
+  }
+
+  async deleteChannelOwner(id: number) {
+    const channel_ids = (
+      await this.prisma.userChannel.findMany({
+        where: {
+          user_id: id,
+          role: UserChannelRoles.OWNER,
+        },
+      })
+    ).map((c) => c.channel_id);
+
+    return this.prisma.channel.deleteMany({
+      where: {
+        id: {
+          in: channel_ids,
+        },
+      },
+    });
   }
 }

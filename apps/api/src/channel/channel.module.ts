@@ -5,6 +5,7 @@ import { PrismaService } from '../prisma.service';
 import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { MessageService } from 'src/message/message.service';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { UserModule } from 'src/user/user.module';
 
 @Module({
   controllers: [ChannelController],
@@ -15,5 +16,6 @@ import { FriendshipService } from 'src/friendship/friendship.service';
     MessageService,
     FriendshipService,
   ],
+  imports: [UserModule],
 })
 export class ChannelModule {}

@@ -238,10 +238,21 @@ export class UserService {
     }
   }
 
+  async getAllUserIds() {
+    const users = await this.prisma.user.findMany({});
+
+    return users.map((u) => u.id);
+  }
+
   private userEvents = new Subject<any>();
 
-  emitUserEvent(type: UserEventType, recipientId: number, initiatorId: number) {
-    this.userEvents.next({ type, initiatorId, recipientId });
+  emitUserEvent(
+    type: UserEventType,
+    recipientIds: number[],
+    userId: number,
+    channelId: number,
+  ) {
+    this.userEvents.next({ type, userId, channelId, recipientIds });
   }
 
   getUserEvents(): Observable<UserEvent> {

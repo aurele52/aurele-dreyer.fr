@@ -40,8 +40,9 @@ export class FriendshipController {
     );
     this.userService.emitUserEvent(
       UserEventType.FRIENDSHIPREMOVED,
-      user1_id,
+      [user1_id],
       user2.id,
+      null,
     );
     return ret;
   }
@@ -51,8 +52,9 @@ export class FriendshipController {
     const ret = await this.friendshipService.deleteBlocked(user1_id, user2.id);
     this.userService.emitUserEvent(
       UserEventType.USERUNBLOCKED,
-      user1_id,
+      [user1_id],
       user2.id,
+      null,
     );
     return ret;
   }
@@ -62,8 +64,9 @@ export class FriendshipController {
     const ret = await this.friendshipService.deletePending(user1_id, user2.id);
     this.userService.emitUserEvent(
       UserEventType.FRIENDREQUESTREVOKED,
-      user1_id,
+      [user1_id],
       user2.id,
+      null,
     );
     return ret;
   }
@@ -79,8 +82,9 @@ export class FriendshipController {
     );
     this.userService.emitUserEvent(
       UserEventType.FRIENDREQUESTRECEIVED,
-      user2_id,
+      [user2_id],
       user1.id,
+      null,
     );
     return ret;
   }
@@ -96,8 +100,9 @@ export class FriendshipController {
     );
     this.userService.emitUserEvent(
       UserEventType.USERBLOCKED,
-      user2_id,
+      [user2_id],
       user1.id,
+      null,
     );
     return ret;
   }
@@ -117,8 +122,9 @@ export class FriendshipController {
     const ret = await this.friendshipService.acceptFriendship(id, user.id);
     this.userService.emitUserEvent(
       UserEventType.FRIENDREQUESTACCEPTED,
-      id,
+      [id],
       user.id,
+      null,
     );
     return ret;
   }

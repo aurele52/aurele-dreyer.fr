@@ -3,7 +3,7 @@ import { connect } from "react-redux";
 import { AppState, delWindow } from "../../reducers";
 import { ConnectedProps } from "react-redux";
 import Window from "../../shared/ui-components/Window/Window";
-import Chat from "../../windows/Chat/Chat";
+import Chat, { ChatType } from "../../windows/Chat/Chat";
 import Ladder from "../../windows/Ladder/Ladder";
 import Profile from "../../windows/Profile/Profile";
 import FindChan from "../../windows/Chat/FindChan/FindChan";
@@ -37,12 +37,18 @@ enum UserEventType {
   FRIENDREQUESTACCEPTED = "FRIENDREQUESTACCEPTED",
   USERBLOCKED = "USERBLOCKED",
   USERUNBLOCKED = "USERUNBLOCKED",
-  ADDEDTOCHAN = 'ADDEDTOCHAN',
-  KICKFROMCHAN = 'KICKFROMCHAN',
-  BANFROMCHAN = 'BANFROMCHAN',
-  MUTEINCHAN = 'MUTEINCHAN',
-  CHANDELETION = 'CHANDELETION',
-  DEPARTUREFROMCHAN = 'DEPARTUREFROMCHAN',
+  ADDEDTOCHAN = "ADDEDTOCHAN",
+  DEPARTUREFROMCHAN = "DEPARTUREFROMCHAN",
+  KICKFROMCHAN = "KICKFROMCHAN",
+  BANFROMCHAN = "BANFROMCHAN",
+  UNBANFROMCHAN = "UNBANFROMCHAN",
+  MUTEINCHAN = "MUTEINCHAN",
+  UNMUTEINCHAN = "UNMUTEINCHAN",
+  CHANDELETION = "CHANDELETION",
+  USERDELETED = "USERDELETED",
+  OWNERMADE = "OWNERMADE",
+  ADMINMADE = "ADMINMADE",
+  DEMOTEADMIN = "DEMOTEADMIN",
 }
 
 interface BackgroundProps extends ReduxProps {}
@@ -80,36 +86,45 @@ export function Background({ windows }: BackgroundProps) {
     PREVIEW: { width: "900px", height: "900px" },
   };
 
-  const [currentTargetId, setCurrentTargetId] = useState(null);
+  const [currentTargetUserId, setCurrentTargetUserId] = useState(null);
+
+  const [currentTargetChannelId, setCurrentTargetChannelId] = useState(null);
 
   const { data: commonChannels } = useQuery<{ id: number }[]>({
-    queryKey: ["commonChannels", currentTargetId],
+    queryKey: ["commonChannels", currentTargetUserId],
     queryFn: () => {
       return api
-        .get("/channels/common/" + currentTargetId)
+        .get("/channels/common/" + currentTargetUserId)
         .then((response) => response.data);
     },
-    enabled: !!currentTargetId,
+    enabled: !!currentTargetUserId,
   });
 
   const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
-    queryKey: ["currUserOnlyChannels", currentTargetId],
+    queryKey: ["currUserOnlyChannels", currentTargetUserId],
     queryFn: () => {
       return api
-        .get("/channels/excluded/" + currentTargetId)
+        .get("/channels/excluded/" + currentTargetUserId)
         .then((response) => response.data);
     },
-    enabled: !!currentTargetId,
+    enabled: !!currentTargetUserId,
   });
 
   const { data: targetUser } = useQuery<{ id: number; username: string }>({
-    queryKey: ["username", currentTargetId],
+    queryKey: ["username", currentTargetUserId],
     queryFn: () => {
       return api
-        .get("/user/" + currentTargetId)
+        .get("/user/" + currentTargetUserId)
         .then((response) => response.data);
     },
-    enabled: !!currentTargetId,
+    enabled: !!currentTargetUserId,
+  });
+
+  const { data: userChannelNames } = useQuery<ChatType[]>({
+    queryKey: ["userChannelNames"],
+    queryFn: async () => {
+      return api.get("/chats").then((response) => response.data);
+    },
   });
 
   const invalidateMessagesQueries = () => {
@@ -130,7 +145,6 @@ export function Background({ windows }: BackgroundProps) {
 
   const closeDMWindow = () => {
     let windows = store.getState().windows;
-    console.log(targetUser);
     windows = windows.filter(
       (window) =>
         window.WindowName === targetUser?.username &&
@@ -139,10 +153,27 @@ export function Background({ windows }: BackgroundProps) {
     windows.forEach((window) => store.dispatch(delWindow(window.id)));
   };
 
-  const [userEventType, setUserEventType] = useState(UserEventType.NOEVENT);
+  useEffect(() => {
+    let windows = store.getState().windows;
+    windows = windows.filter(
+      (window) =>
+        (!userChannelNames?.some((el) => el.name === window.WindowName) &&
+          window.content.type === "CHATSESSION") ||
+        (!userChannelNames?.some(
+          (el) => "About" + el.name === window.WindowName
+        ) &&
+          window.content.type === "ABOUTCHAN")
+    );
+    windows.forEach((window) => store.dispatch(delWindow(window.id)));
+  }, [userChannelNames]);
+
+  const [userEventType, setUserEventType] = useState({
+    type: UserEventType.NOEVENT,
+  });
 
   useEffect(() => {
-    switch (userEventType) {
+    console.log("switch case", userEventType);
+    switch (userEventType.type) {
       case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
@@ -154,13 +185,13 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendsList"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         queryClient.invalidateQueries({
           queryKey: ["pendingRequests", "Profile"],
@@ -174,13 +205,13 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendsList"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         break;
       case UserEventType.FRIENDREQUESTREVOKED:
@@ -191,16 +222,16 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["pendingRequests", "Profile"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         break;
       case UserEventType.FRIENDREQUESTACCEPTED:
@@ -211,7 +242,7 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["pendingRequests", "Profile"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
@@ -220,35 +251,35 @@ export function Background({ windows }: BackgroundProps) {
           queryKey: ["friendsList"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         break;
       case UserEventType.USERUNBLOCKED:
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         invalidateMessagesQueries();
         queryClient.invalidateQueries({
           queryKey: ["chats"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         queryClient.invalidateQueries({
           queryKey: ["addFriendsList"],
         });
         invalidateAddChannelQueries();
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         break;
       case UserEventType.USERBLOCKED:
@@ -266,19 +297,135 @@ export function Background({ windows }: BackgroundProps) {
         });
         invalidateAddChannelQueries();
         queryClient.invalidateQueries({
-          queryKey: ["user", currentTargetId],
+          queryKey: ["user", currentTargetUserId],
         });
         queryClient.invalidateQueries({
-          queryKey: ["friendship", currentTargetId],
+          queryKey: ["friendship", currentTargetUserId],
         });
         invalidateMessagesQueries();
         queryClient.invalidateQueries({
           queryKey: ["chats"],
         });
         queryClient.invalidateQueries({
-          queryKey: ["profile", currentTargetId],
+          queryKey: ["profile", currentTargetUserId],
         });
         closeDMWindow();
+        break;
+      case UserEventType.ADDEDTOCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.KICKFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.BANFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["banList", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["channels"],
+        });
+        break;
+      case UserEventType.UNBANFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["channels"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["banList", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.MUTEINCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["userChannel", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.UNMUTEINCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["userChannel", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.DEPARTUREFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        invalidateMessagesQueries();
+        break;
+      case UserEventType.CHANDELETION:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.USERDELETED:
+        queryClient.invalidateQueries();
+        break;
+      case UserEventType.ADMINMADE:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetUserId, currentTargetChannelId],
+        });
+        break;
+      case UserEventType.DEMOTEADMIN:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetUserId, currentTargetChannelId],
+        });
+        break;
+      case UserEventType.OWNERMADE:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetChannelId],
+        });
         break;
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -297,10 +444,13 @@ export function Background({ windows }: BackgroundProps) {
 
       eventSource.onmessage = ({ data }) => {
         const parsedData = JSON.parse(data);
+        console.log(parsedData);
         const type = parsedData.type;
-        const targetId = parsedData.targetId;
-        setCurrentTargetId(targetId);
-        setUserEventType(type);
+        const targetUserId = parsedData.userId;
+        const targetChannelId = parsedData.channelId;
+        setCurrentTargetUserId(targetUserId);
+        setCurrentTargetChannelId(targetChannelId);
+        setUserEventType({ type });
       };
 
       eventSource.onerror = (error) => {
@@ -312,7 +462,7 @@ export function Background({ windows }: BackgroundProps) {
       };
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [queryClient, setCurrentTargetId]);
+  }, [queryClient, setCurrentTargetUserId, setCurrentTargetChannelId]);
 
   return (
     <div id="Background">

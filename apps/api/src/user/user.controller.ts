@@ -18,10 +18,15 @@ import * as fs from 'fs';
 import { Public } from 'src/auth/decorators/public.decorator';
 import { Observable, interval, merge } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
+import { UserEventType } from './types/user-event.types';
+import { ChannelService } from 'src/channel/channel.service';
 
 @Controller('user')
 export class UserController {
-  constructor(private userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly channelService: ChannelService,
+  ) {}
 
   @Get('/:userid')
   async getOtherUser(@CurrentUser() selfid, @Param('userid') userid: number) {
@@ -94,7 +99,15 @@ export class UserController {
 
   @Delete()
   async deleteUser(@CurrentUserID() id: number) {
-    return this.userService.deleteUser(id);
+    await this.channelService.deleteChannelOwner(id);
+
+    const deletedUser = await this.userService.deleteUser(id);
+
+    const users = await this.userService.getAllUserIds();
+
+    this.userService.emitUserEvent(UserEventType.USERDELETED, users, id, 0);
+
+    return deletedUser;
   }
 
   @Sse('/stream/userevents')
@@ -107,10 +120,14 @@ export class UserController {
     );
 
     const userEvent = this.userService.getUserEvents().pipe(
-      filter((event) => event.recipientId === user_id),
+      filter((event) => event.recipientIds.includes(user_id)),
       map((event) => ({
         type: 'message',
-        data: JSON.stringify({ type: event.type, targetId: event.initiatorId }),
+        data: JSON.stringify({
+          type: event.type,
+          userId: event.userId,
+          channelId: event.channelId,
+        }),
       })),
     );
 
