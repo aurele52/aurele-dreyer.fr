@@ -53,115 +53,117 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 
   const queryClient = useQueryClient();
 
-  const { mutateAsync: deleteGameInvitation } = useMutation({
-    mutationFn: async () => {
-      if (!privateWaitingDisplay) return;
-      else return api.delete(`/message/invitation`);
-    },
-    onSuccess: () => {},
-    onError: (error) => {
-      console.error(error.message);
-    },
-    retry: 0,
-  });
+	const { mutateAsync: deleteSendedGameInvitation } = useMutation({
+		mutationFn: async () => {
+			return api.delete(`/message/sendedinvitation`);
+		},
+		onSuccess: () => {
+		},
+		onError: (error) => {
+			console.error(error.message);
+		},
+	});
 
-  function onWin(data: { winner: string }) {
-    setPongDisplay(false);
-    setWinDisplay(true);
-  }
-  function onLose() {
-    setPongDisplay(false);
-    setLoseDisplay(true);
-  }
-  function onCreateLobby() {
-    setCreateCustomDisplay(false);
-    setCreateCustomWaitingDisplay(true);
-    setJoinNormalDesactivateDisplay(true);
-    setJoinCustomDesactivateDisplay(true);
-  }
-  function onJoinLobby() {
-    setJoinCustomDisplay(false);
-    setJoinCustomWaitingDisplay(true);
-    setJoinNormalDesactivateDisplay(true);
-    setCreateCustomDesactivateDisplay(true);
-    setDisplayMainMenu(false);
-  }
-  function onMatchStart(data: gameInfo) {
-    setGameInfo({ ...normalGameInfo, ...data });
-    setJoinNormalDesactivateDisplay(false);
-    setJoinCustomDesactivateDisplay(false);
-    setCreateCustomDesactivateDisplay(false);
-    setJoinNormalWaitingDisplay(false);
-    setJoinCustomWaitingDisplay(false);
-    setCreateCustomWaitingDisplay(false);
-    setPrivateWaitingDisplay(false);
-    setPongDisplay(true);
-    setDisplayMainMenu(false);
-    console.log("HERE");
-  }
-  function onPrivateMatch() {
-    setGameInfo({ ...normalGameInfo });
-    setJoinNormalDesactivateDisplay(false);
-    setJoinCustomDesactivateDisplay(false);
-    setCreateCustomDesactivateDisplay(false);
-    setJoinNormalWaitingDisplay(false);
-    setJoinCustomWaitingDisplay(false);
-    setCreateCustomWaitingDisplay(false);
-    setJoinNormalDefaultDisplay(false);
-    setJoinCustomDefaultDisplay(false);
-    setCreateCustomDefaultDisplay(false);
-    setPrivateWaitingDisplay(true);
-    setDisplayMainMenu(false);
-    console.log("HERE");
-    socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
-  }
-  function onCancelInvite() {
-    setJoinNormalDesactivateDisplay(false);
-    setJoinCustomDesactivateDisplay(false);
-    setCreateCustomDesactivateDisplay(false);
-    setJoinNormalWaitingDisplay(false);
-    setJoinCustomWaitingDisplay(false);
-    setCreateCustomWaitingDisplay(false);
-    setPrivateWaitingDisplay(false);
-    setPongDisplay(false);
-    setDisplayMainMenu(true);
-    setJoinNormalDefaultDisplay(true);
-    setCreateCustomDefaultDisplay(true);
-    setJoinCustomDefaultDisplay(true);
-    console.log("Cancel Invite");
-  }
-  function onPrivateAbort() {
-    socket.emit("client.privateAbort");
-    const memberSettingsWindow = store
-      .getState()
-      .windows.find((window) => window.content.type === "PLAY");
-    if (memberSettingsWindow) {
-      store.dispatch(delWindow(memberSettingsWindow.id));
-    }
-  }
-  useEffect(() => {
-    if (props.privateLobby) {
-      onPrivateMatch();
-    }
-    socket.on("server.matchStart", onMatchStart);
-    socket.on("server.cancelInvite", onCancelInvite);
-    socket.on("server.win", onWin);
-    socket.on("server.lose", onLose);
-    return () => {
-      console.log(
-        "pv : ",
-        props.privateLobby,
-        "  disp : ",
-        privateWaitingDisplay
-      );
-      if (props.privateLobby) {
-        console.log("Delete Game Invit");
-        deleteGameInvitation();
-      }
-      socket.emit("client.closeMainWindow");
-      socket.off("server.matchStart", onMatchStart);
-    };
-  }, [props.privateLobby]);
+	function onWin(data: {winner: string}) {
+		setPongDisplay(false);
+		setWinDisplay(true);
+	}
+	function onLose() {
+		setPongDisplay(false);
+		setLoseDisplay(true);
+	}
+	function onCreateLobby() {
+		setCreateCustomDisplay(false);
+		setCreateCustomWaitingDisplay(true);
+		setJoinNormalDesactivateDisplay(true);
+		setJoinCustomDesactivateDisplay(true);
+	}
+	function onJoinLobby() {
+		setJoinCustomDisplay(false);
+		setJoinCustomWaitingDisplay(true);
+		setJoinNormalDesactivateDisplay(true);
+		setCreateCustomDesactivateDisplay(true);
+		setDisplayMainMenu(false);
+	}
+	function onMatchStart(data: gameInfo) {
+		setGameInfo({ ...normalGameInfo, ...data });
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setPrivateWaitingDisplay(false);
+		setPongDisplay(true);
+		setDisplayMainMenu(false);
+		console.log("HERE");
+	}
+	function onPrivateMatch() {
+		setGameInfo({ ...normalGameInfo });
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setJoinNormalDefaultDisplay(false);
+		setJoinCustomDefaultDisplay(false);
+		setCreateCustomDefaultDisplay(false);
+		setPrivateWaitingDisplay(true);
+		setDisplayMainMenu(false);
+		console.log("HERE");
+		if (props.privateLobby.isFirstPlayer)
+		socket.emit("client.createPrivate", props.privateLobby.targetId);
+		else
+		socket.emit("client.joinPrivate");
+	}
+	function onCancelInvite() {
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setPrivateWaitingDisplay(false);
+		setPongDisplay(false);
+		setDisplayMainMenu(true);
+		setJoinNormalDefaultDisplay(true);
+		setCreateCustomDefaultDisplay(true);
+		setJoinCustomDefaultDisplay(true);
+		console.log("Cancel Invite");
+	}
+	function onPrivateAbort() {
+		socket.emit('client.privateAbort');
+		const memberSettingsWindow = store
+			.getState()
+			.windows.find((window) => window.content.type === "PLAY");
+		if (memberSettingsWindow) {
+			store.dispatch(delWindow(memberSettingsWindow.id));
+		}
+	}
+	useEffect(() => {
+		if (props.privateLobby) {
+			onPrivateMatch();
+		}
+		socket.on("server.matchStart", onMatchStart);
+		socket.on("server.cancelInvite", onCancelInvite);
+		socket.on("server.win", onWin);
+		socket.on("server.lose", onLose);
+		return () => {
+			console.log(
+				"pv : ",
+				props.privateLobby,
+				"  disp : ",
+				privateWaitingDisplay
+			);
+			if (props.privateLobby) {
+				console.log("Delete Game Invit");
+				deleteSendedGameInvitation();
+			}
+			socket.emit("client.closeMainWindow");
+			socket.off("server.matchStart", onMatchStart);
+		};
+	}, [props.privateLobby]);
 
   function joinNormalDefaultOnClick() {
     setJoinNormalDefaultDisplay(false);
