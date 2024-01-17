@@ -379,6 +379,7 @@ function clearBoard(p: p5) {
 				...gameUpdate,
 			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
 			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
+			gamex: gameUpdate.borderSize,
 			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
 			};
 			setGameInfo(updatedObject);

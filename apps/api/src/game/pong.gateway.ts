@@ -17,7 +17,6 @@ export class PongGateway {
   private readonly lobbyManager: lobbyManager = new lobbyManager();
   private readonly normalLobbyManager: normalLobbyManager = new normalLobbyManager();
   private readonly privateLobbyManager: privateLobbyManager = new privateLobbyManager();
-  private nextGameId: number = 1;
 
   constructor(
     private readonly authService: AuthService,
@@ -135,11 +134,9 @@ export class PongGateway {
     });
     if (index !== -1) {
       this.lobbyManager.createCustomLobby(this.connectedClient[index], {
-        id: this.nextGameId,
         ...normalGameInfo,
         ...gameData,
       });
-      this.nextGameId++;
     }
   }
 
