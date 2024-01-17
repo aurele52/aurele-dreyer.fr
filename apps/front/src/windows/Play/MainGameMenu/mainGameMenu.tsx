@@ -16,6 +16,7 @@ interface mainGameMenuProps {
 	windowId: number;
 	privateLobby?: {
 		targetId: number;
+		isFirstPlayer: boolean;
 	};
 }
 
