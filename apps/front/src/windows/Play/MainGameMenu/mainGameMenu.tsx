@@ -19,6 +19,7 @@ interface mainGameMenuProps {
 		targetId: number;
 		isFirstPlayer: boolean;
 	};
+}
 
 export default function MainGameMenu(props: mainGameMenuProps) {
   const [displayMainMenu, setDisplayMainMenu] = useState<boolean>(true);
