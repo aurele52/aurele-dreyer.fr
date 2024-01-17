@@ -114,9 +114,9 @@ function ChatSession({ channelId }: ChatSessionProps) {
 		},
 	});
 
-	const { mutateAsync: deleteGameInvitation } = useMutation({
+	const { mutateAsync: deleteReceivedGameInvitation } = useMutation({
 		mutationFn: async () => {
-			return api.delete(`/message/invitation`);
+			return api.delete(`/message/receivedinvitation/${channelId}`);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({
@@ -268,12 +268,12 @@ function ChatSession({ channelId }: ChatSessionProps) {
 			color: WinColor.PURPLE,
 		};
 		store.dispatch(addWindow(newWindow));
-		deleteGameInvitation();
+		deleteReceivedGameInvitation();
 	};
 
 	const handleRejectGameRequest = async () => {
 		socket.emit("client.invitationDecline", receivedInvitation.id);
-		deleteGameInvitation();
+		deleteReceivedGameInvitation();
 	};
 
 	const handleMatchButton = async () => {

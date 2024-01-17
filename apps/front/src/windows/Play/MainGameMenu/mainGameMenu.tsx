@@ -53,16 +53,15 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 
 	const queryClient = useQueryClient();
 
-	const { mutateAsync: deleteGameInvitation } = useMutation({
+	const { mutateAsync: deleteSendedGameInvitation } = useMutation({
 		mutationFn: async () => {
-			if (!privateWaitingDisplay) return;
-			else return api.delete(`/message/invitation`);
+			return api.delete(`/message/sendedinvitation`);
 		},
-		onSuccess: () => {},
+		onSuccess: () => {
+		},
 		onError: (error) => {
 			console.error(error.message);
 		},
-		retry: 0,
 	});
 
 	function onWin(data: {winner: string}) {
@@ -156,7 +155,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 			);
 			if (props.privateLobby) {
 				console.log("Delete Game Invit");
-				deleteGameInvitation();
+				deleteSendedGameInvitation();
 			}
 			socket.emit("client.closeMainWindow");
 			socket.off("server.matchStart", onMatchStart);

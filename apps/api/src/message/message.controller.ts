@@ -61,11 +61,14 @@ export class MessageController {
     return merge(heartbeat, message);
   }
 
-  @Delete('/message/invitation')
-  async deleteInvitation(@CurrentUserID() user_id: number) {
-    const message = await this.messageService.findSendedInvitation(user_id);
-    const chanId = message.channel.id;
-    this.messageService.emitMessage(chanId);
-    return this.messageService.deleteInvitation(message.id);
+  @Delete('/message/receivedinvitation/:channel_id')
+  async deleteReceivedInvitation(@Param('channel_id') channel_id: number, @CurrentUserID() user_id: number) {
+    this.messageService.emitMessage(channel_id);
+    return this.messageService.deleteReceivedInvitation(user_id, channel_id);
+  }
+
+  @Delete('/message/sendedinvitation')
+  async deleteSendedInvitation(@CurrentUserID() user_id: number) {
+    return this.messageService.deleteSendedInvitation(user_id);
   }
 }
