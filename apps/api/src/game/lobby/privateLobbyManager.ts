@@ -7,12 +7,10 @@ export class privateLobbyManager {
   private privateQueue: clientInfo[] = [];
 
   public joinPrivate(client: clientInfo) {
-      console.log('test 8');
     const index = this.privateLobbies.findIndex((value) => {
       return value.getMatchInfo().userId === client.user.id;
     });
     if (index !== -1) {
-      console.log('test 9');
       client.mode = 'private';
       this.privateLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
@@ -20,21 +18,16 @@ export class privateLobbyManager {
       this.privateLobbies[index].addClient(client);
       this.privateLobbies[index].start();
       this.privateLobbies.splice(index, 1);
-      console.log('test 10');
     }
-      console.log('test 11');
   }
 
   public createPrivate(client: clientInfo, id: number) {
-      console.log('test 3');
-    console.log('SIZE: ', this.privateLobbies.length);
     client.status = 'waiting join private';
     client.mode = 'private';
     const newLobby = new lobby('private', {...normalGameInfo, userId: id});
     client.lobby = newLobby;
     newLobby.addClient(client);
     this.privateLobbies.push(newLobby);
-      console.log('test 4');
   }
 
   public removeToPrivateQueue(client: clientInfo, playerInvited: clientInfo | null) {
@@ -46,7 +39,6 @@ export class privateLobbyManager {
       if (client.status === 'waiting join private')
         this.privateQueue.splice(index, 1);
       if (playerInvited) {
-        console.log('ffffffffffffffffffffffffff');
         playerInvited.socket.emit('server.cancelInvite');
       }
     }

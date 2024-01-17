@@ -95,7 +95,6 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setPrivateWaitingDisplay(false);
 		setPongDisplay(true);
 		setDisplayMainMenu(false);
-		console.log("HERE");
 	}
 	function onPrivateMatch() {
 		setGameInfo({ ...normalGameInfo });
@@ -110,7 +109,6 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDefaultDisplay(false);
 		setPrivateWaitingDisplay(true);
 		setDisplayMainMenu(false);
-		console.log("HERE");
 		if (props.privateLobby.isFirstPlayer)
 			socket.emit("client.createPrivate", props.privateLobby.targetId);
 		else socket.emit("client.joinPrivate");
@@ -128,7 +126,6 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setJoinNormalDefaultDisplay(true);
 		setCreateCustomDefaultDisplay(true);
 		setJoinCustomDefaultDisplay(true);
-		console.log("Cancel Invite");
 	}
 	function onPrivateAbort() {
 		socket.emit("client.privateAbort");
@@ -148,14 +145,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
 		return () => {
-			console.log(
-				"pv : ",
-				props.privateLobby,
-				"  disp : ",
-				privateWaitingDisplay
-			);
 			if (props.privateLobby) {
-				console.log("Delete Game Invit");
 				deleteSendedGameInvitation();
 			}
 			socket.emit("client.closeMainWindow");

@@ -17,7 +17,6 @@ interface createCustomProps {
 }
 
 export default function CreateCustom(props: createCustomProps) {
-	console.log(props);
 	const [interfaceDisplay, setInterfaceDisplay] = useState<boolean>(false);
 	const [gameDisplay, setGameDisplay] = useState<boolean>(true);
 	const [PowerUpDisplay, setPowerUpDisplay] = useState<boolean>(false);
