@@ -22,33 +22,25 @@ export default function CreateCustom(props: createCustomProps) {
   const [gameDisplay, setGameDisplay] = useState<boolean>(true);
   const [PowerUpDisplay, setPowerUpDisplay] = useState<boolean>(false);
 
-  const [relativeGameInfo, setRelativeGameInfo] = useState<gameInfo>({
-    ...normalGameInfo,
-    numberSize: 100,
-    barLarge: (normalGameInfo.barLarge / normalGameInfo.gamexsize) * 100,
-    menuSize:
-      (normalGameInfo.menuSize /
-        Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-      100,
-    numberTopDist:
-      (normalGameInfo.numberTopDist /
-        Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-      100,
-    numberSideDist:
-      (normalGameInfo.numberSideDist /
-        Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-      100,
-    ballSize:
-      (normalGameInfo.ballSize /
-        Math.min(normalGameInfo.gamexsize, normalGameInfo.gameysize)) *
-      100,
-    ballSpeed: (normalGameInfo.ballSpeed / normalGameInfo.gamexsize) * 100,
-    barSize: (normalGameInfo.barSize / normalGameInfo.gameysize) * 100,
-    barDist: (normalGameInfo.barDist / normalGameInfo.gamexsize) * 100,
-    barSpeed: (normalGameInfo.barSpeed / normalGameInfo.gamexsize) * 100,
-  });
-  const [absoluteGameInfo, setAbsoluteGameInfo] =
-    useState<gameInfo>(normalGameInfo);
+	const [relativeGameInfo, setRelativeGameInfo] = useState<gameInfo>({
+		...normalGameInfo,
+		numberSize: 100,
+		barLarge: 1.25,
+		menuSize:
+			25,
+		numberTopDist:
+			2.5,
+		numberSideDist:
+			2.5,
+		ballSize:
+			2.6,
+		ballSpeed:0.5,
+		barSize: 25,
+		barDist: 2.5,
+		barSpeed: 0.25,
+	});
+	const [absoluteGameInfo, setAbsoluteGameInfo] =
+		useState<gameInfo>(normalGameInfo);
 
   const setValue = (name: string, value: number | string) => {
     setRelativeGameInfo((prevState) => ({
@@ -168,16 +160,11 @@ export default function CreateCustom(props: createCustomProps) {
 					<Button
 						color="purple"
 						content="INTERFACE"
-            onClick={InterfaceDisplayOnClick}
-          />
-          <Button
-            color="purple"
-            content="POWERUP"
-            onClick={PowerUpDisplayOnClick}
-          />
-        </div>
-        <div className="preview-header-createcustom">
-          <Button
+						onClick={InterfaceDisplayOnClick}
+					/>
+				</div>
+				<div className="preview-header-createcustom">
+					<Button
 						color="pink"
 						content="PREVIEW"
 	 					onClick={PreviewOnClick}
@@ -253,15 +240,15 @@ export default function CreateCustom(props: createCustomProps) {
             label="Score Size (%)"
           />
 
-          <RangeSlider
-            name={"barLarge"}
-            value={relativeGameInfo.barLarge}
-            setValue={setValue}
-            min={0.5}
-            max={5}
-            step={0.5}
-            label="Bar Width (%)"
-          />
+						<RangeSlider
+							name={"barLarge"}
+							value={relativeGameInfo.barLarge}
+							setValue={setValue}
+							min={0.5}
+							max={5}
+							step={0.25}
+							label="Bar Width (%)"
+						/>
 
           <RangeSlider
             name={"menuSize"}
@@ -317,7 +304,7 @@ export default function CreateCustom(props: createCustomProps) {
             name={"gameysize"}
             value={relativeGameInfo.gameysize}
             setValue={setValue}
-            min={400}
+            min={300}
             max={1000}
             step={50}
             label="Game Height"
@@ -336,7 +323,7 @@ export default function CreateCustom(props: createCustomProps) {
             value={relativeGameInfo.ballSpeed}
             setValue={setValue}
             min={0.25}
-            max={3}
+            max={2}
             step={0.25}
             label="Ball Speed"
           />
@@ -350,56 +337,46 @@ export default function CreateCustom(props: createCustomProps) {
             label="Bar Size"
           />
 
-          <RangeSlider
-            name={"barDist"}
-            value={relativeGameInfo.barDist}
-            setValue={setValue}
-            min={2.5}
-            max={30}
-            step={2.5}
-            label="Bar Distance"
-          />
-          <RangeSlider
-            name={"barSpeed"}
-            value={relativeGameInfo.barSpeed}
-            setValue={setValue}
-            min={1}
-            max={10}
-            step={1}
-            label="Bar Speed"
-          />
-          <RangeSlider
-            name={"oneScore"}
-            value={relativeGameInfo.oneScore}
-            setValue={setValue}
-            min={0}
-            max={8}
-            step={1}
-            label="Player One Begin Score"
-          />
-          <RangeSlider
-            name={"twoScore"}
-            value={relativeGameInfo.twoScore}
-            setValue={setValue}
-            min={0}
-            max={8}
-            step={1}
-            label="Player Two Begin Score"
-          />
-        </div>
-      )}
-      {PowerUpDisplay === true && (
-        <div className="body-custom">
-          <CheckboxComponent
-            name={"upBallSize"}
-            value={relativeGameInfo.upBallSize}
-            setValue={setValue}
-            label="Increase Ball Size"
-          />
-        </div>
-      )}
-      <div className="footer-createcustom">
-        <Button
+						<RangeSlider
+							name={"barDist"}
+							value={relativeGameInfo.barDist}
+							setValue={setValue}
+							min={2.5}
+							max={30}
+							step={2.5}
+							label="Bar Distance"
+						/>
+						<RangeSlider
+							name={"barSpeed"}
+							value={relativeGameInfo.barSpeed}
+							setValue={setValue}
+							min={1}
+							max={5}
+							step={0.5}
+							label="Bar Speed"
+						/>
+						<RangeSlider
+							name={"oneScore"}
+							value={relativeGameInfo.oneScore}
+							setValue={setValue}
+							min={0}
+							max={8}
+							step={1}
+							label="Player One Begin Score"
+						/>
+						<RangeSlider
+							name={"twoScore"}
+							value={relativeGameInfo.twoScore}
+							setValue={setValue}
+							min={0}
+							max={8}
+							step={1}
+							label="Player Two Begin Score"
+						/>
+					</div>
+				)}
+			<div className="footer-createcustom">
+				<Button
 					color="red"
 					content="GO BACK"
 					onClick={props.returnToMenu}

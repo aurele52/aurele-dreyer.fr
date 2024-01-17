@@ -6,8 +6,28 @@ import { useSelector } from "react-redux";
 import { socket } from "./socket";
 import { useEffect } from "react";
 import { addModal, ModalType } from "./shared/utils/AddModal";
+import { useNavigate } from "@tanstack/react-router";
+
+export const useDetectBackNavigation = (targetPath) => {
+  const navigate = useNavigate();
+
+  useEffect(() => {
+    const handleBackNavigation = () => {
+      console.log(targetPath);
+      navigate({ to: targetPath });
+    };
+
+    window.addEventListener("popstate", handleBackNavigation);
+
+    return () => {
+      window.removeEventListener("popstate", handleBackNavigation);
+    };
+  }, [navigate, targetPath]);
+};
 
 function App() {
+  useDetectBackNavigation("/auth");
+
   useEffect(() => {
     // const fetchData = async () => {
     //   try {

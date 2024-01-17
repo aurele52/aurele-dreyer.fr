@@ -1,4 +1,5 @@
 import {
+    IsHexColor,
   IsInt,
   IsOptional,
   IsString,
@@ -27,7 +28,7 @@ class BallSizeConstraint implements ValidatorConstraintInterface {
 class BallSpeedConstraint implements ValidatorConstraintInterface {
   validate(ballSpeed: number, args: ValidationArguments) {
     const gamexsize = (args.object as any).gamexsize;
-    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.03 * gamexsize;
+    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.02 * gamexsize;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -63,7 +64,7 @@ class BarDistConstraint implements ValidatorConstraintInterface {
 class BarSpeedConstraint implements ValidatorConstraintInterface {
   validate(barSpeed: number, args: ValidationArguments) {
     const gameysize = (args.object as any).gameysize;
-    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.1 * gameysize;
+    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.05 * gameysize;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -136,28 +137,28 @@ export class gameInfoDto {
 
   @IsOptional()
   @IsString()
-  oneBarColor?: string = 'white';
+  oneBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoBarColor?: string = 'white';
+  twoBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  ballColor?: string = 'white';
+  ballColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  backgroundColor?: string = 'black';
+  backgroundColor?: string = '#000000';
   @IsOptional()
   @IsString()
-  borderColor?: string = 'white';
+  borderColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  oneScoreColor?: string = 'white';
+  oneScoreColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoScoreColor?: string = 'white';
+  twoScoreColor?: string = '#ffffff';
   @IsOptional()
-  @IsString()
-  menuColor?: string = 'black';
+  @IsHexColor()
+  menuColor?: string = '#000000';
   // not in setting
   @IsOptional()
   @IsString()
@@ -201,7 +202,7 @@ export class gameInfoDto {
   bally?: number = 100;
   @IsOptional()
   @IsInt()
-  ballDeb?: number = 150;
+  ballDeb?: number = 10;
 
   @IsOptional()
   upBallSize: boolean = false;
