@@ -1,4 +1,8 @@
-import { Injectable, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
 import { Subject, Observable } from 'rxjs';
 import { Message } from './interfaces/message.interface';
@@ -10,24 +14,34 @@ export class MessageService {
   constructor(private readonly prisma: PrismaService) {}
 
   async channelMessages(channel_id: number) {
-    return (
-      await this.prisma.message.findMany({
-        where: {
-          channel_id,
-        },
-        include: {
-          user: {
-            include: {
-              friendship_user1: true,
-              friendship_user2: true,
-            },
+    if (!channel_id) {
+      console.error(`Channel with ID ${channel_id} not found`);
+      throw new NotFoundException(`Channel not found`);
+    }
+
+    const messages = await this.prisma.message.findMany({
+      where: {
+        channel_id,
+      },
+      include: {
+        user: {
+          include: {
+            friendship_user1: true,
+            friendship_user2: true,
           },
         },
-        orderBy: {
-          created_at: 'asc',
-        },
-      })
-    ).map((message) => {
+      },
+      orderBy: {
+        created_at: 'asc',
+      },
+    });
+
+    if (messages === null) {
+      console.error(`Messages for channel with ID ${channel_id} not found`);
+      throw new NotFoundException('Messages not found for this channel');
+    }
+
+    return messages.map((message) => {
       const mergedFriendships = [
         ...message.user.friendship_user1,
         ...message.user.friendship_user2,
@@ -43,13 +57,24 @@ export class MessageService {
   }
 
   async createMessage(channel_id: number, user_id: number, content: string) {
-    return await this.prisma.message.create({
-      data: {
-        channel_id,
-        user_id,
-        content,
-      },
-    });
+    if (!channel_id || !user_id || !content) {
+      console.error(
+        `Missing property for message creation: channel_id = ${channel_id}, user_id = ${user_id}, content = ${content}`,
+      );
+      throw new BadRequestException(`Missing property for message creation`);
+    }
+    try {
+      return await this.prisma.message.create({
+        data: {
+          channel_id,
+          user_id,
+          content,
+        },
+      });
+    } catch (error) {
+      console.error('Error during user creation:', error);
+      throw error;
+    }
   }
 
   async findSendedInvitation(userId: number) {
