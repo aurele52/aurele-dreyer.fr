@@ -296,23 +296,27 @@ function ChatSession({ channelId, winId }: ChatSessionProps) {
     store.dispatch(addWindow(newWindow));
   };
 
-  const pendingGameRequest = () => {
-    if (receivedInvitation)
-      return (
-        <div className="PendingGameRequest">
-          <div className="Text">
-            {receivedInvitation.username} send you a game request
-          </div>
-          <Button color="pink" icon="Check" onClick={handleAcceptGameRequest} />
-          <Button
-            color="red"
-            icon="WhiteClose"
-            onClick={handleRejectGameRequest}
-          />
-        </div>
-      );
-    else return null;
-  };
+	const pendingGameRequest = () => {
+		if (receivedInvitation)
+			return (
+				<div className="PendingGameRequest">
+					<div className="Text">
+						{receivedInvitation.username} sent you a game request
+					</div>
+					<Button
+						color="pink"
+						icon="Check"
+						onClick={handleAcceptGameRequest}
+					/>
+					<Button
+						color="red"
+						icon="WhiteClose"
+						onClick={handleRejectGameRequest}
+					/>
+				</div>
+			);
+		else return null;
+	};
 
   const handleEndCountdown = () => {
     queryClient.invalidateQueries({
