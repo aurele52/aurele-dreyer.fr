@@ -7,7 +7,6 @@ export interface gameInfo {
   ballSpeed: number;
   ballSize: number;
 
-  itemSize: number;
 
   oneScore: number;
   twoScore: number;
@@ -40,9 +39,6 @@ export interface gameInfo {
   gamexsize: number;
   gameysize: number;
 
-  itemx: number;
-  itemy: number;
-
   ballx: number;
   bally: number;
   ballDirx: number;
@@ -51,4 +47,7 @@ export interface gameInfo {
 
   upBallSize: boolean;
   downBallSize: boolean;
+
+  id?: number;
+  userId?: number;
 }

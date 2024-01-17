@@ -1,4 +1,4 @@
-.mainGameMenu {
+.game-menu {
 	display: flex;
 	padding: 5px;
 	flex-direction: column;
@@ -8,65 +8,83 @@
 	flex: 1 0 0;
 	align-self: stretch;
 }
-.mainGameMenu > button {
-	display: flex;
-/* Heading/600 */
-font-family: Chakra Petch;
-font-size: 24px;
-font-style: normal;
-font-weight: 700;
-line-height: 24px; /* 100% */
-	color: var(--text-text-invert, #FFF);
-padding: 10px 12px;
-justify-content: center;
-align-items: center;
-align-self: stretch;
+.game-menu > div {
+	width: 140px;
+	height: 45px;
+	padding: 10px 12px;
+	cursor: pointer;
+	display: flex;	
+	justify-content: center;
+	align-items: center;
 	border-radius: 12px;
-border-top: 3px solid var(--border-border-inside, #FFF);
-border-right: 3px solid var(--border-border-inside, #FFF);
-border-left: 3px solid var(--border-border-inside, #FFF);
-	height: 15%;
-}
-.joinNormalDefaultButton {
-	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
-}
-.createCustomDefaultButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
-}
-.joinCustomDefaultButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+	outline: 2px solid var(--base-black, #000);
+	/* text */
+ 	font-family: Chakra Petch;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	color: var(--text-text-invert, #FFF);
+	border: solid var(--base-white, #fff);
+	border-width: 3px 3px 0;
 }
 
-.joinNormalDesactivateButton {
-	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #F0F0F0 28.22%, #909090 69.07%));
-}
-.createCustomDesactivateButton {
-	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #F0F0F0 28.22%, #909090 69.07%));
-}
-.joinCustomDesactivateButton {
-	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #F0F0F0 28.22%, #909090 69.07%));
-}
-.joinNormalInGameButton {
+/* PLAY */
+
+.play-button-default {
 	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
 }
-.createCustomInGameButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+.play-button-default:hover {
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
 }
-.joinCustomInGameButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+.play-button-waiting {
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
+	border-color: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
 }
-.joinNormalWaitingButton {
+
+.play-button-off {
+	background: var(--grey-gradient, linear-gradient(120deg, #DCDDEA 46.53%, #8F95AB 79.49%));
+}
+
+
+/* JOIN */
+.join-button-default {
+	border: solid var(--base-white, #fff);
+	border-width: 3px 3px 0;
+	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
+}
+
+.join-button-default:hover {
+	border-color : var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+	background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+}
+
+.join-button-off {
+	background: var(--grey-gradient2, linear-gradient(120deg, #A0A5BA 24.38%, #C4C7D7 34.76%, #DCDDEA 48.17%, #BDC0D1 62.01%, #A7ADBF 70.23%, #9FA5BA 75.42%, #ADB2C4 81.9%, #DCDDEA 96.61%));
+}
+
+.join-button-waiting {
 	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
 }
-.createCustomWaitingButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+/* CUSTOM */
+
+.custom-button-default {
+	border: solid var(--base-white, #fff);
+	border-width: 3px 3px 0;
+	background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
 }
-.joinCustomWaitingButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+.custom-button-default:hover {
+	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
 }
-.createCustomInTabButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+.custom-button-off {
+	background: var(--grey-gradient2, linear-gradient(120deg, #A0A5BA 24.38%, #C4C7D7 34.76%, #DCDDEA 48.17%, #BDC0D1 62.01%, #A7ADBF 70.23%, #9FA5BA 75.42%, #ADB2C4 81.9%, #DCDDEA 96.61%));
 }
-.joinCustomInTabButton {
-background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
+
+.custom-button-waiting {
+	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
 }

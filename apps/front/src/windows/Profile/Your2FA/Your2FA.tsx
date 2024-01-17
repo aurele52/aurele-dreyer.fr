@@ -2,11 +2,17 @@ import "./Your2FA.css";
 import { useQuery } from "@tanstack/react-query";
 import api from "../../../axios";
 import { FaSpinner } from "react-icons/fa";
+import store from "../../../store";
+import { delWindow } from "../../../reducers";
 
-export default function Your2FA() {
+interface Your2FAProps {
+  winId: number;
+
+}
+
+export default function Your2FA({winId}: Your2FAProps) {
   const {
     data,
-    error: enable2FAError,
     isLoading: enable2FALoading,
   } = useQuery<string>({
     queryKey: ["QRCode"],
@@ -19,18 +25,14 @@ export default function Your2FA() {
           return imageUrl;
         })
         .catch((error) => {
-          console.log("error", error);
-          return error;
+          store.dispatch(delWindow(winId))
+          return null;
         });
     },
   });
 
   if (enable2FALoading) {
     return <FaSpinner className="loadingSpinner" />;
-  }
-
-  if (enable2FAError) {
-    return <div>Error enabling 2FA: {enable2FAError.message}</div>;
   }
 
   return (

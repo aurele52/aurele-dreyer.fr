@@ -293,10 +293,6 @@ function drawBall(p: p5) {
 	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, gameInfo.ballSize, gameInfo.ballSize);
 }
 
-function drawItem(p: p5) {
-	p.fill('red');
-	p.rect(gameInfo.itemx + gameInfo.gamex, gameInfo.itemy + gameInfo.gamey, gameInfo.itemSize, gameInfo.itemSize);
-}
 
 let input = 0;
 
@@ -379,6 +375,7 @@ function clearBoard(p: p5) {
 				...gameUpdate,
 			xsize: gameUpdate.gamexsize + 2 * gameUpdate.borderSize,
 			ysize: gameUpdate.gameysize + 3 * gameUpdate.borderSize + gameUpdate.menuSize,
+			gamex: gameUpdate.borderSize,
 			gamey: gameUpdate.borderSize * 2 + gameUpdate.menuSize,
 			};
 			setGameInfo(updatedObject);
@@ -407,8 +404,6 @@ function clearBoard(p: p5) {
 			drawBar(p);
 			drawBall(p);
 			drawBoardMidline(p);
-			if (gameInfo.itemSize > 0)
-			drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
 		};

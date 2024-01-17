@@ -13,7 +13,6 @@ export class lobby {
   }
   private finish = 0;
   ballWallRedir() {
-    console.log(this.gameInfo.ballSize);
     if (
       this.gameInfo.bally + this.gameInfo.ballSize + this.gameInfo.ballSpeed >=
       this.gameInfo.gameysize
@@ -41,15 +40,14 @@ export class lobby {
   async win(winner: clientInfo, loser: clientInfo) {
     console.log('test 1');
     try {
-      if (winner.socket.connected) winner.socket.emit('server.win');
-    console.log('test 2');
+      if (winner.socket.connected) winner.socket.emit('server.win', {winner: winner.user.username});
 
       const winnerUser = await this.prisma.user.findUnique({
-        where: { username: winner.user },
+        where: { username: winner.user.username },
       });
 
       const loserUser = await this.prisma.user.findUnique({
-        where: { username: loser.user },
+        where: { username: loser.user.username },
       });
 
       if (!winnerUser || !loserUser) {
@@ -65,7 +63,6 @@ export class lobby {
           : winner.mode === 'custom'
             ? 'CUSTOM'
             : 'PRIVATE';
-    console.log('test 3');
       const match = await this.prisma.match.create({
         data: {
           on_going: false,
@@ -97,14 +94,11 @@ export class lobby {
       this.achievements.updateAchievements(winnerUser.id);
       this.achievements.updateAchievements(loserUser.id);
 
-    console.log('test 4');
       return match;
     } catch (error) {
       console.error('Error in win function:', error);
-    console.log('test 5');
       throw error;
     }
-    console.log('test 6');
   }
 
   lose(user: clientInfo) {
@@ -142,18 +136,18 @@ export class lobby {
     const absinAlpha = inAlpha > 0 ? inAlpha : 2 * Math.PI + inAlpha;
     let absoutAlpha = outAlpha > 0 ? outAlpha : 2 * Math.PI + outAlpha;
     if (absinAlpha > Math.PI / 2 && absinAlpha < (3 * Math.PI) / 2) {
-      if (absoutAlpha < Math.PI / 2 + Math.PI / 9)
-        absoutAlpha = Math.PI / 2 + Math.PI / 9;
-      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 9)
-        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 9;
+      if (absoutAlpha < Math.PI / 2 + Math.PI / 5)
+        absoutAlpha = Math.PI / 2 + Math.PI / 5;
+      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 5)
+        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 5;
     } else {
-      if (absoutAlpha > Math.PI / 2 - Math.PI / 9 && absoutAlpha < Math.PI)
-        absoutAlpha = Math.PI / 2 - Math.PI / 9;
+      if (absoutAlpha > Math.PI / 2 - Math.PI / 5 && absoutAlpha < Math.PI)
+        absoutAlpha = Math.PI / 2 - Math.PI / 5;
       else if (
-        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 9 &&
+        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 5 &&
         absoutAlpha > Math.PI
       )
-        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 9;
+        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 5;
     }
     outAlpha = absoutAlpha > 180 ? absoutAlpha - 2 * Math.PI : absoutAlpha;
     return [1 * speed * Math.cos(outAlpha), speed * Math.sin(outAlpha)];
@@ -231,6 +225,10 @@ export class lobby {
   ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
+    if (this.isCustom == 'private')
+    {
+      this.defaultGameInfo = {...normalGameInfo, userId: matchInfo.userId};
+    }
     if (this.isCustom == 'custom') {
       this.defaultGameInfo = matchInfo;
       this.gameInfo = { ...matchInfo };
@@ -271,32 +269,6 @@ export class lobby {
       )
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
   }
-  itemPick() {
-    let tempx = 0;
-    let tempy = 0;
-    while (tempy < this.gameInfo.ballSize) {
-      while (tempx < this.gameInfo.ballSize) {
-        if (
-          this.gameInfo.bally + tempy <=
-            this.gameInfo.itemy + this.gameInfo.itemSize &&
-          this.gameInfo.bally + tempy >= this.gameInfo.itemSize
-        ) {
-          if (
-            this.gameInfo.ballx + tempx <=
-              this.gameInfo.itemx + this.gameInfo.itemSize &&
-            this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
-          ) {
-            this.gameInfo.itemSize = 0;
-            this.gameInfo.ballSize = 100;
-            return;
-          }
-        }
-        tempx++;
-      }
-      tempx = 0;
-      tempy++;
-    }
-  }
   update() {
     this.move();
     this.score();
@@ -304,7 +276,6 @@ export class lobby {
     while (i > 0) {
       this.ballWallRedir();
       this.ballBarRedir();
-      if (this.gameInfo.itemSize > 0) this.itemPick();
       this.gameInfo.ballx = this.gameInfo.ballx + this.gameInfo.ballDirx;
       this.gameInfo.bally = this.gameInfo.bally + this.gameInfo.ballDiry;
       i--;

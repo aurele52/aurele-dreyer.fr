@@ -4,14 +4,16 @@ import { useQuery } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
-import { addWindow } from "../../reducers";
+import { addWindow, delWindow } from "../../reducers";
 import { WinColor } from "../../shared/utils/WindowTypes";
+import store from "../../store";
 
-interface LadderProps extends ReduxProps {
+interface LadderProps {
 	targetId?: number;
+	winId: number;
 }
 
-export function Ladder({ dispatch, targetId }: LadderProps) {
+export default function Ladder({ targetId, winId }: LadderProps) {
 	const {
 		data: userId,
 		isLoading: userIdLoading,
@@ -27,8 +29,7 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 				const response = await api.get("/id");
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching userId:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
@@ -118,12 +119,12 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 			color: WinColor.PURPLE,
 			targetId: id,
 		};
-		dispatch(addWindow(newWindow));
+		store.dispatch(addWindow(newWindow));
 	};
 
 	return (
 		<div className="Ladder">
-			<List>
+			<List dark={false} lilac = {true}>
 				{users?.map((user) => {
 					const isSelfUser = user.id === userId;
 					const divClass = isSelfUser ? "SelfUser" : "OtherUser";
@@ -181,10 +182,3 @@ export function Ladder({ dispatch, targetId }: LadderProps) {
 	);
 }
 
-const mapDispatchToProps = null;
-
-const connector = connect(mapDispatchToProps);
-type ReduxProps = ConnectedProps<typeof connector>;
-
-const ConnectedLadder = connector(Ladder);
-export default ConnectedLadder;

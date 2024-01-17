@@ -25,9 +25,6 @@ import { gameInfo } from "./gameInfo.interface";
     ballDeb: 150,
     ballSize: 10,
     barSize: 100,
-    itemx: 40,
-    itemy: 40,
-    itemSize: 0,
     numberSize: 10,
     oneBarColor: 'white',
     twoBarColor: 'white',
@@ -41,4 +38,5 @@ import { gameInfo } from "./gameInfo.interface";
     numberTopDist: 10,
     upBallSize: false,
     downBallSize: false,
+    id: 10,
   };

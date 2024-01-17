@@ -1,6 +1,7 @@
 import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { lobbyManager } from './lobby/lobbyManager';
+import { normalLobbyManager } from './lobby/normalLobbyManager';
 import { clientInfo } from './dto-interface/clientInfo.interface';
 import { gameInfoDto } from './dto-interface/shared/gameInfo.dto';
 import { normalGameInfo } from './dto-interface/shared/normalGameInfo';
@@ -8,11 +9,16 @@ import { input } from './dto-interface/input.interface';
 import { baseClientInfo } from './dto-interface/baseClientInfo';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
+import { privateLobbyManager } from './lobby/privateLobbyManager';
 
 @WebSocketGateway({ cors: true })
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
+  private readonly normalLobbyManager: normalLobbyManager =
+    new normalLobbyManager();
+  private readonly privateLobbyManager: privateLobbyManager =
+    new privateLobbyManager();
 
   constructor(
     private readonly authService: AuthService,
@@ -33,36 +39,12 @@ export class PongGateway {
       const user = await this.userService.getUser(payload.id);
       const newClient: clientInfo = { ...baseClientInfo };
       newClient.socket = client;
+      newClient.user = user;
       this.connectedClient.push(newClient);
       console.log('socket connection successfull');
     } catch (ex) {
       console.log('socket connection failed');
       client.emit('connect_failed');
-    }
-  }
-
-  @SubscribeMessage('client.openGame')
-  handleOpenGame(client: Socket) {}
-
-  @SubscribeMessage('client.joinNormalAbort')
-  handleJoinNormalAbort(client: Socket) {
-    const index = this.connectedClient.findIndex((value) => {
-      return value.socket === client;
-    });
-    if (index !== -1) {
-      if (this.connectedClient[index].status === 'waiting join normal')
-        this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
-    }
-  }
-
-  @SubscribeMessage('client.createCustomAbort')
-  handleCreateCustomAbort(client: Socket) {
-    const index = this.connectedClient.findIndex((value) => {
-      return value.socket === client;
-    });
-    if (index !== -1) {
-    console.log('abort');
-      this.lobbyManager.removeToCustomQueue(this.connectedClient[index]);
     }
   }
 
@@ -72,61 +54,37 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      if (this.connectedClient[index].lobby != null) {
-        this.connectedClient[index].lobby.onDisconnect(
-          this.connectedClient[index],
-        );
+      const polo = this.connectedClient[index];
+      if (polo.status == 'inGame' && polo.lobby != null) {
+        polo.lobby.onDisconnect(polo);
       }
-      if (this.connectedClient[index].status === 'waiting join normal')
-        this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
+      if (polo.status === 'waiting join normal')
+        this.normalLobbyManager.removeToNormalQueue(polo);
+      if (polo.status === 'waiting create custom')
+        this.lobbyManager.removeToCustomQueue(polo);
+      if (polo.status === 'inJoinTab') this.lobbyManager.removeInJoinTab(polo);
+      this.connectedClient[index].status = 'connected';
     }
     this.lobbyManager.cleanLobbies();
   }
 
-  @SubscribeMessage('client.previewUpdate')
-  handlePreview(client: Socket, data: gameInfoDto) {
-    console.log(data);
-    client.emit('server.previewUpdate', data);
-  }
-
-  @SubscribeMessage('client.authentification')
-  async handleAuthentification(
-    client: Socket,
-    data: { user: string; token: string },
-  ) {
-    // if (!data.token) {
-    //   client.emit('401');
-    //   client.disconnect(); //mathilde todo
-    //   throw new UnauthorizedException();
-    // }
-    // try {
-    //   const payload = await this.jwt.verifyAsync(data.token, {
-    //     secret: process.env.APP_SECRET,
-    //   });
-    // } catch {
-    //   client.disconnect();
-    //   throw new UnauthorizedException();
-    // }
-    // let index = this.connectedClient.findIndex((value) => {
-    //   return value.user === data.user;
-    // });
-    // if (index !== -1) {
-    //   this.connectedClient[index].socket.emit('server.disconnect');
-    //   if (this.connectedClient[index].lobby != null) {
-    //     this.connectedClient[index].lobby.onDisconnect(this.connectedClient[index]);
-    //   }
-    //   this.lobbyManager.cleanLobbies();
-    //   if (this.connectedClient[index].status = 'inJoinTab') {
-    //     this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
-    //   }
-    //   this.connectedClient.splice(index, 1);
-    // }
+  handleDisconnect(client: Socket) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].user = data.user;
+      const polo = this.connectedClient[index];
+      if (polo.status == 'inGame' && polo.lobby != null) {
+        polo.lobby.onDisconnect(polo);
+      }
+      if (polo.status === 'waiting join normal')
+        this.normalLobbyManager.removeToNormalQueue(polo);
+      if (polo.status === 'inJoinTab') this.lobbyManager.removeInJoinTab(polo);
+      if (polo.status === 'waiting create custom')
+        this.lobbyManager.removeToCustomQueue(polo);
+      this.connectedClient.splice(index, 1);
     }
+    this.lobbyManager.cleanLobbies();
   }
 
   @SubscribeMessage('client.normalMatchmaking')
@@ -135,10 +93,36 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].mode = 'normal';
-      this.lobbyManager.addToNormalQueue(this.connectedClient[index]);
-      this.connectedClient[index].status = 'waiting join normal';
+      this.normalLobbyManager.addToNormalQueue(this.connectedClient[index]);
     }
+    this.connectedClient.forEach((value) => {
+      console.log(value.user);
+    });
+  }
+
+  @SubscribeMessage('client.joinNormalAbort')
+  handleJoinNormalAbort(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.normalLobbyManager.removeToNormalQueue(this.connectedClient[index]);
+    }
+  }
+
+  @SubscribeMessage('client.createCustomAbort')
+  handleCreateCustomAbort(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.lobbyManager.removeToCustomQueue(this.connectedClient[index]);
+    }
+  }
+
+  @SubscribeMessage('client.previewUpdate')
+  handlePreview(client: Socket, data: gameInfoDto) {
+    client.emit('server.previewUpdate', data);
   }
 
   @SubscribeMessage('client.createCustom')
@@ -147,49 +131,91 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].mode = 'custom';
-      this.connectedClient[index].status = 'waiting create custom';
-      this.connectedClient[index].matchInfo = {
+      this.lobbyManager.createCustomLobby(this.connectedClient[index], {
         ...normalGameInfo,
         ...gameData,
-        gamey: gameData.borderSize * 2 + gameData.menuSize,
-        gamexsize: gameData.xsize - 2 * gameData.borderSize,
-        gameysize: gameData.ysize - 3 * gameData.borderSize - gameData.menuSize,
-        ballx: gameData.gamexsize / 2 - 10,
-        bally: gameData.gameysize / 2,
-      };
-      this.lobbyManager.createCustomLobby(this.connectedClient[index]);
+      });
     }
   }
 
   @SubscribeMessage('client.joinMatch')
-  handleJoinCustom(client: Socket, matchName: string) {
+  handleJoinCustom(client: Socket, matchId: number) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].status = 'inGame';
-      this.lobbyManager.removeInJoinTab(this.connectedClient[index]);
-      this.lobbyManager.addPlayerToMatch(
-        this.connectedClient[index],
-        matchName,
-      );
-      this.lobbyManager.removeMatch(matchName);
+      this.lobbyManager.addPlayerToMatch(this.connectedClient[index], matchId);
     }
   }
   @SubscribeMessage('client.inJoinTab')
   handleJoin(client: Socket) {
+    this.lobbyManager.cleanLobbies();
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.connectedClient[index].status = 'inJoinTab';
       this.lobbyManager.addInJoinTab(this.connectedClient[index]);
     }
-    const lobbies = this.lobbyManager.getCustomLobbies();
-    lobbies.forEach((value) => {
-      client.emit('server.lobbyCustom', value.getMatchInfo());
+  }
+
+  @SubscribeMessage('client.createPrivate')
+  handlePrivateMatchmaking(client: Socket, id: number) {
+      console.log('test 1');
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
     });
+    if (index !== -1) {
+      console.log('test 2');
+      this.privateLobbyManager.createPrivate( this.connectedClient[index], id);
+      console.log('test 5');
+    }
+  }
+
+  @SubscribeMessage('client.joinPrivate')
+  handleJoinMatchmaking(client: Socket, id: number) {
+      console.log('test 6');
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      console.log('test 7');
+      this.privateLobbyManager.joinPrivate(this.connectedClient[index]);
+      console.log('test 12');
+    }
+  }
+
+  @SubscribeMessage('client.invitationDecline')
+  async handleInvitationDecline(client: Socket, id: number) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      try {
+        this.privateLobbyManager.cancelPrivateInvitation(
+          this.connectedClient[index],
+          id,
+        );
+      } catch (error) {
+        console.error(error);
+      }
+    }
+  }
+
+  @SubscribeMessage('client.privateAbort')
+  handlePrivateMatchmakingAbort(client: Socket) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      const index2 = this.connectedClient.findIndex((value) => {
+        return value.user.id === this.connectedClient[index].lobby.getMatchInfo().userId;
+      });
+      if (index2 !== -1) {
+        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], this.connectedClient[index2]);
+      } else {
+        this.privateLobbyManager.removeToPrivateQueue(this.connectedClient[index], null);
+      }
+    }
   }
 
   @SubscribeMessage('client.input')
@@ -205,8 +231,7 @@ export class PongGateway {
   @SubscribeMessage('client.getStatusUser')
   handleGetStatusUser(client: Socket, data: { user: string }) {
     const index = this.connectedClient.findIndex((value) => {
-      console.log({ value }, { data });
-      return value.user === data.user;
+      return value.user.username === data.user;
     });
     if (index !== -1) {
       client.emit('server.getStatusUser', {
@@ -222,24 +247,5 @@ export class PongGateway {
       client.emit('server.getStatusUser', {
         data: { username: data.user, status: 'OFFLINE' },
       });
-  }
-
-  handleDisconnect(client: Socket) {
-    const index = this.connectedClient.findIndex((value) => {
-      return value.socket === client;
-    });
-    if (index !== -1) {
-      if (this.connectedClient[index].lobby != null && this.connectedClient[index].status != 'waiting create custom') {
-        this.connectedClient[index].lobby.onDisconnect(
-          this.connectedClient[index],
-        );
-      }
-      if (this.connectedClient[index].status === 'waiting join normal')
-      this.lobbyManager.removeToNormalQueue(this.connectedClient[index]);
-      if (this.connectedClient[index].status === 'waiting create custom')
-      this.lobbyManager.removeToCustomQueue(this.connectedClient[index]);
-      this.connectedClient.splice(index, 1);
-    }
-    this.lobbyManager.cleanLobbies();
   }
 }

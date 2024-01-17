@@ -4,7 +4,7 @@ import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import api from "../../axios";
 import List from "../../shared/ui-components/List/List";
 import { HBButton, WinColor } from "../../shared/utils/WindowTypes";
-import { addWindow } from "../../reducers";
+import { addWindow, delWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
@@ -14,9 +14,10 @@ import { AxiosError } from "axios";
 
 interface ProfileProps {
   targetId?: number;
+  winId: number;
 }
 
-export function Profile({ targetId }: ProfileProps) {
+export function Profile({ targetId, winId }: ProfileProps) {
   const queryClient = useQueryClient();
   const [changingName, setChangingName] = useState<boolean>(false);
   const [placeholderValue, setPlaceholderValue] = useState<string>("");
@@ -26,7 +27,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: profile,
     isLoading: profileLoading,
-    error: profileError,
   } = useQuery<{
     id: number;
     username: string;
@@ -50,8 +50,7 @@ export function Profile({ targetId }: ProfileProps) {
           : await api.get(`/profile/user`);
         return response.data;
       } catch (error) {
-        console.error("Error fetching user:", error);
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -59,7 +58,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: pendingRequests,
     isLoading: pendingRequestsLoading,
-    error: pendingRequestsError,
   } = useQuery<number>({
     queryKey: ["pendingRequests", "Profile"],
     queryFn: async () => {
@@ -71,8 +69,7 @@ export function Profile({ targetId }: ProfileProps) {
             content.type === "received"
         ).length;
       } catch {
-        console.error("Error pending invitations user:", pendingRequestsError);
-        throw pendingRequestsError;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -80,7 +77,6 @@ export function Profile({ targetId }: ProfileProps) {
   const {
     data: historic,
     isLoading: historicLoading,
-    error: historicError,
   } = useQuery<{
     matchHistory: {
       id: number;
@@ -107,16 +103,7 @@ export function Profile({ targetId }: ProfileProps) {
             });
         return response.data;
       } catch (error: unknown) {
-        const e = error as AxiosError;
-        //console.error("Error fetching historic:", error);
-        if (e.response) {
-          // Handle error response from the server
-          console.error("Server responded with:", e.response.data);
-        } else {
-          // Handle network or other errors
-          console.error("Network error or other issue:", e.message);
-        }
-        throw error;
+        store.dispatch(delWindow(winId))
       }
     },
   });
@@ -131,6 +118,9 @@ export function Profile({ targetId }: ProfileProps) {
       });
       queryClient.invalidateQueries({
         queryKey: ["user", targetId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
       });
     },
   });
@@ -182,14 +172,6 @@ export function Profile({ targetId }: ProfileProps) {
         <FaSpinner className="loadingSpinner" />
       </div>
     );
-  }
-
-  if (profileError) {
-    return <div>Error loading users: {profileError.message}</div>;
-  }
-
-  if (historicError) {
-    return <div>Error loading users: {historicError.message}</div>;
   }
 
   const handleOpenLadder = () => {
@@ -347,7 +329,7 @@ export function Profile({ targetId }: ProfileProps) {
   const handleDeleteAccount = async () => {
     addModal(
       ModalType.WARNING,
-      `Are you sure you want to delete your account?`,
+      `Are you sure you want to delete your account? All the channels that you own will be deleted`,
       "deleteUser"
     );
   };
@@ -590,54 +572,46 @@ export function Profile({ targetId }: ProfileProps) {
     </svg>
   );
 
-  return (
-    <div className="Profile">
-      <div className="Header">
-        {avatarDiv()}
-        <div className="Text">
-          {nameDiv()}
-          <div className="Stats">
-            <div>
-              <div className="Rank">
-                <div className="Position">
-                  <div>Rank #{profile?.rank ?? 0}</div>
-                </div>
-                <div style={{ paddingRight: "4px" }} className="Ratio">
-                  <div>
-                    W {profile?.win_count ?? 0} / L {profile?.loose_count ?? 0}
-                  </div>
-                </div>
-                <Button
-                  icon="Arrow"
-                  color="pink"
-                  style={{ display: "flex" }}
-                  onClick={handleOpenLadder}
-                />
-              </div>
-            </div>
-          </div>
-          <div className="ProfileAchievements">
-            <div style={{ paddingRight: "4px" }}>
-              Achievements lvl. {profile?.achievement_lvl}
-            </div>
-            <Button
-              icon="Arrow"
-              color="pink"
-              style={{ display: "flex" }}
-              onClick={() => handleOpenAchievements()}
-            />
-          </div>
-          {buttons}
-        </div>
-      </div>
-      <div className="Body">
-        <div className="Historic">
-          <List>
-            <div className="Count">
-              {historic?.matchHistory.length === historic?.length
-                ? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
-                : `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
-            </div>
+	return (
+		<div className="Profile">
+			<div className="Header">
+				{avatarDiv()}
+				<div className="Text">
+					{nameDiv()}
+					<div className="Stats">
+						<div>
+							<div className="Rank" >
+								<div className="Position" onClick={handleOpenLadder}>
+									<div>Rank #{profile?.rank ?? 0}</div>
+								</div>
+								<div
+									style={{ paddingRight: "4px" }}
+									className="Ratio"
+								>
+									<div>
+										W {profile?.win_count ?? 0} / L{" "}
+										{profile?.loose_count ?? 0}
+									</div>
+								</div>
+							</div>
+						</div>
+					</div>
+					<div className="ProfileAchievements" onClick={() => handleOpenAchievements()}>
+						<div style={{ paddingRight: "4px" }}>	
+							Achievements lvl. {profile?.achievement_lvl}	
+						</div>
+					</div>
+					{buttons}
+				</div>
+			</div>
+			<div className="Body">
+				<div className="Historic">
+					<List>
+						<div className="Count">
+							{historic?.matchHistory.length === historic?.length
+								? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
+								: `MATCH HISTORY (LATEST ${historic?.matchHistory.length}) (${historic?.matchHistory.length}/${historic?.length})`}
+						</div>
 
             {historic?.matchHistory.map((match) => {
               return (

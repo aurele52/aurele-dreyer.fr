@@ -3,19 +3,25 @@ import {
   ForbiddenException,
   HttpStatus,
   Injectable,
+  NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from 'src/prisma.service';
-import { NotFoundException } from '@nestjs/common';
-import { FriendshipStatus, User } from '@prisma/client';
 import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
+import { Subject, Observable } from 'rxjs';
+import { UserEvent, UserEventType } from '../user/types/user-event.types';
 
 @Injectable()
 export class UserService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async getOtherUser(selfId: number, userId: number) {
     if (!userId) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      this.logAndThrowNotFound(userId, 'User');
     }
     const user = await this.prisma.user.findUnique({
       where: {
@@ -24,7 +30,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${userId} not found`);
+      this.logAndThrowNotFound(userId, 'User');
     }
 
     const friendship = await this.prisma.friendship.findFirst({
@@ -67,7 +73,7 @@ export class UserService {
 
   async getUser(id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     const user = await this.prisma.user.findUnique({
       where: {
@@ -76,7 +82,7 @@ export class UserService {
     });
 
     if (!user) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const res = {
@@ -116,7 +122,7 @@ export class UserService {
 
   async postAvatar(id: number, avatarUrl: string) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     try {
       await this.prisma.user.update({
@@ -148,7 +154,7 @@ export class UserService {
 
   async deleteUser(id: number): Promise<number> {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     try {
       if (!Number.isInteger(id) || id <= 0) {
@@ -167,7 +173,7 @@ export class UserService {
       });
 
       if (!user) {
-        throw new NotFoundException(`User with ID ${id} not found`);
+        this.logAndThrowNotFound(id, 'User');
       }
 
       await this.prisma.$transaction(async (prisma) => {
@@ -224,7 +230,7 @@ export class UserService {
 
   async updateUser(id: number, data) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     try {
       await this.prisma.user.update({
@@ -248,5 +254,26 @@ export class UserService {
         message: 'Internal server error',
       };
     }
+  }
+
+  async getAllUserIds() {
+    const users = await this.prisma.user.findMany({});
+
+    return users.map((u) => u.id);
+  }
+
+  private userEvents = new Subject<any>();
+
+  emitUserEvent(
+    type: UserEventType,
+    recipientIds: number[],
+    userId: number,
+    channelId: number,
+  ) {
+    this.userEvents.next({ type, userId, channelId, recipientIds });
+  }
+
+  getUserEvents(): Observable<UserEvent> {
+    return this.userEvents.asObservable();
   }
 }

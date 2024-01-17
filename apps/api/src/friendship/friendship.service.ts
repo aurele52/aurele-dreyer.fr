@@ -1,19 +1,19 @@
 import { Injectable, NotFoundException } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { FriendshipStatus } from '@prisma/client';
-import { Subject, Observable } from 'rxjs';
-import {
-  FriendshipEvent,
-  FriendshipEventType,
-} from './event/friendship-event.type';
 
 @Injectable()
 export class FriendshipService {
   constructor(private readonly prisma: PrismaService) {}
 
+  private logAndThrowNotFound(id: number, entity: string) {
+    console.error(`User with ID ${id} not found`);
+    throw new NotFoundException(`${entity} not found`);
+  }
+
   async userFriendships(id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     return await this.prisma.friendship.findMany({
       where: {
@@ -24,10 +24,10 @@ export class FriendshipService {
 
   async userFriendship(selfId: number, targetId: number) {
     if (!selfId) {
-      throw new NotFoundException(`User with ID ${selfId} not found`);
+      this.logAndThrowNotFound(selfId, 'User');
     }
     if (!targetId) {
-      throw new NotFoundException(`User with ID ${targetId} not found`);
+      this.logAndThrowNotFound(targetId, 'User');
     }
     if (!selfId || !targetId) return {};
     const friendship = await this.prisma.friendship.findFirst({
@@ -69,10 +69,10 @@ export class FriendshipService {
 
   async deleteFriends(user1_id, user2_id) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -87,10 +87,10 @@ export class FriendshipService {
 
   async deletePending(user1_id, user2_id) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -105,10 +105,10 @@ export class FriendshipService {
 
   async deleteBlocked(user1_id, user2_id) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -123,10 +123,10 @@ export class FriendshipService {
 
   async deleteFriendship(user1_id, user2_id) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     return await this.prisma.friendship.deleteMany({
       where: {
@@ -150,10 +150,10 @@ export class FriendshipService {
 
   async createFriendship(user1_id: number, user2_id: number) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     const currentFriendship = await this.userFriendship(user1_id, user2_id);
     if (currentFriendship) {
@@ -184,10 +184,10 @@ export class FriendshipService {
 
   async createBlockedFriendship(user1_id: number, user2_id: number) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     const currentFriendship = await this.userFriendship(user1_id, user2_id);
     if (currentFriendship) {
@@ -213,7 +213,7 @@ export class FriendshipService {
 
   async getPendingInvitations(id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
 
     const invitations = await this.prisma.friendship.findMany({
@@ -248,7 +248,7 @@ export class FriendshipService {
 
   async getBlockedList(id: number) {
     if (!id) {
-      throw new NotFoundException(`User with ID ${id} not found`);
+      this.logAndThrowNotFound(id, 'User');
     }
     const blocked = await this.prisma.friendship.findMany({
       where: {
@@ -272,10 +272,10 @@ export class FriendshipService {
 
   async isBlockedRelationship(user1_id: number, user2_id: number) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     const relationship = await this.prisma.friendship.findFirst({
       where: {
@@ -291,10 +291,10 @@ export class FriendshipService {
 
   async acceptFriendship(user1_id: number, user2_id: number) {
     if (!user1_id) {
-      throw new NotFoundException(`User with ID ${user1_id} not found`);
+      this.logAndThrowNotFound(user1_id, 'User');
     }
     if (!user2_id) {
-      throw new NotFoundException(`User with ID ${user2_id} not found`);
+      this.logAndThrowNotFound(user2_id, 'User');
     }
     return await this.prisma.friendship.update({
       where: {
@@ -307,19 +307,5 @@ export class FriendshipService {
         status: FriendshipStatus.FRIENDS,
       },
     });
-  }
-
-  private friendshipEvents = new Subject<any>();
-
-  emitFriendshipEvent(
-    type: FriendshipEventType,
-    recipientId: number,
-    initiatorId: number,
-  ) {
-    this.friendshipEvents.next({ type, initiatorId, recipientId });
-  }
-
-  getFriendshipEvents(): Observable<FriendshipEvent> {
-    return this.friendshipEvents.asObservable();
   }
 }
