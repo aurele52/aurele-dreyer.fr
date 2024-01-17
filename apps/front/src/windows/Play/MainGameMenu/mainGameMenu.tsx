@@ -76,6 +76,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomWaitingDisplay(true);
 		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDesactivateDisplay(true);
+		setDisplayMainMenu(true);
 	}
 	function onJoinLobby() {
 		setJoinCustomDisplay(false);
