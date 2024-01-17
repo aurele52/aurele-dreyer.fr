@@ -1,6 +1,9 @@
-import { useEffect } from "react";
-import { socket } from "../../../socket";
-
-export default function PrivateWaiting() {
-	return <div className="PrivateWaiting">Private Waiting</div>;
+interface waitingProps {
+	onPrivateAbort: () => void,
+}
+export default function PrivateWaiting(props: waitingProps)
+{
+	return(
+		<div className="PrivateWaiting"><button onClick={props.onPrivateAbort}>Abort</button></div>
+	)
 }

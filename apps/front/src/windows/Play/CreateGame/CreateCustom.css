@@ -9,7 +9,6 @@
 }
 
 .header-createcustom {
-
 	display: flex;
 	padding: 15px;
 	align-items: center;
@@ -79,6 +78,17 @@
 	overflow: scroll;
 }
 
+.custom-powerup {
+	display: flex;
+	padding: 5px 10px;
+	flex-direction: column;
+	align-items: flex-start;
+	gap: 10px;
+	flex: 1 0 0;
+	align-self: stretch;
+	overflow: scroll;
+}
+
 .footer-createcustom {
 	width: 100%;
 	display: flex;
@@ -128,5 +138,36 @@
 
 .playbutton-footer-createcustom:hover {
 	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
+}
+
+.frame-name {
+	display: flex;
+	align-items: center;
+	gap: 10px;
+	align-self: stretch;
+}
+
+.label-name {
+    display: flex;
+    align-items: center;
+    color: var(--Base-Black, #000);
+    font-family: Chakra Petch;
+    font-size: 18px;
+    font-style: normal;
+    font-weight: 600;
+    line-height: normal;
+ 
+}
+
+.placeholder-name {
+	display: flex;
+	min-width: 50px;
+	padding: 5px 8px;
+	align-items: center;
+	gap: 5px;
+	flex: 1 0 0;
+	border-radius: var(--radius-radius-full, 360px);
+	background: var(--Base-White, #FFF);
+	border: none; 
 }
 

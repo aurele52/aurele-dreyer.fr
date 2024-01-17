@@ -65,34 +65,33 @@ export default function Background() {
 		height: string;
 	}
 
-	const windowDimensions: Record<string, WindowDimensions> = {
-		LADDER: { width: "450px", height: "600px" },
-		CHAT: { width: "400px", height: "400px" },
-		PROFILE: { width: "500px", height: "500px" },
-		FINDCHAN: { width: "400px", height: "400px" },
-		NEWCHAN: { width: "400px", height: "400px" },
-		ABOUTCHAN: { width: "500px", height: "500px" },
-		ACHIEVEMENTS: { width: "300px", height: "300px" },
-		FRIENDSLIST: { width: "450px", height: "600px" },
-		MODAL: { width: "390px", height: "200px" },
-		MODALREQUESTED: { width: "390px", height: "250px" },
-		PENDINGREQUESTS: { width: "300px", height: "300px" },
-		BLOCKEDUSERS: { width: "300px", height: "400px" },
-		TWOFAQRCODE: { width: "300px", height: "400px" },
-		ADDFRIENDS: { width: "300px", height: "400px" },
-		ADDMEMBERS: { width: "300px", height: "400px" },
-		AVATARUPLOAD: { width: "300px", height: "250px" },
-		MEMBERSETTINGS: { width: "430px", height: "330px" },
-		CHANSETTINGS: { width: "500px", height: "350px" },
-		BANLIST: { width: "300px", height: "400px" },
-		CHATSESSION: { width: "350px", height: "500px" },
-
-		PLAY: { width: "320px", height: "340px" },
-		PONG: { width: "820px", height: "540px" },
-		PREVIEW: { width: "900px", height: "900px" },
-		CREATECUSTOM: { width: "500px", height: "350px" },
-		JOINCUSTOM: { width: "900px", height: "900px" },
-	};
+  const windowDimensions: Record<string, WindowDimensions> = {
+    LADDER: { width: "450px", height: "600px" },
+    CHAT: { width: "400px", height: "400px" },
+    PROFILE: { width: "500px", height: "500px" },
+    FINDCHAN: { width: "400px", height: "400px" },
+    NEWCHAN: { width: "400px", height: "400px" },
+    ABOUTCHAN: { width: "500px", height: "500px" },
+    ACHIEVEMENTS: { width: "300px", height: "300px" },
+    FRIENDSLIST: { width: "450px", height: "600px" },
+    MODAL: { width: "390px", height: "200px" },
+    MODALREQUESTED: { width: "390px", height: "250px" },
+    PENDINGREQUESTS: { width: "300px", height: "300px" },
+    BLOCKEDUSERS: { width: "300px", height: "400px" },
+    TWOFAQRCODE: { width: "300px", height: "400px" },
+    ADDFRIENDS: { width: "300px", height: "400px" },
+    ADDMEMBERS: { width: "300px", height: "400px" },
+    AVATARUPLOAD: { width: "300px", height: "250px" },
+    MEMBERSETTINGS: { width: "430px", height: "330px" },
+    CHANSETTINGS: { width: "500px", height: "350px" },
+    BANLIST: { width: "300px", height: "400px" },
+    CHATSESSION: { width: "350px", height: "500px" },   
+    PLAY: { width: "420px", height: "340px" },
+    PONG: { width: "815px", height: "550px" },
+	PREVIEW: { width: "815px", height: "550px" },
+	CREATECUSTOM: { width: "500px", height: "350px" },
+	JOINCUSTOM: { width: "900px", height: "900px" },
+  };
 
   const [currentTargetUserId, setCurrentTargetUserId] = useState(null);
 
