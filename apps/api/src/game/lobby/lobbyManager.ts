@@ -37,6 +37,7 @@ export class lobbyManager {
   }
   public addInJoinTab(client: clientInfo) {
     client.status = 'inJoinTab';
+    this.cleanLobbies();
     this.customLobbies.forEach((value) => {
       if (value.getPlayer()[0].status != 'inGame')
         client.socket.emit('server.lobbyCustom', value.getMatchInfo());

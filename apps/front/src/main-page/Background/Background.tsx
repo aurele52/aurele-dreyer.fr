@@ -415,6 +415,7 @@ export default function Background() {
 							{window.content.type === "CHATSESSION" && (
 								<ChatSession channelId={window.content.id} />
 							)}
+							{window.content.type === "PREVIEW" && <Preview />}
 							{window.content.type === "PLAY" && (
 								<MainGameMenu
 									windowId={window.id}

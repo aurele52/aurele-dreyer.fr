@@ -124,6 +124,7 @@ export class PongGateway {
 
   @SubscribeMessage('client.previewUpdate')
   handlePreview(client: Socket, data: gameInfoDto) {
+    console.log('asdaaaaaaaaaaaaaaaaaaaaaaaa');
     client.emit('server.previewUpdate', data);
   }
 
