@@ -17,6 +17,7 @@ interface mainGameMenuProps {
   windowId: number;
   privateLobby?: {
     targetId: number;
+    isFirstPlayer: boolean;
   };
 }
 
@@ -50,12 +51,13 @@ export default function MainGameMenu(props: mainGameMenuProps) {
   const [privateWaitingDisplay, setPrivateWaitingDisplay] =
     useState<boolean>(false);
 
-	const queryClient = useQueryClient();
+  const queryClient = useQueryClient();
 
-	const { mutateAsync: deleteGameInvitation } = useMutation({
+	const { mutateAsync: deleteSendedGameInvitation } = useMutation({
 		mutationFn: async () => {
-			if (!privateWaitingDisplay) return;
-			return api.delete(`/message/invitation`);
+			return api.delete(`/message/sendedinvitation`);
+		},
+		onSuccess: () => {
 		},
 		onError: (error) => {
 			console.error(error.message);
@@ -110,7 +112,10 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setPrivateWaitingDisplay(true);
 		setDisplayMainMenu(false);
 		console.log("HERE");
-		socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
+		if (props.privateLobby.isFirstPlayer)
+		socket.emit("client.createPrivate", props.privateLobby.targetId);
+		else
+		socket.emit("client.joinPrivate");
 	}
 	function onCancelInvite() {
 		setJoinNormalDesactivateDisplay(false);
@@ -153,72 +158,72 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 			);
 			if (props.privateLobby) {
 				console.log("Delete Game Invit");
-				deleteGameInvitation();
+				deleteSendedGameInvitation();
 			}
 			socket.emit("client.closeMainWindow");
 			socket.off("server.matchStart", onMatchStart);
 		};
 	}, [props.privateLobby]);
 
-	function joinNormalDefaultOnClick() {
-		setJoinNormalDefaultDisplay(false);
-		setJoinNormalWaitingDisplay(true);
-		setJoinCustomDesactivateDisplay(true);
-		setJoinCustomDefaultDisplay(false);
-		setCreateCustomDesactivateDisplay(true);
-		setCreateCustomDefaultDisplay(false);
-		socket.emit("client.normalMatchmaking");
-	}
-	function createCustomDefaultOnClick() {
-		setJoinNormalDefaultDisplay(false);
-		setJoinCustomDefaultDisplay(false);
-		setCreateCustomDefaultDisplay(false);
-		setCreateCustomDisplay(true);
-	}
-	function joinCustomDefaultOnClick() {
-		setJoinNormalDefaultDisplay(false);
-		setJoinCustomDefaultDisplay(false);
-		setCreateCustomDefaultDisplay(false);
-		setDisplayMainMenu(false);
-		setJoinCustomDisplay(true);
-		socket.emit("client.inJoinTab");
-	}
-	function joinNormalWaitingOnClick() {
-		setJoinNormalWaitingDisplay(false);
-		setJoinNormalDefaultDisplay(true);
-		setJoinCustomDesactivateDisplay(false);
-		setJoinCustomDefaultDisplay(true);
-		setCreateCustomDesactivateDisplay(false);
-		setCreateCustomDefaultDisplay(true);
-		socket.emit("client.joinNormalAbort");
-	}
-	function createCustomWaitingOnClick() {
-		setJoinNormalDesactivateDisplay(false);
-		setJoinNormalDefaultDisplay(true);
-		setJoinCustomDesactivateDisplay(false);
-		setJoinCustomDefaultDisplay(true);
-		setCreateCustomWaitingDisplay(false);
-		setCreateCustomDefaultDisplay(true);
-		socket.emit("client.createCustomAbort");
-	}
-	function joinCustomWaitingOnClick() {
-		setJoinNormalDesactivateDisplay(false);
-		setJoinNormalDefaultDisplay(true);
-		setJoinCustomWaitingDisplay(false);
-		setJoinCustomDefaultDisplay(true);
-		setCreateCustomDesactivateDisplay(false);
-		setCreateCustomDefaultDisplay(true);
-		socket.emit("client.joinCustomAbort");
-	}
-	function returnToMenu() {
-		setJoinNormalDefaultDisplay(true);
-		setJoinCustomDefaultDisplay(true);
-		setCreateCustomDefaultDisplay(true);
-		setCreateCustomDisplay(false);
-	}
-	function joinNormalDesactivateOnClick() {}
-	function createCustomDesactivateOnClick() {}
-	function joinCustomDesactivateOnClick() {}
+  function joinNormalDefaultOnClick() {
+    setJoinNormalDefaultDisplay(false);
+    setJoinNormalWaitingDisplay(true);
+    setJoinCustomDesactivateDisplay(true);
+    setJoinCustomDefaultDisplay(false);
+    setCreateCustomDesactivateDisplay(true);
+    setCreateCustomDefaultDisplay(false);
+    socket.emit("client.normalMatchmaking");
+  }
+  function createCustomDefaultOnClick() {
+    setJoinNormalDefaultDisplay(false);
+    setJoinCustomDefaultDisplay(false);
+    setCreateCustomDefaultDisplay(false);
+    setCreateCustomDisplay(true);
+  }
+  function joinCustomDefaultOnClick() {
+    setJoinNormalDefaultDisplay(false);
+    setJoinCustomDefaultDisplay(false);
+    setCreateCustomDefaultDisplay(false);
+    setDisplayMainMenu(false);
+    setJoinCustomDisplay(true);
+    socket.emit("client.inJoinTab");
+  }
+  function joinNormalWaitingOnClick() {
+    setJoinNormalWaitingDisplay(false);
+    setJoinNormalDefaultDisplay(true);
+    setJoinCustomDesactivateDisplay(false);
+    setJoinCustomDefaultDisplay(true);
+    setCreateCustomDesactivateDisplay(false);
+    setCreateCustomDefaultDisplay(true);
+    socket.emit("client.joinNormalAbort");
+  }
+  function createCustomWaitingOnClick() {
+    setJoinNormalDesactivateDisplay(false);
+    setJoinNormalDefaultDisplay(true);
+    setJoinCustomDesactivateDisplay(false);
+    setJoinCustomDefaultDisplay(true);
+    setCreateCustomWaitingDisplay(false);
+    setCreateCustomDefaultDisplay(true);
+    socket.emit("client.createCustomAbort");
+  }
+  function joinCustomWaitingOnClick() {
+    setJoinNormalDesactivateDisplay(false);
+    setJoinNormalDefaultDisplay(true);
+    setJoinCustomWaitingDisplay(false);
+    setJoinCustomDefaultDisplay(true);
+    setCreateCustomDesactivateDisplay(false);
+    setCreateCustomDefaultDisplay(true);
+    socket.emit("client.joinCustomAbort");
+  }
+  function returnToMenu() {
+    setJoinNormalDefaultDisplay(true);
+    setJoinCustomDefaultDisplay(true);
+    setCreateCustomDefaultDisplay(true);
+    setCreateCustomDisplay(false);
+  }
+  function joinNormalDesactivateOnClick() {}
+  function createCustomDesactivateOnClick() {}
+  function joinCustomDesactivateOnClick() {}
 
   const mainMenu = (
     <div className="game-menu">
@@ -284,15 +289,17 @@ export default function MainGameMenu(props: mainGameMenuProps) {
       {displayMainMenu === true && mainMenu}
       {createCustomDisplay === true && (
         <CreateCustom
-					onCreateLobby={onCreateLobby}
-					returnToMenu={returnToMenu}
-				/>
+          onCreateLobby={onCreateLobby}
+          returnToMenu={returnToMenu}
+        />
       )}
       {joinCustomDisplay === true && <JoinCustom onJoinCustom={onJoinLobby} />}
       {pongDisplay === true && <Pong gameInfo={gameInfo} />}
       {loseDisplay === true && <GameEnd isVictorious={false}></GameEnd>}
       {winDisplay === true && <GameEnd isVictorious={true}></GameEnd>}
-      {privateWaitingDisplay === true && <PrivateWaiting onPrivateAbort={onPrivateAbort}/>}
+      {privateWaitingDisplay === true && (
+        <PrivateWaiting onPrivateAbort={onPrivateAbort} />
+      )}
     </>
   );
 }

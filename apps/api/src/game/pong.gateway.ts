@@ -158,16 +158,26 @@ export class PongGateway {
     }
   }
 
-  @SubscribeMessage('client.privateMatchmaking')
+  @SubscribeMessage('client.createPrivate')
   handlePrivateMatchmaking(client: Socket, id: number) {
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.privateLobbyManager.addToPrivateQueue(
+      this.privateLobbyManager.createPrivate(
         this.connectedClient[index],
         id,
       );
+    }
+  }
+
+  @SubscribeMessage('client.joinPrivate')
+  handleJoinMatchmaking(client: Socket, id: number) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      this.privateLobbyManager.joinPrivate(this.connectedClient[index]);
     }
   }
 

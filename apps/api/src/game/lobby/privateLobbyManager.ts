@@ -6,26 +6,29 @@ export class privateLobbyManager {
   private privateLobbies: lobby[] = [];
   private privateQueue: clientInfo[] = [];
 
-  public addToPrivateQueue(client: clientInfo, id: number) {
-    console.log('SIZE: ', this.privateLobbies.length);
-    client.status = 'waiting join private';
-    client.mode = 'private';
+  public joinPrivate(client: clientInfo) {
     const index = this.privateLobbies.findIndex((value) => {
-      return value.getPlayer()[0].user.id === id;
+      return value.getMatchInfo().id === client.user.id;
     });
     if (index !== -1) {
+      client.mode = 'private';
       this.privateLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.lobby = this.privateLobbies[index];
       this.privateLobbies[index].addClient(client);
       this.privateLobbies[index].start();
       this.privateLobbies.splice(index, 1);
-    } else {
-      const newLobby = new lobby('private', {...normalGameInfo, userId: id});
-      client.lobby = newLobby;
-      newLobby.addClient(client);
-      this.privateLobbies.push(newLobby);
     }
+  }
+
+  public createPrivate(client: clientInfo, id: number) {
+    console.log('SIZE: ', this.privateLobbies.length);
+    client.status = 'waiting join private';
+    client.mode = 'private';
+    const newLobby = new lobby('private', {...normalGameInfo, userId: id});
+    client.lobby = newLobby;
+    newLobby.addClient(client);
+    this.privateLobbies.push(newLobby);
   }
 
   public removeToPrivateQueue(client: clientInfo, playerInvited: clientInfo | null) {
