@@ -15,8 +15,10 @@ import { privateLobbyManager } from './lobby/privateLobbyManager';
 export class PongGateway {
   private connectedClient: clientInfo[] = [];
   private readonly lobbyManager: lobbyManager = new lobbyManager();
-  private readonly normalLobbyManager: normalLobbyManager = new normalLobbyManager();
-  private readonly privateLobbyManager: privateLobbyManager = new privateLobbyManager();
+  private readonly normalLobbyManager: normalLobbyManager =
+    new normalLobbyManager();
+  private readonly privateLobbyManager: privateLobbyManager =
+    new privateLobbyManager();
 
   constructor(
     private readonly authService: AuthService,
@@ -60,8 +62,7 @@ export class PongGateway {
         this.normalLobbyManager.removeToNormalQueue(polo);
       if (polo.status === 'waiting create custom')
         this.lobbyManager.removeToCustomQueue(polo);
-      if (polo.status === 'inJoinTab')
-        this.lobbyManager.removeInJoinTab(polo);
+      if (polo.status === 'inJoinTab') this.lobbyManager.removeInJoinTab(polo);
       this.connectedClient[index].status = 'connected';
     }
     this.lobbyManager.cleanLobbies();
@@ -78,8 +79,7 @@ export class PongGateway {
       }
       if (polo.status === 'waiting join normal')
         this.normalLobbyManager.removeToNormalQueue(polo);
-      if (polo.status === 'inJoinTab')
-        this.lobbyManager.removeInJoinTab(polo);
+      if (polo.status === 'inJoinTab') this.lobbyManager.removeInJoinTab(polo);
       if (polo.status === 'waiting create custom')
         this.lobbyManager.removeToCustomQueue(polo);
       this.connectedClient.splice(index, 1);
@@ -167,7 +167,27 @@ export class PongGateway {
       return value.socket === client;
     });
     if (index !== -1) {
-      this.privateLobbyManager.addToPrivateQueue(this.connectedClient[index], id);
+      this.privateLobbyManager.addToPrivateQueue(
+        this.connectedClient[index],
+        id,
+      );
+    }
+  }
+
+  @SubscribeMessage('client.invitationDecline')
+  async handleInvitationDecline(client: Socket, id: number) {
+    const index = this.connectedClient.findIndex((value) => {
+      return value.socket === client;
+    });
+    if (index !== -1) {
+      try {
+        this.privateLobbyManager.cancelPrivateInvitation(
+          this.connectedClient[index],
+          id,
+        );
+      } catch (error) {
+        console.error(error);
+      }
     }
   }
 

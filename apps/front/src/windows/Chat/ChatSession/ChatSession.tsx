@@ -10,7 +10,8 @@ import { ChatType } from "../Chat";
 import Message from "../../../shared/ui-components/Message/Message";
 import { ChangeEvent, useEffect, useRef, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
-import { formatTime, formatDate } from "../../../shared/utils/DateUtils";
+import Countdown from "react-countdown";
+import JSConfetti from "js-confetti";
 import { socket } from "../../../socket";
 
 interface ChatSessionProps {
@@ -42,6 +43,8 @@ type MutedData = {
 
 function ChatSession({ channelId }: ChatSessionProps) {
 	const queryClient = useQueryClient();
+
+	const jsConfetti = new JSConfetti();
 
 	const [receivedInvitation, setReceivedInvitation] = useState<{
 		username: string;
@@ -144,13 +147,12 @@ function ChatSession({ channelId }: ChatSessionProps) {
 				},
 			});
 
-			eventSource.onmessage = ({ data }) => {
-				if (data.user_id !== selfId)
-					updateReadUntil().then(() => {
-						queryClient.invalidateQueries({
-							queryKey: ["messages", channelId],
-						});
+			eventSource.onmessage = () => {
+				updateReadUntil().then(() => {
+					queryClient.invalidateQueries({
+						queryKey: ["messages", channelId],
 					});
+				});
 			};
 
 			eventSource.onerror = (error) => {
@@ -267,7 +269,7 @@ function ChatSession({ channelId }: ChatSessionProps) {
 	};
 
 	const handleRejectGameRequest = async () => {
-		socket.emit("client.cancelPrivateGame", receivedInvitation.id);
+		socket.emit("client.invitationDecline", receivedInvitation.id);
 		deleteGameInvitation();
 	};
 
@@ -306,6 +308,13 @@ function ChatSession({ channelId }: ChatSessionProps) {
 				</div>
 			);
 		else return null;
+	};
+
+	const handleEndCountdown = () => {
+		queryClient.invalidateQueries({
+			queryKey: ["userChannel", channelId],
+		});
+		jsConfetti.addConfetti();
 	};
 
 	return (
@@ -352,15 +361,13 @@ function ChatSession({ channelId }: ChatSessionProps) {
 			<div className="footerChatSession">
 				{userChannel?.isMuted ? (
 					<>
-						<textarea
-							className="typeBarChatSession custom-scrollbar white-list"
-							placeholder={`You are muted until ${formatDate(
-								new Date(userChannel?.mutedUntil)
-							)} ${formatTime(
-								new Date(userChannel?.mutedUntil)
-							)}`}
-							disabled
-						></textarea>
+						<div className="typeBarChatSession">
+							Mute expires in:{" "}
+							<Countdown
+								date={userChannel.mutedUntil}
+								onComplete={handleEndCountdown}
+							/>
+						</div>
 						<Button
 							className="btn-disabled"
 							color="purple"

@@ -2,7 +2,7 @@ import "./Background.css";
 import { useSelector } from "react-redux";
 import { AppState, delWindow } from "../../reducers";
 import Window from "../../shared/ui-components/Window/Window";
-import Chat from "../../windows/Chat/Chat";
+import Chat, { ChatType } from "../../windows/Chat/Chat";
 import Ladder from "../../windows/Ladder/Ladder";
 import Profile from "../../windows/Profile/Profile";
 import FindChan from "../../windows/Chat/FindChan/FindChan";
@@ -32,14 +32,26 @@ import JoinCustom from "../../windows/Play/JoinGame/JoinCustom";
 import MainGameMenu from "../../windows/Play/MainGameMenu/mainGameMenu";
 import Preview from "../../windows/Play/Preview/Preview";
 
-enum FriendshipEventType {
-	FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
-	FRIENDSHIPREMOVED = "FRIENDSHIPREMOVED",
-	FRIENDREQUESTREVOKED = "FRIENDREQUESTREVOKED",
-	FRIENDREQUESTACCEPTED = "FRIENDREQUESTACCEPTED",
-	USERBLOCKED = "USERBLOCKED",
-	USERUNBLOCKED = "USERUNBLOCKED",
-	NOEVENT = "NOEVENT",
+enum UserEventType {
+  NOEVENT = "NOEVENT",
+  FRIENDREQUESTRECEIVED = "FRIENDREQUESTRECEIVED",
+  FRIENDSHIPREMOVED = "FRIENDSHIPREMOVED",
+  FRIENDREQUESTREVOKED = "FRIENDREQUESTREVOKED",
+  FRIENDREQUESTACCEPTED = "FRIENDREQUESTACCEPTED",
+  USERBLOCKED = "USERBLOCKED",
+  USERUNBLOCKED = "USERUNBLOCKED",
+  ADDEDTOCHAN = "ADDEDTOCHAN",
+  DEPARTUREFROMCHAN = "DEPARTUREFROMCHAN",
+  KICKFROMCHAN = "KICKFROMCHAN",
+  BANFROMCHAN = "BANFROMCHAN",
+  UNBANFROMCHAN = "UNBANFROMCHAN",
+  MUTEINCHAN = "MUTEINCHAN",
+  UNMUTEINCHAN = "UNMUTEINCHAN",
+  CHANDELETION = "CHANDELETION",
+  USERDELETED = "USERDELETED",
+  OWNERMADE = "OWNERMADE",
+  ADMINMADE = "ADMINMADE",
+  DEMOTEADMIN = "DEMOTEADMIN",
 }
 
 export default function Background() {
@@ -81,37 +93,46 @@ export default function Background() {
 	JOINCUSTOM: { width: "900px", height: "900px" },
   };
 
-	const [currentTargetId, setCurrentTargetId] = useState(null);
+  const [currentTargetUserId, setCurrentTargetUserId] = useState(null);
 
-	const { data: commonChannels } = useQuery<{ id: number }[]>({
-		queryKey: ["commonChannels", currentTargetId],
-		queryFn: () => {
-			return api
-				.get("/channels/common/" + currentTargetId)
-				.then((response) => response.data);
-		},
-		enabled: !!currentTargetId,
-	});
+  const [currentTargetChannelId, setCurrentTargetChannelId] = useState(null);
 
-	const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
-		queryKey: ["currUserOnlyChannels", currentTargetId],
-		queryFn: () => {
-			return api
-				.get("/channels/excluded/" + currentTargetId)
-				.then((response) => response.data);
-		},
-		enabled: !!currentTargetId,
-	});
+  const { data: commonChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["commonChannels", currentTargetUserId],
+    queryFn: () => {
+      return api
+        .get("/channels/common/" + currentTargetUserId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetUserId,
+  });
 
-	const { data: targetUser } = useQuery<{ id: number; username: string }>({
-		queryKey: ["username", currentTargetId],
-		queryFn: () => {
-			return api
-				.get("/user/" + currentTargetId)
-				.then((response) => response.data);
-		},
-		enabled: !!currentTargetId,
-	});
+  const { data: currUserOnlyChannels } = useQuery<{ id: number }[]>({
+    queryKey: ["currUserOnlyChannels", currentTargetUserId],
+    queryFn: () => {
+      return api
+        .get("/channels/excluded/" + currentTargetUserId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetUserId,
+  });
+
+  const { data: targetUser } = useQuery<{ id: number; username: string }>({
+    queryKey: ["username", currentTargetUserId],
+    queryFn: () => {
+      return api
+        .get("/user/" + currentTargetUserId)
+        .then((response) => response.data);
+    },
+    enabled: !!currentTargetUserId,
+  });
+
+  const { data: userChannelNames } = useQuery<ChatType[]>({
+    queryKey: ["userChannelNames"],
+    queryFn: async () => {
+      return api.get("/chats").then((response) => response.data);
+    },
+  });
 
 	const invalidateMessagesQueries = () => {
 		commonChannels?.forEach((c) => {
@@ -129,195 +150,326 @@ export default function Background() {
 		});
 	};
 
-	const closeDMWindow = () => {
-		let windows = store.getState().windows;
-		console.log(targetUser);
-		windows = windows.filter(
-			(window) =>
-				window.WindowName === targetUser?.username &&
-				window.content.type === "CHATSESSION"
-		);
-		windows.forEach((window) => store.dispatch(delWindow(window.id)));
-	};
+  const closeDMWindow = () => {
+    let windows = store.getState().windows;
+    windows = windows.filter(
+      (window) =>
+        window.WindowName === targetUser?.username &&
+        window.content.type === "CHATSESSION"
+    );
+    windows.forEach((window) => store.dispatch(delWindow(window.id)));
+  };
 
-	const [friendshipEventType, setFriendshipEventType] = useState(
-		FriendshipEventType.NOEVENT
-	);
+  useEffect(() => {
+    let windows = store.getState().windows;
+    windows = windows.filter(
+      (window) =>
+        (!userChannelNames?.some((el) => el.name === window.WindowName) &&
+          window.content.type === "CHATSESSION") ||
+        (!userChannelNames?.some(
+          (el) => "About" + el.name === window.WindowName
+        ) &&
+          window.content.type === "ABOUTCHAN")
+    );
+    windows.forEach((window) => store.dispatch(delWindow(window.id)));
+  }, [userChannelNames]);
 
-	useEffect(() => {
-		switch (friendshipEventType) {
-			case FriendshipEventType.FRIENDREQUESTRECEIVED:
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests", "Profile"],
-				});
-				break;
-			case FriendshipEventType.FRIENDSHIPREMOVED:
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				break;
-			case FriendshipEventType.FRIENDREQUESTREVOKED:
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests", "Profile"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				break;
-			case FriendshipEventType.FRIENDREQUESTACCEPTED:
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests", "Profile"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				break;
-			case FriendshipEventType.USERUNBLOCKED:
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				invalidateMessagesQueries();
-				queryClient.invalidateQueries({
-					queryKey: ["chats"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				invalidateAddChannelQueries();
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				break;
-			case FriendshipEventType.USERBLOCKED:
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["pendingRequests", "Profile"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["addFriendsList"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendsList"],
-				});
-				invalidateAddChannelQueries();
-				queryClient.invalidateQueries({
-					queryKey: ["user", currentTargetId],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["friendship", currentTargetId],
-				});
-				invalidateMessagesQueries();
-				queryClient.invalidateQueries({
-					queryKey: ["chats"],
-				});
-				queryClient.invalidateQueries({
-					queryKey: ["profile", currentTargetId],
-				});
-				closeDMWindow();
-				break;
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [friendshipEventType]);
+  const [userEventType, setUserEventType] = useState({
+    type: UserEventType.NOEVENT,
+  });
 
-	useEffect(() => {
-		if (localStorage.getItem("token")) {
-			const eventSource = new EventSourcePolyfill(
-				"api/stream/friendshipevents",
-				{
-					headers: {
-						Authorization: `Bearer ${localStorage.getItem(
-							"token"
-						)}`,
-					},
-				}
-			);
+  useEffect(() => {
+    console.log("switch case", userEventType);
+    switch (userEventType.type) {
+      case UserEventType.FRIENDREQUESTRECEIVED:
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        break;
+      case UserEventType.FRIENDSHIPREMOVED:
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        break;
+      case UserEventType.FRIENDREQUESTREVOKED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        break;
+      case UserEventType.FRIENDREQUESTACCEPTED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        break;
+      case UserEventType.USERUNBLOCKED:
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        invalidateMessagesQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        invalidateAddChannelQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        break;
+      case UserEventType.USERBLOCKED:
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["pendingRequests", "Profile"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["addFriendsList"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendsList"],
+        });
+        invalidateAddChannelQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["user", currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["friendship", currentTargetUserId],
+        });
+        invalidateMessagesQueries();
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["profile", currentTargetUserId],
+        });
+        closeDMWindow();
+        break;
+      case UserEventType.ADDEDTOCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.KICKFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.BANFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["banList", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["channels"],
+        });
+        break;
+      case UserEventType.UNBANFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["channels"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["banList", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.MUTEINCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["userChannel", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.UNMUTEINCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["userChannel", currentTargetChannelId],
+        });
+        break;
+      case UserEventType.DEPARTUREFROMCHAN:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        invalidateMessagesQueries();
+        break;
+      case UserEventType.CHANDELETION:
+        queryClient.invalidateQueries({
+          queryKey: ["chats"],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["userChannelNames"],
+        });
+        break;
+      case UserEventType.USERDELETED:
+        queryClient.invalidateQueries();
+        break;
+      case UserEventType.ADMINMADE:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetUserId, currentTargetChannelId],
+        });
+        break;
+      case UserEventType.DEMOTEADMIN:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetUserId, currentTargetChannelId],
+        });
+        break;
+      case UserEventType.OWNERMADE:
+        queryClient.invalidateQueries({
+          queryKey: ["chanAbout", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId, currentTargetUserId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["self", currentTargetChannelId],
+        });
+        queryClient.invalidateQueries({
+          queryKey: ["memberSettings", currentTargetChannelId],
+        });
+        break;
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [userEventType]);
 
-			eventSource.onmessage = ({ data }) => {
-				const parsedData = JSON.parse(data);
-				const type = parsedData.type;
-				const targetId = parsedData.targetId;
-				setCurrentTargetId(targetId);
-				setFriendshipEventType(type);
-			};
+  useEffect(() => {
+    if (localStorage.getItem("token")) {
+      const eventSource = new EventSourcePolyfill(
+        "api/user/stream/userevents",
+        {
+          headers: {
+            Authorization: `Bearer ${localStorage.getItem("token")}`,
+          },
+        }
+      );
+
+      eventSource.onmessage = ({ data }) => {
+        const parsedData = JSON.parse(data);
+        console.log(parsedData);
+        const type = parsedData.type;
+        const targetUserId = parsedData.userId;
+        const targetChannelId = parsedData.channelId;
+        setCurrentTargetUserId(targetUserId);
+        setCurrentTargetChannelId(targetChannelId);
+        setUserEventType({ type });
+      };
 
 			eventSource.onerror = (error) => {
 				console.error("EventSource failed:", error);
 			};
 
-			return () => {
-				eventSource.close();
-			};
-		}
-		// eslint-disable-next-line react-hooks/exhaustive-deps
-	}, [queryClient, setCurrentTargetId]);
+      return () => {
+        eventSource.close();
+      };
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [queryClient, setCurrentTargetUserId, setCurrentTargetChannelId]);
 
 	return (
 		<div id="Background">
