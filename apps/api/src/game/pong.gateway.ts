@@ -26,11 +26,9 @@ export class PongGateway {
   ) {}
 
   afterInit() {
-    console.log('gateway initialised');
   }
 
   async handleConnection(client: any) {
-    console.log('trying to connect socket...');
     try {
       const payload = await this.authService.checkTokenValidity(
         client.handshake.auth.token,
@@ -160,27 +158,21 @@ export class PongGateway {
 
   @SubscribeMessage('client.createPrivate')
   handlePrivateMatchmaking(client: Socket, id: number) {
-      console.log('test 1');
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      console.log('test 2');
       this.privateLobbyManager.createPrivate( this.connectedClient[index], id);
-      console.log('test 5');
     }
   }
 
   @SubscribeMessage('client.joinPrivate')
   handleJoinMatchmaking(client: Socket, id: number) {
-      console.log('test 6');
     const index = this.connectedClient.findIndex((value) => {
       return value.socket === client;
     });
     if (index !== -1) {
-      console.log('test 7');
       this.privateLobbyManager.joinPrivate(this.connectedClient[index]);
-      console.log('test 12');
     }
   }
 

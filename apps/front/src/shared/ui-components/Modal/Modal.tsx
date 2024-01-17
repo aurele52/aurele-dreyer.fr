@@ -212,7 +212,6 @@ function Modal({
 
 	const { mutateAsync: demoteAdmin } = useMutation({
 		mutationFn: async () => {
-			console.log("DemoteAdmin : ", targetId);
 			return api.patch("/user-channel/moderate/admin", {
 				data: { targetId, channelId },
 			});
