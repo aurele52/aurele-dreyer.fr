@@ -495,6 +495,10 @@ function onSizeChange(p:p5) {
 		function onUpdate(gameUpdate: sendInfo) {
 			const xratio = defaultGameInfo.xsize / gameInfo.xsize;
 			const yratio = defaultGameInfo.ysize / gameInfo.ysize;
+			gameInfo.gamex = defaultGameInfo.gamex / xratio;
+			gameInfo.gamey = defaultGameInfo.gamey / yratio;
+			gameInfo.gamexsize = defaultGameInfo.gamexsize / xratio;
+			gameInfo.gameysize = defaultGameInfo.gameysize / yratio;
 			gameInfo.barSize = gameUpdate.barSize / yratio;
 			gameInfo.barDist = gameUpdate.barDist / xratio;
 			gameInfo.barLarge = gameUpdate.barLarge / xratio;

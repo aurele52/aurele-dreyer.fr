@@ -41,4 +41,5 @@ import { gameInfo } from "./gameInfo.interface";
     numberTopDist: 10,
     upBallSize: false,
     downBallSize: false,
+    id: 10,
   };
