@@ -37,11 +37,6 @@
 
 .play-button-default:hover {
 	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
-	border-color: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));
-}
-
-.play-button-ingame {
-	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
 }
 
 .play-button-waiting {
@@ -70,20 +65,8 @@
 	background: var(--grey-gradient2, linear-gradient(120deg, #A0A5BA 24.38%, #C4C7D7 34.76%, #DCDDEA 48.17%, #BDC0D1 62.01%, #A7ADBF 70.23%, #9FA5BA 75.42%, #ADB2C4 81.9%, #DCDDEA 96.61%));
 }
 
-.join-button-ingame{
-	background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
-}
-
-.join-button-ingame{
-	background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
-}
-
 .join-button-waiting {
 	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
-}
-
-.join-button-intab {
-	background: var(--custom, linear-gradient(114deg, #FF67BD 4.22%, #BBA0E9 27.61%, #3071D2 48.14%, #09E1C7 72.1%, #FFFC9B 89.78%));
 }
 
 /* CUSTOM */
@@ -102,14 +85,6 @@
 	background: var(--grey-gradient2, linear-gradient(120deg, #A0A5BA 24.38%, #C4C7D7 34.76%, #DCDDEA 48.17%, #BDC0D1 62.01%, #A7ADBF 70.23%, #9FA5BA 75.42%, #ADB2C4 81.9%, #DCDDEA 96.61%));
 }
 
-.custom-button-ingame {
-	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
-}
-
 .custom-button-waiting {
-	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
-}
-
-.custom-buttn-intab{
 	background: var(--custom-reverse, linear-gradient(114deg, #FFFC9B 9.88%, #09E1C7 33.26%, #3071D2 52.09%, #BBA0E9 72.62%, #FF67BD 93.15%));
 }

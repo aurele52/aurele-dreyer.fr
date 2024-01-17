@@ -73,10 +73,6 @@ export default function Navbar() {
 		router.load();
 	};
 
-  const handleLogOut = () => {
-    localStorage.removeItem("token");
-    router.load();
-  };
 
   return (
     <div id="Navbar">
