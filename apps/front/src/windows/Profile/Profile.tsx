@@ -10,8 +10,8 @@ import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
 import { useState } from "react";
 import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
-import { AxiosError } from "axios";
 import MatchRecap from "../../shared/ui-components/MatchRecap/MatchRecap";
+import { playerGameEndInfo } from "shared/src/gameEndInfo.interface";
 
 interface ProfileProps {
   targetId?: number;
@@ -73,18 +73,8 @@ export function Profile({ targetId, winId }: ProfileProps) {
   const { data: historic, isLoading: historicLoading } = useQuery<{
     matchHistory: {
       id: number;
-      player1: {
-        id: number;
-        username: string;
-        avatar: string;
-        score: number;
-      };
-      player2: {
-        id: number;
-        username: string;
-        avatar: string;
-        score: number;
-      };
+      player1: playerGameEndInfo;
+      player2: playerGameEndInfo;
     }[];
     length: number;
   }>({
@@ -599,7 +589,8 @@ export function Profile({ targetId, winId }: ProfileProps) {
             {historic?.matchHistory.map((match) => {
               return (
                 <MatchRecap
-                  id={match.id}
+                  key={match.id}
+                  bgColor={false}
                   player1={match.player1}
                   player2={match.player2}
                 ></MatchRecap>

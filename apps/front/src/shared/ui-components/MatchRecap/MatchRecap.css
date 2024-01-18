@@ -1,116 +1,134 @@
 .match-recap {
-	display: flex;
-	min-width: 260px;
-	padding: 10px;
-	align-items: center;
-	gap: 10px;
-	align-self: stretch;
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 1px solid var(--Base-Black, #000);
-	background: var(--Purple-100, #f5f1fc);
+  display: flex;
+  min-width: 260px;
+  padding: 10px;
+  align-items: center;
+  gap: 10px;
+  align-self: stretch;
+  border-radius: var(--radius-radius-rounded, 8px);
+}
+
+.bg-match-default {
+  border: 1px solid var(--Base-Black, #000);
+  background: var(--Purple-100, #f5f1fc);
+}
+
+.bg-match-pink {
+  border-top: 3px solid var(--colors-red-red-100, #f06e8d);
+  border-right: 2px solid var(--colors-red-red-100, #f06e8d);
+  border-bottom: 1px solid var(--colors-red-red-100, #f06e8d);
+  border-left: 2px solid var(--colors-red-red-100, #f06e8d);
+  background: var(--colors-pink-pink-300, #f3acd4);
+}
+
+.bg-match-green {
+  border-top: 3px solid var(--colors-turquoise-turquoise-400, #0ba);
+  border-right: 2px solid var(--colors-turquoise-turquoise-400, #0ba);
+  border-bottom: 1px solid var(--colors-turquoise-turquoise-400, #0ba);
+  border-left: 2px solid var(--colors-turquoise-turquoise-400, #0ba);
+  background: #6ce1d4;
 }
 
 .match-recap > .winner-bg {
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 1px solid var(--Base-Black, #000);
-	background: var(
-		--Turquoise-Gradient-200,
-		linear-gradient(180deg, #9be9e0 66.15%, #61cec5 86.98%)
-	);
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 1px solid var(--Base-Black, #000);
+  background: var(
+    --Turquoise-Gradient-200,
+    linear-gradient(180deg, #9be9e0 66.15%, #61cec5 86.98%)
+  );
 }
 
 .match-recap > .loser-bg {
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 1px solid var(--Base-Black, #000);
-	background: var(
-		--Pink-Gradient-200,
-		linear-gradient(180deg, #ffcbe7 75.69%, #faaad7 91.84%)
-	);
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 1px solid var(--Base-Black, #000);
+  background: var(
+    --Pink-Gradient-200,
+    linear-gradient(180deg, #ffcbe7 75.69%, #faaad7 91.84%)
+  );
 }
 
 .match-recap > .winner-bg:hover {
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 1px solid var(--Base-Black, #000);
-	background: #9be9e0;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 1px solid var(--Base-Black, #000);
+  background: #9be9e0;
 }
 
 .match-recap > .loser-bg:hover {
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 1px solid var(--Base-Black, #000);
-	background: #ffcbe7;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 1px solid var(--Base-Black, #000);
+  background: #ffcbe7;
 }
 
 .match-recap > .player {
-	display: flex;
-	min-width: 80px;
-	min-height: 93px;
-	align-items: center;
-	flex: 1 0 0;
+  display: flex;
+  min-width: 80px;
+  min-height: 93px;
+  align-items: center;
+  flex: 1 0 0;
 }
 
 .match-recap > .player > div {
-	display: flex;
-	min-width: 68px;
-	min-height: 83px;
-	padding: 5px;
-	flex-direction: column;
-	justify-content: center;
-	align-items: center;
-	align-content: space-between;
-	flex: 1 0 0;
-	border-radius: var(--radius-radius-rounded, 8px);
-	border-top: 2px solid var(--Base-White, #fff);
-	border-right: 1px solid var(--Base-White, #fff);
-	border-left: 1px solid var(--Base-White, #fff);
+  display: flex;
+  min-width: 68px;
+  min-height: 83px;
+  padding: 5px;
+  flex-direction: column;
+  justify-content: center;
+  align-items: center;
+  align-content: space-between;
+  flex: 1 0 0;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border-top: 2px solid var(--Base-White, #fff);
+  border-right: 1px solid var(--Base-White, #fff);
+  border-left: 1px solid var(--Base-White, #fff);
 }
 
 .match-recap > .player > div > .Outline {
-	display: flex;
-	padding: 5px;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  padding: 5px;
+  justify-content: center;
+  align-items: center;
 }
 
 .match-recap > .player > div > .Outline > .Avatar {
-	display: flex;
-	padding: 5px;
-	flex-direction: column;
-	align-items: flex-start;
+  display: flex;
+  padding: 5px;
+  flex-direction: column;
+  align-items: flex-start;
 }
 
 .match-recap > .player > div > .Outline > .Avatar > .Picture {
-	width: 48px;
-	height: 48px;
-	border-radius: var(--radius-radius-rounded, 8px);
-	border: 5px solid var(--colors-grey-white, #fff);
-	background: var(--colors-grey-grey-400, #888);
+  width: 48px;
+  height: 48px;
+  border-radius: var(--radius-radius-rounded, 8px);
+  border: 5px solid var(--colors-grey-white, #fff);
+  background: var(--colors-grey-grey-400, #888);
 }
 
 .match-recap > .player > div > .Username {
-	display: flex;
-	padding: 0px 1px;
-	justify-content: center;
-	align-items: center;
-	gap: 5px;
-	align-self: stretch;
+  display: flex;
+  padding: 0px 1px;
+  justify-content: center;
+  align-items: center;
+  gap: 5px;
+  align-self: stretch;
 }
 
 .match-recap > .score {
-	display: flex;
-	min-width: 60px;
-	justify-content: center;
-	align-items: center;
+  display: flex;
+  min-width: 60px;
+  justify-content: center;
+  align-items: center;
 }
 
 .match-recap > .score > div {
-	flex: 1 0 0;
-	color: var(--Base-White, #fff);
-	text-align: center;
-
-	/* Heading/600 */
-	font-size: 24px;
-	font-style: normal;
-	font-weight: 700;
-	line-height: 24px; /* 100% */
-	-webkit-text-stroke: 1px #000;
+  flex: 1 0 0;
+  color: var(--Base-White, #fff);
+  text-align: center;
+  /* Heading/600 */
+  font-size: 24px;
+  font-style: normal;
+  font-weight: 700;
+  line-height: 24px; /* 100% */
+  -webkit-text-stroke: 1px #000;
 }

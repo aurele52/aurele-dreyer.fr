@@ -2,6 +2,7 @@ import { v4 as uuidv4 } from 'uuid';
 import { LobbyCustom } from '../types';
 import { PrismaService } from 'src/prisma.service';
 import { gameInfo } from '../dto-interface/shared/gameInfo.interface';
+import { gameEndInfo } from '../dto-interface/shared/gameEndInfo.interface';
 import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 import { clientInfo } from '../dto-interface/clientInfo.interface';
 import { AchievementsService } from 'src/achievements/achievements.service';
@@ -39,22 +40,29 @@ export class lobby {
 
   async endGame(winner: clientInfo, loser: clientInfo) {
     try {
-      if (winner.socket.connected) winner.socket.emit('server.endMatch', {haveWin: 1, winner: winner.user.username});
-      if (loser.socket.connected) loser.socket.emit('server.endMatch', {haveWin: 0});
+      const gameEndInfo: gameEndInfo = {
+        player1: {
+          ...this.clients[0].user,
+          score: this.gameInfo.oneScore,
+          isWinner: this.clients[0].user === winner.user ? true : false,
+        },
+        player2: {
+          ...this.clients[1].user,
+          score: this.gameInfo.twoScore,
+          isWinner: this.clients[1].user === winner.user ? true : false,
+        },
+      };
 
-      const winnerUser = await this.prisma.user.findUnique({
-        where: { username: winner.user.username },
-      });
-
-      const loserUser = await this.prisma.user.findUnique({
-        where: { username: loser.user.username },
-      });
-
-      if (!winnerUser || !loserUser) {
-        console.error('User not found');
-        return;
+      if (winner.socket.connected) {
+        gameEndInfo.isVictorious = true;
+        winner.socket.emit('server.endMatch', gameEndInfo);
       }
-      if (winnerUser.id === loserUser.id) {
+      if (loser.socket.connected) {
+        gameEndInfo.isVictorious = false;
+        loser.socket.emit('server.endMatch', gameEndInfo);
+      }
+
+      if (winner.user.id === loser.user.id) {
         return;
       }
       const gameMode =
@@ -71,19 +79,19 @@ export class lobby {
             createMany: {
               data: [
                 {
-                  user_id: winnerUser.id,
+                  user_id: winner.user.id,
                   score:
-                    this.gameInfo.oneScore > this.gameInfo.twoScore
+                    this.clients[0].user === winner.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: true,
                 },
                 {
-                  user_id: loserUser.id,
+                  user_id: loser.user.id,
                   score:
-                    this.gameInfo.oneScore > this.gameInfo.twoScore
-                      ? this.gameInfo.twoScore
-                      : this.gameInfo.oneScore,
+                    this.clients[0].user === loser.user
+                      ? this.gameInfo.oneScore
+                      : this.gameInfo.twoScore,
                   winner: false,
                 },
               ],
@@ -91,8 +99,8 @@ export class lobby {
           },
         },
       });
-      this.achievements.updateAchievements(winnerUser.id);
-      this.achievements.updateAchievements(loserUser.id);
+      this.achievements.updateAchievements(winner.user.id);
+      this.achievements.updateAchievements(loser.user.id);
 
       return match;
     } catch (error) {
@@ -100,7 +108,6 @@ export class lobby {
       throw error;
     }
   }
-
 
   score() {
     if (
@@ -222,9 +229,8 @@ export class lobby {
   ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
-    if (this.isCustom == 'private')
-    {
-      this.defaultGameInfo = {...normalGameInfo, userId: matchInfo.userId};
+    if (this.isCustom == 'private') {
+      this.defaultGameInfo = { ...normalGameInfo, userId: matchInfo.userId };
     }
     if (this.isCustom == 'custom') {
       this.defaultGameInfo = matchInfo;
@@ -266,13 +272,13 @@ export class lobby {
       )
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
     if (this.gameInfo.oneBary + this.gameInfo.barSize > this.gameInfo.gameysize)
-      this.gameInfo.oneBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+      this.gameInfo.oneBary =
+        this.gameInfo.gameysize - this.gameInfo.barSize - 1;
     if (this.gameInfo.twoBary + this.gameInfo.barSize > this.gameInfo.gameysize)
-      this.gameInfo.twoBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
-    if (this.gameInfo.oneBary < 0)
-      this.gameInfo.oneBary = 1;
-    if (this.gameInfo.twoBary < 0)
-      this.gameInfo.twoBary = 1;
+      this.gameInfo.twoBary =
+        this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+    if (this.gameInfo.oneBary < 0) this.gameInfo.oneBary = 1;
+    if (this.gameInfo.twoBary < 0) this.gameInfo.twoBary = 1;
   }
   update() {
     this.move();

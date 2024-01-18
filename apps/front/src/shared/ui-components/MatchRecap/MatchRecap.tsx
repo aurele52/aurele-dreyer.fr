@@ -1,25 +1,21 @@
 import { addWindow } from "../../../reducers";
 import { WinColor } from "../../utils/WindowTypes";
 import store from "../../../store";
-import "./MatchRecap.css"
+import "./MatchRecap.css";
+import { gameEndInfo } from "shared/src/gameEndInfo.interface";
 
-interface MatchRecapProps {
-  id: number;
-  player1: {
-    id: number;
-    username: string;
-    avatar: string;
-    score: number;
-  };
-  player2: {
-    id: number;
-    username: string;
-    avatar: string;
-    score: number;
-  };
-}
+type MatchRecapProps = {
+  key?: number;
+  bgColor: boolean;
+} & gameEndInfo;
 
-function MatchRecap({ id, player1, player2 }: MatchRecapProps) {
+function MatchRecap({
+  key,
+  bgColor,
+  player1,
+  player2,
+  isVictorious,
+}: MatchRecapProps) {
   const handleOpenProfile = (id: number, username: string) => {
     const newWindow = {
       WindowName: username,
@@ -36,17 +32,22 @@ function MatchRecap({ id, player1, player2 }: MatchRecapProps) {
   };
 
   return (
-    <div className="match-recap" key={id}>
+    <div
+      className={`match-recap bg-match-${
+        bgColor ? (isVictorious ? "green" : "pink") : "default"
+      }`}
+      key={key}
+    >
       <div
-        className={`player ${
-          player1.score > player2.score ? "winner-bg" : "loser-bg"
-        }`}
+        className={`player ${player1.isWinner ? "winner-bg" : "loser-bg"}`}
+        onClick={() => handleOpenProfile(player1.id, player1.username)}
+        style={{ cursor: "pointer" }}
       >
         <div>
           <div className="Outline">
             <div className="Avatar">
               <img
-                src={player1.avatar}
+                src={player1.avatar_url}
                 className="Picture"
                 alt={player1.username}
               />
@@ -59,9 +60,7 @@ function MatchRecap({ id, player1, player2 }: MatchRecapProps) {
         <div>{player1.score + " - " + player2.score}</div>
       </div>
       <div
-        className={`player ${
-          player1.score < player2.score ? "winner-bg" : "loser-bg"
-        }`}
+        className={`player ${player2.isWinner ? "winner-bg" : "loser-bg"}`}
         onClick={() => handleOpenProfile(player2.id, player2.username)}
         style={{ cursor: "pointer" }}
       >
@@ -69,7 +68,7 @@ function MatchRecap({ id, player1, player2 }: MatchRecapProps) {
           <div className="Outline">
             <div className="Avatar">
               <img
-                src={player2.avatar}
+                src={player2.avatar_url}
                 className="Picture"
                 alt={player2.username}
               />

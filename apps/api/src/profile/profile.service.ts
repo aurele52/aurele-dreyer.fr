@@ -1,13 +1,10 @@
 import {
-  HttpStatus,
-  ImATeapotException,
   Injectable,
   NotFoundException,
 } from '@nestjs/common';
 import { PrismaService } from '../prisma.service';
 import { LadderService } from 'src/ladder/ladder.service';
 import { FriendshipService } from 'src/friendship/friendship.service';
-import { PrismaClientKnownRequestError } from '@prisma/client/runtime/library';
 
 @Injectable()
 export class ProfileService {
@@ -136,33 +133,21 @@ export class ProfileService {
     });
     const matchHistory = matches.map((matchPlayer) => {
       const match = matchPlayer.match;
-      const user1 =
-        match.players[0].user.id === id
-          ? match.players[0].user
-          : match.players[1].user;
-      const user2 =
-        match.players[0].user.id === id
-          ? match.players[1].user
-          : match.players[0].user;
 
-      const player1 = {
-        id: user1.id,
-        username: user1.username,
-        avatar: user1.avatar_url,
-        score:
-          match.players[0].user.id === id
-            ? match.players[0].score
-            : match.players[1].score,
+      let player1 = {
+        ...match.players[0].user,
+        score: match.players[0].score,
+        isWinner: match.players[0].winner,
       };
-      const player2 = {
-        id: user2.id,
-        username: user2.username,
-        avatar: user2.avatar_url,
-        score:
-          match.players[0].user.id === id
-            ? match.players[1].score
-            : match.players[0].score,
+      let player2 = {
+        ...match.players[1].user,
+        score: match.players[1].score,
+        isWinner: match.players[1].winner,
       };
+
+      if (match.players[0].user.id !== id) {
+        [player1, player2] = [player2, player1];
+      }
 
       return {
         id: match.id,
