@@ -114,18 +114,12 @@ export default function MainGameMenu(props: mainGameMenuProps) {
     else socket.emit("client.joinPrivate");
   }
   function onCancelInvite() {
-    setJoinNormalDesactivateDisplay(false);
-    setJoinCustomDesactivateDisplay(false);
-    setCreateCustomDesactivateDisplay(false);
-    setJoinNormalWaitingDisplay(false);
-    setJoinCustomWaitingDisplay(false);
-    setCreateCustomWaitingDisplay(false);
-    setPrivateWaitingDisplay(false);
-    setPongDisplay(false);
-    setDisplayMainMenu(true);
-    setJoinNormalDefaultDisplay(true);
-    setCreateCustomDefaultDisplay(true);
-    setJoinCustomDefaultDisplay(true);
+    const memberSettingsWindow = store
+      .getState()
+      .windows.find((window) => window.content.type === "PLAY");
+    if (memberSettingsWindow) {
+      store.dispatch(delWindow(memberSettingsWindow.id));
+    }
   }
   function onPrivateAbort() {
     socket.emit("client.privateAbort");

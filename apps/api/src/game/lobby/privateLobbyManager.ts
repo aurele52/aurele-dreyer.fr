@@ -4,9 +4,9 @@ import { normalGameInfo } from '../dto-interface/shared/normalGameInfo';
 
 export class privateLobbyManager {
   private privateLobbies: lobby[] = [];
-  private privateQueue: clientInfo[] = [];
 
   public joinPrivate(client: clientInfo) {
+    this.cleanLobbies();
     const index = this.privateLobbies.findIndex((value) => {
       return value.getMatchInfo().userId === client.user.id;
     });
@@ -22,42 +22,39 @@ export class privateLobbyManager {
       this.privateLobbies[index].start();
       this.privateLobbies.splice(index, 1);
     }
+    this.cleanLobbies();
   }
 
   public createPrivate(client: clientInfo, id: number) {
+    this.cleanLobbies();
     client.status = 'waiting join private';
     client.mode = 'private';
     const newLobby = new lobby('private', {...normalGameInfo, userId: id});
     client.lobby = newLobby;
     newLobby.addClient(client);
     this.privateLobbies.push(newLobby);
+    this.cleanLobbies();
   }
 
-  public removeToPrivateQueue(client: clientInfo, playerInvited: clientInfo | null) {
+  public privateAbort(client: clientInfo, playerInvited: clientInfo | null) {
+    this.cleanLobbies();
+    if (client.lobby) client.lobby.disconnectAll();
     client.status === 'connected';
-    const index = this.privateQueue.findIndex((value) => {
-      return value === client;
-    });
-    if (index !== -1) {
-      if (client.status === 'waiting join private')
-        this.privateQueue.splice(index, 1);
-      if (playerInvited) {
-        playerInvited.socket.emit('server.cancelInvite');
-      }
-    }
+    if (playerInvited) playerInvited.socket.emit('server.cancelInvite');
+    this.cleanLobbies();
   }
 
   public cancelPrivateInvitation(client: clientInfo, id: number) {
+    this.cleanLobbies();
     const index = this.privateLobbies.findIndex((value) => {
       return value.getPlayer()[0].user.id === id;
     });
-
     if (index !== -1) {
       const otherPlayer: clientInfo = this.privateLobbies[index].getPlayer()[0];
       otherPlayer.status = 'connected';
-      this.privateQueue.splice(index, 1);
       otherPlayer.socket.emit('server.cancelInvite');
     }
+    this.cleanLobbies();
   }
 
   public cleanLobbies() {
