@@ -12,6 +12,9 @@ export class privateLobbyManager {
     });
     if (index !== -1) {
       client.mode = 'private';
+      if (this.privateLobbies[index].getPlayer()[0].status === 'inGame') {
+        client.socket.emit("server.privateGameError", "This player is already in game");
+      }
       this.privateLobbies[index].getPlayer()[0].status = 'inGame';
       client.status = 'inGame';
       client.lobby = this.privateLobbies[index];
