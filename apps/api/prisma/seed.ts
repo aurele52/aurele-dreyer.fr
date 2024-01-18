@@ -34,15 +34,15 @@ async function createChannels() {
 
   const channels = [];
 
-  const chanType = ['PUBLIC', 'PROTECTED', 'PRIVATE'];
+  const chanType = ['PUBLIC', 'PRIVATE'];
 
   for (let i = 0; i < amountOfChannels; i++) {
-    const type = chanType[faker.number.int({ min: 0, max: 2 })];
+    const type = chanType[faker.number.int({ min: 0, max: 1 })];
     const channel = {
       name: faker.word.words({ count: { min: 1, max: 3 } }),
       topic: faker.lorem.lines({ min: 1, max: 4 }),
       type: type,
-      password: type === 'PROTECTED' ? faker.word.words() : undefined,
+      password: undefined,
       created_at: faker.date.past(),
       updated_at: faker.date.recent(),
     };
