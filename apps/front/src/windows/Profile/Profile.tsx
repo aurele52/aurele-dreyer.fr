@@ -161,6 +161,9 @@ export function Profile({ targetId, winId }: ProfileProps) {
       });
       queryClient.invalidateQueries({ queryKey: ["pendingRequests"] });
       queryClient.invalidateQueries({ queryKey: ["friendsList"] });
+      queryClient.invalidateQueries({
+        queryKey: ["profile", targetId],
+      });
     },
   });
 
