@@ -24,10 +24,10 @@ export class lobby {
   onDisconnect(user: clientInfo) {
     this.finish = 1;
     if (this.clients[0] == user) {
-      this.win(this.clients[1], this.clients[0]);
+      this.endGame(this.clients[1], this.clients[0]);
     }
     if (this.clients[1] == user) {
-      this.win(this.clients[0], this.clients[1]);
+      this.endGame(this.clients[0], this.clients[1]);
     }
   }
   getPlayer() {
@@ -37,9 +37,10 @@ export class lobby {
     this.clients.splice(0);
   }
 
-  async win(winner: clientInfo, loser: clientInfo) {
+  async endGame(winner: clientInfo, loser: clientInfo) {
     try {
-      if (winner.socket.connected) winner.socket.emit('server.win', {winner: winner.user.username});
+      if (winner.socket.connected) winner.socket.emit('server.endMatch', {haveWin: 1, winner: winner.user.username});
+      if (loser.socket.connected) loser.socket.emit('server.endMatch', {haveWin: 0});
 
       const winnerUser = await this.prisma.user.findUnique({
         where: { username: winner.user.username },
@@ -100,9 +101,6 @@ export class lobby {
     }
   }
 
-  lose(user: clientInfo) {
-    if (user.socket.connected) user.socket.emit('server.lose');
-  }
 
   score() {
     if (
@@ -303,12 +301,10 @@ export class lobby {
       await this.delay(20);
     }
     if (this.gameInfo.oneScore == 9) {
-      this.win(this.clients[0], this.clients[1]);
-      this.lose(this.clients[1]);
+      this.endGame(this.clients[0], this.clients[1]);
     }
     if (this.gameInfo.twoScore == 9) {
-      this.win(this.clients[1], this.clients[0]);
-      this.lose(this.clients[0]);
+      this.endGame(this.clients[1], this.clients[0]);
     }
     this.clients.forEach((value) => {
       value.lobby = null;

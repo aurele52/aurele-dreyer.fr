@@ -65,13 +65,10 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		},
 	});
 
-	function onWin(data: { winner: string }) {
+	function onEndMatch(data: { haveWin: boolean, winner: string }) {
 		setPongDisplay(false);
-		setWinDisplay(true);
-	}
-	function onLose() {
-		setPongDisplay(false);
-		setLoseDisplay(true);
+		if (data.haveWin) setWinDisplay(true);
+		else setLoseDisplay(true);
 	}
 	function onCreateLobby() {
 		setCreateCustomDisplay(false);
@@ -146,8 +143,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		}
 		socket.on("server.matchStart", onMatchStart);
 		socket.on("server.cancelInvite", onCancelInvite);
-		socket.on("server.win", onWin);
-		socket.on("server.lose", onLose);
+		socket.on("server.endMatch", onEndMatch);
 		socket.on("server.privateGameError", (err_message) => {
 			addModal(ModalType.ERROR, err_message);
 		});
