@@ -10,7 +10,7 @@
 }
 .game-menu > div {
 	width: 140px;
-	height: 31px;
+	height: 45px;
 	padding: 10px 12px;
 	cursor: pointer;
 	display: flex;	
@@ -25,13 +25,13 @@
 	font-weight: 700;
 	line-height: 24px;
 	color: var(--text-text-invert, #FFF);
+	border: solid var(--base-white, #fff);
+	border-width: 3px 3px 0;
 }
 
 /* PLAY */
 
 .play-button-default {
-	border: solid var(--base-white, #fff);
-	border-width: 3px 3px 0;
 	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
 }
 

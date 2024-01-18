@@ -6,14 +6,19 @@ import CreateCustom from "../CreateGame/CreateCustom";
 import JoinCustom from "../JoinGame/JoinCustom";
 import { normalGameInfo } from "shared/src/normalGameInfo";
 import Pong from "../Pong/Pong";
-import Win from "../Win/Win";
-import Lose from "../Lose/Lose";
 import PrivateWaiting from "../PrivateWaiting/PrivateWaiting";
+import store from "../../../store";
+import { delWindow } from "../../../reducers";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
+import api from "../../../axios";
+import { GameEnd } from "../GameEnd/GameEnd";
+import { addModal, ModalType } from "../../../shared/utils/AddModal";
 
 interface mainGameMenuProps {
 	windowId: number;
 	privateLobby?: {
 		targetId: number;
+		isFirstPlayer: boolean;
 	};
 }
 
@@ -47,7 +52,20 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 	const [privateWaitingDisplay, setPrivateWaitingDisplay] =
 		useState<boolean>(false);
 
-	function onWin() {
+	const queryClient = useQueryClient();
+
+	const { mutateAsync: deleteSendedGameInvitation } = useMutation({
+		mutationFn: async () => {
+			console.log("DElete invit");
+			return api.delete(`/message/sendedinvitation`);
+		},
+		onSuccess: () => {},
+		onError: (error) => {
+			console.error(error.message);
+		},
+	});
+
+	function onWin(data: { winner: string }) {
 		setPongDisplay(false);
 		setWinDisplay(true);
 	}
@@ -60,6 +78,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomWaitingDisplay(true);
 		setJoinNormalDesactivateDisplay(true);
 		setJoinCustomDesactivateDisplay(true);
+		setDisplayMainMenu(true);
 	}
 	function onJoinLobby() {
 		setJoinCustomDisplay(false);
@@ -93,18 +112,55 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDefaultDisplay(false);
 		setPrivateWaitingDisplay(true);
 		setDisplayMainMenu(false);
-		socket.emit("client.privateMatchmaking", props.privateLobby.targetId);
+		if (props.privateLobby.isFirstPlayer)
+			socket.emit("client.createPrivate", props.privateLobby.targetId);
+		else socket.emit("client.joinPrivate");
 	}
+	function onCancelInvite() {
+		setJoinNormalDesactivateDisplay(false);
+		setJoinCustomDesactivateDisplay(false);
+		setCreateCustomDesactivateDisplay(false);
+		setJoinNormalWaitingDisplay(false);
+		setJoinCustomWaitingDisplay(false);
+		setCreateCustomWaitingDisplay(false);
+		setPrivateWaitingDisplay(false);
+		setPongDisplay(false);
+		setDisplayMainMenu(true);
+		setJoinNormalDefaultDisplay(true);
+		setCreateCustomDefaultDisplay(true);
+		setJoinCustomDefaultDisplay(true);
+	}
+	function onPrivateAbort() {
+		socket.emit("client.privateAbort");
+		const memberSettingsWindow = store
+			.getState()
+			.windows.find((window) => window.content.type === "PLAY");
+		if (memberSettingsWindow) {
+			store.dispatch(delWindow(memberSettingsWindow.id));
+		}
+	}
+
 	useEffect(() => {
 		if (props.privateLobby) {
 			onPrivateMatch();
 		}
 		socket.on("server.matchStart", onMatchStart);
+		socket.on("server.cancelInvite", onCancelInvite);
 		socket.on("server.win", onWin);
 		socket.on("server.lose", onLose);
+		socket.on("server.privateGameError", (err_message) => {
+			addModal(ModalType.ERROR, err_message);
+		});
 		return () => {
+			if (props.privateLobby) {
+				deleteSendedGameInvitation();
+			}
 			socket.emit("client.closeMainWindow");
-			socket.off("server.matchStart", onMatchStart);
+			socket.off("server.matchStart");
+			socket.off("server.cancelInvite");
+			socket.off("server.win");
+			socket.off("server.lose");
+			socket.off("server.privateGameError");
 		};
 	}, [props.privateLobby]);
 
@@ -122,6 +178,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setJoinCustomDefaultDisplay(false);
 		setCreateCustomDefaultDisplay(false);
 		setCreateCustomDisplay(true);
+		setDisplayMainMenu(false);
 	}
 	function joinCustomDefaultOnClick() {
 		setJoinNormalDefaultDisplay(false);
@@ -157,6 +214,13 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		setCreateCustomDesactivateDisplay(false);
 		setCreateCustomDefaultDisplay(true);
 		socket.emit("client.joinCustomAbort");
+	}
+	function returnToMenu() {
+		setJoinNormalDefaultDisplay(true);
+		setJoinCustomDefaultDisplay(true);
+		setCreateCustomDefaultDisplay(true);
+		setCreateCustomDisplay(false);
+		setDisplayMainMenu(true);
 	}
 	function joinNormalDesactivateOnClick() {}
 	function createCustomDesactivateOnClick() {}
@@ -243,15 +307,20 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		<>
 			{displayMainMenu === true && mainMenu}
 			{createCustomDisplay === true && (
-				<CreateCustom onCreateLobby={onCreateLobby} />
+				<CreateCustom
+					onCreateLobby={onCreateLobby}
+					returnToMenu={returnToMenu}
+				/>
 			)}
 			{joinCustomDisplay === true && (
 				<JoinCustom onJoinCustom={onJoinLobby} />
 			)}
 			{pongDisplay === true && <Pong gameInfo={gameInfo} />}
-			{loseDisplay === true && <Lose />}
-			{winDisplay === true && <Win />}
-			{privateWaitingDisplay === true && <PrivateWaiting />}
+			{loseDisplay === true && <GameEnd isVictorious={false}></GameEnd>}
+			{winDisplay === true && <GameEnd isVictorious={true}></GameEnd>}
+			{privateWaitingDisplay === true && (
+				<PrivateWaiting onPrivateAbort={onPrivateAbort} />
+			)}
 		</>
 	);
 }

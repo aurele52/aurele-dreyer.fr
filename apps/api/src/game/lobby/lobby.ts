@@ -38,9 +38,8 @@ export class lobby {
   }
 
   async win(winner: clientInfo, loser: clientInfo) {
-    console.log('test 1');
     try {
-      if (winner.socket.connected) winner.socket.emit('server.win');
+      if (winner.socket.connected) winner.socket.emit('server.win', {winner: winner.user.username});
 
       const winnerUser = await this.prisma.user.findUnique({
         where: { username: winner.user.username },
@@ -108,7 +107,7 @@ export class lobby {
   score() {
     if (
       this.gameInfo.ballx + this.gameInfo.ballSize >=
-      this.gameInfo.gamexsize - this.gameInfo.barDist
+      this.gameInfo.gamexsize - 10
     ) {
       this.gameInfo.oneScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 + this.gameInfo.ballDeb;
@@ -116,7 +115,7 @@ export class lobby {
       this.gameInfo.ballDirx = -1;
       this.gameInfo.ballDiry = 1;
     }
-    if (this.gameInfo.ballx <= this.gameInfo.barDist) {
+    if (this.gameInfo.ballx <= 10) {
       this.gameInfo.twoScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 - this.gameInfo.ballDeb;
       this.gameInfo.bally = this.gameInfo.gameysize / 2;
@@ -136,18 +135,18 @@ export class lobby {
     const absinAlpha = inAlpha > 0 ? inAlpha : 2 * Math.PI + inAlpha;
     let absoutAlpha = outAlpha > 0 ? outAlpha : 2 * Math.PI + outAlpha;
     if (absinAlpha > Math.PI / 2 && absinAlpha < (3 * Math.PI) / 2) {
-      if (absoutAlpha < Math.PI / 2 + Math.PI / 9)
-        absoutAlpha = Math.PI / 2 + Math.PI / 9;
-      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 9)
-        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 9;
+      if (absoutAlpha < Math.PI / 2 + Math.PI / 5)
+        absoutAlpha = Math.PI / 2 + Math.PI / 5;
+      else if (absoutAlpha > (3 * Math.PI) / 2 - Math.PI / 5)
+        absoutAlpha = (3 * Math.PI) / 2 - Math.PI / 5;
     } else {
-      if (absoutAlpha > Math.PI / 2 - Math.PI / 9 && absoutAlpha < Math.PI)
-        absoutAlpha = Math.PI / 2 - Math.PI / 9;
+      if (absoutAlpha > Math.PI / 2 - Math.PI / 5 && absoutAlpha < Math.PI)
+        absoutAlpha = Math.PI / 2 - Math.PI / 5;
       else if (
-        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 9 &&
+        absoutAlpha < (3 * Math.PI) / 2 + Math.PI / 5 &&
         absoutAlpha > Math.PI
       )
-        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 9;
+        absoutAlpha = (3 * Math.PI) / 2 + Math.PI / 5;
     }
     outAlpha = absoutAlpha > 180 ? absoutAlpha - 2 * Math.PI : absoutAlpha;
     return [1 * speed * Math.cos(outAlpha), speed * Math.sin(outAlpha)];
@@ -225,6 +224,10 @@ export class lobby {
   ) {
     this.prisma = new PrismaService();
     this.isCustom = isCustom;
+    if (this.isCustom == 'private')
+    {
+      this.defaultGameInfo = {...normalGameInfo, userId: matchInfo.userId};
+    }
     if (this.isCustom == 'custom') {
       this.defaultGameInfo = matchInfo;
       this.gameInfo = { ...matchInfo };
@@ -264,32 +267,14 @@ export class lobby {
         this.gameInfo.gameysize
       )
         this.gameInfo.twoBary = this.gameInfo.twoBary + this.gameInfo.barSpeed;
-  }
-  itemPick() {
-    let tempx = 0;
-    let tempy = 0;
-    while (tempy < this.gameInfo.ballSize) {
-      while (tempx < this.gameInfo.ballSize) {
-        if (
-          this.gameInfo.bally + tempy <=
-            this.gameInfo.itemy + this.gameInfo.itemSize &&
-          this.gameInfo.bally + tempy >= this.gameInfo.itemSize
-        ) {
-          if (
-            this.gameInfo.ballx + tempx <=
-              this.gameInfo.itemx + this.gameInfo.itemSize &&
-            this.gameInfo.ballx + tempx >= this.gameInfo.itemSize
-          ) {
-            this.gameInfo.itemSize = 0;
-            this.gameInfo.ballSize = 100;
-            return;
-          }
-        }
-        tempx++;
-      }
-      tempx = 0;
-      tempy++;
-    }
+    if (this.gameInfo.oneBary + this.gameInfo.barSize > this.gameInfo.gameysize)
+      this.gameInfo.oneBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+    if (this.gameInfo.twoBary + this.gameInfo.barSize > this.gameInfo.gameysize)
+      this.gameInfo.twoBary = this.gameInfo.gameysize - this.gameInfo.barSize - 1;
+    if (this.gameInfo.oneBary < 0)
+      this.gameInfo.oneBary = 1;
+    if (this.gameInfo.twoBary < 0)
+      this.gameInfo.twoBary = 1;
   }
   update() {
     this.move();
@@ -298,7 +283,6 @@ export class lobby {
     while (i > 0) {
       this.ballWallRedir();
       this.ballBarRedir();
-      if (this.gameInfo.itemSize > 0) this.itemPick();
       this.gameInfo.ballx = this.gameInfo.ballx + this.gameInfo.ballDirx;
       this.gameInfo.bally = this.gameInfo.bally + this.gameInfo.ballDiry;
       i--;

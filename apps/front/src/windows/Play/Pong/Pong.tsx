@@ -9,8 +9,6 @@ interface scaleInfo {
 		xborderSize: number,
 		ynumberSize: number,
 		xnumberSize: number,
-		yitemSize: number,
-		xitemSize: number,
 		xballSize: number,
 		yballSize: number,
 }
@@ -32,8 +30,6 @@ export default function Pong(props: pongProps) {
 		xborderSize: gameInfo.borderSize,
 		ynumberSize: gameInfo.numberSize,
 		xnumberSize: gameInfo.numberSize,
-		yitemSize: gameInfo.itemSize,
-		xitemSize: gameInfo.itemSize,
 		xballSize: gameInfo.ballSize,
 		yballSize: gameInfo.ballSize,
 	};
@@ -297,10 +293,10 @@ function drawNumber(p: p5, nb: number, x: number, y: number) {
 function scoreOne(p: p5, nb: number) {
 	p.fill(gameInfo.menuColor);
 	p.rect(
-		scaleInfo.xborderSize + gameInfo.numberSideDist,
-		scaleInfo.yborderSize + gameInfo.numberTopDist,
-		4 * scaleInfo.xnumberSize,
-		7 * scaleInfo.ynumberSize
+		scaleInfo.xborderSize + gameInfo.numberSideDist - 1,
+		scaleInfo.yborderSize + gameInfo.numberTopDist - 1,
+		4 * scaleInfo.xnumberSize + 2,
+		7 * scaleInfo.ynumberSize + 2
 	);
 	p.fill(gameInfo.oneScoreColor);
 	drawNumber(p, nb, gameInfo.numberSideDist + scaleInfo.xborderSize, gameInfo.numberTopDist + scaleInfo.yborderSize);
@@ -309,23 +305,20 @@ function scoreOne(p: p5, nb: number) {
 function scoreTwo(p: p5, nb: number) {
 	p.fill(gameInfo.menuColor);
 	p.rect(
-		gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize,
-		scaleInfo.yborderSize + gameInfo.numberTopDist,
-		4 * scaleInfo.xnumberSize,
-		7 * scaleInfo.ynumberSize
+		gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize - 1,
+		scaleInfo.yborderSize + gameInfo.numberTopDist - 1,
+		4 * scaleInfo.xnumberSize + 2,
+		7 * scaleInfo.ynumberSize + 2
 	);
 	p.fill(gameInfo.twoScoreColor);
 	drawNumber(p, nb, gameInfo.xsize - scaleInfo.xborderSize - gameInfo.numberSideDist - 4 * scaleInfo.xnumberSize, gameInfo.numberTopDist + scaleInfo.yborderSize);
 }
 
 function drawBall(p: p5) {
-	p.fill(gameInfo.ballColor);
-	p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, scaleInfo.xballSize, scaleInfo.yballSize);
-}
-
-function drawItem(p: p5) {
-	p.fill('red');
-	p.rect(gameInfo.itemx + gameInfo.gamex, gameInfo.itemy + gameInfo.gamey, gameInfo.itemSize, gameInfo.itemSize);
+	if (gameInfo.ballx > 0 && gameInfo.ballx < gameInfo.gamexsize - gameInfo.ballSize) {
+		p.fill(gameInfo.ballColor);
+		p.rect(gameInfo.ballx + gameInfo.gamex, gameInfo.bally + gameInfo.gamey, scaleInfo.xballSize, scaleInfo.yballSize);
+	}
 }
 
 let input = 0;
@@ -413,11 +406,9 @@ function clearBoard(p: p5) {
 function loop(p: p5) {
 			move(p);
 			clearBoard(p);
+			drawBoardMidline(p);
 			drawBar(p);
 			drawBall(p);
-			drawBoardMidline(p);
-			if (gameInfo.itemSize > 0)
-				drawItem(p);
 			scoreOne(p, gameInfo.oneScore);
 			scoreTwo(p, gameInfo.twoScore);
 }
@@ -427,8 +418,6 @@ interface sendInfo {
 	bally: number;
 	oneBary: number;
 	twoBary: number;
-	itemx: number;
-	itemy: number;
 
   barDist: number;
   barLarge: number;
@@ -436,7 +425,6 @@ interface sendInfo {
 
   ballSize: number;
 
-  itemSize: number;
 
   oneScore: number;
   twoScore: number;
@@ -475,8 +463,6 @@ function onSizeChange(p:p5) {
 				scaleInfo.yborderSize = defaultGameInfo.borderSize / yratio;
 				scaleInfo.xballSize = defaultGameInfo.ballSize / xratio;
 				scaleInfo.yballSize = defaultGameInfo.ballSize / yratio;
-				scaleInfo.xitemSize = defaultGameInfo.itemSize / xratio;
-				scaleInfo.yitemSize = defaultGameInfo.itemSize / yratio;
 				scaleInfo.xnumberSize = defaultGameInfo.numberSize / xratio;
 				scaleInfo.ynumberSize = defaultGameInfo.numberSize / yratio;
 
@@ -506,14 +492,10 @@ function onSizeChange(p:p5) {
 			gameInfo.bally = gameUpdate.bally / yratio;
 			gameInfo.oneBary = gameUpdate.oneBary / yratio;
 			gameInfo.twoBary = gameUpdate.twoBary / yratio;
-			gameInfo.itemx = gameUpdate.itemx / xratio;
-			gameInfo.itemy = gameUpdate.itemy / yratio;
 			gameInfo.oneScore = gameUpdate.oneScore;
 			gameInfo.twoScore = gameUpdate.twoScore;
 			scaleInfo.xballSize = gameUpdate.ballSize / xratio;
 			scaleInfo.yballSize = gameUpdate.ballSize / yratio;
-			scaleInfo.xitemSize = gameUpdate.itemSize / xratio;
-			scaleInfo.yitemSize = gameUpdate.itemSize / yratio;
 		}
 	}, []);
 
@@ -521,7 +503,7 @@ function onSizeChange(p:p5) {
 		p.setup = () => {
 			width = document.getElementById('canva')?.getBoundingClientRect().width;
 			height = document.getElementById('canva')?.getBoundingClientRect().height;
-			p.createCanvas(defaultGameInfo.xsize, defaultGameInfo.ysize); //margot
+			p.createCanvas(height, width);
 			p.frameRate(30);
 			p.noStroke();
 			drawEmpty(p);
@@ -537,15 +519,15 @@ function onSizeChange(p:p5) {
 			if (ms < 1000) {
 				compteur(p, 3);
 			}
-			// else if (ms < 2000) {
-			// 	compteur(p, 2);
-			// }
-			// else if (ms < 3000) {
-			// 	compteur(p, 1);
-			// }
-			// else if (ms < 3200) {
-			// 	compteur(p, 0);
-			// }
+			else if (ms < 2000) {
+				compteur(p, 2);
+			}
+			else if (ms < 3000) {
+				compteur(p, 1);
+			}
+			else if (ms < 3200) {
+				compteur(p, 0);
+			}
 			else {
 				loop(p);
 			}

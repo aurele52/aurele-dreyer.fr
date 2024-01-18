@@ -31,7 +31,7 @@ export function User({ userId, channel }: UserProps) {
 		isLoading: selfLoading,
 		error: selfError,
 	} = useQuery<{ userId: number; role: UserRole }>({
-		queryKey: ["self"],
+		queryKey: ["self", channel?.channelId, userId],
 		queryFn: async () => {
 			try {
 				const response = await api.get(
@@ -110,8 +110,11 @@ export function User({ userId, channel }: UserProps) {
 				content: { type: "PLAY" },
 				handleBarButton:
 					HBButton.Close + HBButton.Enlarge + HBButton.Reduce,
-				targetId: userId,
 				color: WinColor.PURPLE,
+				privateLobby: {
+					targetId: userId,
+					isFirstPlayer: true,
+				}
 			};
 			store.dispatch(addWindow(newWindow));
 			queryClient.invalidateQueries({ queryKey: ["chats"] });
@@ -181,6 +184,8 @@ export function User({ userId, channel }: UserProps) {
 	};
 
 	const handleMatch = async () => {
+		if (store.getState().windows.some((window) => window.content.type === "PLAY"))
+			return;
 		sendGameInvitation({
 			message: "/PongInvitation",
 			targetId: userId,

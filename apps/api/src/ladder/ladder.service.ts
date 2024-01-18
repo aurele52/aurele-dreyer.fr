@@ -26,6 +26,9 @@ export class LadderService {
           where: {
             user_id: user.id,
             winner: true,
+            match: {
+              type: "NORMAL",
+            }
           },
         });
         return { userId: user.id, winCount: count };

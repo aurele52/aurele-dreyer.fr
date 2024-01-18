@@ -15,6 +15,8 @@ import { UserChannelService } from 'src/user-channel/user-channel.service';
 import { UserChannelRoles } from 'src/user-channel/roles/user-channel.roles';
 import { ChannelTypes } from './types/channel.types';
 import { FriendshipService } from 'src/friendship/friendship.service';
+import { UserService } from 'src/user/user.service';
+import { UserEventType } from 'src/user/types/user-event.types';
 
 @Controller()
 export class ChannelController {
@@ -22,6 +24,7 @@ export class ChannelController {
     private readonly channelService: ChannelService,
     private readonly userChannelService: UserChannelService,
     private readonly friendshipService: FriendshipService,
+    private readonly userService: UserService,
   ) {}
 
   @Get('/chats')
@@ -134,6 +137,14 @@ export class ChannelController {
       throw new BadRequestException('Cannot create a dm with a blocked user');
     }
 
+    const dmAlreadyExists = await this.channelService.dmAlreadyExists(
+      user1_id,
+      user2_id,
+    );
+    if (dmAlreadyExists !== undefined) {
+      return dmAlreadyExists;
+    }
+
     const channel = await this.channelService.createChannel({
       name: '',
       topic: '',
@@ -172,7 +183,22 @@ export class ChannelController {
     @Param('channelid') channelId: number,
     @CurrentUserID() userId,
   ) {
-    console.log('Delete Channel');
-    return await this.channelService.deleteChannel(userId, channelId);
+    const memberIds = (
+      await this.channelService.getChannelMemberIds(channelId)
+    ).filter((i) => i !== userId);
+
+    const deletedChannel = await this.channelService.deleteChannel(
+      userId,
+      channelId,
+    );
+
+    this.userService.emitUserEvent(
+      UserEventType.CHANDELETION,
+      memberIds,
+      userId,
+      channelId,
+    );
+
+    return deletedChannel;
   }
 }

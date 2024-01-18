@@ -1,4 +1,5 @@
 import {
+  IsHexColor,
   IsInt,
   IsOptional,
   IsString,
@@ -27,7 +28,7 @@ class BallSizeConstraint implements ValidatorConstraintInterface {
 class BallSpeedConstraint implements ValidatorConstraintInterface {
   validate(ballSpeed: number, args: ValidationArguments) {
     const gamexsize = (args.object as any).gamexsize;
-    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.03 * gamexsize;
+    return ballSpeed >= 0.0025 * gamexsize && ballSpeed <= 0.02 * gamexsize;
   }
 
   defaultMessage(args: ValidationArguments) {
@@ -63,25 +64,11 @@ class BarDistConstraint implements ValidatorConstraintInterface {
 class BarSpeedConstraint implements ValidatorConstraintInterface {
   validate(barSpeed: number, args: ValidationArguments) {
     const gameysize = (args.object as any).gameysize;
-    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.1 * gameysize;
+    return barSpeed >= 0.01 * gameysize && barSpeed <= 0.05 * gameysize;
   }
 
   defaultMessage(args: ValidationArguments) {
     return `invalid barSpeed`;
-  }
-}
-
-@ValidatorConstraint({ name: 'itemSize', async: false })
-class ItemSizeConstraint implements ValidatorConstraintInterface {
-  validate(itemSize: number, args: ValidationArguments) {
-    const gamexsize = (args.object as any).gamexsize;
-    const gameysize = (args.object as any).gameysize;
-    const mindim = Math.min(gamexsize, gameysize);
-    return itemSize >= 0.01 * mindim && itemSize <= 0.2 * mindim;
-  }
-
-  defaultMessage(args: ValidationArguments) {
-    return `invalid itemSize`;
   }
 }
 
@@ -111,11 +98,6 @@ export class gameInfoDto {
   @IsInt()
   @Validate(BallSizeConstraint)
   ballSize?: number = 10;
-
-  @IsOptional()
-  @IsInt()
-  @Validate(ItemSizeConstraint)
-  itemSize?: number = 10;
 
   @IsOptional()
   @IsInt()
@@ -153,32 +135,32 @@ export class gameInfoDto {
 
   @IsOptional()
   @IsString()
-  oneBarColor?: string = 'white';
+  oneBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoBarColor?: string = 'white';
+  twoBarColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  ballColor?: string = 'white';
+  ballColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  backgroundColor?: string = 'black';
+  backgroundColor?: string = '#000000';
   @IsOptional()
   @IsString()
-  borderColor?: string = 'white';
+  borderColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  oneScoreColor?: string = 'white';
+  oneScoreColor?: string = '#ffffff';
   @IsOptional()
   @IsString()
-  twoScoreColor?: string = 'white';
+  twoScoreColor?: string = '#ffffff';
   @IsOptional()
-  @IsString()
-  menuColor?: string = 'black';
+  @IsHexColor()
+  menuColor?: string = '#000000';
   // not in setting
   @IsOptional()
   @IsString()
-  name?: string = 'normal';
+  name?: string = 'My Custom Game';
 
   @IsOptional()
   @IsInt()
@@ -206,13 +188,6 @@ export class gameInfoDto {
 
   @IsOptional()
   @IsInt()
-  itemx?: number = 40;
-  @IsOptional()
-  @IsInt()
-  itemy?: number = 40;
-
-  @IsOptional()
-  @IsInt()
   ballDirx?: number = -1;
   @IsOptional()
   @IsInt()
@@ -225,7 +200,7 @@ export class gameInfoDto {
   bally?: number = 100;
   @IsOptional()
   @IsInt()
-  ballDeb?: number = 150;
+  ballDeb?: number = 10;
 
   @IsOptional()
   upBallSize: boolean = false;

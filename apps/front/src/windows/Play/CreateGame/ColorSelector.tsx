@@ -17,7 +17,7 @@ export default function ColorSelector(props: rangeProps) {
 	return (
 		<div className="frame-color-selector"> 
 			<div className= "label-color-selector" >{props.label}</div>
-			<input className= "box-color-selector" type='color' onChange={handleChange}></input> 
+			<input className= "box-color-selector" type='color' value={props.value} onChange={handleChange}></input> 
 		</div>
 
   );

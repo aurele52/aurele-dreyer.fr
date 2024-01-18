@@ -5,14 +5,17 @@ import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import { HeartButton } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
-interface BlockedUsersProps {}
+interface BlockedUsersProps {
+	winId: number;
+}
 
-export function BlockedUsers({}: BlockedUsersProps) {
+export function BlockedUsers({winId}: BlockedUsersProps) {
 	const {
 		data: blockedUsers,
 		isLoading: blockedUsersLoading,
-		error: blockedUsersError,
 	} = useQuery<
 		{
 			id: number;
@@ -25,18 +28,13 @@ export function BlockedUsers({}: BlockedUsersProps) {
 				const response = await api.get(`/friendships/blockedList`);
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching BlockedUsers:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
 
 	if (blockedUsersLoading) {
 		return <FaSpinner className="loadingSpinner" />;
-	}
-
-	if (blockedUsersError) {
-		return <div>Error loading users: {blockedUsersError.message}</div>;
 	}
 
 	if (!Array.isArray(blockedUsers)) {

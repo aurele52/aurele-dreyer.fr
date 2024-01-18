@@ -25,9 +25,9 @@ export class TwoFAService {
       },
     });
     if (!user) {
-      const err_message = `User with ID ${id} not found`;
+      const err_message = `User with not found`;
       console.log('404 EXCEPTION THROWN: ', err_message);
-      throw new NotFoundException(`User with ID ${id} not found`);
+      throw new NotFoundException(err_message);
     }
     return user;
   }
@@ -41,7 +41,7 @@ export class TwoFAService {
       const err_message = 'Could not genera 2FA secret';
       console.log('500 EXCEPTION THROWN: ', err_message);
       console.log({ error });
-      throw new InternalServerErrorException('Could not genera 2FA secret');
+      throw new InternalServerErrorException(err_message);
     }
   }
 
@@ -62,7 +62,7 @@ export class TwoFAService {
       const err_message = 'Could not generate 2FA QR code';
       console.log('500 EXCEPTION THROWN: ', err_message);
       console.log({ error });
-      throw new InternalServerErrorException('Could not generate 2FA QR code');
+      throw new InternalServerErrorException(err_message);
     }
   }
 

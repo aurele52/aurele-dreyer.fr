@@ -5,7 +5,7 @@ import { ModalType } from "./shared/utils/AddModal";
 import { ActionKey } from "./shared/ui-components/Modal/Modal";
 import { gameInfo } from "shared/src/gameInfo.interface";
 
-interface WindowData {
+export interface WindowData {
 	WindowName: string;
 	position?: {
 		x: string;
@@ -27,6 +27,10 @@ interface WindowData {
 	channelId?: number;
 	zindex?: number;
 	gameInfo?: gameInfo;
+	privateLobby?: {
+		targetId: number;
+		isFirstPlayer: boolean;
+	}
 }
 
 export interface AppState {
@@ -71,6 +75,7 @@ const windowsSlice = createSlice({
 				"TWOFAQRCODE",
 				"FRIENDSLIST",
 				"PLAY",
+				"CHATSESSION",
 			];
 
 			if (

@@ -48,7 +48,19 @@ export class UserChannelService {
         return true;
       }
     }
-    return false;
+
+    return Promise.all(
+      userChannels.map((uc) =>
+        this.friendshipService
+          .isBlockedRelationship(uc.User.id, user_id)
+          .then((r) => {
+            if (r) return Promise.reject();
+            return Promise.resolve();
+          }),
+      ),
+    )
+      .then(() => false)
+      .catch(() => true);
   }
 
   async createUserChannel(params: {
@@ -90,7 +102,7 @@ export class UserChannelService {
       throw new ForbiddenException('DM cannot be created');
     }
 
-    return await this.prisma.userChannel.create({
+    return this.prisma.userChannel.create({
       data: {
         User: {
           connect: {

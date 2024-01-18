@@ -4,20 +4,23 @@ import api from "../../../axios";
 import List from "../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import { Button } from "../../../shared/ui-components/Button/Button";
-import { addWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { WinColor } from "../../../shared/utils/WindowTypes";
 import { User } from "../../../shared/ui-components/User/User";
 import store from "../../../store";
 import { useState } from "react";
 import { SearchBar } from "../../../shared/ui-components/SearchBar/SearchBar";
 
-export function FriendsList() {
+interface FriendsListProps {
+	winId: number;
+}
+
+export function FriendsList({winId}: FriendsListProps) {
 	const [searchBarValue, setSearchBarValue] = useState("");
 
 	const {
 		data: friendsList,
 		isLoading: friendsListLoading,
-		error: friendsListError,
 	} = useQuery<
 		{
 			userid: number;
@@ -30,8 +33,7 @@ export function FriendsList() {
 				const response = await api.get(`/FriendsList/list`);
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching FriendsList:", error);
-				throw error;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
@@ -39,7 +41,6 @@ export function FriendsList() {
 	const {
 		data: pendingRequests,
 		isLoading: pendingRequestsLoading,
-		error: pendingRequestsError,
 	} = useQuery<number>({
 		queryKey: ["pendingRequests", "Profile"],
 		queryFn: async () => {
@@ -50,11 +51,7 @@ export function FriendsList() {
 						content.type === "received"
 				).length;
 			} catch {
-				console.error(
-					"Error pending invitations user:",
-					pendingRequestsError
-				);
-				throw pendingRequestsError;
+				store.dispatch(delWindow(winId))
 			}
 		},
 	});
@@ -65,10 +62,6 @@ export function FriendsList() {
 				<FaSpinner className="loadingSpinner" />
 			</div>
 		);
-	}
-
-	if (friendsListError) {
-		return <div>Error loading users: {friendsListError.message}</div>;
 	}
 
 	const handlePendingRequests = () => {

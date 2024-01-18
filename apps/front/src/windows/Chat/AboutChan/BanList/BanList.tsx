@@ -5,12 +5,15 @@ import List from "../../../../shared/ui-components/List/List";
 import { FaSpinner } from "react-icons/fa";
 import { Button } from "../../../../shared/ui-components/Button/Button";
 import { ReducedUser } from "../../../../shared/ui-components/User/User";
+import store from "../../../../store";
+import { delWindow } from "../../../../reducers";
 
 interface BanListProps {
 	channelId: number;
+	winId: number;
 }
 
-export function BanList({ channelId }: BanListProps) {
+export function BanList({ channelId, winId }: BanListProps) {
 	const queryClient = useQueryClient();
 	const {
 		data: banList,
@@ -26,11 +29,9 @@ export function BanList({ channelId }: BanListProps) {
 		queryFn: async () => {
 			try {
 				const response = await api.get(`/banList/${channelId}`);
-				console.log({ response });
 				return response.data;
 			} catch (error) {
-				console.error("Error fetching BanList:", error);
-				throw error;
+				store.dispatch(delWindow(winId));
 			}
 		},
 	});

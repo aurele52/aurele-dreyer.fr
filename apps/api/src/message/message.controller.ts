@@ -37,7 +37,7 @@ export class MessageController {
       user_id,
       content,
     );
-    this.messageService.emitMessage(message, channel_id);
+    this.messageService.emitMessage(channel_id);
     return message;
   }
 
@@ -49,18 +49,31 @@ export class MessageController {
       mergeMap((event) =>
         from(this.channelService.isUserMember(event.channel_id, user_id)).pipe(
           filter((isMember) => isMember),
-          map(() => ({ data: event.message })),
+          map(() => ({
+            type: 'message',
+            data: JSON.stringify({
+              channelId: event.channel_id,
+            }),
+          })),
         ),
       ),
     );
     return merge(heartbeat, message);
   }
 
-  @Delete('/message/invitation')
-  async deleteInvitation(
-    @Body('channel_id') channel_id: number,
+  @Delete('/message/receivedinvitation/:channel_id')
+  async deleteReceivedInvitation(
+    @Param('channel_id') channel_id: number,
     @CurrentUserID() user_id: number,
   ) {
-    return this.messageService.deleteInvitation(user_id, channel_id);
+    this.messageService.emitMessage(channel_id);
+    return this.messageService.deleteReceivedInvitation(user_id, channel_id);
+  }
+
+  @Delete('/message/sendedinvitation')
+  async deleteSendedInvitation(@CurrentUserID() user_id: number) {
+    const channel_id = await this.messageService.getInvitationChannel(user_id);
+    this.messageService.emitMessage(channel_id);
+    return this.messageService.deleteSendedInvitation(user_id);
   }
 }
