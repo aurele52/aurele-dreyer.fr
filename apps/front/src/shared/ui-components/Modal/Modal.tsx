@@ -315,6 +315,10 @@ function Modal({
     handleClose(winId);
     if (pwdCorrect) {
       await createUserChannel({ channelId: channelId || -1 });
+      queryClient.invalidateQueries({ queryKey: ["chanAbout", channelId] });
+      queryClient.invalidateQueries({ queryKey: ["channels"] });
+      queryClient.invalidateQueries({ queryKey: ["chats"] });
+      queryClient.invalidateQueries({ queryKey: ["isMember", channelId] });
     } else {
       addModal(ModalType.ERROR, "Wrong password");
     }
@@ -451,6 +455,7 @@ function Modal({
               placeholder="Type here..."
               value={password}
               onChange={handlePasswordChange}
+              type="password"
             />
           </div>
         </>
