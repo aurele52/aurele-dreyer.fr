@@ -47,8 +47,8 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		useState<boolean>(false);
 	const [pongDisplay, setPongDisplay] = useState<boolean>(false);
 	const [gameInfo, setGameInfo] = useState<gameInfo>(normalGameInfo);
-	const [winDisplay, setWinDisplay] = useState<boolean>(false);
-	const [loseDisplay, setLoseDisplay] = useState<boolean>(false);
+	const [endGameDisplay, setEndGameDisplay] = useState<boolean>(false);
+	const [winInfo, setWinInfo] =useState<{haveWin: boolean}>({haveWin: false});
 	const [privateWaitingDisplay, setPrivateWaitingDisplay] =
 		useState<boolean>(false);
 
@@ -65,13 +65,10 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		},
 	});
 
-	function onWin(data: { winner: string }) {
+	function onEndMatch(data: { haveWin: boolean, winner: string }) {
 		setPongDisplay(false);
-		setWinDisplay(true);
-	}
-	function onLose() {
-		setPongDisplay(false);
-		setLoseDisplay(true);
+		setWinInfo({haveWin: data.haveWin});
+		setEndGameDisplay(true);
 	}
 	function onCreateLobby() {
 		setCreateCustomDisplay(false);
@@ -146,8 +143,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 		}
 		socket.on("server.matchStart", onMatchStart);
 		socket.on("server.cancelInvite", onCancelInvite);
-		socket.on("server.win", onWin);
-		socket.on("server.lose", onLose);
+		socket.on("server.endMatch", onEndMatch);
 		socket.on("server.privateGameError", (err_message) => {
 			addModal(ModalType.ERROR, err_message);
 		});
@@ -316,8 +312,7 @@ export default function MainGameMenu(props: mainGameMenuProps) {
 				<JoinCustom onJoinCustom={onJoinLobby} />
 			)}
 			{pongDisplay === true && <Pong gameInfo={gameInfo} />}
-			{loseDisplay === true && <GameEnd isVictorious={false}></GameEnd>}
-			{winDisplay === true && <GameEnd isVictorious={true}></GameEnd>}
+			{endGameDisplay === true && <GameEnd isVictorious={winInfo.haveWin}></GameEnd>}
 			{privateWaitingDisplay === true && (
 				<PrivateWaiting onPrivateAbort={onPrivateAbort} />
 			)}
