@@ -3,6 +3,8 @@ import { WinColor } from "../../utils/WindowTypes";
 import store from "../../../store";
 import "./MatchRecap.css";
 import { gameEndInfo } from "shared/src/gameEndInfo.interface";
+import { useQuery } from "@tanstack/react-query";
+import api from "../../../axios";
 
 type MatchRecapProps = {
   key?: number;
@@ -16,13 +18,24 @@ function MatchRecap({
   player2,
   isVictorious,
 }: MatchRecapProps) {
+
+  const { data: selfId } = useQuery<number>({
+    queryKey: ["selfId"],
+    queryFn: async () => {
+      const response = await api.get("/id");
+      return response.data;
+    },
+  });
+
   const handleOpenProfile = (id: number, username: string) => {
+    const name = selfId === id ? "Profile" : username;
+    const idUser = id === selfId ? undefined : id;
     const newWindow = {
-      WindowName: username,
+      WindowName: name,
       width: "400",
       height: "600",
       id: 0,
-      content: { type: "PROFILE", id: id },
+      content: { type: "PROFILE", id: idUser },
       toggle: false,
       handleBarButton: 7,
       color: WinColor.PURPLE,
