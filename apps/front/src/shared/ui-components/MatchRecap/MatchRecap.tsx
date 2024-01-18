@@ -43,18 +43,14 @@ function MatchRecap({
         onClick={() => handleOpenProfile(player1.id, player1.username)}
         style={{ cursor: "pointer" }}
       >
-        <div>
-          <div className="Outline">
-            <div className="Avatar">
-              <img
-                src={player1.avatar_url}
-                className="Picture"
-                alt={player1.username}
-              />
-            </div>
-          </div>
-          <div className="Username">{player1.username}</div>
+        <div className="truncate avatar-match">
+          <img
+            src={player1.avatar_url}
+            className="avatar insideCard"
+            alt={player1.username}
+          />
         </div>
+        <div className="username">{player1.username}</div>
       </div>
       <div className="score">
         <div>{player1.score + " - " + player2.score}</div>
@@ -64,21 +60,17 @@ function MatchRecap({
         onClick={() => handleOpenProfile(player2.id, player2.username)}
         style={{ cursor: "pointer" }}
       >
-        <div>
-          <div className="Outline">
-            <div className="Avatar">
-              <img
-                src={player2.avatar_url}
-                className="Picture"
-                alt={player2.username}
-              />
-            </div>
-            <div className="Crown">
-              <div></div>
-            </div>
-          </div>
-          <div className="Username">{player2.username}</div>
+        <div className="truncate avatar-match">
+          <img
+            src={player2.avatar_url}
+            className="avatar insideCard"
+            alt={player2.username}
+          />
         </div>
+        <div className="Crown">
+          <div></div>
+        </div>
+        <div className="username">{player2.username}</div>
       </div>
     </div>
   );

@@ -30,45 +30,30 @@
 }
 
 .match-recap > .winner-bg {
-  border-radius: var(--radius-radius-rounded, 8px);
-  border: 1px solid var(--Base-Black, #000);
   background: var(
     --Turquoise-Gradient-200,
     linear-gradient(180deg, #9be9e0 66.15%, #61cec5 86.98%)
   );
 }
+.match-recap > .winner-bg:hover {
+  border-color:#9be9e0;
+  background: #9be9e0;
+}
 
 .match-recap > .loser-bg {
-  border-radius: var(--radius-radius-rounded, 8px);
-  border: 1px solid var(--Base-Black, #000);
   background: var(
     --Pink-Gradient-200,
     linear-gradient(180deg, #ffcbe7 75.69%, #faaad7 91.84%)
   );
 }
-
-.match-recap > .winner-bg:hover {
-  border-radius: var(--radius-radius-rounded, 8px);
-  border: 1px solid var(--Base-Black, #000);
-  background: #9be9e0;
-}
-
 .match-recap > .loser-bg:hover {
-  border-radius: var(--radius-radius-rounded, 8px);
-  border: 1px solid var(--Base-Black, #000);
+  border-color: #ffcbe7;
   background: #ffcbe7;
 }
 
 .match-recap > .player {
   display: flex;
-  min-width: 80px;
-  min-height: 93px;
-  align-items: center;
-  flex: 1 0 0;
-}
-
-.match-recap > .player > div {
-  display: flex;
+  height: 100px;
   min-width: 68px;
   min-height: 83px;
   padding: 5px;
@@ -77,35 +62,20 @@
   align-items: center;
   align-content: space-between;
   flex: 1 0 0;
+  outline: 1px solid var(--Base-Black, #000);
   border-radius: var(--radius-radius-rounded, 8px);
   border-top: 2px solid var(--Base-White, #fff);
   border-right: 1px solid var(--Base-White, #fff);
   border-left: 1px solid var(--Base-White, #fff);
 }
 
-.match-recap > .player > div > .Outline {
+.avatar-match {
   display: flex;
-  padding: 5px;
-  justify-content: center;
   align-items: center;
+  height: inherit;
 }
 
-.match-recap > .player > div > .Outline > .Avatar {
-  display: flex;
-  padding: 5px;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.match-recap > .player > div > .Outline > .Avatar > .Picture {
-  width: 48px;
-  height: 48px;
-  border-radius: var(--radius-radius-rounded, 8px);
-  border: 5px solid var(--colors-grey-white, #fff);
-  background: var(--colors-grey-grey-400, #888);
-}
-
-.match-recap > .player > div > .Username {
+.match-recap > .player > .username {
   display: flex;
   padding: 0px 1px;
   justify-content: center;
