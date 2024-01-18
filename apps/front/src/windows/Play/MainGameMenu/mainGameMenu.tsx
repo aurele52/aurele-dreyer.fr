@@ -299,7 +299,11 @@ export default function MainGameMenu(props: mainGameMenuProps) {
         ></GameEnd>
       )}
       {privateWaitingDisplay === true && (
-        <PrivateWaiting onPrivateAbort={onPrivateAbort} />
+        <PrivateWaiting
+          onPrivateAbort={onPrivateAbort}
+          opponentId={props.privateLobby.targetId}
+          winId={props.windowId}
+        />
       )}
     </>
   );
