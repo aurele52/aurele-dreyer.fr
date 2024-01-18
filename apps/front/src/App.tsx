@@ -46,10 +46,12 @@ function App() {
 		});
 
 		return () => {
+			socket.disconnect();
 			socket.off("connect");
 			socket.off("disconnect");
 		};
 	}, []);
+
 	const { displayFilter, zIndexFilter } = useSelector(
 		(state: AppState) => {
 			const modalWindow = state.windows.find(

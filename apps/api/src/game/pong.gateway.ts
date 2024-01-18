@@ -38,7 +38,6 @@ export class PongGateway {
       newClient.socket = client;
       newClient.user = user;
       this.connectedClient.push(newClient);
-      console.log('socket connection successfull');
     } catch (ex) {
       console.log('socket connection failed');
       client.emit('connect_failed');
@@ -79,7 +78,7 @@ export class PongGateway {
       if (polo.status === 'inJoinTab') this.lobbyManager.removeInJoinTab(polo);
       if (polo.status === 'waiting create custom')
         this.lobbyManager.removeToCustomQueue(polo);
-      this.connectedClient = this.connectedClient.splice(index, 1);
+      this.connectedClient.splice(index, 1);
     }
     this.lobbyManager.cleanLobbies();
   }
