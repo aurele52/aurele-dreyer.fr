@@ -134,10 +134,8 @@ export class ProfileService {
         },
       },
     });
-
     const matchHistory = matches.map((matchPlayer) => {
       const match = matchPlayer.match;
-
       const user1 =
         match.players[0].user.id === id
           ? match.players[0].user
@@ -147,33 +145,29 @@ export class ProfileService {
           ? match.players[1].user
           : match.players[0].user;
 
-      const player1 = user1.username;
-      const player2 = user2.username;
-
-      const player1_id = user1.id;
-      const player2_id = user2.id;
-
-      const player1_avatar = user1.avatar_url;
-      const player2_avatar = user2.avatar_url;
-      const score1 =
-        match.players[0].user.id === id
-          ? match.players[0].score
-          : match.players[1].score;
-      const score2 =
-        match.players[0].user.id === id
-          ? match.players[1].score
-          : match.players[0].score;
+      const player1 = {
+        id: user1.id,
+        username: user1.username,
+        avatar: user1.avatar_url,
+        score:
+          match.players[0].user.id === id
+            ? match.players[0].score
+            : match.players[1].score,
+      };
+      const player2 = {
+        id: user2.id,
+        username: user2.username,
+        avatar: user2.avatar_url,
+        score:
+          match.players[0].user.id === id
+            ? match.players[1].score
+            : match.players[0].score,
+      };
 
       return {
         id: match.id,
-        player1: player1,
-        player2: player2,
-        player1_id: player1_id,
-        player2_id: player2_id,
-        player1_avatar: player1_avatar,
-        player2_avatar: player2_avatar,
-        score1: score1,
-        score2: score2,
+        player1,
+        player2,
       };
     });
     return { matchHistory, length: matchHistory.length };

@@ -11,6 +11,7 @@ import { addModal, ModalType } from "../../shared/utils/AddModal";
 import { useState } from "react";
 import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
 import { AxiosError } from "axios";
+import MatchRecap from "../../shared/ui-components/MatchRecap/MatchRecap";
 
 interface ProfileProps {
   targetId?: number;
@@ -24,10 +25,7 @@ export function Profile({ targetId, winId }: ProfileProps) {
   const [avatarIsHovered, setAvatarIsHovered] = useState(false);
   const [historicMaxDisplay, setHistoricMaxDisplay] = useState<number>(10);
 
-  const {
-    data: profile,
-    isLoading: profileLoading,
-  } = useQuery<{
+  const { data: profile, isLoading: profileLoading } = useQuery<{
     id: number;
     username: string;
     avatar_url: string;
@@ -50,44 +48,43 @@ export function Profile({ targetId, winId }: ProfileProps) {
           : await api.get(`/profile/user`);
         return response.data;
       } catch (error) {
-        store.dispatch(delWindow(winId))
+        store.dispatch(delWindow(winId));
       }
     },
   });
 
-  const {
-    data: pendingRequests,
-    isLoading: pendingRequestsLoading,
-  } = useQuery<number>({
-    queryKey: ["pendingRequests", "Profile"],
-    queryFn: async () => {
-      try {
-        if (targetId) return 0;
-        const response = await api.get(`/friendships/pendingList`);
-        return response.data?.filter(
-          (content: { type: "sent" | "received" }) =>
-            content.type === "received"
-        ).length;
-      } catch {
-        store.dispatch(delWindow(winId))
-      }
-    },
-  });
+  const { data: pendingRequests, isLoading: pendingRequestsLoading } =
+    useQuery<number>({
+      queryKey: ["pendingRequests", "Profile"],
+      queryFn: async () => {
+        try {
+          if (targetId) return 0;
+          const response = await api.get(`/friendships/pendingList`);
+          return response.data?.filter(
+            (content: { type: "sent" | "received" }) =>
+              content.type === "received"
+          ).length;
+        } catch {
+          store.dispatch(delWindow(winId));
+        }
+      },
+    });
 
-  const {
-    data: historic,
-    isLoading: historicLoading,
-  } = useQuery<{
+  const { data: historic, isLoading: historicLoading } = useQuery<{
     matchHistory: {
       id: number;
-      player1: string;
-      player2: string;
-      player1_id: number;
-      player2_id: number;
-      player1_avatar: string;
-      player2_avatar: string;
-      score1: number;
-      score2: number;
+      player1: {
+        id: number;
+        username: string;
+        avatar: string;
+        score: number;
+      };
+      player2: {
+        id: number;
+        username: string;
+        avatar: string;
+        score: number;
+      };
     }[];
     length: number;
   }>({
@@ -103,7 +100,7 @@ export function Profile({ targetId, winId }: ProfileProps) {
             });
         return response.data;
       } catch (error: unknown) {
-        store.dispatch(delWindow(winId))
+        store.dispatch(delWindow(winId));
       }
     },
   });
@@ -226,21 +223,6 @@ export function Profile({ targetId, winId }: ProfileProps) {
       toggle: false,
       handleBarButton: 7,
       color: WinColor.PURPLE,
-    };
-    store.dispatch(addWindow(newWindow));
-  };
-
-  const handleOpenProfile = (id: number, username: string) => {
-    const newWindow = {
-      WindowName: username,
-      width: "400",
-      height: "600",
-      id: 0,
-      content: { type: "PROFILE", id: id },
-      toggle: false,
-      handleBarButton: 7,
-      color: WinColor.PURPLE,
-      targetId: id,
     };
     store.dispatch(addWindow(newWindow));
   };
@@ -575,97 +557,52 @@ export function Profile({ targetId, winId }: ProfileProps) {
     </svg>
   );
 
-	return (
-		<div className="Profile">
-			<div className="Header">
-				{avatarDiv()}
-				<div className="Text">
-					{nameDiv()}
-					<div className="Stats">
-						<div>
-							<div className="Rank" >
-								<div className="Position" onClick={handleOpenLadder}>
-									<div>Rank #{profile?.rank ?? 0}</div>
-								</div>
-								<div
-									style={{ paddingRight: "4px" }}
-									className="Ratio"
-								>
-									<div>
-										W {profile?.win_count ?? 0} / L{" "}
-										{profile?.loose_count ?? 0}
-									</div>
-								</div>
-							</div>
-						</div>
-					</div>
-					<div className="ProfileAchievements" onClick={() => handleOpenAchievements()}>
-						<div className="AchievementLink">	
-							Achievements lvl. {profile?.achievement_lvl}	
-						</div>
-					</div>
-					{buttons}
-				</div>
-			</div>
-			<div className="Body">
-				<div className="Historic">
-					<List>
-						<div className="Count">
-							{historic?.matchHistory.length === historic?.length
-								? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
-								: `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`}
-						</div>
-
-            {historic?.matchHistory.map((match) => {
-              return (
-                <div className="Match" key={match.id}>
-                  <div
-                    className={`Player ${
-                      match.score1 > match.score2 ? "WinPlayer" : "LoosePlayer"
-                    }`}
-                  >
-                    <div>
-                      <div className="Outline">
-                        <div className="Avatar">
-                          <img
-                            src={match?.player1_avatar}
-                            className="Picture"
-                            alt={match?.player1.toLowerCase()}
-                          />
-                        </div>
-                      </div>
-                      <div className="Username">{match?.player1}</div>
-                    </div>
-                  </div>
-                  <div className="Score">
-                    <div>{match?.score1 + " - " + match?.score2}</div>
-                  </div>
-                  <div
-                    className={`Player ${
-                      match.score1 < match.score2 ? "WinPlayer" : "LoosePlayer"
-                    }`}
-                    onClick={() =>
-                      handleOpenProfile(match.player2_id, match.player2)
-                    }
-                    style={{ cursor: "pointer" }}
-                  >
-                    <div>
-                      <div className="Outline">
-                        <div className="Avatar">
-                          <img
-                            src={match?.player2_avatar}
-                            className="Picture"
-                            alt={match?.player2.toLowerCase()}
-                          />
-                        </div>
-                        <div className="Crown">
-                          <div></div>
-                        </div>
-                      </div>
-                      <div className="Username">{match?.player2}</div>
-                    </div>
+  return (
+    <div className="Profile">
+      <div className="Header">
+        {avatarDiv()}
+        <div className="Text">
+          {nameDiv()}
+          <div className="Stats">
+            <div>
+              <div className="Rank">
+                <div className="Position" onClick={handleOpenLadder}>
+                  <div>Rank #{profile?.rank ?? 0}</div>
+                </div>
+                <div style={{ paddingRight: "4px" }} className="Ratio">
+                  <div>
+                    W {profile?.win_count ?? 0} / L {profile?.loose_count ?? 0}
                   </div>
                 </div>
+              </div>
+            </div>
+          </div>
+          <div
+            className="ProfileAchievements"
+            onClick={() => handleOpenAchievements()}
+          >
+            <div className="AchievementLink">
+              Achievements lvl. {profile?.achievement_lvl}
+            </div>
+          </div>
+          {buttons}
+        </div>
+      </div>
+      <div className="Body">
+        <div className="Historic">
+          <List>
+            <div className="Count">
+              {historic?.matchHistory.length === historic?.length
+                ? `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`
+                : `MATCH HISTORY (${historic?.matchHistory.length}/${historic?.length})`}
+            </div>
+            {historic?.matchHistory.map((match) => {
+              return (
+                <MatchRecap
+                  id={match.id}
+                  player1={match.player1}
+                  player2={match.player2}
+                ></MatchRecap>
               );
             })}
             {historic && historic.matchHistory.length !== historic.length ? (
