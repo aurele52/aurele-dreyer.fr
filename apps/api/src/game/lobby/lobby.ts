@@ -42,14 +42,14 @@ export class lobby {
     try {
       const gameEndInfo: gameEndInfo = {
         player1: {
-          ...this.clients[0].user,
+          ...this.clients[0]?.user,
           score: this.gameInfo.oneScore,
-          isWinner: this.clients[0].user === winner.user ? true : false,
+          isWinner: this.clients[0]?.user === winner.user ? true : false,
         },
         player2: {
-          ...this.clients[1].user,
+          ...this.clients[1]?.user,
           score: this.gameInfo.twoScore,
-          isWinner: this.clients[1].user === winner.user ? true : false,
+          isWinner: this.clients[1]?.user === winner.user ? true : false,
         },
       };
 
@@ -81,7 +81,7 @@ export class lobby {
                 {
                   user_id: winner.user.id,
                   score:
-                    this.clients[0].user === winner.user
+                    this.clients[0]?.user === winner.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: true,
@@ -89,7 +89,7 @@ export class lobby {
                 {
                   user_id: loser.user.id,
                   score:
-                    this.clients[0].user === loser.user
+                    this.clients[0]?.user === loser.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: false,
