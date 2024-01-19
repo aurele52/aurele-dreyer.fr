@@ -14,13 +14,15 @@ export class lobbyManager {
     client.matchInfo = {
       ...normalGameInfo,
       ...gameInfo,
+      gamex: gameInfo.borderSize,
       gamey: gameInfo.borderSize * 2 + gameInfo.menuSize,
-      gamexsize: gameInfo.xsize - 2 * gameInfo.borderSize,
-      gameysize: gameInfo.ysize - 3 * gameInfo.borderSize - gameInfo.menuSize,
+      xsize: gameInfo.gamexsize + 2 * gameInfo.borderSize,
+      ysize: gameInfo.gameysize + 3 * gameInfo.borderSize + gameInfo.menuSize,
       ballx: gameInfo.gamexsize / 2,
       bally: gameInfo.gameysize / 2,
       id: this.nextGameId,
     };
+    console.log(client.matchInfo);
     this.nextGameId++;
     const newLobby = new lobby('custom', client.matchInfo);
     client.lobby = newLobby;

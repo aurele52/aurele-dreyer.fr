@@ -300,14 +300,12 @@ export class lobby {
   }
 
   async start() {
-    console.log(this.gameInfo.compteur);
     this.clients[0].socket.emit('server.matchStart', this.defaultGameInfo);
     this.clients[1].socket.emit('server.matchStart', this.defaultGameInfo);
     this.gameInfo.compteur = 3;
     this.clients[0].socket.emit('server.update', this.gameInfo);
     this.clients[1].socket.emit('server.update', this.gameInfo);
     await this.delay(1000);
-    console.log(this.gameInfo.compteur);
     this.gameInfo.compteur = 2;
     this.clients[0].socket.emit('server.update', this.gameInfo);
     this.clients[1].socket.emit('server.update', this.gameInfo);
@@ -322,9 +320,7 @@ export class lobby {
     this.clients[0].socket.emit('server.update', this.gameInfo);
     this.clients[1].socket.emit('server.update', this.gameInfo);
     this.gameInfo.compteur = -1;
-    console.log(this.gameInfo.compteur);
     await this.delay(200);
-    console.log(this.gameInfo.compteur);
 
     while (
       this.finish === 0 &&
