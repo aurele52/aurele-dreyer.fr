@@ -69,12 +69,17 @@ export class MessageService {
       if (sendedInvitations > 0)
         throw new BadRequestException(`Can't send multiple invitations`);
     }
-    if (!channel_id || !user_id || !content) {
+    if (!channel_id || !user_id) {
       console.error(
         `Missing property for message creation: channel_id = ${channel_id}, user_id = ${user_id}, content = ${content}`,
       );
       throw new BadRequestException(`Missing property for message creation`);
     }
+    
+    if (!content) {
+      return undefined;
+    }
+
     try {
       return await this.prisma.message.create({
         data: {

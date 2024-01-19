@@ -91,6 +91,10 @@ const windowsSlice = createSlice({
             window.content.type === action.payload.content.type &&
             window.WindowName === action.payload.WindowName
         );
+        
+        if (windowIndex === -1)
+          return;
+
         if (state.windows[windowIndex].toggle) {
           state.windows.forEach((window) => {
             if (
