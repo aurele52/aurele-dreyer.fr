@@ -203,10 +203,8 @@ export function User({ userId, channel }: UserProps) {
     return (
       <div className="UserComponent">
         <div className="User">
-          <div className="Frame">
-            <div className="Player">
-              <div className="Name">Unexisting User</div>
-            </div>
+          <div className="Player">
+            <div className="Name">Unexisting User</div>
           </div>
         </div>
       </div>
@@ -286,31 +284,29 @@ export function User({ userId, channel }: UserProps) {
           background: backgroundColor,
         }}
       >
-        <div className="Frame">
-          <div className="Player">
-            <div className="Name">
-              {channel ? (
-                <div className="Icon">
-                  {(() => {
-                    switch (channel.userRole) {
-                      case UserRole.OWNER:
-                        return IconSVG["Crown"];
-                      case UserRole.ADMIN:
-                        return IconSVG["Star"];
-                      default:
-                        return null;
-                    }
-                  })()}
-                </div>
-              ) : (
-                <div></div>
-              )}
-              <div className="Text">{user.username}</div>
-            </div>
-            {status}
+        <div className="Player">
+          <div className="Name">
+            {channel ? (
+              <div className="Icon">
+                {(() => {
+                  switch (channel.userRole) {
+                    case UserRole.OWNER:
+                      return IconSVG["Crown"];
+                    case UserRole.ADMIN:
+                      return IconSVG["Star"];
+                    default:
+                      return null;
+                  }
+                })()}
+              </div>
+            ) : (
+              <div></div>
+            )}
+            <div className="Text">{user.username}</div>
           </div>
-          {self?.userId !== userId ? buttons() : ""}
+          {status}
         </div>
+        {self?.userId !== userId ? buttons() : ""}
       </div>
       {self?.role === UserRole.ADMIN || self?.role === UserRole.OWNER
         ? channelSettingsButton
