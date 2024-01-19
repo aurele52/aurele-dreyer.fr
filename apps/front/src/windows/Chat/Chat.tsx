@@ -10,12 +10,13 @@ import store from "../../store";
 import { useEffect, useState } from "react";
 import { EventSourcePolyfill } from "event-source-polyfill";
 import { SearchBar } from "../../shared/ui-components/SearchBar/SearchBar";
+import { UserInfo } from "shared/src/userInfo.interface";
 
 export type ChatType = {
   id: number;
   name: string;
   type: string;
-  interlocutor: { avatar_url: string; username: string; id: number };
+  interlocutor: UserInfo;
   notif: number;
 };
 
