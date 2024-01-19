@@ -11,6 +11,7 @@ import { addWindow, renameWindow } from "../../../reducers";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { ModalType, addModal } from "../../../shared/utils/AddModal";
 import { delWindow } from "../../../reducers";
+import { UserInfo } from "shared/src/userInfo.interface";
 
 interface AboutChanProps {
   chanId: number | undefined;
@@ -26,11 +27,7 @@ export type ChannelData = {
     id: number;
     role: UserRole;
     user_id: number;
-    User: {
-      id: number;
-      username: string;
-      avatar_url: string;
-    };
+    User: UserInfo;
   }[];
 };
 

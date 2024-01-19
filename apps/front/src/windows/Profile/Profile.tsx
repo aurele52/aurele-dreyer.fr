@@ -8,14 +8,20 @@ import { addWindow, delWindow } from "../../reducers";
 import { FaSpinner } from "react-icons/fa";
 import store from "../../store";
 import { addModal, ModalType } from "../../shared/utils/AddModal";
-import { useState } from "react";
+import { FormEvent, useState } from "react";
 import { UserStatus } from "../../shared/ui-components/UserStatus/UserStatus";
 import MatchRecap from "../../shared/ui-components/MatchRecap/MatchRecap";
 import { playerGameEndInfo } from "shared/src/gameEndInfo.interface";
+import { Input } from "../../shared/ui-components/Input/Input";
+import { AxiosError } from "axios";
 
 interface ProfileProps {
   targetId?: number;
   winId: number;
+}
+
+interface ValidationErrorResponse {
+  [key: string]: string[];
 }
 
 export function Profile({ targetId, winId }: ProfileProps) {
@@ -95,9 +101,16 @@ export function Profile({ targetId, winId }: ProfileProps) {
     },
   });
 
-  const { mutateAsync: setUsername } = useMutation({
-    mutationFn: async () => {
-      return api.post("/user/username/" + placeholderValue);
+  const { mutateAsync: setUsername, error: setUsernameError } = useMutation({
+    mutationFn: async (formData) => {
+      return api.post("/user/username", formData).catch((error: AxiosError) => {
+        if (error.response?.status === 400) {
+          throw error.response?.data as ValidationErrorResponse;
+        } else
+          throw {
+            username: [(error.response?.data as { message: string }).message],
+          };
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
@@ -272,16 +285,12 @@ export function Profile({ targetId, winId }: ProfileProps) {
     setPlaceholderValue(profile?.username || "Username");
   };
 
-  const handleChangeName = async () => {
-    const new_username = placeholderValue;
-    const usernamePattern = /^[a-zA-Z0-9_-]{4,15}$/;
-    if (!usernamePattern.test(new_username)) {
-      setChangingName(false);
-      addModal(ModalType.ERROR, `Invalid username format`);
-    } else {
-      setUsername();
-      setChangingName(false);
-    }
+  const handleChangeName = (e: FormEvent) => {
+    e.preventDefault();
+    const target = e.target as HTMLFormElement;
+    const formData = Object.fromEntries(new FormData(target));
+    setUsername(formData as any);
+    setChangingName(false);
   };
 
   const handleUploadAvatar = async () => {
@@ -343,17 +352,15 @@ export function Profile({ targetId, winId }: ProfileProps) {
         );
       } else {
         return (
-          <div className="TypeBarFrame">
-            <div className="TypeBar">
-              <div className="Placeholder">
-                <input
-                  value={placeholderValue}
-                  onChange={(e) => setPlaceholderValue(e.target.value)}
-                />
-              </div>
-              <Button icon="Check" color="purple" onClick={handleChangeName} />
-            </div>
-          </div>
+          <form className="TypeBarFrame" onSubmit={handleChangeName}>
+            <Input
+              name="username"
+              value={placeholderValue}
+              onChange={(e) => setPlaceholderValue(e.target.value)}
+              errors={(setUsernameError as any)?.username}
+            />
+            <Button icon="Check" type="submit" color="purple" />
+          </form>
         );
       }
     }
@@ -575,8 +582,8 @@ export function Profile({ targetId, winId }: ProfileProps) {
               Achievements lvl. {profile?.achievement_lvl}
             </div>
           </div>
-          {buttons}
         </div>
+        {buttons}
       </div>
       <div className="Body">
         <div className="Historic">

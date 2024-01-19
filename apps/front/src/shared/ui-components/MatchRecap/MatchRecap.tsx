@@ -18,7 +18,6 @@ function MatchRecap({
   player2,
   isVictorious,
 }: MatchRecapProps) {
-
   const { data: selfId } = useQuery<number>({
     queryKey: ["selfId"],
     queryFn: async () => {
@@ -52,38 +51,38 @@ function MatchRecap({
       key={key}
     >
       <div
-        className={`player ${player1.isWinner ? "winner-bg" : "loser-bg"}`}
+        className={`player player-left ${
+          player1.isWinner ? "winner-bg" : "loser-bg"
+        }`}
         onClick={() => handleOpenProfile(player1.id, player1.username)}
         style={{ cursor: "pointer" }}
       >
-        <div className="truncate avatar-match">
-          <img
-            src={player1.avatar_url}
-            className="avatar insideCard"
-            alt={player1.username}
-          />
-        </div>
+        <img
+          src={player1.avatar_url}
+          className="avatar-match"
+          alt={player1.username}
+        />
         <div className="username">{player1.username}</div>
       </div>
       <div className="score">
         <div>{player1.score + " - " + player2.score}</div>
       </div>
       <div
-        className={`player ${player2.isWinner ? "winner-bg" : "loser-bg"}`}
+        className={`player player-right ${
+          player2.isWinner ? "winner-bg" : "loser-bg"
+        }`}
         onClick={() => handleOpenProfile(player2.id, player2.username)}
         style={{ cursor: "pointer" }}
       >
-        <div className="truncate avatar-match">
-          <img
-            src={player2.avatar_url}
-            className="avatar insideCard"
-            alt={player2.username}
-          />
-        </div>
+        <div className="username">{player2.username}</div>
+        <img
+          src={player2.avatar_url}
+          className="avatar-match"
+          alt={player2.username}
+        />
         <div className="Crown">
           <div></div>
         </div>
-        <div className="username">{player2.username}</div>
       </div>
     </div>
   );

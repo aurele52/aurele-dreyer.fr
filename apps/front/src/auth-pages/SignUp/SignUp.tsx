@@ -50,7 +50,6 @@ export default function Initialise() {
       label="Pick a username"
       name="username"
       required
-      minLength={3}
       errors={(error as any)?.username}
     ></Input>
   );

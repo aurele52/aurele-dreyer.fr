@@ -22,31 +22,20 @@
 
 .UserComponent > .User {
 	display: flex;
-	min-width: 101px;
-	justify-content: center;
-	align-items: center;
-	align-content: center;
-	flex: 1 0 0;
-	flex-wrap: wrap;
-	border-radius: var(--radius-radius-minimal, 4px);
-	border: 1px solid var(--Base-Black, #000);
-}
-
-.UserComponent > .User > .Frame {
-	display: flex;
 	padding: 5px;
 	align-items: center;
 	align-content: center;
 	gap: 10px;
 	flex: 1 0 0;
 	flex-wrap: wrap;
-	border-radius: 5px;
+	border-radius: 4px;
+	outline: 1px solid var(--Base-Black, #000);
 	border-top: 2px solid var(--Base-White, #fff);
 	border-right: 1px solid var(--Base-White, #fff);
 	border-left: 1px solid var(--Base-White, #fff);
 }
 
-.UserComponent > .User > .Frame > .Player {
+.UserComponent > .User > .Player {
 	display: flex;
 	min-width: 100px;
 	padding: 5px;
@@ -55,7 +44,7 @@
 	flex: 1 0 0;
 }
 
-.UserComponent > .User > .Frame > .Player > .Name {
+.UserComponent > .User > .Player > .Name {
 	display: flex;
 	padding: 0px 1px;
 	align-items: center;
@@ -63,17 +52,17 @@
 	align-self: stretch;
 }
 
-.UserComponent > .User > .Frame > .Player > .Name > .Icon {
+.UserComponent > .User > .Player > .Name > .Icon {
 	display: flex;
 	align-items: flex-start;
 }
 
-.UserComponent > .User > .Frame > .Player > .Name > .Icon > svg {
+.UserComponent > .User > .Player > .Name > .Icon > svg {
 	width: 18px;
 	height: 18px;
 }
 
-.UserComponent > .User > .Frame > .Player > .Name > .Text {
+.UserComponent > .User > .Player > .Name > .Text {
 	text-overflow: ellipsis;
 	display: -webkit-box;
 	-webkit-box-orient: vertical;
@@ -87,33 +76,32 @@
 	font-size: 18px;
 	font-style: normal;
 	font-weight: 700;
-	line-height: 18px; /* 100% */
 }
 
-.UserComponent > .User > .Frame > .Player > .Status {
+.UserComponent > .User > .Player > .Status {
 	display: flex;
 	align-items: center;
 	gap: 5px;
 }
 
-.UserComponent > .User > .Frame > .Player > .Status > .Icon {
+.UserComponent > .User > .Player > .Status > .Icon {
 	width: 5px;
 	height: 5px;
 }
 
-.UserComponent > .User > .Frame > .Player > .Status > .Online {
+.UserComponent > .User > .Player > .Status > .Online {
 	fill: #44e929;
 	stroke-width: 1px;
 	stroke: var(--Base-Black, #000);
 }
 
-.UserComponent > .User > .Frame > .Player > .Status > .Offline {
+.UserComponent > .User > .Player > .Status > .Offline {
 	fill: #fe0000;
 	stroke-width: 1px;
 	stroke: var(--Base-Black, #000);
 }
 
-.UserComponent > .User > .Frame > .Player > .Status > .Text {
+.UserComponent > .User > .Player > .Status > .Text {
 	color: var(--Base-Black, #000);
 
 	/* Text/300/Regular */
@@ -124,7 +112,7 @@
 	letter-spacing: 0.12px;
 }
 
-.UserComponent > .User > .Frame > .Buttons {
+.UserComponent > .User > .Buttons {
 	display: flex;
 	min-width: 70px;
 	justify-content: flex-end;
@@ -135,7 +123,7 @@
 	flex-wrap: wrap;
 }
 
-.UserComponent > .User > .Frame > .Buttons > .Match {
+.UserComponent > .User > .Buttons > .Match {
 	display: flex;
 	justify-content: center;
 	align-items: center;
@@ -152,7 +140,7 @@
 		0px 0px 1px 0px rgba(12, 14, 25, 0.24);
 }
 
-.UserComponent > .User > .Frame > .Buttons > .Other {
+.UserComponent > .User > .Buttons > .Other {
 	display: flex;
 	align-items: center;
 	gap: var(--radius-radius-minimal, 4px);
