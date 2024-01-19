@@ -273,7 +273,7 @@ export default function CreateCustom(props: createCustomProps) {
 						min={0.5}
 						max={5}
 						step={0.5}
-						label="SCcore Side Dist (%)"
+						label="Score Side Dist (%)"
 					/>
 				</div>
 			)}
@@ -358,7 +358,7 @@ export default function CreateCustom(props: createCustomProps) {
 						min={0}
 						max={8}
 						step={1}
-						label="Player One Begin Score"
+						label="P1 Start Score"
 					/>
 					<RangeSlider
 						name={"twoScore"}
@@ -367,7 +367,7 @@ export default function CreateCustom(props: createCustomProps) {
 						min={0}
 						max={8}
 						step={1}
-						label="Player Two Begin Score"
+						label="P2 Start Score"
 					/>
 				</div>
 			)}
