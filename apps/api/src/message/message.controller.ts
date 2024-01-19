@@ -43,7 +43,7 @@ export class MessageController {
 
   @Sse('/stream/messages')
   streamMessages(@CurrentUserID() user_id: number): Observable<MessageEvent> {
-    const heartbeat = interval(30000).pipe(map(() => ({ data: '' })));
+    const heartbeat = interval(10000).pipe(map(() => ({ data: '' })));
 
     const message = this.messageService.getMessageEvents().pipe(
       mergeMap((event) =>
