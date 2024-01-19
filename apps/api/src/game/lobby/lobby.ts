@@ -116,6 +116,7 @@ export class lobby {
       this.gameInfo.ballx + this.gameInfo.ballSize >=
       this.gameInfo.gamexsize - 10
     ) {
+      this.gameInfo.ballSpeed = this.defaultGameInfo.ballSpeed;
       this.gameInfo.oneScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 + this.gameInfo.ballDeb;
       this.gameInfo.bally = this.gameInfo.gameysize / 2;
@@ -123,6 +124,7 @@ export class lobby {
       this.gameInfo.ballDiry = 1;
     }
     if (this.gameInfo.ballx <= 10) {
+      this.gameInfo.ballSpeed = this.defaultGameInfo.ballSpeed;
       this.gameInfo.twoScore++;
       this.gameInfo.ballx = this.gameInfo.gamexsize / 2 - this.gameInfo.ballDeb;
       this.gameInfo.bally = this.gameInfo.gameysize / 2;
@@ -285,6 +287,8 @@ export class lobby {
   update() {
     this.move();
     this.score();
+    if (this.gameInfo.ballSpeed <= 0.02 * this.gameInfo.gamexsize)
+      this.gameInfo.ballSpeed += 0.001;
     let i = this.gameInfo.ballSpeed;
     while (i > 0) {
       this.ballWallRedir();
