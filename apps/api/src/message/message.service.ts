@@ -66,8 +66,22 @@ export class MessageService {
           },
         },
       });
+      const receivedInvitations = await this.prisma.message.count({
+        where: {
+          id: channel_id,
+          content,
+          channel: {
+            type: 'DM',
+          },
+        },
+      });
       if (sendedInvitations > 0)
         throw new BadRequestException(`Can't send multiple invitations`);
+
+      if (receivedInvitations > 0)
+        throw new BadRequestException(
+          `This user have already sended you an invitation`,
+        );
     }
     if (!channel_id || !user_id || !content) {
       console.error(
