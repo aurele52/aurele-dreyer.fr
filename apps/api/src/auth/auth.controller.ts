@@ -109,18 +109,18 @@ export class AuthController {
     return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
   }
 
-  @Public() // Ne pas laisser ça public car normalement réservé aux admins
-  @Redirect()
-  @Get('/impersonate/:id')
-  async impersonateUser(@Param('id') id: number) {
-    const user = await this.userService.getUser(id);
-    const token = await this.authService.generateJWTToken(
-      user,
-      process.env.APP_SECRET,
-      '3d',
-    );
-    return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
-  }
+// @Public() 
+// @Redirect()
+// @Get('/impersonate/:id')
+// async impersonateUser(@Param('id') id: number) {
+//   const user = await this.userService.getUser(id);
+//   const token = await this.authService.generateJWTToken(
+//     user,
+//     process.env.APP_SECRET,
+//     '3d',
+//   );
+//   return { url: `${process.env.DOMAIN_NAME_FRONT}/redirect/${token}` };
+// }
 
   @Post('/2fa/enable')
   async enableTwoFA(@CurrentUser() user: User) {

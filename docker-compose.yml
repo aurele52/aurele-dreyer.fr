@@ -24,6 +24,20 @@ services:
     networks:
       - net-transcendence
 
+  app:
+    build:
+      context: .
+      dockerfile: ./docker/Dockerfile
+    ports:
+      - "3000:3000"
+    depends_on:
+      migrate-sql:
+        condition: service_completed_successfully
+    env_file:
+      - .env.docker
+    networks:
+      - net-transcendence
+
 volumes:
   postgres:
 
