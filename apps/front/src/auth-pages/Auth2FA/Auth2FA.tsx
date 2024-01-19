@@ -6,7 +6,7 @@ import { Button } from "../../shared/ui-components/Button/Button";
 import { FormEvent } from "react";
 import { Input } from "../../shared/ui-components/Input/Input";
 import { useMutation } from "@tanstack/react-query";
-import api from "../../axios";
+import api, { apiWoInterceptor } from "../../axios";
 
 interface ValidationErrorResponse {
 	[key: string]: string[];
@@ -17,7 +17,7 @@ export default function Auth2FA() {
 
 	const { mutate: postForm, error } = useMutation({
 		mutationFn: (code: string) => {
-			return api
+			return apiWoInterceptor
 				.post(`/auth/2fa/submit?jwt_id=${id}`, {
 					code,
 				})
