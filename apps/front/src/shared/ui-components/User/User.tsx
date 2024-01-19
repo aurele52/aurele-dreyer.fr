@@ -7,7 +7,7 @@ import {
   Button,
   HeartButton,
 } from "../../../shared/ui-components/Button/Button";
-import { addWindow } from "../../../reducers";
+import { addWindow, delWindow } from "../../../reducers";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import store from "../../../store";
 import { ReactNode } from "react";
@@ -152,6 +152,12 @@ export function User({ userId, channel }: UserProps) {
   };
 
   const handleChannelSettings = () => {
+    const memberSettingsWindow = store
+      .getState()
+      .windows.find((window) => window.content.type === "MEMBERSETTINGS");
+    if (memberSettingsWindow) {
+      store.dispatch(delWindow(memberSettingsWindow.id));
+    }
     const newWindow = {
       WindowName: "Member Setting",
       id: 0,
