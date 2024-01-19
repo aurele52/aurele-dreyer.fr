@@ -44,22 +44,22 @@ export class lobby {
         player1: {
           ...this.clients[0]?.user,
           score: this.gameInfo.oneScore,
-          isWinner: this.clients[0]?.user === winner.user ? true : false,
+          isWinner: this.clients[0]?.user === winner?.user ? true : false,
         },
         player2: {
           ...this.clients[1]?.user,
           score: this.gameInfo.twoScore,
-          isWinner: this.clients[1]?.user === winner.user ? true : false,
+          isWinner: this.clients[1]?.user === winner?.user ? true : false,
         },
       };
 
-      if (winner.socket.connected) {
+      if (winner?.socket.connected) {
         gameEndInfo.isVictorious = true;
-        winner.socket.emit('server.endMatch', gameEndInfo);
+        winner?.socket.emit('server.endMatch', gameEndInfo);
       }
-      if (loser.socket.connected) {
+      if (loser?.socket.connected) {
         gameEndInfo.isVictorious = false;
-        loser.socket.emit('server.endMatch', gameEndInfo);
+        loser?.socket.emit('server.endMatch', gameEndInfo);
       }
 
       if (winner.user.id === loser.user.id) {
@@ -79,17 +79,17 @@ export class lobby {
             createMany: {
               data: [
                 {
-                  user_id: winner.user.id,
+                  user_id: winner?.user.id,
                   score:
-                    this.clients[0]?.user === winner.user
+                    this.clients[0]?.user === winner?.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: true,
                 },
                 {
-                  user_id: loser.user.id,
+                  user_id: loser?.user.id,
                   score:
-                    this.clients[0]?.user === loser.user
+                    this.clients[0]?.user === loser?.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: false,
