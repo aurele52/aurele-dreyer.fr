@@ -16,21 +16,20 @@ import { ChannelTypes } from './types/channel.types';
 
 @Injectable()
 export class ChannelService {
-  constructor(
-    private readonly prisma: PrismaService,
-  ) {}
+  constructor(private readonly prisma: PrismaService) {}
 
   async createChannel(
     channelData: Omit<CreateChannelDto, 'passwordConfirmation'>,
   ) {
     try {
-      { }
+      {
+      }
       const { password, ...channelDataOther } = channelData;
       let hash = password;
       if (channelData.type === ChannelTypes.PROTECTED) {
         hash = await this.hashPassword(channelData.password);
       }
-  
+
       return this.prisma.channel.create({
         data: {
           ...channelDataOther,
@@ -412,14 +411,14 @@ export class ChannelService {
       const { password, ...channelDataOther } = channelData;
       let hash = password;
       if (channelData.type === ChannelTypes.PROTECTED) {
-      const hash = await this.hashPassword(channelData.password);
+        hash = await this.hashPassword(channelData.password);
       }
       return await this.prisma.channel.update({
         where: {
           id,
         },
         data: {
-          ...channelData,
+          ...channelDataOther,
           password: hash,
         },
       });
@@ -651,26 +650,25 @@ export class ChannelService {
     return dm !== undefined ? dm.id : undefined;
   }
 
-  async hashPassword(password: string){
-		try {
-			const salt = await bcrypt.genSalt();;
-			const hash = await bcrypt.hash(password, salt);
-			return hash;
-		} catch (err) {
-			const err_message = "Failed to hash password";
-			console.log("500 EXCEPTION THROWN: ", err_message);
-			throw new InternalServerErrorException(err_message);
-		}
-	}
+  async hashPassword(password: string) {
+    try {
+      const salt = await bcrypt.genSalt();
+      const hash = await bcrypt.hash(password, salt);
+      return hash;
+    } catch (err) {
+      const err_message = 'Failed to hash password';
+      console.log('500 EXCEPTION THROWN: ', err_message);
+      throw new InternalServerErrorException(err_message);
+    }
+  }
 
-	async comparePassword(password:string, hash:string){
-		try {
-			return await bcrypt.compare(password, hash)
-		} catch (err) {
-			const err_message = "Failed in hashed password comparison";
-			console.log("500 EXCEPTION THROWN: ", err_message);
-			throw new InternalServerErrorException(err_message);
-		}
-	}
-
+  async comparePassword(password: string, hash: string) {
+    try {
+      return await bcrypt.compare(password, hash);
+    } catch (err) {
+      const err_message = 'Failed in hashed password comparison';
+      console.log('500 EXCEPTION THROWN: ', err_message);
+      throw new InternalServerErrorException(err_message);
+    }
+  }
 }

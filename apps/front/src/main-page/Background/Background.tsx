@@ -127,7 +127,7 @@ export default function Background() {
   const { data: userChannelNames } = useQuery<ChatType[]>({
     queryKey: ["userChannelNames"],
     queryFn: async () => {
-      return api.get("/chats").then((response) => response.data);
+      return api.get("/chats").then((response) => response.data).finally(() => checkWindows());
     },
   });
 
@@ -157,25 +157,27 @@ export default function Background() {
     windows.forEach((window) => store.dispatch(delWindow(window.id)));
   };
 
-  useEffect(() => {
-    let windows = store.getState().windows;
-    windows = windows.filter(
+  const checkWindows = () => {
+    const windows = store.getState().windows;
+    const windowsToDel = windows.filter(
       (window) =>
         (!userChannelNames?.some((el) => el.name === window.WindowName) &&
           window.content.type === "CHATSESSION") ||
         (!userChannelNames?.some(
-          (el) => "About" + el.name === window.WindowName
+          (el) => `About ${el.name}` === window.WindowName
         ) &&
           window.content.type === "ABOUTCHAN")
     );
-    windows.forEach((window) => store.dispatch(delWindow(window.id)));
-  }, [userChannelNames]);
+    console.log(windowsToDel);
+    windowsToDel.forEach((window) => store.dispatch(delWindow(window.id)));
+  }
 
   const [userEventType, setUserEventType] = useState({
     type: UserEventType.NOEVENT,
   });
 
   useEffect(() => {
+    console.log(userEventType);
     switch (userEventType.type) {
       case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({

@@ -31,7 +31,7 @@ export function MemberSettingsBody({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", user.id, channelId],
+        queryKey: ["memberSettings", channelId, user.id],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
@@ -47,7 +47,7 @@ export function MemberSettingsBody({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", user.id, channelId],
+        queryKey: ["memberSettings", channelId, user.id],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],

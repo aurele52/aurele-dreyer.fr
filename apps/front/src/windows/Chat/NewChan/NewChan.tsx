@@ -2,7 +2,7 @@ import "./NewChan.css";
 import { Button } from "../../../shared/ui-components/Button/Button";
 import { useState, ChangeEvent, FormEvent } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import api from "../../../axios";
+import { apiWoInterceptor } from "../../../axios";
 import { AxiosResponse, AxiosError } from "axios";
 import store from "../../../store";
 import { delWindow } from "../../../reducers";
@@ -30,7 +30,7 @@ function NewChan({winId}: NewChanProps) {
 		Record<string, FormDataEntryValue>
 	>({
 		mutationFn: async (param: Record<string, FormDataEntryValue>) => {
-			return api.post("/channel", param);
+			return apiWoInterceptor.post("/channel", param);
 		},
 		onSuccess: () => {
 			queryClient.invalidateQueries({ queryKey: ["channels"] });

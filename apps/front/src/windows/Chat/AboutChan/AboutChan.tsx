@@ -7,7 +7,7 @@ import { Button } from "../../../shared/ui-components/Button/Button";
 import { User } from "../../../shared/ui-components/User/User";
 import { UserRole, userLvl } from "../../../shared/utils/User";
 import store from "../../../store";
-import { addWindow } from "../../../reducers";
+import { addWindow, renameWindow } from "../../../reducers";
 import { HBButton, WinColor } from "../../../shared/utils/WindowTypes";
 import { ModalType, addModal } from "../../../shared/utils/AddModal";
 import { delWindow } from "../../../reducers";
@@ -42,9 +42,11 @@ function AboutChan({ chanId, winId }: AboutChanProps) {
   const { data: channel } = useQuery<ChannelData>({
     queryKey: ["chanAbout", chanId],
     queryFn: async () => {
-      try {const data = api.get(chanApiUrl).then((response) => response.data);
-      return data;
-      } catch {
+      try {
+        const data = await api.get(chanApiUrl).then((response) => response.data);
+        store.dispatch(renameWindow({id: winId, newName: data.name}));
+        return data;
+      } catch (error) {
         store.dispatch(delWindow(winId));
       }
     },
@@ -59,7 +61,7 @@ function AboutChan({ chanId, winId }: AboutChanProps) {
         );
         return response.data;
       } catch (error) {
-        store.dispatch(delWindow(winId))
+        store.dispatch(delWindow(winId));
       }
     },
   });
@@ -67,9 +69,10 @@ function AboutChan({ chanId, winId }: AboutChanProps) {
   const { data: isMember } = useQuery<boolean>({
     queryKey: ["isMember", chanId],
     queryFn: async () => {
-      try {return api.get(chanApiUrl + "/me").then((response) => response.data);}
-      catch {
-        store.dispatch(delWindow(winId))
+      try {
+        return api.get(chanApiUrl + "/me").then((response) => response.data);
+      } catch {
+        store.dispatch(delWindow(winId));
       }
     },
   });

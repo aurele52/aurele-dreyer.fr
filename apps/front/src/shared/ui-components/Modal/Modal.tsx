@@ -200,10 +200,13 @@ function Modal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", targetId, channelId],
+        queryKey: ["memberSettings", channelId, targetId],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["self", channelId],
       });
     },
   });
@@ -216,10 +219,13 @@ function Modal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", targetId, channelId],
+        queryKey: ["memberSettings", channelId, targetId],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["self", channelId],
       });
     },
   });
@@ -232,10 +238,13 @@ function Modal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", targetId, channelId],
+        queryKey: ["memberSettings", channelId, targetId],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["self", channelId],
       });
     },
   });
@@ -332,13 +341,16 @@ function Modal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", targetId, channelId],
+        queryKey: ["memberSettings", channelId, targetId],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
       });
       queryClient.invalidateQueries({
         queryKey: ["banList", channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["self", channelId],
       });
       const memberSettingsWindow = store
         .getState()
@@ -358,10 +370,13 @@ function Modal({
     },
     onSuccess: () => {
       queryClient.invalidateQueries({
-        queryKey: ["memberSettings", targetId, channelId],
+        queryKey: ["memberSettings", channelId, targetId],
       });
       queryClient.invalidateQueries({
         queryKey: ["chanAbout", channelId],
+      });
+      queryClient.invalidateQueries({
+        queryKey: ["self", channelId],
       });
       const memberSettingsWindow = store
         .getState()

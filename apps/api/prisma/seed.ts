@@ -165,6 +165,10 @@ async function createMatches() {
 
     const userA = userPool[a];
     const userB = userPool[b];
+    const scoreA = faker.number.int({ min: 0, max: 9 });
+    const scoreB = faker.number.int({ min: 0, max: 9 });
+    const winA = scoreA > scoreB;
+    const winB = scoreB > scoreA;
 
     await prisma.match.create({
       data: {
@@ -176,13 +180,13 @@ async function createMatches() {
             data: [
               {
                 user_id: userA.id,
-                score: faker.number.int({ min: 0, max: 9 }),
-                winner: faker.datatype.boolean(),
+                score: scoreA,
+                winner: winA,
               },
               {
                 user_id: userB.id,
-                score: faker.number.int({ min: 0, max: 9 }),
-                winner: faker.datatype.boolean(),
+                score: scoreB,
+                winner: winB,
               },
             ],
           },

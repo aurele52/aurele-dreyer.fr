@@ -2,6 +2,7 @@ import "./ChannelSettings.css";
 import { useState, FormEvent, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { AxiosResponse, AxiosError } from "axios";
+import { apiWoInterceptor } from "../../../../axios";
 import api from "../../../../axios";
 import { Button } from "../../../../shared/ui-components/Button/Button";
 import { UserRole } from "../../../../shared/utils/User";
@@ -70,7 +71,7 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
         name: channel.name,
         topic: channel.topic,
         type: channel.type,
-        password: channel.password || "",
+        password: "",
         passwordConfirmation: "",
       });
     }
@@ -82,7 +83,7 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
     Record<string, FormDataEntryValue>
   >({
     mutationFn: async (param) => {
-      return api.put("/channel/" + channelId, param);
+      return apiWoInterceptor.put("/channel/" + channelId, param);
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["channels"] });
@@ -95,7 +96,12 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
 
   const handleSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
+    const channelName = channel.name;
     await updateChannel({ ...formData });
+    const window = store
+      .getState()
+      .windows.filter((w) => w.WindowName === `${channelName}'s Settings`);
+    store.dispatch(delWindow(window[0].id));
   };
 
   const handleDeleteChannel = async () => {
@@ -180,6 +186,8 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
                       setFormData({
                         ...formData,
                         type: e.target.value,
+                        password: "",
+                        passwordConfirmation: "",
                       })
                     }
                   />
@@ -198,6 +206,8 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
                       setFormData({
                         ...formData,
                         type: e.target.value,
+                        password: "",
+                        passwordConfirmation: "",
                       })
                     }
                   />
@@ -240,6 +250,12 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
                           placeholder="Type here"
                           name="password"
                           type="password"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              password: e.target.value,
+                            })
+                          }
                         ></input>
                         {dataError?.password ? (
                           <p className="errorFormNewChan">
@@ -265,6 +281,12 @@ function ChannelSettings({ channelId, winId }: ChannelSettingsProps) {
                           placeholder="Type here"
                           name="passwordConfirmation"
                           type="password"
+                          onChange={(e) =>
+                            setFormData({
+                              ...formData,
+                              passwordConfirmation: e.target.value,
+                            })
+                          }
                         ></input>
                         {dataError?.passwordConfirmation ? (
                           <p className="errorFormNewChan">
