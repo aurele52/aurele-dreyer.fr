@@ -210,4 +210,8 @@ export class gameInfoDto {
   @IsOptional()
   @IsInt()
   id?: number;
+
+  @IsOptional()
+  @IsInt()
+  compteur: number = 3;
 }

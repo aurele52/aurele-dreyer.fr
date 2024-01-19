@@ -50,4 +50,5 @@ export interface gameInfo {
 
   id?: number;
   userId?: number;
+  compteur: number;
 }

@@ -17,7 +17,7 @@ export class lobbyManager {
       gamey: gameInfo.borderSize * 2 + gameInfo.menuSize,
       gamexsize: gameInfo.xsize - 2 * gameInfo.borderSize,
       gameysize: gameInfo.ysize - 3 * gameInfo.borderSize - gameInfo.menuSize,
-      ballx: gameInfo.gamexsize / 2 - 10,
+      ballx: gameInfo.gamexsize / 2,
       bally: gameInfo.gameysize / 2,
       id: this.nextGameId,
     };

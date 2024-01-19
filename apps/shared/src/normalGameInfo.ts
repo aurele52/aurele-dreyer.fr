@@ -39,4 +39,5 @@ import { gameInfo } from "./gameInfo.interface";
     upBallSize: false,
     downBallSize: false,
     id: 10,
+    compteur: 3,
   };
