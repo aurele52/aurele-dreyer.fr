@@ -202,6 +202,8 @@ export class AchievementsService {
         take: 10,
       });
 
+      if (lastTenGames.length < 10) return false;
+
       const allWins = lastTenGames.every((game) => game.winner);
 
       return allWins;
