@@ -111,7 +111,7 @@ export class UserController {
 
   @Sse('/stream/userevents')
   streamUserEvents(@CurrentUserID() user_id): Observable<any> {
-    const heartbeat = interval(30000).pipe(
+    const heartbeat = interval(10000).pipe(
       map(() => ({
         type: 'heartbeat',
         data: JSON.stringify({}),

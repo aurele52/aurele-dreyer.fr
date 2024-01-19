@@ -129,8 +129,8 @@ export default function Background() {
 		queryFn: async () => {
 			return api.get("/chats").then((response) => {
 				checkWindows();
-				return (response.data)
-			})
+				return response.data;
+			});
 		},
 	});
 
@@ -164,13 +164,11 @@ export default function Background() {
 		const windows = store.getState().windows;
 		const windowsToDel = windows.filter(
 			(window) =>
-				(!userChannelNames?.some(
-					(el) => el.name === window.WindowName
-				) &&
+				(userChannelNames?.filter((el) => el.id === window.content.id)
+					.length <= 0 &&
 					window.content.type === "CHATSESSION") ||
-				(!userChannelNames?.some(
-					(el) => `About ${el.name}` === window.WindowName
-				) &&
+				(userChannelNames?.filter((el) => el.id === window.content.id)
+					.length <= 0 &&
 					window.content.type === "ABOUTCHAN")
 		);
 		windowsToDel.forEach((window) => store.dispatch(delWindow(window.id)));
