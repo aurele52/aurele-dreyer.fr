@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -20,6 +21,7 @@ import { Observable, interval, merge } from 'rxjs';
 import { map, filter } from 'rxjs/operators';
 import { UserEventType } from './types/user-event.types';
 import { ChannelService } from 'src/channel/channel.service';
+import { SetUsernameDto } from 'src/auth/dto/setusername.dto';
 
 @Controller('user')
 export class UserController {
@@ -38,19 +40,16 @@ export class UserController {
     return this.userService.getUser(selfid.id);
   }
 
-  @Post('/username/:new_username')
+  @Post('/username')
   async createBlockedFriendship(
-    @Param('new_username') username: string,
+    @Body() body: SetUsernameDto,
     @CurrentUser() user,
   ) {
-    const usernamePattern = /^[a-zA-Z0-9_-]{4,15}$/;
-    if (!usernamePattern.test(username)) {
-      return {
-        statusCode: HttpStatus.BAD_REQUEST,
-        message: 'Invalid username format',
-      };
-    }
-    return await this.userService.changeUsername(user.id, username);
+    const { username } = body;
+    return await this.userService.changeUsername(
+      user.id,
+      username as any as string,
+    );
   }
 
   @Post('/avatar')

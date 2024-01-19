@@ -100,9 +100,9 @@ export class AuthService {
     }
   }
 
-  async registerUser(user_infos_42, username) {
+  async registerUser(user_infos_42, username: string) {
     try {
-      const user = await this.prisma.user.create({
+      return await this.prisma.user.create({
         data: {
           username: username,
           avatar_url: user_infos_42.avatar,
@@ -111,7 +111,7 @@ export class AuthService {
           is_enable_2fa: false,
         },
       });
-      return user;
+      // return user;
     } catch (error) {
       if (error instanceof Prisma.PrismaClientKnownRequestError) {
         if (error.code === 'P2002') {

@@ -107,36 +107,6 @@
 	align-self: stretch;
 }
 
-.Profile > .Header > .Text > .TypeBarFrame > .TypeBar {
-	display: flex;
-	min-width: 50px;
-	padding: 5px 8px;
-	align-items: center;
-	gap: 5px;
-	flex: 1 0 0;
-	border-radius: var(--radius-radius-full, 360px);
-	background: var(--Base-White, #fff);
-}
-
-.Profile > .Header > .Text > .TypeBarFrame > .TypeBar > .Placeholder {
-	display: flex;
-	align-items: flex-start;
-	flex: 1 0 0;
-}
-
-.Profile > .Header > .Text > .TypeBarFrame > .TypeBar > .Placeholder > input {
-	color: var(--text-text-primary, #000);
-
-	/* Text/400/Regular */
-	font-family: Chakra Petch;
-	font-size: 14px;
-	font-style: normal;
-	font-weight: 400;
-	line-height: 14px; /* 100% */
-	letter-spacing: 0.07px;
-	border: none;
-}
-
 .Profile > .Header > .Text > .Stats {
 	display: flex;
 	align-items: center;

@@ -19,7 +19,7 @@ import { UserService } from '../user/user.service';
 import { User } from '@prisma/client';
 import { JwtService } from '@nestjs/jwt';
 import { Validate2FADto } from './dto/validate2fa.dto';
-import { CreateUserDto } from './dto/createuser.dto';
+import { SetUsernameDto } from './dto/setusername.dto';
 
 function generateRandomState(): string {
   return randomBytes(16).toString('hex');
@@ -84,13 +84,13 @@ export class AuthController {
 
   @Public()
   @Post('/sign-up')
-  async signUp(@Query('id') id: string, @Body() body: CreateUserDto) {
+  async signUp(@Query('id') id: string, @Body() body: SetUsernameDto) {
     const { username } = body;
     const user_infos_42 = await this.authService.checkTokenValidity(
       id,
       process.env.APP_TMP_SECRET,
     );
-    const token = await this.authService.registerUser(user_infos_42, username);
+    await this.authService.registerUser(user_infos_42, username);
   }
 
   @Public()
