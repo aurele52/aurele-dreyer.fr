@@ -46,6 +46,7 @@ export class MessageController {
     const heartbeat = interval(10000).pipe(map(() => ({ data: '' })));
 
     const message = this.messageService.getMessageEvents().pipe(
+      filter((event) => !!event.channel_id),
       mergeMap((event) =>
         from(this.channelService.isUserMember(event.channel_id, user_id)).pipe(
           filter((isMember) => isMember),
