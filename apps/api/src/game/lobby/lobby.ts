@@ -65,6 +65,8 @@ export class lobby {
       if (winner.user.id === loser.user.id) {
         return;
       }
+      if (!winner || !loser || !this.clients || this.clients.length != 2)
+        return;
       const gameMode =
         winner.mode === 'normal'
           ? 'NORMAL'
@@ -79,17 +81,17 @@ export class lobby {
             createMany: {
               data: [
                 {
-                  user_id: winner?.user.id,
+                  user_id: winner.user.id,
                   score:
-                    this.clients[0]?.user === winner?.user
+                    this.clients[0].user === winner.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: true,
                 },
                 {
-                  user_id: loser?.user.id,
+                  user_id: loser.user.id,
                   score:
-                    this.clients[0]?.user === loser?.user
+                    this.clients[0].user === loser?.user
                       ? this.gameInfo.oneScore
                       : this.gameInfo.twoScore,
                   winner: false,
