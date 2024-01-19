@@ -168,7 +168,6 @@ export default function Background() {
         ) &&
           window.content.type === "ABOUTCHAN")
     );
-    console.log(windowsToDel);
     windowsToDel.forEach((window) => store.dispatch(delWindow(window.id)));
   }
 
@@ -177,7 +176,6 @@ export default function Background() {
   });
 
   useEffect(() => {
-    console.log(userEventType);
     switch (userEventType.type) {
       case UserEventType.FRIENDREQUESTRECEIVED:
         queryClient.invalidateQueries({
