@@ -116,7 +116,7 @@ export class MessageService {
         console.error('Prisma error details:', error);
       }
 
-      throw new NotFoundException('No invitations found for deletion');
+      console.log('No invitations found for deletion');
     }
   }
 
@@ -144,7 +144,7 @@ export class MessageService {
         console.error('Prisma error details:', error);
       }
 
-      throw new NotFoundException('No invitations found for deletion');
+      console.log('No invitations found for deletion');
     }
   }
 
@@ -155,8 +155,10 @@ export class MessageService {
         content: '/PongInvitation',
       },
     });
-    if (!message)
-      throw new NotFoundException('No invitations found for deletion');
+    if (!message) {
+      console.log('No invitations found for deletion');
+      return;
+    }
     return message.channel_id;
   }
 
