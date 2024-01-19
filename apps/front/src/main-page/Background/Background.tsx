@@ -127,10 +127,10 @@ export default function Background() {
 	const { data: userChannelNames } = useQuery<ChatType[]>({
 		queryKey: ["userChannelNames"],
 		queryFn: async () => {
-			return api
-				.get("/chats")
-				.then((response) => response.data)
-				.finally(() => checkWindows());
+			return api.get("/chats").then((response) => {
+				checkWindows();
+				return (response.data)
+			})
 		},
 	});
 
