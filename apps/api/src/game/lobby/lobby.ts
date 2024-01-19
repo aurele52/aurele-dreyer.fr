@@ -40,6 +40,8 @@ export class lobby {
 
   async endGame(winner: clientInfo, loser: clientInfo) {
     try {
+      if (!winner || !loser || !this.clients || this.clients.length != 2)
+        return;
       const gameEndInfo: gameEndInfo = {
         player1: {
           ...this.clients[0]?.user,
@@ -65,8 +67,6 @@ export class lobby {
       if (winner.user.id === loser.user.id) {
         return;
       }
-      if (!winner || !loser || !this.clients || this.clients.length != 2)
-        return;
       const gameMode =
         winner.mode === 'normal'
           ? 'NORMAL'
