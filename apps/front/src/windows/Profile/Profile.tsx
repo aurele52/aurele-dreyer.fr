@@ -575,8 +575,8 @@ export function Profile({ targetId, winId }: ProfileProps) {
               Achievements lvl. {profile?.achievement_lvl}
             </div>
           </div>
-          {buttons}
         </div>
+        {buttons}
       </div>
       <div className="Body">
         <div className="Historic">

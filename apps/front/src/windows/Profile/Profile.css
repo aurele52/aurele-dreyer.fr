@@ -77,7 +77,6 @@
 
 .Profile > .Header > .Text {
 	display: flex;
-	min-width: 240px;
 	flex-direction: column;
 	justify-content: center;
 	align-items: flex-start;
@@ -143,6 +142,7 @@
 	align-items: center;
 	gap: 2px;
 	align-self: stretch;
+	min-width: 160px;
 }
 
 .Profile > .Header > .Text > .Stats > div {
@@ -215,7 +215,7 @@
 	letter-spacing: 0.07px;
 }
 
-.Profile > .Header > .Text > .Buttons {
+.Profile > .Header > .Buttons {
 	display: flex;
 	min-width: 115px;
 	padding: 0px 5px;
