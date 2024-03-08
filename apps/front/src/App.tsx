@@ -7,6 +7,7 @@ import { socket } from "./socket";
 import { useEffect } from "react";
 import { addModal, ModalType } from "./shared/utils/AddModal";
 import { useNavigate } from "@tanstack/react-router";
+import EnglishMenu from "./windows/English/EnglishMenu";
 
 export const useDetectBackNavigation = (targetPath) => {
 	const navigate = useNavigate();
@@ -76,6 +77,8 @@ function App() {
 			prev.displayFilter === next.displayFilter &&
 			prev.zIndexFilter === next.zIndexFilter
 	);
+	if (window.innerWidth <= 760)
+	return (<EnglishMenu/>);
 	return (
 		<div className="App">
 			<div

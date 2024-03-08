@@ -38,6 +38,21 @@ export default function Navbar() {
 		store.dispatch(addWindow(newWindow));
 	};
 
+	const handleEnglish = () => {
+		const newWindow = {
+			WindowName: "English",
+			width: "500",
+			height: "500",
+			id: 0,
+			content: { type: "ENGLISH" },
+			toggle: true,
+			handleBarButton:
+				HBButton.Reduce + HBButton.Enlarge + HBButton.Close,
+			color: WinColor.PURPLE,
+		};
+		store.dispatch(addWindow(newWindow));
+	};
+
 	const handleChat = () => {
 		const newWindow = {
 			WindowName: "Chat",
@@ -88,6 +103,9 @@ export default function Navbar() {
         </button>
         <button type="button" className="NavButton" onClick={handleProfile}>
           MY PROFILE
+        </button>
+        <button type="button" className="NavButton" onClick={handleEnglish}>
+          ENGLISH
         </button>
       </div>
       <button type="button" className="DecoButton" onClick={handleLogOut}>

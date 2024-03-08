@@ -1,0 +1,69 @@
+.listPage {
+        width: 100%;
+        height: 100%;
+}
+
+.listElement {
+        width: 80%;
+        height: 80%;
+  display: flex; /* Utilise flexbox pour le layout */
+  justify-content: space-between; /* Espacement régulier entre les éléments */
+}
+
+/* .div-container { */
+/*   flex-wrap: nowrap; /* Empêche les éléments de passer à la ligne */ */
+/*   align-items: center; /* Centre les éléments verticalement */ */
+/*   overflow: hidden; /* Masque le contenu débordant */ */
+/* } */
+/**/
+/* .label { */
+/*   white-space: nowrap; /* Empêche le texte des labels de passer à la ligne */ */
+/*   overflow: hidden; /* Masque le contenu qui déborde de l'élément */ */
+/*   text-overflow: ellipsis; /* Ajoute des points de suspension si le texte déborde */ */
+/* } */
+
+
+.listFr, .listEng, .listHint, .listLevel {
+        background-color: rgb(222, 222, 222);
+        margin-left: 1%;
+        padding: 1px;
+        border-radius: 8px;
+}
+
+.listEng {
+        width: 30%;
+        margin-left: 2%;
+}
+
+.listFr {
+        width: 30%;
+}
+.listHint {
+        width: 30%;
+}
+
+.listLevel {
+        width: 20%;
+}
+
+.row {
+        background-color: rgb(200, 200, 200);
+        display: flex;
+        width: 96%;
+        height: 10%;
+        margin-top: 1%;
+        margin-left: 2%;
+        margin-right: 2%;
+        align-items: center;
+        border-radius: 3px;
+}
+
+.modifieButton {
+        color: black;
+		  right: 5px;
+        height: 80%;
+        width: 10%;
+        border: 1px solid black;
+        border-radius: 10px;
+        box-shadow: 0px 4px 4px #00000040;
+}

@@ -34,6 +34,7 @@ export class AuthService {
   }
 
   async fetchAccessToken(code: string, state: string): Promise<AccessToken42> {
+    console.log(process.env.DOMAIN_NAME_BACK);
     return fetch('https://api.intra.42.fr/oauth/token', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },

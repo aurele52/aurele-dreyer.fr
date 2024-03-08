@@ -16,6 +16,7 @@ import { UserModule } from './user/user.module';
 import { MessageModule } from './message/message.module';
 import { ServeStaticModule } from '@nestjs/serve-static';
 import { join } from 'path';
+import { EnglishModule } from './english/english.module';
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { join } from 'path';
     FriendshipModule,
     UserModule,
     MessageModule,
+    EnglishModule,
   ],
   controllers: [AppController],
   providers: [AppService, PrismaService],

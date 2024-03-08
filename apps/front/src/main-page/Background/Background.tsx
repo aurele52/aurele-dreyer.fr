@@ -28,6 +28,7 @@ import api from "../../axios";
 import store from "../../store";
 import MainGameMenu from "../../windows/Play/MainGameMenu/mainGameMenu";
 import Preview from "../../windows/Play/Preview/Preview";
+import EnglishMenu from "../../windows/English/EnglishMenu";
 
 enum UserEventType {
 	NOEVENT = "NOEVENT",
@@ -88,6 +89,7 @@ export default function Background() {
 		PREVIEW: { width: "815px", height: "550px" },
 		CREATECUSTOM: { width: "500px", height: "350px" },
 		JOINCUSTOM: { width: "900px", height: "900px" },
+		ENGLISH: { width: "420px", height: "340px" },
 	};
 
 	const [currentTargetUserId, setCurrentTargetUserId] = useState(null);
@@ -615,6 +617,7 @@ export default function Background() {
 								/>
 							)}
 							{window.content.type === "PREVIEW" && <Preview />}
+							{window.content.type === "ENGLISH" && <EnglishMenu />}
 							{window.content.type === "PLAY" && (
 								<MainGameMenu
 									windowId={window.id}

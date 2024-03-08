@@ -1,0 +1,4 @@
+.addWord {
+	display: flex;
+	flex-direction: column;
+}

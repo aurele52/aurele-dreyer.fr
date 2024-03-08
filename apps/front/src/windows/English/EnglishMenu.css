@@ -1,0 +1,57 @@
+.game-menu {
+	display: flex;
+	padding: 5px;
+	flex-direction: column;
+	justify-content: center;
+	align-items: center;
+	gap: 30px;
+	flex: 1 0 0;
+	align-self: stretch;
+}
+.game-menu > div {
+	width: 140px;
+	height: 45px;
+	padding: 10px 12px;
+	cursor: pointer;
+	display: flex;	
+	justify-content: center;
+	align-items: center;
+	border-radius: 12px;
+	outline: 2px solid var(--base-black, #000);
+	/* text */
+ 	font-family: Chakra Petch;
+	font-size: 24px;
+	font-style: normal;
+	font-weight: 700;
+	line-height: 24px;
+	color: var(--text-text-invert, #FFF);
+	border: solid var(--base-white, #fff);
+	border-width: 3px 3px 0;
+}
+
+/* PLAY */
+
+.addWord-button {
+	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
+}
+
+.addWord-button:hover {
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
+}
+
+.list-button {
+	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
+}
+
+.list-button:hover {
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
+}
+
+.QCM-button {
+	background: var(--Turquoise-gradient-match-reverse, linear-gradient(122deg, #3071D2 28.22%, #09E1C7 69.07%));
+}
+
+.QCM-button:hover {
+	background: var(--Turquoise-Gradient-Match, linear-gradient(120deg, #09E1C7 46.53%, #3071D2 79.49%));	
+}
+
